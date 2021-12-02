@@ -96,7 +96,7 @@ int main(void) {
 
     // synchronize timers
     TCNT1 = OCR1A;
-    TCNT3 = OCR3A;
+    TCNT3 = OCR3A-VIRT_ADJUST*20;
 
     // release timers
     GTCCR = 0;

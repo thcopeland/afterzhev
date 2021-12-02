@@ -56,6 +56,10 @@ CIRCUIT
 #define DISPLAY_HEIGHT 48
 #define VBUFF_SIZE (DISPLAY_WIDTH*DISPLAY_HEIGHT)
 
+// if the rows are vertically offset (the screen appears split horizontally),
+// change this by a hundred or so.
+#define VIRT_ADJUST 0
+
 extern uint8_t vbuff[];
 
 #endif
