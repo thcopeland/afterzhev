@@ -7,7 +7,7 @@ CC             = avr-gcc
 MCU_TARGET	   = atmega1280
 
 # Override is only needed by avr-lib build system.
-override CFLAGS        = -g -Wall -Wextra -Werror $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFS)
+override CFLAGS        = -g -flto -Wall -Wextra -Werror $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFS)
 
 OBJCOPY        = avr-objcopy
 OBJDUMP        = avr-objdump

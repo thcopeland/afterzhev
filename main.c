@@ -1,84 +1,80 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
-#include <avr/pgmspace.h>
-#include "/home/tom/src/simavr-master/simavr/sim/avr/avr_mcu_section.h"
-#ifndef F_CPU
-#define F_CPU 16000000
-#endif
-AVR_MCU(F_CPU, "atmega1280");
-// const struct avr_mmcu_vcd_trace_t _mytrace[]  _MMCU_ = {
-//     { AVR_MCU_VCD_SYMBOL("PORTB"), .what = (void*)&PORTB, },
-//     { AVR_MCU_VCD_SYMBOL("TCNT1"), .what = (void*)&TCNT1, },
-    // { AVR_MCU_VCD_SYMBOL("GTCCR"), .what = (void*)&GTCCR, },
-//
-// };
-AVR_MCU_VCD_PORT_PIN('C', 5, "GREEN");
-AVR_MCU_VCD_PORT_PIN('B', 6, "HSYNC");
-AVR_MCU_VCD_PORT_PIN('E', 4, "VSYNC");
+#include "display.h"
 
-// PB7 - T1C
-// PB6 - T1B
-// PB5 - T1A
-// PE5 - T3C
-// PE4 - T3B
-// PE3 - T3A
+uint8_t vbuff[VBUFF_SIZE];
+static uint8_t offset_h = 0, // offset in rows divided by 10
+               offset_l = 0; // offset in rows mod 10
 
-static uint8_t data[1024];
-static uint16_t offset = 0;
+// avr-gcc can generate this code, but it tends to use ldd and update the counter
+// at the end of the loop, which leads to uneven pixel sizes.
+#define WRITE_PIXEL(buff, port)     \
+    asm volatile(                   \
+        "ld __tmp_reg__, %a0+\n\t"  \
+        "out %1, __tmp_reg__\n\t"   \
+        : "+e" (buff)               \
+        : "I" (_SFR_IO_ADDR(port))  \
+    )
 
+// nops are for spacing. ideally, we could get some work done there instead.
+#define WRITE_PIXEL_DELAY(buff, port)   \
+    WRITE_PIXEL(buff, port);            \
+    __builtin_avr_nop();                \
+    __builtin_avr_nop();                \
+    __builtin_avr_nop()
+
+// main loop
+// no prologue or epilogue is necessary, since all the game code will run inside
+// here. This saves a fair number of cycles.
 ISR(TIMER1_COMPA_vect, ISR_NAKED) {
-    // send image data
-    // uint8_t clk_l = TCNT3 >> 6;
-    // uint8_t clk_h = TCNT3 >> 14;
+    if (TCNT3 > 512/256*31 && TCNT3 <= 512/256*(480+31)) {
+        uint8_t *vbuff_line = vbuff + DISPLAY_WIDTH*(uint16_t)offset_h;
 
-    // between 31*64 and (480+31)*64
-    if (TCNT3 > 31*64 && TCNT3 < (480+31)*64) { // 511
-        // __builtin_avr_delay_cycles(6);
-        uint8_t *data_line = data + (uint8_t)32*(uint8_t)(offset>>4); // force 8 bit math
-        for (uint8_t i = 0; i < 32;) {
-            PORTC = data_line[i];
-            // PORTC = data_line[i+1];
-            // PORTC = data_line[i+2];
-            // PORTC = data_line[i+3];
-            // PORTC = data_line[i+4];
-            // PORTC = data_line[i+5];
-            // PORTC = data_line[i+6];
-            // PORTC = data_line[i+7];
-            i++;
+        for (int i = 0; i < (DISPLAY_WIDTH/4)-1; i++) {
+            WRITE_PIXEL_DELAY(vbuff_line, PORTA);
+            WRITE_PIXEL_DELAY(vbuff_line, PORTA);
+            WRITE_PIXEL_DELAY(vbuff_line, PORTA);
+            WRITE_PIXEL(vbuff_line, PORTA);
         }
-        offset++;
-        if (offset >= 480) offset = 0;
-        // offset &= 7;
-        // offset = (offset + 1) & 1;
-        // register unsigned char i = 0;
-        // PORTC = data[i++];
-        PORTC = 0x00;
+        // split loop to gain a few cycles
+        WRITE_PIXEL_DELAY(vbuff_line, PORTA);
+        WRITE_PIXEL_DELAY(vbuff_line, PORTA);
+        WRITE_PIXEL_DELAY(vbuff_line, PORTA);
+        WRITE_PIXEL(vbuff_line, PORTA);
+        ++offset_l; // update offset_l (placing here to extend last pixel)
+        PORTA = 0x00;
+
+        // rollover offset_l
+        if (offset_l >= 10) {
+            offset_l = 0;
+            // update and rollover offset_h
+            if ((++offset_h) >= DISPLAY_HEIGHT) offset_h = 0;
+        }
+        // ~75 free cycles
     } else {
-        // time to work!
+        // ~500 free cycles
     }
     reti();
 }
 
 int main(void) {
-    for (uint16_t i = 0; i < sizeof(data); i++) {
-        data[i] = (i<<4) + ((i>>3)<<1);
+    for (uint16_t i = 0; i < sizeof(vbuff); i++) {
+        vbuff[i] = i;
     }
-    data[0] = 0xFF;
-    data[1] = 0x00;
-    data[2] = 0xFF;
-    data[3] = 0x00;
-    data[4] = 0xFF;
-    data[5] = 0x00;
-    data[6] = 0xFF;
-    data[7] = 0x00;
+    // first row pattern
+    vbuff[0] = 0xFF;
+    vbuff[1] = 0x00;
+    vbuff[2] = 0xFF;
+    vbuff[3] = 0x00;
+    vbuff[4] = 0xFF;
+    vbuff[5] = 0x00;
+    vbuff[6] = 0xFF;
+    vbuff[7] = 0x00;
 
+    DDRA = 0xFF;
     DDRB = 0xFF;
-    DDRC = 0xFF;
     DDRE = 0xFF;
-
-    PORTB = 0x00;
-    PORTE = 0x00;
 
     // halt all timers
     GTCCR = (1 << TSM) | (1 << PSRASY) | (1 << PSRSYNC);
@@ -94,26 +90,18 @@ int main(void) {
     // VSYNC
     // initialize timer 3 to fast PWM (pin PE4)
     TCCR3A = (1 << WGM30) | (1 << WGM31) | (1 << COM3B1) | (1 << COM3B0);
-    TCCR3B = (1 << WGM32) | (1 << WGM33) | (1 << CS31); // use 64 prescaling?
-    // OCR3A = 33599-64*13;
-    // OCR3B = 33471-64*13;
-    OCR3A = 33599;
-    OCR3B = 33471;
-    // OCR3A = 33535;
-    // OCR3B = 33407;
+    TCCR3B = (1 << WGM32) | (1 << WGM33) | (1 << CS32);
+    OCR3A = 512/256*(480+11+2+31)-1;
+    OCR3B = 512/256*(480+11+2)-1;
 
     // synchronize timers
-    TCNT1 = 26; // slight offset for the back porch
-    TCNT3 = 0; //OCR3A-64*120;
+    TCNT1 = OCR1A;
+    TCNT3 = OCR3A;
 
     // release timers
     GTCCR = 0;
 
     sei();
-
-    while(1) {
-        sleep_mode();
-    }
-
+    while(1) sleep_mode(); // sleep for consistent interrupt timing (prevents horizontal blurring)
     return 1;
 }
