@@ -50,10 +50,8 @@ CIRCUIT
  GND ------------------------------------------------------- VGA pins 5,6,7,8,10
 */
 
-// TODO: if there's enough memory, upgrade to 80x60. (Memory is the main constraint,
-// not time -- at 16Mhz, we could go up to 200x480 if memory wasn't tight).
-#define DISPLAY_WIDTH 64
-#define DISPLAY_HEIGHT 48
+#define DISPLAY_WIDTH 80
+#define DISPLAY_HEIGHT 60
 #define VBUFF_SIZE (DISPLAY_WIDTH*DISPLAY_HEIGHT)
 
 // if the rows are vertically offset (the screen appears split horizontally),

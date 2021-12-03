@@ -17,36 +17,40 @@ static uint8_t offset_h = 0, // offset in rows divided by 10
         : "I" (_SFR_IO_ADDR(port))  \
     )
 
-// nops are for spacing. ideally, we could get some work done there instead.
 #define WRITE_PIXEL_DELAY(buff, port)   \
     WRITE_PIXEL(buff, port);            \
-    __builtin_avr_nop();                \
-    __builtin_avr_nop();                \
     __builtin_avr_nop()
+
+#define WRITE_8_PIXELS(buff, port)  \
+    WRITE_PIXEL_DELAY(buff, port);  \
+    WRITE_PIXEL_DELAY(buff, port);  \
+    WRITE_PIXEL_DELAY(buff, port);  \
+    WRITE_PIXEL_DELAY(buff, port);  \
+    WRITE_PIXEL_DELAY(buff, port);  \
+    WRITE_PIXEL_DELAY(buff, port);  \
+    WRITE_PIXEL_DELAY(buff, port);  \
+    WRITE_PIXEL_DELAY(buff, port)
 
 // main loop
 // no prologue or epilogue is necessary, since all the game code will run inside
 // here. This saves a fair number of cycles.
 ISR(TIMER1_COMPA_vect, ISR_NAKED) {
-    if (TCNT3 > 512/256*31 && TCNT3 <= 512/256*(480+31)) {
+    if (TCNT3 > 512/256*31 && TCNT3 <= 512/256*(360+31)) {
         uint8_t *vbuff_line = vbuff + DISPLAY_WIDTH*(uint16_t)offset_h;
-
-        for (int i = 0; i < (DISPLAY_WIDTH/4)-1; i++) {
-            WRITE_PIXEL_DELAY(vbuff_line, PORTA);
-            WRITE_PIXEL_DELAY(vbuff_line, PORTA);
-            WRITE_PIXEL_DELAY(vbuff_line, PORTA);
-            WRITE_PIXEL(vbuff_line, PORTA);
-        }
-        // split loop to gain a few cycles
-        WRITE_PIXEL_DELAY(vbuff_line, PORTA);
-        WRITE_PIXEL_DELAY(vbuff_line, PORTA);
-        WRITE_PIXEL_DELAY(vbuff_line, PORTA);
-        WRITE_PIXEL(vbuff_line, PORTA);
-        ++offset_l; // update offset_l (placing here to extend last pixel)
+        WRITE_8_PIXELS(vbuff_line, PORTA);
+        WRITE_8_PIXELS(vbuff_line, PORTA);
+        WRITE_8_PIXELS(vbuff_line, PORTA);
+        WRITE_8_PIXELS(vbuff_line, PORTA);
+        WRITE_8_PIXELS(vbuff_line, PORTA);
+        WRITE_8_PIXELS(vbuff_line, PORTA);
+        WRITE_8_PIXELS(vbuff_line, PORTA);
+        WRITE_8_PIXELS(vbuff_line, PORTA);
+        WRITE_8_PIXELS(vbuff_line, PORTA);
+        WRITE_8_PIXELS(vbuff_line, PORTA);
         PORTA = 0x00;
 
-        // rollover offset_l
-        if (offset_l >= 10) {
+        // update and rollover offset_l
+        if ((++offset_l) >= 6) {
             offset_l = 0;
             // update and rollover offset_h
             if ((++offset_h) >= DISPLAY_HEIGHT) offset_h = 0;
