@@ -17,25 +17,21 @@ static uint8_t offset_h = 0, // offset in rows divided by 10
         : "I" (_SFR_IO_ADDR(port))  \
     )
 
-#define WRITE_PIXEL_DELAY(buff, port)   \
-    WRITE_PIXEL(buff, port);            \
-    __builtin_avr_nop()
-
 #define WRITE_8_PIXELS(buff, port)  \
-    WRITE_PIXEL_DELAY(buff, port);  \
-    WRITE_PIXEL_DELAY(buff, port);  \
-    WRITE_PIXEL_DELAY(buff, port);  \
-    WRITE_PIXEL_DELAY(buff, port);  \
-    WRITE_PIXEL_DELAY(buff, port);  \
-    WRITE_PIXEL_DELAY(buff, port);  \
-    WRITE_PIXEL_DELAY(buff, port);  \
-    WRITE_PIXEL_DELAY(buff, port)
+    WRITE_PIXEL(buff, port);  \
+    WRITE_PIXEL(buff, port);  \
+    WRITE_PIXEL(buff, port);  \
+    WRITE_PIXEL(buff, port);  \
+    WRITE_PIXEL(buff, port);  \
+    WRITE_PIXEL(buff, port);  \
+    WRITE_PIXEL(buff, port);  \
+    WRITE_PIXEL(buff, port)
 
 // main loop
 // no prologue or epilogue is necessary, since all the game code will run inside
 // here. This saves a fair number of cycles.
 ISR(TIMER1_COMPA_vect, ISR_NAKED) {
-    if (TCNT3 > 512/256*31 && TCNT3 <= 512/256*(360+31)) {
+    if (TCNT3 > 512/256*31 && TCNT3 <= 512/256*(480*4/8+31)) {
         uint8_t *vbuff_line = vbuff + DISPLAY_WIDTH*(uint16_t)offset_h;
         WRITE_8_PIXELS(vbuff_line, PORTA);
         WRITE_8_PIXELS(vbuff_line, PORTA);
@@ -50,7 +46,7 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
         PORTA = 0x00;
 
         // update and rollover offset_l
-        if ((++offset_l) >= 6) {
+        if ((++offset_l) >= 4) {
             offset_l = 0;
             // update and rollover offset_h
             if ((++offset_h) >= DISPLAY_HEIGHT) offset_h = 0;
