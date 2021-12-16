@@ -1,13 +1,14 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
-#include "display.h"
+#include "dimensions.h"
+#include "vga.h"
 #include "map.h"
 #include "tile.h"
 #include "render.h"
 #include "main.h"
 
-static uint8_t fbuff[FBUFF_SIZE];
+static uint8_t fbuff[DISPLAY_WIDTH*DISPLAY_HEIGHT];
 
 static uint8_t current_stage;
 static union stage_data stage_data;

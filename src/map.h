@@ -2,12 +2,9 @@
 #define MAP_H
 
 #include <avr/pgmspace.h>
+#include "dimensions.h"
 
 #define WORLD_SIZE 2
-
-#define SECTOR_WIDTH  20
-#define SECTOR_HEIGHT 10
-#define SECTOR_SIZE (SECTOR_WIDTH*SECTOR_HEIGHT)
 
 #define MAX_SECTOR_NPCS  8
 #define MAX_SECTOR_ITEMS 4

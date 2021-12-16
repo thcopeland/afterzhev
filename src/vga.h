@@ -1,16 +1,7 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include "tile.h"
-
-// display data
-#define DISPLAY_WIDTH 120
-#define DISPLAY_HEIGHT 60
-#define FOOTER_HEIGHT 12
-#define DISPLAY_TOTAL_HEIGHT (DISPLAY_HEIGHT + FOOTER_HEIGHT)
-#define DISPLAY_VERTICAL_SCALE 5
-
-#define FBUFF_SIZE (DISPLAY_WIDTH*DISPLAY_HEIGHT)
+#include "dimensions.h"
 
 // VGA timing data
 #define VGA_HORIZONAL_ACTIVE_PIXELS 640

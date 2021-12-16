@@ -1,6 +1,5 @@
+#include "dimensions.h"
 #include "tile.h"
-#include "map.h"
-#include "display.h"
 #include "render.h"
 
 void render_whole_tile(uint8_t *buff, uint8_t tile, uint8_t min_y, uint8_t height) {
@@ -112,7 +111,6 @@ void render_sector(uint8_t *fbuff,
             render_partial_tile2(buff+DISPLAY_WIDTH-offset_x_l, sector->tiles[right], 0, 12, 0, offset_x_l);
             buff += DISPLAY_WIDTH*TILE_HEIGHT;
         }
-
         col_offset = 1;
         fbuff += TILE_WIDTH-offset_x_l;
     } else if (offset_y_l) {

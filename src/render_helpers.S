@@ -1,6 +1,4 @@
-#include "tile.h"
-#include "display.h"
-#include "map.h"
+#include "dimensions.h"
 
 .global render_partial_tile2    ; void render_partial_tile(uint8_t *buff, uint8_t tile,
                                 ;   `                      uint8_t min_y, uint8_t height,
