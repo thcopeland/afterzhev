@@ -6,14 +6,11 @@
 // display data
 #define DISPLAY_WIDTH 120
 #define DISPLAY_HEIGHT 60
-#define FOOTER_HEIGHT 16
+#define FOOTER_HEIGHT 12
 #define DISPLAY_TOTAL_HEIGHT (DISPLAY_HEIGHT + FOOTER_HEIGHT)
 #define DISPLAY_VERTICAL_SCALE 5
 
-// the video buffer contains 2*TILE_WIDTH more pixels than the display in order
-// to easily perform horizontal scrolling. (vertical scrolling is handled more
-// explicitly).
-#define VBUFF_SIZE (DISPLAY_WIDTH*DISPLAY_HEIGHT + 2*TILE_WIDTH)
+#define FBUFF_SIZE (DISPLAY_WIDTH*DISPLAY_HEIGHT)
 
 // VGA timing data
 #define VGA_HORIZONAL_ACTIVE_PIXELS 640

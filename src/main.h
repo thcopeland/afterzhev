@@ -24,8 +24,6 @@ union stage_data {
         uint8_t *fbuff_line;
     } output;
     struct {
-        const __flash struct sector *upper_left, *upper_right, *lower_left, *lower_right;
-        uint8_t ul_start_x, ul_start_y;
     } render;
     struct {
     } update;
@@ -34,8 +32,7 @@ union stage_data {
 struct game_data {
     uint8_t offset_x_h, offset_x_l;
     uint8_t offset_y_h, offset_y_l;
-    uint8_t active_sector;
-    uint8_t tmp;
+    const __flash struct sector *active_sector;
 };
 
 // quick output helper
@@ -43,32 +40,33 @@ struct game_data {
 // counter at the end of the loop, which leads to uneven pixel sizes.
 #define WRITE_12_PIXELS(buff, port) \
     asm volatile(                   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
-        "ld __tmp_reg__, %a0+\n\t"  \
-        "out %1, __tmp_reg__\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
+        "ld r0, %a0+\n\t"  \
+        "out %1, r0\n\t"   \
         : "+e" (buff)               \
         : "I" (_SFR_IO_ADDR(port))  \
+		: "r0"						\
     )
 
 #endif

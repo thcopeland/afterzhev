@@ -8,14 +8,17 @@
 #include "render.h"
 #include "main.h"
 
-static uint8_t vbuff[VBUFF_SIZE];
-static uint8_t *fbuff = vbuff + TILE_WIDTH;
+static uint8_t fbuff[FBUFF_SIZE];
 
 static uint8_t current_stage;
 static union stage_data stage_data;
 static struct game_data game_data = {
-    0, 0, 0, 0, 4, 0
+    .offset_x_h = 0, .offset_x_l = 0,
+    .offset_y_h = 0, .offset_y_l = 0,
+    .active_sector = sectors
 };
+
+static uint8_t tmp, dir_x = 1, dir_y = 1;
 
 // main loop
 // no prologue or epilogue is necessary, since all the game code will run inside
@@ -33,73 +36,105 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
         WRITE_12_PIXELS(fbuff_line, PORTA);
         WRITE_12_PIXELS(fbuff_line, PORTA);
         WRITE_12_PIXELS(fbuff_line, PORTA);
+        stage_data.output.current_row_l++;
         PORTA = 0x00;
-
-        if ((++stage_data.output.current_row_l) >= DISPLAY_VERTICAL_SCALE) {
+        if (stage_data.output.current_row_l >= DISPLAY_VERTICAL_SCALE) {
             stage_data.output.current_row_l = 0;
             stage_data.output.fbuff_line = fbuff_line;
-            if ((++stage_data.output.current_row_h) >= FOOTER_HEIGHT && current_stage) {
+            stage_data.output.current_row_h++;
+            if (stage_data.output.current_row_h >= FOOTER_HEIGHT && current_stage) {
                 current_stage = 2;
             } else if (stage_data.output.current_row_h >= DISPLAY_HEIGHT) {
                 stage_data.output.current_row_h = 0;
                 stage_data.output.current_row_l = 0;
-                // stage_data.output.fbuff_line = fbuff; // TODO UNCOMMENT ME!!
+                // stage_data.output.fbuff_line = fbuff;
                 current_stage = 1;
             }
         }
 
         // ~90 free cycles
         // render a single layer of the footer (120x16)
-    } else {
-        // render/update the game screen (120x60)
-        switch (current_stage++) {
-            case 2:
-                // __builtin_avr_delay_cycles(64000);
-                stage_data.render.lower_right = sectors + game_data.active_sector;
-                stage_data.render.lower_left = sectors + stage_data.render.lower_right->left;
-                stage_data.render.upper_right = sectors + stage_data.render.lower_left->above;
-                stage_data.render.upper_left = sectors + stage_data.render.lower_right->above;
-
-                if (game_data.tmp++ > 10) {
+    } else if (current_stage == 2) {
+        // game_data.active_sector = sectors;
+        tmp++;
+        if (tmp > 0) {
+            tmp = 0;
+            // x++;
+            PORTB ^= 0b10000000;
+            if (dir_x) {
+                if (game_data.offset_x_l < 11) {
                     game_data.offset_x_l++;
-                    game_data.tmp = 0;
-                    if (game_data.offset_x_l > 12) game_data.offset_x_l = 1;
+                } else if (game_data.offset_x_h < 9) {
+                    game_data.offset_x_h++;
+                    game_data.offset_x_l = 0;
+                } else {
+                    dir_x = 0;
                 }
+            } else {
+                if (game_data.offset_x_l > 0) {
+                    game_data.offset_x_l--;
+                } else if (game_data.offset_x_h > 0) {
+                    game_data.offset_x_h--;
+                    game_data.offset_x_l = 11;
+                } else {
+                    dir_x = 1;
+                }
+            }
 
-                render_visible_sectors(fbuff, stage_data.render.upper_left, stage_data.render.lower_left, stage_data.render.upper_right, stage_data.render.upper_left, 0, 2, 0, 0);
-                // render_visible_sectors(fbuff, sectors, sectors, sectors, sectors, 0, 0);
-                break;
-            default:
-                // reset to output stage
-                current_stage = 0;
-                stage_data.output.current_row_h = 0;
-                stage_data.output.current_row_l = 0;
-                stage_data.output.fbuff_line = fbuff;
-                break;
+            if (game_data.offset_x_l & 1) {
+                if (dir_y) {
+                    if (game_data.offset_y_l < 11) {
+                        game_data.offset_y_l++;
+                    } else if (game_data.offset_y_h < 4) {
+                        game_data.offset_y_h++;
+                        game_data.offset_y_l = 0;
+                    } else {
+                        dir_y = 0;
+                    }
+                } else {
+                    if (game_data.offset_y_l > 0) {
+                        game_data.offset_y_l--;
+                    } else if (game_data.offset_y_h > 0) {
+                        game_data.offset_y_h--;
+                        game_data.offset_y_l = 11;
+                    } else {
+                        dir_y = 1;
+                    }
+                }
+            }
         }
-
-        TIFR1 = 0xFF; // clear any pending interrupts on timer 1
+        // if (x > 11) x = 0;
+        render_sector(fbuff, game_data.active_sector, game_data.offset_x_h, game_data.offset_x_l, game_data.offset_y_h, game_data.offset_y_l);
+        // render_sector(fbuff, game_data.active_sector, 0, 0, game_data.offset_y_h, game_data.offset_y_l);
+        current_stage++;
+        TIFR1 = 0xFF;
+    } else if (current_stage > 2) {
+        current_stage = 0;
+        stage_data.output.current_row_h = 0;
+        stage_data.output.current_row_l = 0;
+        stage_data.output.fbuff_line = fbuff;
+        TIFR1 = 0xFF;
     }
     reti();
 }
 
 int main(void) {
-    // for (uint16_t i = 0; i < sizeof(vbuff); i++) {
+    // for (uint16_t i = 0; i < sizeof(fbuff); i++) {
     //     fbuff[i] = i;
     // }
     //
-    // vbuff[0] = 0xc7; vbuff[1] = 0xc7; vbuff[2] = 0xd; vbuff[3] = 0xd; vbuff[4] = 0x48; vbuff[5] = 0x48; vbuff[6] = 0x48; vbuff[7] = 0x48; vbuff[8] = 0x48; vbuff[9] = 0xc7; vbuff[10] = 0xc7; vbuff[11] = 0xc7;
-    // vbuff[120] = 0xc7; vbuff[121] = 0x48; vbuff[122] = 0x48; vbuff[123] = 0x2f; vbuff[124] = 0xd1; vbuff[125] = 0xd1; vbuff[126] = 0xd1; vbuff[127] = 0xd1; vbuff[128] = 0x48; vbuff[129] = 0x48; vbuff[130] = 0x48; vbuff[131] = 0xc7;
-    // vbuff[240] = 0xc7; vbuff[241] = 0xc7; vbuff[242] = 0xa; vbuff[243] = 0x48; vbuff[244] = 0x48; vbuff[245] = 0xd1; vbuff[246] = 0xd1; vbuff[247] = 0x48; vbuff[248] = 0x48; vbuff[249] = 0xa; vbuff[250] = 0xc7; vbuff[251] = 0xc7;
-    // vbuff[360] = 0xc7; vbuff[361] = 0xc7; vbuff[362] = 0x13; vbuff[363] = 0x6e; vbuff[364] = 0x6e; vbuff[365] = 0x48; vbuff[366] = 0x48; vbuff[367] = 0x6e; vbuff[368] = 0x6e; vbuff[369] = 0x13; vbuff[370] = 0xc7; vbuff[371] = 0xc7;
-    // vbuff[480] = 0xc7; vbuff[481] = 0xc7; vbuff[482] = 0x5d; vbuff[483] = 0xa; vbuff[484] = 0xa; vbuff[485] = 0x6e; vbuff[486] = 0x6e; vbuff[487] = 0xa; vbuff[488] = 0xa; vbuff[489] = 0x5d; vbuff[490] = 0xc7; vbuff[491] = 0xc7;
-    // vbuff[600] = 0xc7; vbuff[601] = 0xc7; vbuff[602] = 0x5d; vbuff[603] = 0xff; vbuff[604] = 0x48; vbuff[605] = 0x6e; vbuff[606] = 0x6e; vbuff[607] = 0x48; vbuff[608] = 0xff; vbuff[609] = 0x5d; vbuff[610] = 0xc7; vbuff[611] = 0xc7;
-    // vbuff[720] = 0xc7; vbuff[721] = 0xc7; vbuff[722] = 0xc7; vbuff[723] = 0x5d; vbuff[724] = 0x5d; vbuff[725] = 0x5d; vbuff[726] = 0x5d; vbuff[727] = 0x5d; vbuff[728] = 0x5d; vbuff[729] = 0xc7; vbuff[730] = 0xc7; vbuff[731] = 0xc7;
-    // vbuff[840] = 0xc7; vbuff[841] = 0xc7; vbuff[842] = 0x77; vbuff[843] = 0x2f; vbuff[844] = 0x48; vbuff[845] = 0xd1; vbuff[846] = 0xd1; vbuff[847] = 0x48; vbuff[848] = 0x2f; vbuff[849] = 0x77; vbuff[850] = 0xc7; vbuff[851] = 0xc7;
-    // vbuff[960] = 0xc7; vbuff[961] = 0xc7; vbuff[962] = 0x48; vbuff[963] = 0x48; vbuff[964] = 0xd1; vbuff[965] = 0x48; vbuff[966] = 0x48; vbuff[967] = 0xd1; vbuff[968] = 0x48; vbuff[969] = 0x48; vbuff[970] = 0xc7; vbuff[971] = 0xc7;
-    // vbuff[1080] = 0xc7; vbuff[1081] = 0xc7; vbuff[1082] = 0x5d; vbuff[1083] = 0x6e; vbuff[1084] = 0x48; vbuff[1085] = 0x48; vbuff[1086] = 0x48; vbuff[1087] = 0x48; vbuff[1088] = 0x6e; vbuff[1089] = 0x5d; vbuff[1090] = 0xc7; vbuff[1091] = 0xc7;
-    // vbuff[1200] = 0xc7; vbuff[1201] = 0xc7; vbuff[1202] = 0xc7; vbuff[1203] = 0x48; vbuff[1204] = 0x48; vbuff[1205] = 0xa; vbuff[1206] = 0xa; vbuff[1207] = 0x48; vbuff[1208] = 0x48; vbuff[1209] = 0xc7; vbuff[1210] = 0xc7; vbuff[1211] = 0xc7;
-    // vbuff[1320] = 0xc7; vbuff[1321] = 0xc7; vbuff[1322] = 0xc7; vbuff[1323] = 0xa; vbuff[1324] = 0xa; vbuff[1325] = 0xc7; vbuff[1326] = 0xc7; vbuff[1327] = 0xa; vbuff[1328] = 0xa; vbuff[1329] = 0xc7; vbuff[1330] = 0xc7; vbuff[1331] = 0xc7;
+    // fbuff[0] = 0xc7; fbuff[1] = 0xc7; fbuff[2] = 0xd; fbuff[3] = 0xd; fbuff[4] = 0x48; fbuff[5] = 0x48; fbuff[6] = 0x48; fbuff[7] = 0x48; fbuff[8] = 0x48; fbuff[9] = 0xc7; fbuff[10] = 0xc7; fbuff[11] = 0xc7;
+    // fbuff[120] = 0xc7; fbuff[121] = 0x48; fbuff[122] = 0x48; fbuff[123] = 0x2f; fbuff[124] = 0xd1; fbuff[125] = 0xd1; fbuff[126] = 0xd1; fbuff[127] = 0xd1; fbuff[128] = 0x48; fbuff[129] = 0x48; fbuff[130] = 0x48; fbuff[131] = 0xc7;
+    // fbuff[240] = 0xc7; fbuff[241] = 0xc7; fbuff[242] = 0xa; fbuff[243] = 0x48; fbuff[244] = 0x48; fbuff[245] = 0xd1; fbuff[246] = 0xd1; fbuff[247] = 0x48; fbuff[248] = 0x48; fbuff[249] = 0xa; fbuff[250] = 0xc7; fbuff[251] = 0xc7;
+    // fbuff[360] = 0xc7; fbuff[361] = 0xc7; fbuff[362] = 0x13; fbuff[363] = 0x6e; fbuff[364] = 0x6e; fbuff[365] = 0x48; fbuff[366] = 0x48; fbuff[367] = 0x6e; fbuff[368] = 0x6e; fbuff[369] = 0x13; fbuff[370] = 0xc7; fbuff[371] = 0xc7;
+    // fbuff[480] = 0xc7; fbuff[481] = 0xc7; fbuff[482] = 0x5d; fbuff[483] = 0xa; fbuff[484] = 0xa; fbuff[485] = 0x6e; fbuff[486] = 0x6e; fbuff[487] = 0xa; fbuff[488] = 0xa; fbuff[489] = 0x5d; fbuff[490] = 0xc7; fbuff[491] = 0xc7;
+    // fbuff[600] = 0xc7; fbuff[601] = 0xc7; fbuff[602] = 0x5d; fbuff[603] = 0xff; fbuff[604] = 0x48; fbuff[605] = 0x6e; fbuff[606] = 0x6e; fbuff[607] = 0x48; fbuff[608] = 0xff; fbuff[609] = 0x5d; fbuff[610] = 0xc7; fbuff[611] = 0xc7;
+    // fbuff[720] = 0xc7; fbuff[721] = 0xc7; fbuff[722] = 0xc7; fbuff[723] = 0x5d; fbuff[724] = 0x5d; fbuff[725] = 0x5d; fbuff[726] = 0x5d; fbuff[727] = 0x5d; fbuff[728] = 0x5d; fbuff[729] = 0xc7; fbuff[730] = 0xc7; fbuff[731] = 0xc7;
+    // fbuff[840] = 0xc7; fbuff[841] = 0xc7; fbuff[842] = 0x77; fbuff[843] = 0x2f; fbuff[844] = 0x48; fbuff[845] = 0xd1; fbuff[846] = 0xd1; fbuff[847] = 0x48; fbuff[848] = 0x2f; fbuff[849] = 0x77; fbuff[850] = 0xc7; fbuff[851] = 0xc7;
+    // fbuff[960] = 0xc7; fbuff[961] = 0xc7; fbuff[962] = 0x48; fbuff[963] = 0x48; fbuff[964] = 0xd1; fbuff[965] = 0x48; fbuff[966] = 0x48; fbuff[967] = 0xd1; fbuff[968] = 0x48; fbuff[969] = 0x48; fbuff[970] = 0xc7; fbuff[971] = 0xc7;
+    // fbuff[1080] = 0xc7; fbuff[1081] = 0xc7; fbuff[1082] = 0x5d; fbuff[1083] = 0x6e; fbuff[1084] = 0x48; fbuff[1085] = 0x48; fbuff[1086] = 0x48; fbuff[1087] = 0x48; fbuff[1088] = 0x6e; fbuff[1089] = 0x5d; fbuff[1090] = 0xc7; fbuff[1091] = 0xc7;
+    // fbuff[1200] = 0xc7; fbuff[1201] = 0xc7; fbuff[1202] = 0xc7; fbuff[1203] = 0x48; fbuff[1204] = 0x48; fbuff[1205] = 0xa; fbuff[1206] = 0xa; fbuff[1207] = 0x48; fbuff[1208] = 0x48; fbuff[1209] = 0xc7; fbuff[1210] = 0xc7; fbuff[1211] = 0xc7;
+    // fbuff[1320] = 0xc7; fbuff[1321] = 0xc7; fbuff[1322] = 0xc7; fbuff[1323] = 0xa; fbuff[1324] = 0xa; fbuff[1325] = 0xc7; fbuff[1326] = 0xc7; fbuff[1327] = 0xa; fbuff[1328] = 0xa; fbuff[1329] = 0xc7; fbuff[1330] = 0xc7; fbuff[1331] = 0xc7;
     DDRA = 0xFF;
     DDRB = 0xFF;
     DDRE = 0xFF;

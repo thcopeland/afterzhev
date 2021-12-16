@@ -39,10 +39,10 @@ def convert_file(input, output)
   pixels_8bit = pixels.map { |r, g, b| (b & 0xC0) | ((g >> 2) & 0x38) | ((r >> 5) & 0x07) }
 
   # debugging:
-  pixels_8bit.each_with_index do |p, i|
-    print "vbuff[#{i%12 + (i/12)*120}] = 0x#{p.to_s(16)}; "
-    puts if (i+1)%12 == 0
-  end
+  # pixels_8bit.each_with_index do |p, i|
+  #   print "fbuff[#{i%12 + (i/12)*120}] = 0x#{p.to_s(16)}; "
+  #   puts if (i+1)%12 == 0
+  # end
 
   File.open(output, "w") do |f|
     f << pixels_8bit.pack("C*")
