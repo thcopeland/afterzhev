@@ -21,10 +21,8 @@ static struct game_data game_data = {
 static uint8_t tmp, dir_x = 1, dir_y = 1;
 
 // main loop
-// no prologue or epilogue is necessary, since all the game code will run inside
-// here. This saves a fair number of cycles.
-ISR(TIMER1_COMPA_vect, ISR_NAKED) {
-    if (TCNT3 > VSYNC_BACK_PORCH_PRESCALED && TCNT3 <= LINES_TO_TICKS(DISPLAY_VERTICAL_SCALE*DISPLAY_TOTAL_HEIGHT+VGA_VBACK_PORCH_LINES)) {
+ISR(TIMER1_COMPA_vect) {
+    if (TCNT3 <= LINES_TO_TICKS(DISPLAY_VERTICAL_SCALE*DISPLAY_TOTAL_HEIGHT)) {
         uint8_t *fbuff_line = stage_data.output.fbuff_line;
         WRITE_12_PIXELS(fbuff_line, PORTA);
         WRITE_12_PIXELS(fbuff_line, PORTA);
@@ -33,9 +31,10 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
         WRITE_12_PIXELS(fbuff_line, PORTA);
         WRITE_12_PIXELS(fbuff_line, PORTA);
         WRITE_12_PIXELS(fbuff_line, PORTA);
-        WRITE_12_PIXELS(fbuff_line, PORTA);
-        WRITE_12_PIXELS(fbuff_line, PORTA);
-        WRITE_12_PIXELS(fbuff_line, PORTA);
+        // WRITE_12_PIXELS(fbuff_line, PORTA);
+        // WRITE_12_PIXELS(fbuff_line, PORTA);
+        // WRITE_12_PIXELS(fbuff_line, PORTA);
+        fbuff_line += 12 * 3;
         stage_data.output.current_row_l++;
         PORTA = 0x00;
         if (stage_data.output.current_row_l >= DISPLAY_VERTICAL_SCALE) {
@@ -56,7 +55,7 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
         // render a single layer of the footer (120x16)
     } else if (current_stage == 2) {
         tmp++;
-        if (tmp > 0) {
+        if (tmp > 4) {
             tmp = 0;
             PORTB ^= 0b10000000;
             if (dir_x) {
@@ -102,6 +101,8 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
             }
         }
         render_sector(fbuff, game_data.active_sector, game_data.offset_x_h, game_data.offset_x_l, game_data.offset_y_h, game_data.offset_y_l);
+        render_partial_tile3(fbuff, 3, 0, 12, 0, 12);
+        render_partial_tile3(fbuff, 0, 0, 12-game_data.offset_x_l, 0, 12);
         current_stage++;
         TIFR1 = 0xFF;
     } else if (current_stage > 2) {
@@ -111,16 +112,16 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
         stage_data.output.fbuff_line = fbuff;
         TIFR1 = 0xFF;
     }
-    reti();
 }
 
 int main(void) {
     DDRA = 0xFF;
     DDRB = 0xFF;
+    DDRC = 0xFF;
     DDRE = 0xFF;
 
     // halt all timers
-    GTCCR = (1 << TSM) | (1 << PSRASY) | (1 << PSRSYNC);
+    // GTCCR = (1 << TSM) | (1 << PSRASY) | (1 << PSRSYNC);
 
     // HSYNC
     // initialize timer 1 to fast PWM (pin PB6)
@@ -138,11 +139,11 @@ int main(void) {
     OCR3B = VSYNC_PERIOD_PRESCALED - VSYNC_SYNC_PRESCALED - 1;
 
     // synchronize timers
-    TCNT1 = OCR1A;
+    TCNT1 = OCR1A-50;
     TCNT3 = OCR3A-VIRT_ADJUST*20;
 
     // release timers
-    GTCCR = 0;
+    // GTCCR = 0;
 
     sei();
     while(1) sleep_mode(); // sleep for consistent interrupt timing (prevents horizontal blurring)

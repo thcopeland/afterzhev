@@ -1,25 +1,26 @@
-OBJ            = main.o map.o tile.o render.o
+OBJ            = main.o map.o tile.o render.o render_helpers.o
 SRC 		   = src
-OPTIMIZE       = -O2 -fno-inline # TODO: -finline (and -flto) would be nice, but has problems near ISR_NAKED. The situation could be improved by marking specific functions as __attribute__ ((noinline))
+OPTIMIZE       = -O2 -flto
 DEFS           = -DDEV
-LIBS           =
 CC             = avr-gcc
-MCU_TARGET	   = atmega1280
-CFLAGS		   = -Wall -Wextra -mmcu=$(MCU_TARGET) $(OPTIMIZE) $(DEFS)
-LDFLAGS		   = $(LIBS)
+MCU_TARGET	   = atmega2560
+CFLAGS		   = -Wall -Wextra -mmcu=$(MCU_TARGET) $(DEFS)
 OBJCOPY        = avr-objcopy
 OBJDUMP        = avr-objdump
 
 all: game.elf game.hex game.lst
 
 upload: all
-	avrdude -p atmega1280 -c arduino -P /dev/ttyUSB0 -b 57600 -D -U flash:w:game.hex:i
+	avrdude -p $(MCU_TARGET) -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:game.hex:i
 
 game.elf: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OPTIMIZE) -o $@ $^
 
 %.o: $(SRC)/%.c
-	$(CC) $(CFLAGS) -c -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OPTIMIZE) -c -o $@ $^
+
+%.o: $(SRC)/%.S
+	$(CC) $(CFLAGS) -c -o $@ $^
 
 clean:
 	rm -rf *.o *.elf *.hex *.lst *.i *.res *.s *.out
