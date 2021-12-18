@@ -1,32 +1,19 @@
-OBJ            = main.o map.o tile.o render.o render_helpers.o
-SRC 		   = src
-OPTIMIZE       = -O2 -flto
-DEFS           = -DDEV
-CC             = avr-gcc
-MCU_TARGET	   = atmega2560
-CFLAGS		   = -Wall -Wextra -mmcu=$(MCU_TARGET) $(DEFS)
-OBJCOPY        = avr-objcopy
+SRC            = src
+MCU_TARGET     = atmega2560
+DEFS           = -D DEV -D target_$(MCU_TARGET)
+AS             = avra
 OBJDUMP        = avr-objdump
 
-all: game.elf game.hex game.lst
+all: main.hex main.lst
+
+%.hex: $(SRC)/%.asm $(SRC)/*.asm $(SRC)/*.inc
+    $(AS) $(DEFS) -I $(SRC) -o $@ $<
+
+%.lst: %.hex
+    $(OBJDUMP) -m avr51 -D $< > $@
 
 upload: all
-	avrdude -p $(MCU_TARGET) -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:game.hex:i
-
-game.elf: $(OBJ)
-	$(CC) $(CFLAGS) $(OPTIMIZE) -o $@ $^
-
-%.o: $(SRC)/%.c
-	$(CC) $(CFLAGS) $(OPTIMIZE) -c -o $@ $^
-
-%.o: $(SRC)/%.S
-	$(CC) $(CFLAGS) -c -o $@ $^
+    avrdude -p $(MCU_TARGET) -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:main.hex:i
 
 clean:
-	rm -rf *.o *.elf *.hex *.lst *.i *.res *.s *.out
-
-%.lst: %.elf
-	$(OBJDUMP) -d $< > $@
-
-%.hex: %.elf
-	$(OBJCOPY) -j .text -j .data -O ihex $< $@
+    rm -rf *.hex *.lst *.i *.o *.s $(SRC)/*.obj $(SRC)/*.eep.hex
