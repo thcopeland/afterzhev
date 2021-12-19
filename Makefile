@@ -1,5 +1,5 @@
 SRC            = src
-MCU_TARGET     = atmega2560 # what about 1280/1281 or 2561
+MCU_TARGET     = atmega2560
 DEFS           = -D DEV -D __$(MCU_TARGET)
 AS             = avra
 OBJDUMP        = avr-objdump
