@@ -1,7 +1,7 @@
 .nolist
 .if defined(__atmega2560) || defined(__atmega2561)
 .include "m2560def.inc" ; TODO: verify 2561
-.elif defined(__atmega1280) || defined(__atmega1281)
+.elseif defined(__atmega1280) || defined(__atmega1281)
 .include "m1280def.inc" ; TODO: verify
 .else
 .error "Device not supported. Supported devices for After Zhev are ATmega1280/1281 and ATmega2560/2561."
@@ -94,10 +94,8 @@ _idr_active_screen:
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
-    lds r18, sig_work_complete ; out of place, but here to extend the last pixel (nop's would work, but waste precious cycles)
+    sts sig_work_complete, r1 ; reset working state (somewhat out of place here, but simple)
     out PORTA, r1
-    ; reset working state (somewhat out of place here, but simple)
-    sts sig_work_complete, r1
     ; update current row counter
     ; sig_current_row/r16 describes the number of times to left to repeat the row,
     ; while sig_current_row+1/r17 describes the actual row number.
@@ -124,6 +122,7 @@ _idr_quick_work:
     rjmp _idr_end
 _idr_work:
     ; check sig_work_complete/r18 (0 - not complete; 1 - work complete)
+    lds r18, sig_work_complete
     inc r18
     cpi r18, 1
     brne _idr_reset_render_state
@@ -146,11 +145,16 @@ _idr_work:
     out PORTB, r0
     .endif
 
-        ldi r24, 0xFF
-        ldi r25, 0x0F
-    _idr_tmp_lp:
-        sbiw r24, 1
-        brne _idr_tmp_lp
+        ldi r24, 110
+    _wait_loop:
+        ldi r21, 0
+        ldi r22, 12
+        ldi r23, 0
+        ldi XL, low(framebuffer)
+        ldi XH, high(framebuffer)
+        call render_whole_tile
+        subi r24, 1
+        brne _wait_loop
 
 _idr_reset_render_state:
     ; prepare to output an image signal
@@ -159,10 +163,10 @@ _idr_reset_render_state:
     stiw sig_fbuff_offset, framebuffer
     ; clear any pending interrupts. This is necessary because this ISR can run
     ; far, far longer than the interrupt period.
-    ldi r16, (1 << OCF1A)
-    out TIFR1, r16
+    sbi TIFR1, OCF1A
 _idr_end:
     reti
 
+    .include "render.asm"
     .include "rodata.asm"
     .include "data.asm"

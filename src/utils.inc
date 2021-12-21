@@ -24,7 +24,7 @@
 
 ; rapidly write 12 pixels to the given port
 ; clobbers r0
-.macro write_12_pixels ; port, rp (X,Y,Z)
+.macro write_12_pixels ; port, X|Y|Z
     ld r0, @1+
     out @0, r0
     ld r0, @1+
