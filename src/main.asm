@@ -109,7 +109,7 @@ _idr_active_screen:
     brne _idr_quick_work
     ; return to the start of the buffer to render the footer, which should have
     ; been populated during _idr_quick_work.
-    stiw sig_fbuff_offset, framebuffer
+    ; stiw sig_fbuff_offset, framebuffer
     clr r17
 _idr_quick_work:
     ; save the current row information
@@ -136,7 +136,6 @@ _idr_work:
     ; during this time, but since the necessary VGA signal has already been sent
     ; and interrupts are disabled, we can ignore this as long as we clear any
     ; pending interrupts before reti'ing. No registers need to be preserved.
-    ; **work** **work**
     .ifdef DEV
     ; heartbeat, toggle PB7 every frame
     in r0, PORTB
@@ -145,16 +144,45 @@ _idr_work:
     out PORTB, r0
     .endif
 
-        ldi r24, 110
-    _wait_loop:
-        ldi r21, 0
-        ldi r22, 12
-        ldi r23, 0
-        ldi XL, low(framebuffer)
-        ldi XH, high(framebuffer)
-        call render_whole_tile
-        subi r24, 1
-        brne _wait_loop
+    lds r16, tmp_offset
+    lds r17, tmp_offset+1
+    lds r18, tmp_offset_dir
+    cpi r18, 0
+    breq _tmp_chk_l_mi
+_tmp_chk_l_pl:
+    inc r16
+    cpi r16, 12
+    brmi _tmp_save
+    ldi r16, 0
+    inc r17
+    cpi r17, 10
+    brmi _tmp_save
+    ldi r18, 0
+_tmp_chk_l_mi:
+    dec r16
+    cpi r16, 0
+    brpl _tmp_save
+    ldi r16, 11
+    dec r17
+    cpi r17, 0
+    brpl _tmp_save
+    clr r16
+    clr r17
+    ldi r18, 1
+_tmp_save:
+    sts tmp_offset, r16
+    sts tmp_offset+1, r17
+    sts tmp_offset_dir, r18
+    movw r20, r16
+    movw r22, r16
+    cpi r23, 5
+    brmi _tmp_pass
+    ldi r22, 0
+    ldi r23, 5
+_tmp_pass:
+    ldi r24, low(sector_table*2)
+    ldi r25, high(sector_table*2)
+    call render_sector
 
 _idr_reset_render_state:
     ; prepare to output an image signal

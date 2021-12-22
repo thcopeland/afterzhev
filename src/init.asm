@@ -4,6 +4,7 @@ init:
     sti sig_current_row, DISPLAY_VERTICAL_STRETCH
     sti sig_current_row+1, 0
     sti sig_work_complete, 0
+    stiw tmp_offset, 0
 
     ; init framebuffer
     ldi r23, 0
