@@ -1,17 +1,8 @@
-.nolist
-.if defined(__atmega2560) || defined(__atmega2561)
-.include "m2560def.inc" ; TODO: verify 2561
-.elseif defined(__atmega1280) || defined(__atmega1281)
-.include "m1280def.inc" ; TODO: verify
-.else
-.error "Device not supported. Supported devices for After Zhev are ATmega1280/1281 and ATmega2560/2561."
-.exit
-.endif
-.list
-
+.include "device.inc"
 .include "vga.inc"
-.include "dimensions.inc"
 .include "utils.inc"
+.include "dimensions.inc"
+.include "gamedefs.inc"
 
 .cseg
     .org 0x0000
@@ -23,10 +14,12 @@
 
 main:
     ldi r18, 0xFF
+    ldi r19, 0x00
     out DDRA, r18   ; VGA image output
     out DDRB, r18   ; PB6 is VGA HSYNC
-    out DDRC, r18   ; debugging
     out DDRE, r18   ; PE4 is VGA VSYNC
+    out DDRC, r19   ; controls
+    out PORTC, r18  ; pull-up (?)
 
     ; init timers
     ; halt all timers
@@ -80,10 +73,10 @@ _idr_active_screen:
     ; output a single row from the framebuffer as quickly as reasonably possible.
     ; The only complication is that every row is drawn a few times (DISPLAY_VERTICAL_STRETCH)
     ; to make the "pixels" square.
-    lds XL, sig_fbuff_offset
-    lds XH, sig_fbuff_offset+1
-    lds r16, sig_current_row
-    lds r17, sig_current_row+1
+    lds XL, vid_fbuff_offset
+    lds XH, vid_fbuff_offset+1
+    lds r16, vid_current_row
+    lds r17, vid_current_row+1
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
@@ -94,39 +87,39 @@ _idr_active_screen:
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
-    sts sig_work_complete, r1 ; reset working state (somewhat out of place here, but simple)
+    sts vid_work_complete, r1 ; reset working state (somewhat out of place here, but simple)
     out PORTA, r1
     ; update current row counter
-    ; sig_current_row/r16 describes the number of times to left to repeat the row,
-    ; while sig_current_row+1/r17 describes the actual row number.
+    ; vid_current_row/r16 describes the number of times to left to repeat the row,
+    ; while vid_current_row+1/r17 describes the actual row number.
     dec r16
     brpl _idr_quick_work
-    sts sig_fbuff_offset, XL
-    sts sig_fbuff_offset+1, XH
+    sts vid_fbuff_offset, XL
+    sts vid_fbuff_offset+1, XH
     ldi r16, DISPLAY_VERTICAL_STRETCH-1
     inc r17
     cpi r17, DISPLAY_HEIGHT-FOOTER_HEIGHT
     brne _idr_quick_work
     ; return to the start of the buffer to render the footer, which should have
     ; been populated during _idr_quick_work.
-    ; stiw sig_fbuff_offset, framebuffer
+    ; stiw vid_fbuff_offset, framebuffer
     clr r17
 _idr_quick_work:
     ; save the current row information
-    sts sig_current_row, r16
-    sts sig_current_row+1, r17
+    sts vid_current_row, r16
+    sts vid_current_row+1, r17
     ; After writing a row to the screen, there's a brief period (~75 cycles) where
     ; we can do other work (this corresponds to the VGA front porch and sync pulse).
     ; In particular, we write the footer to the top of the video buffer. No
     ; registers need to be preserved.
     rjmp _idr_end
 _idr_work:
-    ; check sig_work_complete/r18 (0 - not complete; 1 - work complete)
-    lds r18, sig_work_complete
+    ; check vid_work_complete/r18 (0 - not complete; 1 - work complete)
+    lds r18, vid_work_complete
     inc r18
     cpi r18, 1
     brne _idr_reset_render_state
-    sts sig_work_complete, r18
+    sts vid_work_complete, r18
     ; At this point, we've rendered a complete image (main image + footer) to the
     ; screen, and there's a fairly long gap (~80,000 cycles) where we fill the
     ; render buffer and update the game. This corresponds to the VGA vertical front
@@ -184,17 +177,20 @@ _tmp_pass:
     ldi r25, high(sector_table*2)
     call render_sector
 
+    call read_controls
+
 _idr_reset_render_state:
     ; prepare to output an image signal
-    sts sig_current_row+1, r1
-    sti sig_current_row, DISPLAY_VERTICAL_STRETCH
-    stiw sig_fbuff_offset, framebuffer
+    sts vid_current_row+1, r1
+    sti vid_current_row, DISPLAY_VERTICAL_STRETCH
+    stiw vid_fbuff_offset, framebuffer
     ; clear any pending interrupts. This is necessary because this ISR can run
     ; far, far longer than the interrupt period.
     sbi TIFR1, OCF1A
 _idr_end:
     reti
 
-    .include "render.asm"
-    .include "rodata.asm"
-    .include "data.asm"
+.include "controls.asm"
+.include "render.asm"
+.include "rodata.asm"
+.include "data.asm"

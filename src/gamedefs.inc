@@ -1,0 +1,4 @@
+.equ CONTROLS_UP = 0
+.equ CONTROLS_DOWN = 1
+.equ CONTROLS_LEFT = 2
+.equ CONTROLS_RIGHT = 3

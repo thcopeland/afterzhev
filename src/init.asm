@@ -1,9 +1,9 @@
 init:
     clr r1
-    stiw sig_fbuff_offset, framebuffer
-    sti sig_current_row, DISPLAY_VERTICAL_STRETCH
-    sti sig_current_row+1, 0
-    sti sig_work_complete, 0
+    stiw vid_fbuff_offset, framebuffer
+    sti vid_fbuff_offset, DISPLAY_VERTICAL_STRETCH
+    sti vid_fbuff_offset+1, 0
+    sti vid_fbuff_offset, 0
     stiw tmp_offset, 0
 
     ; init framebuffer
