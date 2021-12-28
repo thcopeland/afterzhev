@@ -6,6 +6,10 @@ explore_update_game:
     rcall move_camera
     ret
 
+; Render the game while in the EXPLORE mode. The current sector, NPCs, items,
+; the player must all be rendered.
+;
+; Register Usage
 render_game:
     lds r20, camera_position_x
     lds r21, camera_position_x+1
@@ -16,26 +20,6 @@ render_game:
     call render_sector
     ; render npcs
     ; render player
-    ; lds r20, player_position_x
-    ; ldi XL, low(framebuffer)
-    ; ldi XH, high(framebuffer)
-    ; add XL, r20
-    ; st X, r1
-    ; lds r20, player_position_x+1
-    ; ldi XL, low(framebuffer+DISPLAY_WIDTH)
-    ; ldi XH, high(framebuffer+DISPLAY_WIDTH)
-    ; add XL, r20
-    ; st X, r1
-    ; lds r20, camera_position_x
-    ; ldi XL, low(framebuffer+3*DISPLAY_WIDTH)
-    ; ldi XH, high(framebuffer+3*DISPLAY_WIDTH)
-    ; add XL, r20
-    ; st X, r1
-    ; lds r20, camera_position_x+1
-    ; ldi XL, low(framebuffer+4*DISPLAY_WIDTH)
-    ; ldi XH, high(framebuffer+4*DISPLAY_WIDTH)
-    ; add XL, r20
-    ; st X, r1
 
     ldi ZL, low(framebuffer)
     ldi ZH, high(framebuffer)
@@ -175,8 +159,50 @@ _mp_end:
 ; r23           new x position high (param)
 ; r24           new y position low (param)
 ; r25           new y position high (param)
-; Z (r30:r31)   sector pointer
+; Z (r30:r31)   sector pointer, flash memory pointer
 resolve_player_movement:
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_AJD_OFFSET)
+    sbci ZH, high(-SECTOR_AJD_OFFSET)
+_rpm_check_sector_left:
+    cpi r23, 0
+    brge _rpm_check_sector_right
+    adiw ZL, 2
+    ldi r22, TILE_WIDTH-1
+    ldi r23, SECTOR_WIDTH-2
+    rjmp _rpm_switch_sector
+_rpm_check_sector_right:
+    cpi r23, SECTOR_WIDTH-1
+    brlt _rpm_check_sector_top
+    adiw ZL, 3
+    clr r22
+    clr r23
+    rjmp _rpm_switch_sector
+_rpm_check_sector_top:
+    cpi r25, 0
+    brge _rpm_check_sector_bottom
+    ldi r24, TILE_HEIGHT-1
+    ldi r25, SECTOR_HEIGHT-2
+    rjmp _rpm_switch_sector
+_rpm_check_sector_bottom:
+    cpi r25, SECTOR_HEIGHT-1
+    brlt _rmp_resolve_collisions
+    adiw ZL, 1
+    clr r24
+    clr r25
+_rpm_switch_sector:
+    lpm r20, Z
+    ldi r21, SECTOR_MEMSIZE
+    mul r20, r21
+    ldi ZL, low(2*sector_table)
+    ldi ZH, high(2*sector_table)
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    call load_new_sector
+    rjmp _rpm_no_collision
+_rmp_resolve_collisions:
     lds ZL, player_class
     lds ZH, player_class+1
     subi ZL, low(-CLASS_DIMS_OFFSET)
@@ -261,6 +287,17 @@ _rpm_no_collision:
     sts player_position_y, r24
     sts player_position_y+1, r25
 _rpm_end:
+    ret
+
+; Change sectors. Every sector has its own set of items and npcs, these must be
+; changed as necessary.
+;
+; Register Usage
+;   Z (r30:r31)     a pointer to the new sector
+load_new_sector:
+    sts current_sector, ZL
+    sts current_sector+1, ZH
+    ; change npcs, loose items, etc
     ret
 
 ; Move the "camera" so that the player is within the camera view plus some margin.

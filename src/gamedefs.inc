@@ -9,3 +9,12 @@
 .equ CAMERA_VERTICAL_PADDING_H = 1
 
 .equ MIN_BLOCKING_TILE_IDX = 1 ; eventually to be 64 or so
+
+.equ MODE_STARTUP = 0
+.equ MODE_CHARACTER = 1
+.equ MODE_STORY = 2
+.equ MODE_EXPLORE = 3
+.equ MODE_INVENTORY = 4
+.equ MODE_STORE = 5
+.equ MODE_CONVERSATION = 6
+.equ MODE_ENDGAME = 7
