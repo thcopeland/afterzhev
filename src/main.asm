@@ -137,47 +137,7 @@ _idr_work:
     out PORTB, r0
     .endif
 
-    lds r16, tmp_offset
-    lds r17, tmp_offset+1
-    lds r18, tmp_offset_dir
-    cpi r18, 0
-    breq _tmp_chk_l_mi
-_tmp_chk_l_pl:
-    inc r16
-    cpi r16, 12
-    brmi _tmp_save
-    ldi r16, 0
-    inc r17
-    cpi r17, 10
-    brmi _tmp_save
-    ldi r18, 0
-_tmp_chk_l_mi:
-    dec r16
-    cpi r16, 0
-    brpl _tmp_save
-    ldi r16, 11
-    dec r17
-    cpi r17, 0
-    brpl _tmp_save
-    clr r16
-    clr r17
-    ldi r18, 1
-_tmp_save:
-    sts tmp_offset, r16
-    sts tmp_offset+1, r17
-    sts tmp_offset_dir, r18
-    movw r20, r16
-    movw r22, r16
-    cpi r23, 5
-    brmi _tmp_pass
-    ldi r22, 0
-    ldi r23, 5
-_tmp_pass:
-    ldi r24, low(sector_table*2)
-    ldi r25, high(sector_table*2)
-    call render_sector
-
-    call read_controls
+    call explore_update_game
 
 _idr_reset_render_state:
     ; prepare to output an image signal
@@ -192,5 +152,6 @@ _idr_end:
 
 .include "controls.asm"
 .include "render.asm"
+.include "explore.asm"
 .include "rodata.asm"
 .include "data.asm"

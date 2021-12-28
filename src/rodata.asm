@@ -7,6 +7,7 @@
 ; the code.
     .include "world.asm"
     .include "tiles.asm"
+    .include "classes.asm"
 ; store tiles and maps in partition 1 with code (64K)
 ; store sprites in partition 2 (64K)
 ; store everything else in partitions 3 and 4 (128K)

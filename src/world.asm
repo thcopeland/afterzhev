@@ -2,7 +2,7 @@
 ; and containing specific NPCs and features.
 ;
 ; Layout (see dimensions.inc as well)
-; 0-199     : tile data, row major order
+; 0-199     : tile data, row major order (zero offset is assumed throughout the code)
 ; 200-203   : adjacent sectors (above, left, below, right)
 ; 204-211   : npcs
 

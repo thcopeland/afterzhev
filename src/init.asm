@@ -4,23 +4,13 @@ init:
     sti vid_fbuff_offset, DISPLAY_VERTICAL_STRETCH
     sti vid_fbuff_offset+1, 0
     sti vid_fbuff_offset, 0
-    stiw tmp_offset, 0
-
-    ; init framebuffer
-    ldi r23, 0
-    ldi r24, low(120*60)
-    ldi r25, high(120*60)
-    ldi XL, low(framebuffer)
-    ldi XH, high(framebuffer)
-_init_lp:
-    st X+, r23
-    inc r23
-    ; st X+, r1
-    ; st X+, r1
-    ; st X+, r1
-    ; st X+, r1
-_init_chk:
-    sbiw r24, 1
-    brne _init_lp
+    stiw player_position_x, 0x0200
+    stiw player_position_y, 0x0200
+    sti player_velocity_x, 0
+    sti player_velocity_y, 0
+    stiw player_class, 2*class_table
+    stiw current_sector, 2*sector_table
+    stiw camera_position_x, 0x0200
+    stiw camera_position_y, 0x0200
 
     rjmp main
