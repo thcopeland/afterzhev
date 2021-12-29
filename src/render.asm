@@ -22,29 +22,29 @@ render_whole_tile:
     inc r22
     rjmp _rwt_loop_chk
 _rwt_loop:
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
     subi XL, low(-(DISPLAY_WIDTH - TILE_WIDTH))
     sbci XH, high(-(DISPLAY_WIDTH - TILE_WIDTH))
@@ -91,29 +91,29 @@ render_partial_tile:
     inc r22
     rjmp _rpt_loop_chk
 _rpt_loop:
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
-    lpm r0, Z+
+    elpm r0, Z+
     st X+, r0
     add ZL, r23
     adc ZH, r1
@@ -165,6 +165,8 @@ render_sector:
     movw r14, r20
     movw r16, r22
     movw r18, r24
+    ldi r24, byte3(2*sector_table)
+    out RAMPZ, r24
 _rs_test_corners1:
     tst r16
     brne _rs_test_corners2
@@ -189,7 +191,7 @@ _rs_render_corners:
     ldi r24, TILE_WIDTH
     sub r24, r14
     movw ZL, YL
-    lpm r25, Z
+    elpm r25, Z
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
     call render_partial_tile ; upper left
@@ -200,7 +202,7 @@ _rs_render_corners:
     clr r23
     mov r24, r14
     movw ZL, YL
-    lpm r25, Z
+    elpm r25, Z
     ldi XL, low(framebuffer + DISPLAY_WIDTH)
     ldi XH, high(framebuffer + DISPLAY_WIDTH)
     sub XL, r24
@@ -213,7 +215,7 @@ _rs_render_corners:
     clr r23
     mov r24, r14
     movw ZL, YL
-    lpm r25, Z
+    elpm r25, Z
     ldi XL, low(framebuffer + DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT) + DISPLAY_WIDTH)
     ldi XH, high(framebuffer + DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT) + DISPLAY_WIDTH)
     ldi r20, DISPLAY_WIDTH
@@ -231,7 +233,7 @@ _rs_render_corners:
     ldi r24, TILE_WIDTH
     sub r24, r14
     movw ZL, YL
-    lpm r25, Z
+    elpm r25, Z
     ldi XL, low(framebuffer + DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
     ldi XH, high(framebuffer + DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
     ldi r20, DISPLAY_WIDTH
@@ -275,7 +277,7 @@ _rs_render_left_edge:
     ldi r24, TILE_WIDTH
     sub r24, r14
     movw ZL, YL
-    lpm r25, Z
+    elpm r25, Z
     call render_partial_tile
     adiw YL, SECTOR_WIDTH
     dec r13
@@ -313,7 +315,7 @@ _rs_render_right_edge:
     clr r23
     mov r24, r14
     movw ZL, YL
-    lpm r25, Z
+    elpm r25, Z
     call render_partial_tile
     adiw YL, SECTOR_WIDTH
     dec r13
@@ -348,7 +350,7 @@ _rs_write_horizontal_edges:
     ldi r22, TILE_HEIGHT
     sub r22, r16
     movw ZL, YL
-    lpm r23, Z
+    elpm r23, Z
     movw XL, r24
     call render_whole_tile  ; top edge
     clr r21
@@ -356,7 +358,7 @@ _rs_write_horizontal_edges:
     movw ZL, YL
     subi ZL, low(-SECTOR_WIDTH*DISPLAY_VERTICAL_TILES)
     sbci ZH, high(-SECTOR_WIDTH*DISPLAY_VERTICAL_TILES)
-    lpm r23, Z
+    elpm r23, Z
     movw XL, r24
     subi XL, low(-DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
     sbci XH, high(-DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
@@ -417,7 +419,7 @@ _rs_write_inner_tile:
     ldi r21, 0
     ldi r22, 12
     movw ZL, YL
-    lpm r23, Z
+    elpm r23, Z
     movw XL, r24
     call render_whole_tile
     adiw r24, TILE_WIDTH
