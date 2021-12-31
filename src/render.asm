@@ -132,6 +132,102 @@ _rpt_loop_chk:
 _rpt_end:
     ret
 
+; Render any rectangular section of a sprite, taking transparency into account.
+; This subroutine uses the same indirect jump trick as render_partial_tile.
+;
+; Register Usage
+;   r20             delta framebuffer pointer
+;   r21             sprite width (param), delta sprite pointer
+;   r22             slice min y (param)
+;   r23             slice height (param)
+;   r24             slice min x (param), reused for jump low
+;   r25             slice width (param), reused for jump high
+;   X (r26:r27)     framebuffer pointer (param)
+;   Z (r30:r31)     sprite pointer (param)
+render_sprite:
+    add ZL, r24
+    adc ZH, r1
+    mul r21, r22
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    ldi r20, DISPLAY_WIDTH
+    sub r20, r25
+    sub r21, r25
+    ldi r24, TILE_WIDTH
+    sub r24, r25
+    lsl r24
+    lsl r24
+    clr r25
+    subi r24, low(-_rs_loop)
+    sbci r25, high(-_rs_loop)
+    inc r23
+    ldi r22, TRANSPARENT
+    rjmp _rs_loop_check
+_rs_loop:
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    elpm r0, Z+
+    cpse r0, r22
+    st X, r0
+    adiw XL, 1
+    add ZL, r21
+    adc ZH, r1
+    add XL, r20
+    adc XH, r1
+_rs_loop_check:
+    dec r23
+    breq _rs_end
+    push r24
+    push r25
+.if defined(__atmega2560) || defined(__atmega2561)
+    push r1
+.endif
+_rs_end:
+    ret
+
 ; Render the visible portion of a sector to the framebuffer, as determined by
 ; the given offsets and tile and display dimensions.
 ;
@@ -442,4 +538,77 @@ _rs_write_inner_tile:
     pop r15
     pop r14
     pop r13
+    ret
+
+; Render a character, taking camera position, animations, and weapons into account.
+; The character data pointer should point to memory with the following layout:
+;   base sprite idx (1 byte)
+;   weapon idx      (1 byte)
+;   direction       (1 byte) PERF: if memory is tight, direction, action, and frame could be packed into a single byte
+;   current action  (1 byte)
+;   action frame    (1 byte)
+;
+; Register Usage
+;   r16, r17        screen x position (not preserved)
+;   r18, r19        screen y position (not preserved) (?)
+;   r20, r21        calculations
+;   r22, r23        character x position (param), calculations
+;   r24, r25        character y position (param)
+;   X (r26:r27)     framebuffer pointer
+;   Y (r28:r29)     character data pointer (param), character animation pointer
+;   Z (r30:r21)     flash memory pointer, temporary pointer
+; _rc_trampoline_rc_end: rjmp _rc_end
+render_character:
+    lds r18, camera_position_y
+    lds r19, camera_position_y+1
+    sub r24, r18
+    sub r25, r19
+    qmod r24, r25, TILE_HEIGHT
+    movw r18, r24
+    ; cpi r25, 0  ; offscreen check TODO not here? (avoid trampoline)
+    ; brlt _rc_trampoline_rc_end
+    ; cpi r25, DISPLAY_VERTICAL_TILES
+    ; brge _rc_trampoline_rc_end
+    ldi r20, TILE_HEIGHT
+    mul r25, r20
+    add r24, r0
+    ldi r20, DISPLAY_WIDTH
+    mul r24, r20
+    movw XL, r0
+    clr r1  ; unnecesary, cleared later
+
+    lds r16, camera_position_x
+    lds r17, camera_position_x+1
+    sub r22, r16
+    sub r23, r17
+    qmod r22, r23, TILE_WIDTH
+    movw r16, r22
+    ; cpi r23, 0  ; offscreen check TODO not here?
+    ; brlt _rc_end
+    ; cpi r23, DISPLAY_HORIZONTAL_TILES
+    ; brge _rc_end
+    ldi r20, TILE_WIDTH
+    mul r23, r20
+    add XL, r0
+    adc XH, r1
+    clr r1
+    add XL, r22
+    adc XH, r1
+    subi XL, low(-framebuffer)
+    sbci XH, high(-framebuffer)
+
+    ldd r22, Y+CHARACTER_SPRITE_OFFSET
+    ldd r23, Y+CHARACTER_DIRECTION_OFFSET
+    ldd r24, Y+CHARACTER_ACTION_OFFSET
+    ldd r25, Y+CHARACTER_FRAME_OFFSET
+    call determine_character_sprite
+
+    ldi r21, CHARACTER_SPRITE_WIDTH
+    ldi r22, 0
+    ldi r23, 12
+    ldi r24, 0
+    ldi r25, 12
+    call render_sprite
+
+_rc_end:
     ret

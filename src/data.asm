@@ -18,13 +18,17 @@ camera_position_x:  .byte 2
 camera_position_y:  .byte 2
 
 player_class:       .byte 2
-; player_inventory:   .byte 8
 player_subpixel_x:  .byte 1
 player_position_x:  .byte 2
+player_velocity_x:  .byte 1
 player_subpixel_y:  .byte 1
 player_position_y:  .byte 2
-player_velocity_x:  .byte 1
 player_velocity_y:  .byte 1
-; player_direction:   .byte 1
-; player_status:      .byte 1
-; player_frame:       .byte 1
+player_cooldown:    .byte 1
+
+player_character:   .byte 1
+player_weapon:      .byte 1
+player_direction:   .byte 1
+player_action:      .byte 1
+player_frame:       .byte 1
+player_inventory:   .byte 8

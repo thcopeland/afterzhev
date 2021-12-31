@@ -151,6 +151,7 @@ _idr_end:
     reti
 
 .include "controls.asm"
+.include "animation.asm"
 .include "render.asm"
 .include "explore.asm"
 .include "rodata.asm"
