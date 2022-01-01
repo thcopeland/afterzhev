@@ -60,24 +60,14 @@ render_game:
     ldi r23, 4
     ldi r24, 6
     ldi r25, 2
-    ldi r20, ACTION_WALK
-    lds r19, player_position_x+1
-    ldi r21, 12
-    mul r21, r19
-    lds r19, player_position_x
-    add r19, r0
-    lsr r19
-    lsr r19
-    clr r1
     sts player_character, r1
     sts player_weapon, r1
     sts player_direction, r1
-    sts player_action, r20
-    sts player_frame, r19
+    sti player_action, ACTION_IDLE
+    sts player_frame, r1
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character
-
     ret
 
 ; Handle button presses.

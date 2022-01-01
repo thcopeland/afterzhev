@@ -11,8 +11,9 @@
     .include "tiles.asm"
 
 ; Partion 3 (words 0x10000-0x14fff): character and item sprites
-    ; .org 0x10000 FIXME uncomment
+    .org 0x10000
     .include "character_sprites.asm"
+    .include "item_sprites.asm"
 
 ; Partion 4 (words 0x15000-0x1ffff):
     .org 0x15000

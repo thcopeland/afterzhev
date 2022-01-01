@@ -20,6 +20,11 @@
 .equ MODE_CONVERSATION = 6
 .equ MODE_ENDGAME = 7
 
+.equ DIRECTION_DOWN = 0 ; ordering is convenient for reusing sprites
+.equ DIRECTION_RIGHT = 1
+.equ DIRECTION_UP = 2
+.equ DIRECTION_LEFT = 3
+
 .equ CHARACTER_PALADIN = 0  ; player class 1
 .equ CHARACTER_HALFLING = 1 ; player class 2 (hard, bold, and wicked!)
 .equ CHARACTER_MAGE = 2     ; player class 3

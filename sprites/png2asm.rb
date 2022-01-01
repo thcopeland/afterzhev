@@ -28,15 +28,18 @@ def convert_file(input, output)
   pixels = data.unpack("C*").each_slice(3).to_a
   pixels_8bit = pixels.map { |r, g, b| (b & 0xC0) | ((g >> 2) & 0x38) | ((r >> 5) & 0x07) }
   ascii = '#WXx~-,. '.chars
+  width = `identify -format %w #{input}`.to_i
+  width += 1 if width.odd?
 
   File.open(output, "w") do |f|
-    pixels_8bit.each_slice(12) do |data|
-      f << ".db #{data.map { |x| "0x#{x.to_s(16).rjust(2, "0")}" }.join(", ")}\t; "
-      data.each do |x|
-        f << (x == 0xc7 ? " " : ascii[(((x>>6)&3)+((x>>3)&7)+(x&7))*(ascii.length-1)/17])*2
-      end
+    pixels_8bit.each_slice(width) do |data|
+      f << ".db #{data.map { |x| "0x#{x.to_s(16).rjust(2, "0")}" }.join(", ")}"
+      # data.each do |x|
+      #   f << (x == 0xc7 ? " " : ascii[(((x>>6)&3)+((x>>3)&7)+(x&7))*(ascii.length-1)/17])*2
+      # end
       f << "\n"
     end
+    f << "\n"
   end
 end
 

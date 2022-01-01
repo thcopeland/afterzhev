@@ -28,10 +28,10 @@ _dcs_determine_offsets:
     mul ZL, r25
     movw ZL, r0
     clr r1
-    ldi r25, byte3(2*character_animation_table)
+    ldi r25, byte3(2*character_sprite_table)
     out RAMPZ, r25
-    subi ZL, low(-2*character_animation_table)
-    sbci ZH, high(-2*character_animation_table)
+    subi ZL, low(-2*character_sprite_table)
+    sbci ZH, high(-2*character_sprite_table)
 _dcs_foyle:
     ret
 
