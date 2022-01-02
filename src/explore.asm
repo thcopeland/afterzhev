@@ -64,7 +64,7 @@ render_game:
     ; lds r23, player_position_x+1
     ; lds r24, player_position_y
     ; lds r25, player_position_y+1
-    ; lds r20, player_position_x
+    lds r20, player_position_x
     andi r20, 3
     sts player_character, r1
     sts player_weapon, r1

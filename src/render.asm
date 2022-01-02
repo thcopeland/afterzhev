@@ -134,30 +134,35 @@ _rpt_end:
 
 ; Render any rectangular section of a sprite, taking transparency into account.
 ; This subroutine uses the same indirect jump trick as render_partial_tile.
+; Both the X and Y register pairs are preserved.
 ;
 ; Register Usage
-;   r20             delta framebuffer pointer
 ;   r21             sprite width (param), delta sprite pointer
-;   r22             slice min y (param)
+;   r22             slice min y (param), reused to hold transparency value
 ;   r23             slice height (param)
 ;   r24             slice min x (param), reused for jump low
 ;   r25             slice width (param), reused for jump high
 ;   X (r26:r27)     framebuffer pointer (param)
+;   Y (r28:r29)     working framebuffer pointer (it'd be more natural to use X, but the std instruction supports only Y and Z)
 ;   Z (r30:r31)     sprite pointer (param)
 render_sprite:
+    push YL
+    push YH
     add ZL, r24
     adc ZH, r1
     mul r21, r22
     add ZL, r0
     adc ZH, r1
     clr r1
-    ldi r20, DISPLAY_WIDTH
-    sub r20, r25
     sub r21, r25
     ldi r24, TILE_WIDTH
     sub r24, r25
-    lsl r24
-    lsl r24
+    movw YL, XL
+    sub YL, r24
+    sbci YH, 0
+    mov r25, r24 ; multiply r24 by 3
+    add r24, r25
+    add r24, r25
     clr r25
     subi r24, low(-_rs_loop)
     sbci r25, high(-_rs_loop)
@@ -167,56 +172,44 @@ render_sprite:
 _rs_loop:
     elpm r0, Z+
     cpse r0, r22
-    st X, r0 ; PERF: use st Y, std Y+1, std Y+2... subi Y, low(-DISPLAY_WIDTH) etc
-    adiw XL, 1
+    st Y, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+1, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+2, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+3, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+4, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+5, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+6, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+7, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+8, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+9, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+10, r0
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
-    adiw XL, 1
+    std Y+11, r0
     add ZL, r21
     adc ZH, r1
-    add XL, r20
-    adc XH, r1
+    subi YL, low(-DISPLAY_WIDTH)
+    sbci YH, high(-DISPLAY_WIDTH)
 _rs_loop_check:
     dec r23
     breq _rs_end
@@ -225,7 +218,10 @@ _rs_loop_check:
 .if defined(__atmega2560) || defined(__atmega2561)
     push r1
 .endif
+    ret
 _rs_end:
+    pop YH
+    pop YL
     ret
 
 ; Render the visible portion of a sector to the framebuffer, as determined by
