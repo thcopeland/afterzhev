@@ -33,10 +33,10 @@ def convert_file(input, output)
 
   File.open(output, "w") do |f|
     pixels_8bit.each_slice(width) do |data|
-      f << ".db #{data.map { |x| "0x#{x.to_s(16).rjust(2, "0")}" }.join(", ")}"
-      # data.each do |x|
-      #   f << (x == 0xc7 ? " " : ascii[(((x>>6)&3)+((x>>3)&7)+(x&7))*(ascii.length-1)/17])*2
-      # end
+      f << ".db #{data.map { |x| "0x#{x.to_s(16).rjust(2, "0")}" }.join(", ")}\t; "
+      data.each do |x|
+        f << (x == 0xc7 ? " " : ascii[(((x>>6)&3)+((x>>3)&7)+(x&7))*(ascii.length-1)/17])*2
+      end
       f << "\n"
     end
     f << "\n"

@@ -60,11 +60,18 @@ render_game:
     ldi r23, 4
     ldi r24, 6
     ldi r25, 2
+    ; lds r22, player_position_x
+    ; lds r23, player_position_x+1
+    ; lds r24, player_position_y
+    ; lds r25, player_position_y+1
+    ; lds r20, player_position_x
+    andi r20, 3
     sts player_character, r1
     sts player_weapon, r1
+    sts player_armor, r1
     sts player_direction, r1
-    sti player_action, ACTION_IDLE
-    sts player_frame, r1
+    sti player_action, ACTION_WALK
+    sts player_frame, r20
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character

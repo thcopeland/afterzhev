@@ -167,7 +167,7 @@ render_sprite:
 _rs_loop:
     elpm r0, Z+
     cpse r0, r22
-    st X, r0
+    st X, r0 ; PERF: use st Y, std Y+1, std Y+2... subi Y, low(-DISPLAY_WIDTH) etc
     adiw XL, 1
     elpm r0, Z+
     cpse r0, r22
@@ -544,6 +544,7 @@ _rs_write_inner_tile:
 ; The character data pointer should point to memory with the following layout:
 ;   base sprite idx (1 byte)
 ;   weapon idx      (1 byte)
+;   armor idx       (1 byte)
 ;   direction       (1 byte) PERF: if memory is tight, direction, action, and frame could be packed into a single byte
 ;   current action  (1 byte)
 ;   action frame    (1 byte)
@@ -565,28 +566,18 @@ render_character:
     sub r25, r19
     qmod r24, r25, TILE_HEIGHT
     movw r18, r24
-    ; cpi r25, 0  ; offscreen check TODO not here? (avoid trampoline)
-    ; brlt _rc_trampoline_rc_end
-    ; cpi r25, DISPLAY_VERTICAL_TILES
-    ; brge _rc_trampoline_rc_end
     ldi r20, TILE_HEIGHT
     mul r25, r20
     add r24, r0
     ldi r20, DISPLAY_WIDTH
     mul r24, r20
     movw XL, r0
-    clr r1  ; unnecesary, cleared later
-
     lds r16, camera_position_x
     lds r17, camera_position_x+1
     sub r22, r16
     sub r23, r17
     qmod r22, r23, TILE_WIDTH
     movw r16, r22
-    ; cpi r23, 0  ; offscreen check TODO not here?
-    ; brlt _rc_end
-    ; cpi r23, DISPLAY_HORIZONTAL_TILES
-    ; brge _rc_end
     ldi r20, TILE_WIDTH
     mul r23, r20
     add XL, r0
@@ -608,6 +599,24 @@ render_character:
     ldi r23, 12
     ldi r24, 0
     ldi r25, 12
+    call render_sprite
+
+    ldd r22, Y+CHARACTER_WEAPON_OFFSET
+    ldd r23, Y+CHARACTER_DIRECTION_OFFSET
+    ldd r24, Y+CHARACTER_ACTION_OFFSET
+    ldd r25, Y+CHARACTER_FRAME_OFFSET
+    call determine_overlay_sprite
+
+    elpm r20, Z+
+    elpm r23, Z+
+    mov r21, r23
+    andi r23, 0xf
+    swap r21
+    andi r21, 0xf
+    mov r25, r21
+
+    ldi r22, 0
+    ldi r24, 0
     call render_sprite
 
 _rc_end:

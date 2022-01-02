@@ -28,6 +28,7 @@ player_cooldown:    .byte 1
 
 player_character:   .byte 1
 player_weapon:      .byte 1
+player_armor:       .byte 1
 player_direction:   .byte 1
 player_action:      .byte 1
 player_frame:       .byte 1
