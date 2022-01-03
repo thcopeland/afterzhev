@@ -55,6 +55,8 @@ void *run_game(void *x) {
     while (1) {
         int state = avr_run(avr);
 
+        // usleep(100);
+
         if (state == cpu_Done) {
             exit(0);
         } else if (state == cpu_Crashed) {

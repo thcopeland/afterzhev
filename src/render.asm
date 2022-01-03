@@ -1,5 +1,5 @@
 ; Write an entire tile or a horizontal slice of a tile to a framebuffer. This is
-; slightly faster but less flexible than render_partial_tile.
+; slightly faster but less flexible than write_partial_tile.
 ;
 ; Register Usage
 ;   r0, r1          multiplication
@@ -8,7 +8,7 @@
 ;   r23             tile number (param)
 ;   X (r26:r27)     framebuffer pointer (param)
 ;   Z (r30:r31)     tile pointer
-render_whole_tile:
+write_entire_tile:
     ldi r20, TILE_MEMSIZE
     mul r23, r20
     movw ZL, r0
@@ -20,8 +20,8 @@ render_whole_tile:
     subi ZL, low(-(tile_table*2+TILE_DATA_OFFSET))  ; *2 to convert word address->byte address
     sbci ZH, high(-(tile_table*2+TILE_DATA_OFFSET))
     inc r22
-    rjmp _rwt_loop_chk
-_rwt_loop:
+    rjmp _wet_loop_chk
+_wet_loop:
     elpm r0, Z+
     st X+, r0
     elpm r0, Z+
@@ -48,9 +48,9 @@ _rwt_loop:
     st X+, r0
     subi XL, low(-(DISPLAY_WIDTH - TILE_WIDTH))
     sbci XH, high(-(DISPLAY_WIDTH - TILE_WIDTH))
-_rwt_loop_chk:
+_wet_loop_chk:
     dec r22
-    brne _rwt_loop
+    brne _wet_loop
     ret
 
 ; Render any rectangular section of a tile.
@@ -65,7 +65,7 @@ _rwt_loop_chk:
 ;   r25             tile number (param) and reused for jump high
 ;   X (r26:r27)     framebuffer pointer (param)
 ;   Z (r30:r31)     tile pointer
-render_partial_tile:
+write_partial_tile:
     ldi r20, TILE_MEMSIZE
     mul r25, r20
     movw ZL, r0
@@ -82,15 +82,15 @@ render_partial_tile:
     sub r23, r24
     ldi r21, DISPLAY_WIDTH
     sub r21, r24
-    ldi r24, low(_rpt_loop)
-    ldi r25, high(_rpt_loop)
+    ldi r24, low(_wpt_loop)
+    ldi r25, high(_wpt_loop)
     add r24, r23
     adc r25, r1
     add r24, r23
     adc r25, r1
     inc r22
-    rjmp _rpt_loop_chk
-_rpt_loop:
+    rjmp _wpt_loop_chk
+_wpt_loop:
     elpm r0, Z+
     st X+, r0
     elpm r0, Z+
@@ -119,9 +119,9 @@ _rpt_loop:
     adc ZH, r1
     add XL, r21
     adc XH, r1
-_rpt_loop_chk:
+_wpt_loop_chk:
     dec r22
-    breq _rpt_end
+    breq _wpt_end
     ; push an address to the stack and return, effectively a somewhat slow indirect
     ; jump. Unlike ijmp, however, we aren't restricted to using Z.
     push r24
@@ -129,11 +129,11 @@ _rpt_loop_chk:
 .if defined(__atmega2560) || defined(__atmega2561)
     push r1 ; atmega256* use 3 byte flash addresses
 .endif
-_rpt_end:
+_wpt_end:
     ret
 
 ; Render any rectangular section of a sprite, taking transparency into account.
-; This subroutine uses the same indirect jump trick as render_partial_tile.
+; This subroutine uses the same indirect jump trick as write_partial_tile.
 ; Both the X and Y register pairs are preserved.
 ;
 ; Register Usage
@@ -145,7 +145,7 @@ _rpt_end:
 ;   X (r26:r27)     framebuffer pointer (param)
 ;   Y (r28:r29)     working framebuffer pointer (it'd be more natural to use X, but the std instruction supports only Y and Z)
 ;   Z (r30:r31)     sprite pointer (param)
-render_sprite:
+write_sprite:
     push YL
     push YH
     add ZL, r24
@@ -164,12 +164,12 @@ render_sprite:
     add r24, r25
     add r24, r25
     clr r25
-    subi r24, low(-_rs_loop)
-    sbci r25, high(-_rs_loop)
+    subi r24, low(-_ws_loop)
+    sbci r25, high(-_ws_loop)
     inc r23
     ldi r22, TRANSPARENT
-    rjmp _rs_loop_check
-_rs_loop:
+    rjmp _ws_loop_check
+_ws_loop:
     elpm r0, Z+
     cpse r0, r22
     st Y, r0
@@ -210,16 +210,16 @@ _rs_loop:
     adc ZH, r1
     subi YL, low(-DISPLAY_WIDTH)
     sbci YH, high(-DISPLAY_WIDTH)
-_rs_loop_check:
+_ws_loop_check:
     dec r23
-    breq _rs_end
+    breq _ws_end
     push r24
     push r25
 .if defined(__atmega2560) || defined(__atmega2561)
     push r1
 .endif
     ret
-_rs_end:
+_ws_end:
     pop YH
     pop YL
     ret
@@ -286,7 +286,7 @@ _rs_render_corners:
     elpm r25, Z
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
-    call render_partial_tile ; upper left
+    call write_partial_tile ; upper left
     adiw YL, DISPLAY_HORIZONTAL_TILES
     mov r21, r16
     ldi r22, TILE_HEIGHT
@@ -299,7 +299,7 @@ _rs_render_corners:
     ldi XH, high(framebuffer + DISPLAY_WIDTH)
     sub XL, r24
     sbc XH, r1
-    call render_partial_tile ; upper right
+    call write_partial_tile ; upper right
     subi YL, low(-(DISPLAY_VERTICAL_TILES*SECTOR_WIDTH))
     sbci YH, high(-(DISPLAY_VERTICAL_TILES*SECTOR_WIDTH))
     clr r21
@@ -317,7 +317,7 @@ _rs_render_corners:
     clr r1
     sub XL, r14
     sbc XH, r1
-    call render_partial_tile ; lower right
+    call write_partial_tile ; lower right
     sbiw YL, DISPLAY_HORIZONTAL_TILES
     clr r21
     mov r22, r16
@@ -332,7 +332,7 @@ _rs_render_corners:
     mul r20, r16
     sub XL, r0
     sbc XH, r1
-    call render_partial_tile ; lower left
+    call write_partial_tile ; lower left
 _rs_test_vertical_edges:
     tst r14
     brne _rs_render_vertical_edges
@@ -370,7 +370,7 @@ _rs_render_left_edge:
     sub r24, r14
     movw ZL, YL
     elpm r25, Z
-    call render_partial_tile
+    call write_partial_tile
     adiw YL, SECTOR_WIDTH
     dec r13
     brne _rs_render_left_edge
@@ -408,7 +408,7 @@ _rs_render_right_edge:
     mov r24, r14
     movw ZL, YL
     elpm r25, Z
-    call render_partial_tile
+    call write_partial_tile
     adiw YL, SECTOR_WIDTH
     dec r13
     brne _rs_render_right_edge
@@ -444,7 +444,7 @@ _rs_write_horizontal_edges:
     movw ZL, YL
     elpm r23, Z
     movw XL, r24
-    call render_whole_tile  ; top edge
+    call write_entire_tile  ; top edge
     clr r21
     mov r22, r16
     movw ZL, YL
@@ -459,7 +459,7 @@ _rs_write_horizontal_edges:
     sub XL, r0
     sbc XH, r1
     clr r1
-    call render_whole_tile  ; bottom edge
+    call write_entire_tile  ; bottom edge
     adiw r24, TILE_WIDTH
     adiw YL, 1
     dec r13
@@ -513,7 +513,7 @@ _rs_write_inner_tile:
     movw ZL, YL
     elpm r23, Z
     movw XL, r24
-    call render_whole_tile
+    call write_entire_tile
     adiw r24, TILE_WIDTH
     adiw YL, 1
     dec r14
@@ -536,6 +536,130 @@ _rs_write_inner_tile:
     pop r13
     ret
 
+; Render a sprite at the given absolute position, taking camera position into
+; account and cropping the sprite as necessary to prevent exceeding the display
+; edges.
+;
+; Register Usage
+;   r16, r17        screen x position
+;   r18, r19        screen y position, camera position
+;   r20, r21        sprite width (param), sprite height (param); calculations
+;   r22, r23        sprite x position (param), calculations
+;   r24, r25        sprite y position (param)
+;   X (r26:r27)     framebuffer pointer
+;   Z (r30:r21)     sprite pointer (param)
+render_sprite:
+    push r16
+    push r17
+    push r20
+    push r21
+    ldi XL, low(framebuffer)
+    ldi XH, high(framebuffer)
+_rs_calc_vertical_offset:
+    lds r18, camera_position_y
+    lds r19, camera_position_y+1
+    sub r24, r18
+    sub r25, r19
+    qmod r24, r25, TILE_HEIGHT
+    movw r18, r24
+    cpi r25, 0
+    brlt _rs_calc_horizonal_offset
+    ldi r20, TILE_HEIGHT
+    mul r25, r20
+    add r24, r0
+    ldi r20, DISPLAY_WIDTH
+    mul r24, r20
+    add XL, r0
+    add XH, r1
+    clr r1
+_rs_calc_horizonal_offset:
+    lds r16, camera_position_x
+    lds r17, camera_position_x+1
+    sub r22, r16
+    sub r23, r17
+    qmod r22, r23, TILE_WIDTH
+    movw r16, r22
+    cpi r23, 0
+    brlt _rs_check_display_bounds
+    ldi r20, TILE_WIDTH
+    mul r23, r20
+    add XL, r0
+    adc XH, r1
+    clr r1
+    add XL, r22
+    adc XH, r1
+_rs_check_display_bounds:
+    pop r23
+    pop r25
+_rs_check_x_too_large:
+    movw r20, r16
+    cpi r21, DISPLAY_HORIZONTAL_TILES
+    brge _rs_end
+_rs_check_x_too_small:
+    cpi r21, 0
+    brge _rs_check_y_too_large
+    cpi r21, -1
+    brlt _rs_end
+    add r20, r25
+    cpi r20, TILE_WIDTH
+    brlt _rs_end
+_rs_check_y_too_large:
+    movw r20, r18
+    cpi r21, DISPLAY_VERTICAL_TILES
+    brge _rs_end
+_rs_check_y_too_small:
+    cpi r21, 0
+    brge _rs_render_sprite
+    cpi r21, -1
+    brlt _rs_end
+    add r20, r23
+    cpi r20, TILE_HEIGHT
+    brlt _rs_end
+_rs_render_sprite:
+    clr r22
+    clr r24
+    mov r21, r25
+_rs_test_left_cut:
+    cpi r17, 0
+    brge _rs_test_right_cut
+    ldi r24, TILE_WIDTH
+    sub r24, r16
+    sub r25, r24
+    rjmp _rs_test_top_cut
+_rs_test_right_cut:
+    cpi r17, DISPLAY_HORIZONTAL_TILES-1
+    brlt _rs_test_top_cut
+    ldi r24, TILE_WIDTH
+    mov r0, r24
+    sub r0, r16
+    clr r24
+    cp r0, r25
+    brge _rs_write_sprite
+    mov r25, r0
+_rs_test_top_cut:
+    cpi r19, 0
+    brge _rs_test_bottom_cut
+    ldi r22, TILE_HEIGHT
+    sub r22, r18
+    sub r23, r22
+    rjmp _rs_write_sprite
+_rs_test_bottom_cut:
+    cpi r19, DISPLAY_VERTICAL_TILES-1
+    brlt _rs_write_sprite
+    ldi r22, TILE_HEIGHT
+    mov r0, r22
+    sub r0, r18
+    clr r22
+    cp r0, r23
+    brge _rs_write_sprite
+    mov r23, r0
+_rs_write_sprite:
+    call write_sprite
+_rs_end:
+    pop r17
+    pop r16
+    ret
+
 ; Render a character, taking camera position, animations, and weapons into account.
 ; The character data pointer should point to memory with the following layout:
 ;   base sprite idx (1 byte)
@@ -546,74 +670,77 @@ _rs_write_inner_tile:
 ;   action frame    (1 byte)
 ;
 ; Register Usage
-;   r16, r17        screen x position (not preserved)
-;   r18, r19        screen y position (not preserved) (?)
-;   r20, r21        calculations
-;   r22, r23        character x position (param), calculations
+;   r14, r15        character x position
+;   r16, r17        character x position
+;   r18-r21         calculations
+;   r22, r23        character x position (param)
 ;   r24, r25        character y position (param)
 ;   X (r26:r27)     framebuffer pointer
 ;   Y (r28:r29)     character data pointer (param), character animation pointer
 ;   Z (r30:r21)     flash memory pointer, temporary pointer
-; _rc_trampoline_rc_end: rjmp _rc_end
 render_character:
-    lds r18, camera_position_y
-    lds r19, camera_position_y+1
-    sub r24, r18
-    sub r25, r19
-    qmod r24, r25, TILE_HEIGHT
-    movw r18, r24
-    ldi r20, TILE_HEIGHT
-    mul r25, r20
-    add r24, r0
-    ldi r20, DISPLAY_WIDTH
-    mul r24, r20
-    movw XL, r0
-    lds r16, camera_position_x
-    lds r17, camera_position_x+1
-    sub r22, r16
-    sub r23, r17
-    qmod r22, r23, TILE_WIDTH
-    movw r16, r22
-    ldi r20, TILE_WIDTH
-    mul r23, r20
-    add XL, r0
-    adc XH, r1
-    clr r1
-    add XL, r22
-    adc XH, r1
-    subi XL, low(-framebuffer)
-    sbci XH, high(-framebuffer)
-
+    push r14
+    push r15
+    push r16
+    push r17
+    movw r14, r22
+    movw r16, r24
+_rc_render_character_sprite:
     ldd r22, Y+CHARACTER_SPRITE_OFFSET
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_character_sprite
-
-    ldi r21, CHARACTER_SPRITE_WIDTH
-    ldi r22, 0
-    ldi r23, 12
-    ldi r24, 0
-    ldi r25, 12
+    ldi r20, CHARACTER_SPRITE_WIDTH
+    ldi r21, CHARACTER_SPRITE_HEIGHT
+    movw r22, r14
+    movw r24, r16
     call render_sprite
-
+_rc_render_weapon_sprite:
     ldd r22, Y+CHARACTER_WEAPON_OFFSET
+    tst r22
+    breq _rc_render_armor_sprite
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_overlay_sprite
-
-    elpm r20, Z+
-    elpm r23, Z+
-    mov r21, r23
-    andi r23, 0xf
-    swap r21
-    andi r21, 0xf
-    mov r25, r21
-
-    ldi r22, 0
-    ldi r24, 0
+    movw r22, r14
+    movw r24, r16
+    elpm r21, Z+
+    splts r21, r20
+    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
+    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
+    add r22, r20
+    add r24, r21
+    qmod r22, r23, TILE_WIDTH
+    qmod r24, r25, TILE_HEIGHT
+    elpm r21, Z+
+    splt r21, r20
     call render_sprite
-
+_rc_render_armor_sprite:
+    ldd r22, Y+CHARACTER_ARMOR_OFFSET
+    tst r22
+    breq _rc_end
+    ldd r23, Y+CHARACTER_DIRECTION_OFFSET
+    ldd r24, Y+CHARACTER_ACTION_OFFSET
+    ldd r25, Y+CHARACTER_FRAME_OFFSET
+    call determine_overlay_sprite
+    movw r22, r14
+    movw r24, r16
+    elpm r21, Z+
+    splts r21, r20
+    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
+    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
+    add r22, r20
+    add r24, r21
+    qmod r22, r23, TILE_WIDTH
+    qmod r24, r25, TILE_HEIGHT
+    elpm r21, Z+
+    splt r21, r20
+    call render_sprite
 _rc_end:
+    pop r17
+    pop r16
+    pop r15
+    pop r14
     ret

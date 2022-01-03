@@ -29,6 +29,25 @@
     com @1
 .endm
 
+; Split a 8 bit register into two unsigned 4 bit values
+; The high value is placed in dst, the low value remains in src
+.macro splt ; src, dst
+    mov @1, @0
+    swap @1
+    andi @0, 0x0f
+    andi @1, 0x0f
+.endm
+
+; Split a 8 bit register into two signed 4 bit values
+; The high value is placed in dst, the low value remains in src
+.macro splts ; src, dst
+    splt @0, @1
+    sbrc @0, 3
+    ori @0, 0xf0
+    sbrc @1, 3
+    ori @1, 0xf0
+.endm
+
 ; add without signed overflow
 .macro adnv ; r1, r2
     add @0, @1

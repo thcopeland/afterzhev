@@ -35,7 +35,8 @@ _dcs_determine_offsets:
 _dcs_foyle:
     ret
 
-; Calculate a pointer to a nonstatic item sprite. Sets RAMPZ.
+; Calculate a pointer to a nonstatic item sprite. Sets RAMPZ. The behavior is
+; undefined if the given action is not a valid action.
 ;
 ; Register Usage
 ;   r22         item index (param)
@@ -44,6 +45,12 @@ _dcs_foyle:
 ;   r25         character frame (param), temp register
 ;   Z (r30:r31) calculated sprite pointer
 determine_overlay_sprite:
+    dec r22
+    brge _dos_determine_sprite
+    ldi ZL, low(2*animated_item_sprite_table)
+    ldi ZH, high(2*animated_item_sprite_table)
+    ret
+_dos_determine_sprite:
     mov ZL, r25
     clr ZH
 _dos_test_idle_animation: ; IDLE and HURT actions share the same sprites

@@ -21,53 +21,15 @@ render_game:
     ; render npcs
     ; render player
 
-    ldi ZL, low(framebuffer)
-    ldi ZH, high(framebuffer)
-    lds r18, camera_position_x
-    lds r19, camera_position_x+1
-    lds r20, player_position_x
-    lds r21, player_position_x+1
-    sub r20, r18
-    sub r21, r19
-    qmod r20, r21, TILE_WIDTH
-    add ZL, r20
-    adc ZH, r1
-    ldi r22, TILE_WIDTH
-    mul r22, r21
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    lds r18, camera_position_y
-    lds r19, camera_position_y+1
-    lds r20, player_position_y
-    lds r21, player_position_y+1
-    sub r20, r18
-    sub r21, r19
-    qmod r20, r21, TILE_HEIGHT
-    ldi r22, TILE_HEIGHT
-    mul r21, r22
-    add r20, r0
-    clr r1
-    ldi r22, DISPLAY_WIDTH
-    mul r20, r22
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    ldi r18, 0xC0
-    st Z, r18
-
-    ldi r22, 6
-    ldi r23, 4
-    ldi r24, 6
-    ldi r25, 2
-    ; lds r22, player_position_x
-    ; lds r23, player_position_x+1
-    ; lds r24, player_position_y
-    ; lds r25, player_position_y+1
+    lds r22, player_position_x
+    lds r23, player_position_x+1
+    lds r24, player_position_y
+    lds r25, player_position_y+1
     lds r20, player_position_x
     andi r20, 3
+    ldi r18, 1
     sts player_character, r1
-    sts player_weapon, r1
+    sts player_weapon, r18
     sts player_armor, r1
     sts player_direction, r1
     sti player_action, ACTION_WALK
