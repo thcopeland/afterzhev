@@ -9,6 +9,7 @@ framebuffer:        .byte (DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
 vid_fbuff_offset:   .byte 2     ; pointer into framebuffer indicating what to draw next
 vid_current_row:    .byte 2     ; high byte indicates the row, low byte indicates the row repetitions
 vid_work_complete:  .byte 1     ; whether the main work is complete
+clock:              .byte 2
 
 controller_values:  .byte 1
 

@@ -3,6 +3,7 @@ explore_update_game:
     call read_controls
     rcall handle_controls
     rcall move_player
+    rcall update_player
     rcall move_camera
     ret
 
@@ -25,15 +26,6 @@ render_game:
     lds r23, player_position_x+1
     lds r24, player_position_y
     lds r25, player_position_y+1
-    lds r20, player_position_x
-    andi r20, 3
-    ldi r18, 1
-    sts player_character, r1
-    sts player_weapon, r18
-    sts player_armor, r1
-    sts player_direction, r1
-    sti player_action, ACTION_WALK
-    sts player_frame, r20
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character
@@ -44,6 +36,7 @@ render_game:
 ; Register Usage
 ;   r18             button states
 ;   r19-r21         miscellaneous (player acceleration, velocity)
+;   r22             temp
 ;   Z (r30:r31)     flash memory lookups
 handle_controls:
     lds r18, controller_values
@@ -58,18 +51,26 @@ _hc_up:
     sbrs r18, CONTROLS_UP
     rjmp _hc_down
     sbnv r21, r19
+    ldi r22, DIRECTION_UP
+    sts player_direction, r22
 _hc_down:
     sbrs r18, CONTROLS_DOWN
     rjmp _hc_left
     adnv r21, r19
+    ldi r22, DIRECTION_DOWN
+    sts player_direction, r22
 _hc_left:
     sbrs r18, CONTROLS_LEFT
     rjmp _hc_right
     sbnv r20, r19
+    ldi r22, DIRECTION_LEFT
+    sts player_direction, r22
 _hc_right:
     sbrs r18, CONTROLS_RIGHT
     rjmp _hc_button1
     adnv r20, r19
+    ldi r22, DIRECTION_RIGHT
+    sts player_direction, r22
 _hc_button1:
 _hc_button2:
 _hc_button3:
@@ -269,6 +270,14 @@ _rpm_no_collision:
     sts player_position_y, r24
     sts player_position_y+1, r25
 _rpm_end:
+    ret
+
+update_player:
+    lds r20, player_action
+    lds r21, player_frame
+    inc r21
+    andi r21, 3
+    sts player_frame, r21
     ret
 
 ; Change sectors. Every sector has its own set of items and npcs, these must be

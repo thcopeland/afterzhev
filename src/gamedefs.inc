@@ -34,6 +34,8 @@
 .equ CHARACTER_SNEAK = 6    ; enemy 3
 .equ CHARACTER_GHOUL = 7    ; enemy 4
 
+.equ FRAME_DURATION_MASK = 0x3
+
 .equ ACTION_IDLE = 0
 .equ ACTION_WALK = 1
 .equ ACTION_HURT = 2

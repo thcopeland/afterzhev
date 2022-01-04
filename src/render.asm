@@ -224,6 +224,98 @@ _ws_end:
     pop YL
     ret
 
+; Render any rectangular section of a sprite flipped across the vertical axis.
+; The final result is the same as mirroring the original sprite, then rendering
+; it with write_sprite.
+;
+; Register Usage
+;   r21             sprite width (param), delta sprite pointer
+;   r22             slice min y (param), reused to hold transparency value
+;   r23             slice height (param)
+;   r24             slice min x (param), reused for jump low
+;   r25             slice width (param), reused for jump high
+;   X (r26:r27)     framebuffer pointer (param)
+;   Y (r28:r29)     working framebuffer pointer (it'd be more natural to use X, but the std instruction supports only Y and Z)
+;   Z (r30:r31)     sprite pointer (param)
+write_sprite_flipped:
+    push YL
+    push YH
+    mul r21, r22
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    sub r21, r25
+    add ZL, r21
+    adc ZH, r1
+    sub ZL, r24
+    sbc ZH, r1
+    ldi r24, TILE_WIDTH
+    sub r24, r25
+    movw YL, XL
+    mov r25, r24 ; multiply r24 by 3
+    add r24, r25
+    add r24, r25
+    clr r25
+    subi r24, low(-_wsf_loop)
+    sbci r25, high(-_wsf_loop)
+    inc r23
+    ldi r22, TRANSPARENT
+    rjmp _ws_loop_check
+_wsf_loop:
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+11, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+10, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+9, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+8, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+7, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+6, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+5, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+4, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+3, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+2, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+1, r0
+    elpm r0, Z+
+    cpse r0, r22
+    st Y, r0
+    add ZL, r21
+    adc ZH, r1
+    subi YL, low(-DISPLAY_WIDTH)
+    sbci YH, high(-DISPLAY_WIDTH)
+_wsf_loop_check:
+    dec r23
+    breq _wsf_end
+    push r24
+    push r25
+.if defined(__atmega2560) || defined(__atmega2561)
+    push r1
+.endif
+    ret
+_wsf_end:
+    pop YH
+    pop YL
+    ret
+
 ; Render the visible portion of a sector to the framebuffer, as determined by
 ; the given offsets and tile and display dimensions.
 ;
@@ -541,6 +633,7 @@ _rs_write_inner_tile:
 ; edges.
 ;
 ; Register Usage
+;   r10             whether or not to mirror the sprite (param)
 ;   r16, r17        screen x position
 ;   r18, r19        screen y position, camera position
 ;   r20, r21        sprite width (param), sprite height (param); calculations
@@ -654,6 +747,12 @@ _rs_test_bottom_cut:
     brge _rs_write_sprite
     mov r23, r0
 _rs_write_sprite:
+    tst r10
+    breq _rs_write_normal
+_rs_write_flipped:
+    call write_sprite_flipped
+    rjmp _rs_end
+_rs_write_normal:
     call write_sprite
 _rs_end:
     pop r17
@@ -679,12 +778,34 @@ _rs_end:
 ;   Y (r28:r29)     character data pointer (param), character animation pointer
 ;   Z (r30:r21)     flash memory pointer, temporary pointer
 render_character:
+    push r10
     push r14
     push r15
     push r16
     push r17
     movw r14, r22
     movw r16, r24
+    clr r10
+    ldd r18, Y+CHARACTER_DIRECTION_OFFSET
+    cpi r18, DIRECTION_UP
+    brsh _rc_alpha_under
+_rc_alpha_over:
+    call _rc_render_character_sprite
+    call _rc_render_weapon_sprite
+    rjmp _rc_end
+_rc_alpha_under:
+    ldd r18, Y+CHARACTER_ACTION_OFFSET
+    neg r18
+    cpi r18, -(ACTION_ATTACK1-1)
+    adc r10, r1
+    call _rc_render_weapon_sprite
+    clr r10
+    call _rc_render_character_sprite
+    rjmp _rc_end
+; _rc_render_character_sprite is sort of a sub-subroutine. It contains a ret, so
+; must be call'd, not simple jumped to or entered. It renders both the character
+; sprite and (if necessary) the armor sprite, since these are always drawn in
+; the same order.
 _rc_render_character_sprite:
     ldd r22, Y+CHARACTER_SPRITE_OFFSET
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
@@ -696,10 +817,38 @@ _rc_render_character_sprite:
     movw r22, r14
     movw r24, r16
     call render_sprite
+    ldd r22, Y+CHARACTER_ARMOR_OFFSET
+    cpi r22, 0
+    brne _rc_write_armor_sprite
+    ret
+_rc_write_armor_sprite:
+    ldd r23, Y+CHARACTER_DIRECTION_OFFSET
+    ldd r24, Y+CHARACTER_ACTION_OFFSET
+    ldd r25, Y+CHARACTER_FRAME_OFFSET
+    call determine_overlay_sprite
+    movw r22, r14
+    movw r24, r16
+    elpm r21, Z+
+    splts r21, r20
+    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
+    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
+    add r22, r20
+    add r24, r21
+    qmod r22, r23, TILE_WIDTH
+    qmod r24, r25, TILE_HEIGHT
+    elpm r21, Z+
+    splt r21, r20
+    call render_sprite
+    ret
+; *** end of _rc_render_character_sprite ***
+; _rc_render_weapon_sprite is another sub-subroutine. It must also be call'd,
+; not simply jumped to or entered.
 _rc_render_weapon_sprite:
     ldd r22, Y+CHARACTER_WEAPON_OFFSET
-    tst r22
-    breq _rc_render_armor_sprite
+    cpi r22, 0
+    brne _rc_write_weapon_sprite
+    ret
+_rc_write_weapon_sprite:
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
@@ -717,30 +866,12 @@ _rc_render_weapon_sprite:
     elpm r21, Z+
     splt r21, r20
     call render_sprite
-_rc_render_armor_sprite:
-    ldd r22, Y+CHARACTER_ARMOR_OFFSET
-    tst r22
-    breq _rc_end
-    ldd r23, Y+CHARACTER_DIRECTION_OFFSET
-    ldd r24, Y+CHARACTER_ACTION_OFFSET
-    ldd r25, Y+CHARACTER_FRAME_OFFSET
-    call determine_overlay_sprite
-    movw r22, r14
-    movw r24, r16
-    elpm r21, Z+
-    splts r21, r20
-    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
-    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
-    add r22, r20
-    add r24, r21
-    qmod r22, r23, TILE_WIDTH
-    qmod r24, r25, TILE_HEIGHT
-    elpm r21, Z+
-    splt r21, r20
-    call render_sprite
+    ret
+; *** end of _rc_render_weapon_sprite ***
 _rc_end:
     pop r17
     pop r16
     pop r15
     pop r14
+    pop r10
     ret

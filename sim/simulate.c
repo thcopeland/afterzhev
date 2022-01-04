@@ -66,11 +66,6 @@ void *run_game(void *x) {
     }
 }
 
-void request_redraw(int x) {
-    glutPostRedisplay();
-    glutTimerFunc(1000/30, request_redraw, 0);
-}
-
 void render(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     glBegin(GL_QUADS);
@@ -89,6 +84,7 @@ void render(void) {
     }
     glEnd();
     glFlush();
+    glutPostRedisplay();
 }
 
 int main(int argc, char **argv) {
@@ -120,7 +116,6 @@ int main(int argc, char **argv) {
     glutKeyboardFunc(keypress);
     glutKeyboardUpFunc(keyrelease);
     glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
-    request_redraw(0);
 
     pthread_t run;
 	pthread_create(&run, NULL, run_game, NULL);

@@ -137,6 +137,12 @@ _idr_work:
     out PORTB, r0
     .endif
 
+    lds r24, clock
+    lds r25, clock+1
+    adiw r24, 1
+    sts clock, r24
+    sts clock+1, r25
+
     call explore_update_game
 
 _idr_reset_render_state:
