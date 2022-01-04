@@ -633,7 +633,7 @@ _rs_write_inner_tile:
 ; edges.
 ;
 ; Register Usage
-;   r10             whether or not to mirror the sprite (param)
+;   T (SREG)        whether or not to mirror the sprite (param)
 ;   r16, r17        screen x position
 ;   r18, r19        screen y position, camera position
 ;   r20, r21        sprite width (param), sprite height (param); calculations
@@ -747,9 +747,7 @@ _rs_test_bottom_cut:
     brge _rs_write_sprite
     mov r23, r0
 _rs_write_sprite:
-    tst r10
-    breq _rs_write_normal
-_rs_write_flipped:
+    brtc _rs_write_normal
     call write_sprite_flipped
     rjmp _rs_end
 _rs_write_normal:
@@ -778,32 +776,31 @@ _rs_end:
 ;   Y (r28:r29)     character data pointer (param), character animation pointer
 ;   Z (r30:r21)     flash memory pointer, temporary pointer
 render_character:
-    push r10
     push r14
     push r15
     push r16
     push r17
     movw r14, r22
     movw r16, r24
-    clr r10
     ldd r18, Y+CHARACTER_DIRECTION_OFFSET
     cpi r18, DIRECTION_UP
     brsh _rc_alpha_under
 _rc_alpha_over:
+    clt
     call _rc_render_character_sprite
     call _rc_render_weapon_sprite
     rjmp _rc_end
 _rc_alpha_under:
     ldd r18, Y+CHARACTER_ACTION_OFFSET
-    neg r18
-    cpi r18, -(ACTION_ATTACK1-1)
-    adc r10, r1
+    subi r18, ACTION_ATTACK1
+    com r18
+    bst r18, 7
     call _rc_render_weapon_sprite
-    clr r10
+    clt
     call _rc_render_character_sprite
     rjmp _rc_end
 ; _rc_render_character_sprite is sort of a sub-subroutine. It contains a ret, so
-; must be call'd, not simple jumped to or entered. It renders both the character
+; must be call'd, not simply jumped to or entered. It renders both the character
 ; sprite and (if necessary) the armor sprite, since these are always drawn in
 ; the same order.
 _rc_render_character_sprite:
@@ -873,5 +870,4 @@ _rc_end:
     pop r16
     pop r15
     pop r14
-    pop r10
     ret
