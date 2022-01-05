@@ -68,6 +68,19 @@ _adnv_done_%:
 _adnv_done_%:
 .endm
 
+; read the nth bit of a register (the result is placed in the register). Only the
+; last three bits of n are considered.
+.macro nbit ; r, n
+    andi @1, 7
+    breq _nbit_end_%
+_nbit_lp_%:
+    lsr @0
+    dec @1
+    brne _nbit_lp_%
+_nbit_end_%:
+    andi @0, 1
+.endm
+
 ; peform a single iteration of an iterative modulo operation (mod K) for
 ; signed numbers
 .macro qmod ; low, high, K

@@ -12,6 +12,10 @@ explore_update_game:
 ;
 ; Register Usage
 render_game:
+    push r16
+    push r17
+    push YL
+    push YH
     lds r20, camera_position_x
     lds r21, camera_position_x+1
     lds r22, camera_position_y
@@ -19,8 +23,36 @@ render_game:
     lds r24, current_sector
     lds r25, current_sector+1
     call render_sector
-    ; render npcs
-    ; render player
+
+_rg_render_loose_items:
+    clt
+    ldi YL, low(sector_loose_items)
+    ldi YH, high(sector_loose_items)
+    ldi r16, SECTOR_DYNAMIC_ITEM_COUNT
+_rg_render_loose_items_iter:
+    ld r18, Y
+    tst r18
+    breq _rg_render_loose_items_check
+    ldi ZL, byte3(2*static_item_sprite_table)
+    out RAMPZ, ZL
+    ldi r19, STATIC_ITEM_MEMSIZE
+    dec r18
+    mul r18, r19
+    movw ZL, r0
+    clr r1
+    subi ZL, low(-2*static_item_sprite_table)
+    sbci ZH, high(-2*static_item_sprite_table)
+    ldi r20, STATIC_ITEM_WIDTH
+    ldi r21, STATIC_ITEM_HEIGHT
+    ldi r22, (TILE_WIDTH-STATIC_ITEM_WIDTH)/2
+    ldd r23, Y+2
+    ldi r24, (TILE_HEIGHT-STATIC_ITEM_HEIGHT)/2
+    ldd r25, Y+3
+    call render_sprite
+_rg_render_loose_items_check:
+    adiw YL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    dec r16
+    brne _rg_render_loose_items_iter
 
     lds r22, player_position_x
     lds r23, player_position_x+1
@@ -29,6 +61,10 @@ render_game:
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character
+    pop YH
+    pop YL
+    pop r17
+    pop r16
     ret
 
 ; Handle button presses.
@@ -151,40 +187,46 @@ resolve_player_movement:
 _rpm_check_sector_left:
     cpi r23, 0
     brge _rpm_check_sector_right
-    adiw ZL, 2
+    adiw ZL, 3
     ldi r22, TILE_WIDTH-1
     ldi r23, SECTOR_WIDTH-2
     rjmp _rpm_switch_sector
 _rpm_check_sector_right:
     cpi r23, SECTOR_WIDTH-1
     brlt _rpm_check_sector_top
-    adiw ZL, 3
+    adiw ZL, 1
     clr r22
     clr r23
     rjmp _rpm_switch_sector
 _rpm_check_sector_top:
     cpi r25, 0
     brge _rpm_check_sector_bottom
+    adiw ZL, 2
     ldi r24, TILE_HEIGHT-1
     ldi r25, SECTOR_HEIGHT-2
     rjmp _rpm_switch_sector
 _rpm_check_sector_bottom:
     cpi r25, SECTOR_HEIGHT-1
     brlt _rmp_resolve_collisions
-    adiw ZL, 1
     clr r24
     clr r25
 _rpm_switch_sector:
+    sts player_position_x, r22
+    sts player_position_x+1, r23
+    sts player_position_y, r24
+    sts player_position_y+1, r25
     lpm r20, Z
     ldi r21, SECTOR_MEMSIZE
     mul r20, r21
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
     ldi ZL, low(2*sector_table)
     ldi ZH, high(2*sector_table)
     add ZL, r0
     adc ZH, r1
     clr r1
-    call load_new_sector
-    rjmp _rpm_no_collision
+    call load_sector
+    ret
 _rmp_resolve_collisions:
     lds ZL, player_class
     lds ZH, player_class+1
@@ -284,11 +326,56 @@ update_player:
 ; changed as necessary.
 ;
 ; Register Usage
-;   Z (r30:r31)     a pointer to the new sector
-load_new_sector:
+;   r18-r24         calculations
+;   X (r26:r27)     data pointer
+;   Y (r28:r29)     second data pointer
+;   Z (r30:r31)     pointer to the new sector (param)
+load_sector:
+    push YL
+    push YH
     sts current_sector, ZL
     sts current_sector+1, ZH
-    ; change npcs, loose items, etc
+    subi ZL, low(-SECTOR_ITEMS_OFFSET)
+    sbci ZH, high(-SECTOR_ITEMS_OFFSET)
+_ls_load_preplaced_items:
+    ldi YL, low(sector_loose_items)
+    ldi YH, high(sector_loose_items)
+    ldi r18, SECTOR_PREPLACED_ITEM_COUNT
+_ls_load_preplaced_items_iter:
+    elpm r19, Z+
+    elpm r20, Z+
+    elpm r21, Z+
+    elpm r22, Z+
+    ldi XL, low(loose_item_availability)
+    ldi XH, high(loose_item_availability)
+    mov r23, r20
+    mov r24, r20
+    lsr r23
+    lsr r23
+    lsr r23
+    add XL, r23
+    adc XH, r1
+    ld r23, X
+    nbit r23, r24 ; check that the item is still available
+    breq _ls_load_preplaced_items_check
+    st Y, r19
+    std Y+1, r20
+    std Y+2, r21
+    std Y+3, r22
+_ls_load_preplaced_items_check:
+    adiw YL, SECTOR_PREPLACED_ITEM_MEMSIZE
+    dec r18
+    brne _ls_load_preplaced_items_iter
+    ldi r18, SECTOR_DYNAMIC_ITEM_COUNT-SECTOR_PREPLACED_ITEM_COUNT
+_ls_clear_dynamic_items_iter:
+    st Y+, r1
+    st Y+, r1
+    st Y+, r1
+    st Y+, r1
+    dec r18
+    brne _ls_clear_dynamic_items_iter
+    pop YH
+    pop YL
     ret
 
 ; Move the "camera" so that the player is within the camera view plus some margin.

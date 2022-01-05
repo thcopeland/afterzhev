@@ -15,6 +15,9 @@ controller_values:  .byte 1
 
 current_sector:     .byte 2
 
+loose_item_availability: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
+sector_loose_items: .byte 4*SECTOR_DYNAMIC_ITEM_COUNT
+
 camera_position_x:  .byte 2
 camera_position_y:  .byte 2
 
