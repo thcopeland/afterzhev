@@ -81,6 +81,17 @@ _nbit_end_%:
     andi @0, 1
 .endm
 
+; multiply the register by the given power of 2.
+.macro mpow2 ; r, n
+    andi @1, 7
+    breq _mpow2_end_%
+_mpow2_lp_%:
+    lsl @0
+    dec @1
+    brne _mpow2_lp_%
+_mpow2_end_%:
+.endm
+
 ; peform a single iteration of an iterative modulo operation (mod K) for
 ; signed numbers
 .macro qmod ; low, high, K
@@ -144,3 +155,20 @@ _ck_end_%:
     ld r0, @1+
     out @0, r0
 .endm
+
+.ifdef DEV
+.macro display_byte ; r, offset
+    ldi ZL, low(framebuffer+@1)
+    ldi ZH, high(framebuffer+@1)
+    ldi r18, 0xff
+    ldi r19, 8
+_db_lp_%:
+    st Z, r1
+    sbrc @0, 0
+    st Z, r18
+    adiw ZL, 1
+    lsr @0
+    dec r19
+    brne _db_lp_%
+.endm
+.endif

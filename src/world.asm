@@ -26,7 +26,7 @@ sector_table:
         2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2
     .db 0, 0, 1, 0
     .db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-    .db 1, 0, 2, 2, 2, 1, 8, 5, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+    .db 1, 1, 2, 2, 2, 2, 8, 5, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
     ; sector 1
     .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,             \
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,             \
@@ -40,4 +40,4 @@ sector_table:
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     .db 0, 1, 1, 1
     .db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-    .db 3, 2, 2, 8, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+    .db 3, 3, 2, 8, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0

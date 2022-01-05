@@ -70,50 +70,128 @@ _rg_render_loose_items_check:
 ; Handle button presses.
 ;
 ; Register Usage
-;   r18             button states
+;   r18             previous button states
+;   r19             current button state
 ;   r19-r21         miscellaneous (player acceleration, velocity)
-;   r22             temp
 ;   Z (r30:r31)     flash memory lookups
 handle_controls:
-    lds r18, controller_values
+    lds r18, prev_controller_values
+    lds r19, controller_values
     lds ZL, player_class
     lds ZH, player_class+1
     subi ZL, low(-CLASS_ACC_OFFSET)
     sbci ZH, high(-CLASS_ACC_OFFSET)
-    lpm r19, Z
-    lds r20, player_velocity_x
-    lds r21, player_velocity_y
+    lpm r20, Z
 _hc_up:
-    sbrs r18, CONTROLS_UP
+    sbrs r19, CONTROLS_UP
     rjmp _hc_down
-    sbnv r21, r19
-    ldi r22, DIRECTION_UP
-    sts player_direction, r22
-_hc_down:
-    sbrs r18, CONTROLS_DOWN
-    rjmp _hc_left
-    adnv r21, r19
-    ldi r22, DIRECTION_DOWN
-    sts player_direction, r22
-_hc_left:
-    sbrs r18, CONTROLS_LEFT
-    rjmp _hc_right
-    sbnv r20, r19
-    ldi r22, DIRECTION_LEFT
-    sts player_direction, r22
-_hc_right:
-    sbrs r18, CONTROLS_RIGHT
-    rjmp _hc_button1
-    adnv r20, r19
-    ldi r22, DIRECTION_RIGHT
-    sts player_direction, r22
-_hc_button1:
-_hc_button2:
-_hc_button3:
-_hc_esc:
-_hc_end:
-    sts player_velocity_x, r20
+    lds r21, player_velocity_y
+    sbnv r21, r20
     sts player_velocity_y, r21
+    ldi r21, DIRECTION_UP
+    sts player_direction, r21
+_hc_down:
+    sbrs r19, CONTROLS_DOWN
+    rjmp _hc_left
+    lds r21, player_velocity_y
+    adnv r21, r20
+    sts player_velocity_y, r21
+    ldi r21, DIRECTION_DOWN
+    sts player_direction, r21
+_hc_left:
+    sbrs r19, CONTROLS_LEFT
+    rjmp _hc_right
+    lds r21, player_velocity_x
+    sbnv r21, r20
+    sts player_velocity_x, r21
+    ldi r21, DIRECTION_LEFT
+    sts player_direction, r21
+_hc_right:
+    sbrs r19, CONTROLS_RIGHT
+    rjmp _hc_button1
+    lds r21, player_velocity_x
+    adnv r21, r20
+    sts player_velocity_x, r21
+    ldi r21, DIRECTION_RIGHT
+    sts player_direction, r21
+_hc_button1:
+    sbrs r19, CONTROLS_SPECIAL1
+    rjmp _hc_button2
+    sbrc r18, CONTROLS_SPECIAL1
+    rjmp _hc_button2
+    rcall handle_main_button
+    rjmp _hc_end
+_hc_button2:
+_hc_end:
+    ret
+
+; The main button allows interaction with the environment. If there are nearby
+; items, one of them is added to the player's inventory.
+;
+; Register Usage
+;   r18-r22         calculations
+;   X (r26:r27)     memory pointer 2
+;   Z (r30:r31)     memory pointer
+handle_main_button:
+_hmb_pickup_items:
+    lds r18, player_position_y
+    lds r19, player_position_y+1
+    lds r20, player_position_x
+    lds r21, player_position_x+1
+    subi r18, -CHARACTER_SPRITE_HEIGHT/2
+    qmod r18, r19, TILE_HEIGHT
+    subi r20, -CHARACTER_SPRITE_WIDTH/2
+    qmod r20, r21, TILE_WIDTH
+    mov r18, r21
+    ldi ZL, low(sector_loose_items)
+    ldi ZH, high(sector_loose_items)
+    ldi r20, SECTOR_DYNAMIC_ITEM_COUNT
+_hmb_loose_item_iter:
+    ldd r0, Z+SECTOR_ITEM_X_OFFSET
+    cp r0, r18
+    brne _hmb_loose_item_next
+    ldd r0, Z+SECTOR_ITEM_Y_OFFSET
+    cp r0, r19
+    breq _hmb_nearby_item_found
+_hmb_loose_item_next:
+    adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    dec r20
+    brne _hmb_loose_item_iter
+    rjmp _hmb_end
+_hmb_nearby_item_found:
+    ldi XL, low(player_inventory)
+    ldi XH, high(player_inventory)
+    ldi r20, PLAYER_INVENTORY_SIZE
+_hmb_inventory_iter:
+    ld r0, X+
+    tst r0
+    breq _hmb_empty_inventory_slot_found
+_hmb_inventory_next:
+    dec r20
+    brne _hmb_inventory_iter
+    rjmp _hmb_end
+_hmb_empty_inventory_slot_found:
+    ldd r0, Z+SECTOR_ITEM_IDX_OFFSET
+    st -X, r0   ; fill the empty slot
+    std Z+SECTOR_ITEM_IDX_OFFSET, r1
+    ldd r20, Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET
+    tst r20
+    breq _hmb_end
+    mov r21, r20    ; if a preplaced item, mark as unavailable
+    lsr r20
+    lsr r20
+    lsr r20
+    ldi XL, low(preplaced_item_availability)
+    ldi XH, high(preplaced_item_availability)
+    add XL, r20
+    adc XH, r1
+    ld r20, X
+    ldi r22, 1
+    mpow2 r22, r21
+    com r22
+    and r20, r22
+    st X, r20
+_hmb_end:
     ret
 
 ; Simple player physics. Horizontal and vertical movements are calculated separately
@@ -335,6 +413,17 @@ load_sector:
     push YH
     sts current_sector, ZL
     sts current_sector+1, ZH
+_ls_clear_loose_items:
+    ldi YL, low(sector_loose_items)
+    ldi YH, high(sector_loose_items)
+    ldi r18, SECTOR_DYNAMIC_ITEM_COUNT
+_ls_clear_loose_items_iter:
+    st Y+, r1
+    st Y+, r1
+    st Y+, r1
+    st Y+, r1
+    dec r18
+    brne _ls_clear_loose_items_iter
     subi ZL, low(-SECTOR_ITEMS_OFFSET)
     sbci ZH, high(-SECTOR_ITEMS_OFFSET)
 _ls_load_preplaced_items:
@@ -346,8 +435,8 @@ _ls_load_preplaced_items_iter:
     elpm r20, Z+
     elpm r21, Z+
     elpm r22, Z+
-    ldi XL, low(loose_item_availability)
-    ldi XH, high(loose_item_availability)
+    ldi XL, low(preplaced_item_availability)
+    ldi XH, high(preplaced_item_availability)
     mov r23, r20
     mov r24, r20
     lsr r23
@@ -366,14 +455,6 @@ _ls_load_preplaced_items_check:
     adiw YL, SECTOR_PREPLACED_ITEM_MEMSIZE
     dec r18
     brne _ls_load_preplaced_items_iter
-    ldi r18, SECTOR_DYNAMIC_ITEM_COUNT-SECTOR_PREPLACED_ITEM_COUNT
-_ls_clear_dynamic_items_iter:
-    st Y+, r1
-    st Y+, r1
-    st Y+, r1
-    st Y+, r1
-    dec r18
-    brne _ls_clear_dynamic_items_iter
     pop YH
     pop YL
     ret

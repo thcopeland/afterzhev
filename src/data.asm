@@ -11,11 +11,12 @@ vid_current_row:    .byte 2     ; high byte indicates the row, low byte indicate
 vid_work_complete:  .byte 1     ; whether the main work is complete
 clock:              .byte 2
 
+prev_controller_values: .byte 1
 controller_values:  .byte 1
 
 current_sector:     .byte 2
 
-loose_item_availability: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
+preplaced_item_availability: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
 sector_loose_items: .byte 4*SECTOR_DYNAMIC_ITEM_COUNT
 
 camera_position_x:  .byte 2
@@ -36,4 +37,4 @@ player_armor:       .byte 1
 player_direction:   .byte 1
 player_action:      .byte 1
 player_frame:       .byte 1
-player_inventory:   .byte 8
+player_inventory:   .byte PLAYER_INVENTORY_SIZE

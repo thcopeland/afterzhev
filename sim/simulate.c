@@ -29,6 +29,9 @@ void keypress(unsigned char c, int x, int y) {
         case 'd':
             avr->data[0x26] &= ~(1 << 4);
             break;
+        case ' ':
+            avr->data[0x26] &= ~(1 << 3);
+            break;
         case 27:
             exit(0);
     }
@@ -47,6 +50,9 @@ void keyrelease(unsigned char c, int x, int y) {
             break;
         case 'd':
             avr->data[0x26] |= (1 << 4);
+            break;
+        case ' ':
+            avr->data[0x26] |= (1 << 3);
             break;
     }
 }

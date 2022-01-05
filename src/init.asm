@@ -15,7 +15,7 @@ init:
     sti player_action, ACTION_WALK
     sti player_frame, 0
 
-    stiw loose_item_availability, 0xffff
+    stiw preplaced_item_availability, 0xffff
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
