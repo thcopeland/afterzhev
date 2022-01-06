@@ -14,6 +14,7 @@ clock:              .byte 2
 prev_controller_values: .byte 1
 controller_values:  .byte 1
 
+game_mode:          .byte 1
 current_sector:     .byte 2
 
 preplaced_item_availability: .byte TOTAL_PREPLACED_ITEM_COUNT>>3

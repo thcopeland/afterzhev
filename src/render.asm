@@ -880,8 +880,6 @@ _rc_end:
 ;   X (r26:r27)     framebuffer pointer (param, preserved)
 ;   Z (r30:r31)     flash pointer, working framebuffer pointer
 putc:
-    ; ldi ZL, byte3(2*font_character_table)
-    ; out RAMPZ, ZL
     ldi ZL, low(2*font_character_table)
     ldi ZH, high(2*font_character_table)
     subi r22, 32
@@ -959,13 +957,13 @@ _puts_loop:
     breq _puts_end
     call putc
     movw ZL, r18
-    adiw XL, 4
+    adiw XL, FONT_DISPLAY_WIDTH
     cp r20, r21
     brne _puts_loop
 _puts_newline:
     clr r20
-    subi YL, low(-6*DISPLAY_WIDTH)
-    sbci YH, high(-6*DISPLAY_WIDTH)
+    subi YL, low(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
+    sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
     movw XL, YL
     rjmp _puts_loop
 _puts_end:

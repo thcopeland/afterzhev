@@ -1,6 +1,5 @@
 explore_update_game:
     rcall render_game
-    call read_controls
     rcall handle_controls
     rcall move_player
     rcall update_player
@@ -122,6 +121,15 @@ _hc_button1:
     rcall handle_main_button
     rjmp _hc_end
 _hc_button2:
+_hc_button3:
+_hc_button4:
+    sbrs r19, CONTROLS_SPECIAL4
+    rjmp _hc_end
+    sbrc r18, CONTROLS_SPECIAL4
+    rjmp _hc_end
+    sts player_velocity_x, r1
+    sts player_velocity_y, r1
+    sti game_mode, MODE_INVENTORY
 _hc_end:
     ret
 

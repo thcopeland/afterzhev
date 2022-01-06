@@ -1,6 +1,7 @@
 SRC            = src
 BIN            = bin
 SIM            = sim
+DATA           = $(SRC)/data
 MCU_TARGET     = atmega2560
 DEFS           = -D DEV -D __$(MCU_TARGET)
 AS             = avra
@@ -9,7 +10,7 @@ OBJDUMP        = avr-objdump
 all: $(BIN)/main.hex $(BIN)/main.lst
 
 $(BIN)/%.hex: $(SRC)/%.asm $(SRC)/*.asm $(SRC)/*.inc
-	$(AS) $(DEFS) -I $(SRC) -o $@ -e /dev/null -d /dev/null $<
+	$(AS) $(DEFS) -I $(SRC) -I $(DATA) -o $@ -e /dev/null -d /dev/null $<
 
 $(BIN)/%.lst: $(BIN)/%.hex
 	$(OBJDUMP) -m avr51 -D $< > $@

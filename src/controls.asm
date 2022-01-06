@@ -23,6 +23,6 @@ read_controls:
     sbrs r20, 1
     ori r18, 1<<CONTROLS_SPECIAL3
     sbrs r20, 0
-    ori r18, 1<<CONTROLS_SHIFT
+    ori r18, 1<<CONTROLS_SPECIAL4
     sts controller_values, r18
     ret

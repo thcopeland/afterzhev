@@ -143,7 +143,8 @@ _idr_work:
     sts clock, r24
     sts clock+1, r25
 
-    call explore_update_game
+    call read_controls
+    call inventory_update_game
 
 _idr_reset_render_state:
     ; prepare to output an image signal
@@ -160,5 +161,6 @@ _idr_end:
 .include "animation.asm"
 .include "render.asm"
 .include "explore.asm"
+.include "inventory.asm"
 .include "rodata.asm"
 .include "data.asm"
