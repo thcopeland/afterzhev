@@ -3,6 +3,7 @@
 
 ; Partition 1 (0x00000-x04ffff): code and miscellaneous small data (classes etc)
     .cseg
+    .include "font.asm"
     .include "classes.asm"
 
 ; Partition 2 (words 0x05000-0x0ffff): tiles and maps

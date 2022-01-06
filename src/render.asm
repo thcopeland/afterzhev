@@ -871,3 +871,102 @@ _rc_end:
     pop r15
     pop r14
     ret
+
+; Print a single character to the framebuffer.
+;
+; Register Usage
+;   r22, r23        character (param), foreground color (param)
+;   r24, r25        character data
+;   X (r26:r27)     framebuffer pointer (param, preserved)
+;   Z (r30:r31)     flash pointer, working framebuffer pointer
+putc:
+    ; ldi ZL, byte3(2*font_character_table)
+    ; out RAMPZ, ZL
+    ldi ZL, low(2*font_character_table)
+    ldi ZH, high(2*font_character_table)
+    subi r22, 32
+    lsl r22
+    add ZL, r22
+    adc ZH, r1
+    lpm r25, Z+
+    lpm r24, Z
+    movw ZL, XL
+    sbrs r25, 7
+    rjmp _putc_write_pixels
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+_putc_write_pixels:
+    sbrs r25, 6
+    st Z, r23
+    sbrs r25, 5
+    std Z+1, r23
+    sbrs r25, 4
+    std Z+2, r23
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    sbrs r25, 3
+    st Z, r23
+    sbrs r25, 2
+    std Z+1, r23
+    sbrs r25, 1
+    std Z+2, r23
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    sbrs r25, 0
+    st Z, r23
+    sbrs r24, 7
+    std Z+1, r23
+    sbrs r24, 6
+    std Z+2, r23
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    sbrs r24, 5
+    st Z, r23
+    sbrs r24, 4
+    std Z+1, r23
+    sbrs r24, 3
+    std Z+2, r23
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    sbrs r24, 2
+    st Z, r23
+    sbrs r24, 1
+    std Z+1, r23
+    sbrs r24, 0
+    std Z+2, r23
+    ret
+
+; Write a string to the framebuffer.
+;
+; Register Usage
+;   r18-r19         storage across calls
+;   r20             counter
+;   r21             number of horizontal characters to print (param)
+;   r23             foreground color (param)
+;   X (r26:r27)     working framebuffer pointer
+;   Y (r28:r29)     framebuffer pointer (param)
+;   Z (r30:r31)     string flash pointer (param)
+puts:
+    clr r20
+    movw XL, YL
+_puts_loop:
+    inc r20
+    elpm r22, Z+
+    movw r18, ZL
+    cpi r22, 10
+    breq _puts_newline
+    cpi r22, 0
+    breq _puts_end
+    call putc
+    movw ZL, r18
+    adiw XL, 4
+    cp r20, r21
+    brne _puts_loop
+_puts_newline:
+    clr r20
+    subi YL, low(-6*DISPLAY_WIDTH)
+    sbci YH, high(-6*DISPLAY_WIDTH)
+    movw XL, YL
+    rjmp _puts_loop
+_puts_end:
+    ret
