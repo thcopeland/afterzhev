@@ -10,7 +10,7 @@
 #include <simavr/sim_hex.h>
 
 #define GAME_DISPLAY_WIDTH 120
-#define GAME_DISPLAY_HEIGHT 72
+#define GAME_DISPLAY_HEIGHT 69
 #define SCALE 8
 
 avr_t *avr;

@@ -5,10 +5,10 @@
     .dseg
     .org SRAM_START
 
-framebuffer:        .byte (DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
-vid_fbuff_offset:   .byte 2     ; pointer into framebuffer indicating what to draw next
-vid_current_row:    .byte 2     ; high byte indicates the row, low byte indicates the row repetitions
-vid_work_complete:  .byte 1     ; whether the main work is complete
+framebuffer:        .byte DISPLAY_WIDTH*DISPLAY_HEIGHT
+vid_fbuff_offset:   .byte 2
+vid_row_repeat:     .byte 1
+vid_work_complete:  .byte 1
 clock:              .byte 2
 
 prev_controller_values: .byte 1
