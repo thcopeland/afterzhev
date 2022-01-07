@@ -10,6 +10,7 @@
     .org 0x05000
     .include "world.asm"
     .include "tiles.asm"
+    .include "ui.asm"
 
 ; Partion 3 (words 0x10000-0x14fff): character and item sprites
     .org 0x10000

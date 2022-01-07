@@ -109,6 +109,19 @@ _ck_test_overflow_%:
 _ck_end_%:
 .endm
 
+; clamp an unsigned value to the given range
+.macro clampi ; r, min, max
+_ci_lt_%:
+    cpi @0, @1
+    brpl _ci_gt_%
+    ldi @0, @1
+_ci_gt_%:
+    cpi @0, @2
+    brlo _ci_end_%
+    ldi @0, @2
+_ci_end_%:
+.endm
+
 ; approximate one step of 0.9375 exponential decay for a signed 8 bit number
 .macro decay_94p ; x, tmp1, tmp2
     mov @1, @0

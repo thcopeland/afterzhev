@@ -378,7 +378,7 @@ _rs_render_corners:
     elpm r25, Z
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
-    call write_partial_tile ; upper left
+    rcall write_partial_tile ; upper left
     adiw YL, DISPLAY_HORIZONTAL_TILES
     mov r21, r16
     ldi r22, TILE_HEIGHT
@@ -391,7 +391,7 @@ _rs_render_corners:
     ldi XH, high(framebuffer + DISPLAY_WIDTH)
     sub XL, r24
     sbc XH, r1
-    call write_partial_tile ; upper right
+    rcall write_partial_tile ; upper right
     subi YL, low(-(DISPLAY_VERTICAL_TILES*SECTOR_WIDTH))
     sbci YH, high(-(DISPLAY_VERTICAL_TILES*SECTOR_WIDTH))
     clr r21
@@ -409,7 +409,7 @@ _rs_render_corners:
     clr r1
     sub XL, r14
     sbc XH, r1
-    call write_partial_tile ; lower right
+    rcall write_partial_tile ; lower right
     sbiw YL, DISPLAY_HORIZONTAL_TILES
     clr r21
     mov r22, r16
@@ -424,7 +424,7 @@ _rs_render_corners:
     mul r20, r16
     sub XL, r0
     sbc XH, r1
-    call write_partial_tile ; lower left
+    rcall write_partial_tile ; lower left
 _rs_test_vertical_edges:
     tst r14
     brne _rs_render_vertical_edges
@@ -462,7 +462,7 @@ _rs_render_left_edge:
     sub r24, r14
     movw ZL, YL
     elpm r25, Z
-    call write_partial_tile
+    rcall write_partial_tile
     adiw YL, SECTOR_WIDTH
     dec r13
     brne _rs_render_left_edge
@@ -500,7 +500,7 @@ _rs_render_right_edge:
     mov r24, r14
     movw ZL, YL
     elpm r25, Z
-    call write_partial_tile
+    rcall write_partial_tile
     adiw YL, SECTOR_WIDTH
     dec r13
     brne _rs_render_right_edge
@@ -536,7 +536,7 @@ _rs_write_horizontal_edges:
     movw ZL, YL
     elpm r23, Z
     movw XL, r24
-    call write_entire_tile  ; top edge
+    rcall write_entire_tile  ; top edge
     clr r21
     mov r22, r16
     movw ZL, YL
@@ -551,7 +551,7 @@ _rs_write_horizontal_edges:
     sub XL, r0
     sbc XH, r1
     clr r1
-    call write_entire_tile  ; bottom edge
+    rcall write_entire_tile  ; bottom edge
     adiw r24, TILE_WIDTH
     adiw YL, 1
     dec r13
@@ -605,7 +605,7 @@ _rs_write_inner_tile:
     movw ZL, YL
     elpm r23, Z
     movw XL, r24
-    call write_entire_tile
+    rcall write_entire_tile
     adiw r24, TILE_WIDTH
     adiw YL, 1
     dec r14
@@ -748,10 +748,10 @@ _rs_test_bottom_cut:
     mov r23, r0
 _rs_write_sprite:
     brtc _rs_write_normal
-    call write_sprite_flipped
+    rcall write_sprite_flipped
     rjmp _rs_end
 _rs_write_normal:
-    call write_sprite
+    rcall write_sprite
 _rs_end:
     pop r17
     pop r16
@@ -787,17 +787,17 @@ render_character:
     brsh _rc_alpha_under
 _rc_alpha_over:
     clt
-    call _rc_render_character_sprite
-    call _rc_render_weapon_sprite
+    rcall _rc_render_character_sprite
+    rcall _rc_render_weapon_sprite
     rjmp _rc_end
 _rc_alpha_under:
     ldd r18, Y+CHARACTER_ACTION_OFFSET
     subi r18, ACTION_ATTACK1
     com r18
     bst r18, 7
-    call _rc_render_weapon_sprite
+    rcall _rc_render_weapon_sprite
     clt
-    call _rc_render_character_sprite
+    rcall _rc_render_character_sprite
     rjmp _rc_end
 ; _rc_render_character_sprite is sort of a sub-subroutine. It contains a ret, so
 ; must be call'd, not simply jumped to or entered. It renders both the character
@@ -813,7 +813,7 @@ _rc_render_character_sprite:
     ldi r21, CHARACTER_SPRITE_HEIGHT
     movw r22, r14
     movw r24, r16
-    call render_sprite
+    rcall render_sprite
     ldd r22, Y+CHARACTER_ARMOR_OFFSET
     cpi r22, 0
     brne _rc_write_armor_sprite
@@ -835,7 +835,7 @@ _rc_write_armor_sprite:
     qmod r24, r25, TILE_HEIGHT
     elpm r21, Z+
     splt r21, r20
-    call render_sprite
+    rcall render_sprite
     ret
 ; *** end of _rc_render_character_sprite ***
 ; _rc_render_weapon_sprite is another sub-subroutine. It must also be call'd,
@@ -862,7 +862,7 @@ _rc_write_weapon_sprite:
     qmod r24, r25, TILE_HEIGHT
     elpm r21, Z+
     splt r21, r20
-    call render_sprite
+    rcall render_sprite
     ret
 ; *** end of _rc_render_weapon_sprite ***
 _rc_end:
@@ -870,6 +870,105 @@ _rc_end:
     pop r16
     pop r15
     pop r14
+    ret
+
+; Render the character in the down-idle position, for viewing in the UI.
+;
+; Register Usage
+;   r18:r19         temporary storage
+;   r21-r25         calculations
+;   X (r26:r27)     framebuffer pointer (param)
+;   Y (r28:r29)     character data pointer (param)
+;   Z (r30:r21)     flash memory pointer, temporary pointer
+render_character_icon:
+    ldd r22, Y+CHARACTER_SPRITE_OFFSET
+    ldi r23, DIRECTION_DOWN
+    ldi r24, ACTION_IDLE
+    clr r25
+    call determine_character_sprite
+    ldi r21, CHARACTER_SPRITE_WIDTH
+    clr r22
+    ldi r23, CHARACTER_SPRITE_HEIGHT
+    clr r24
+    ldi r25, CHARACTER_SPRITE_WIDTH
+    call write_sprite
+    ldd r22, Y+CHARACTER_ARMOR_OFFSET
+    tst r22, 0
+    breq _rci_write_weapon_sprite
+    ldi r23, DIRECTION_DOWN
+    ldi r24, ACTION_IDLE
+    clr r25
+    call determine_overlay_sprite
+    movw r18, XL
+    elpm r21, Z+
+    splts r21, r20
+    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
+    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
+    add XL, r20
+    ldi r20, DISPLAY_WIDTH
+    mul r20, r21
+    add XL, r0
+    adc XH, r1
+    clr r1
+    elpm r23, Z+
+    splt r23, r21
+    clr r22
+    clr r24
+    mov r25, r21
+    rcall write_sprite
+    movw XL, r18
+_rci_write_weapon_sprite:
+    ldd r22, Y+CHARACTER_WEAPON_OFFSET
+    tst r22, 0
+    breq _rci_end
+    ldi r23, DIRECTION_DOWN
+    ldi r24, ACTION_IDLE
+    clr r25
+    call determine_overlay_sprite
+    elpm r21, Z+
+    splts r21, r20
+    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
+    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
+    add XL, r20
+    ldi r20, DISPLAY_WIDTH
+    mul r20, r21
+    add XL, r0
+    adc XH, r1
+    clr r1
+    elpm r23, Z+
+    splt r23, r21
+    clr r22
+    clr r24
+    mov r25, r21
+    rcall write_sprite
+_rci_end:
+    ret
+
+; Render an item for viewing in the UI.
+;
+; Register Usage
+;   r25             item index (param)
+;   r21-r25         arguments
+;   X (r26:r27)     framebuffer pointer (param)
+;   Z (r30:r31)     flash pointer
+render_item_icon:
+    tst r25
+    breq _rii_end
+    dec r25
+    ldi ZL, low(2*static_item_sprite_table)
+    ldi ZH, high(2*static_item_sprite_table)
+    ldi r22, STATIC_ITEM_MEMSIZE
+    mul r25, r22
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    ldi r21, STATIC_ITEM_WIDTH
+    clr r22
+    ldi r23, STATIC_ITEM_HEIGHT
+    clr r24
+    ldi r25, STATIC_ITEM_WIDTH
+    call write_sprite
+_rii_end:
     ret
 
 ; Print a single character to the framebuffer.
@@ -955,7 +1054,7 @@ _puts_loop:
     breq _puts_newline
     cpi r22, 0
     breq _puts_end
-    call putc
+    rcall putc
     movw ZL, r18
     adiw XL, FONT_DISPLAY_WIDTH
     cp r20, r21
@@ -967,4 +1066,58 @@ _puts_newline:
     movw XL, YL
     rjmp _puts_loop
 _puts_end:
+    ret
+
+; Render a UI element with the given dimensions, taking transparency into account.
+; The entire element is rendered.
+;
+; Register Usage
+;   r21             delta
+;   r22             transparency
+;   r23             counter
+;   r24             element width (param)
+;   r25             element height (param)
+;   X (r26:r27)     framebuffer pointer (param)
+;   Z (r30:r31)     element pointer (param)
+render_element:
+    ldi r22, TRANSPARENT
+    ldi r21, DISPLAY_WIDTH
+    sub r21, r24
+_re_outer:
+    mov r23, r24
+_re_inner:
+    elpm r0, Z+
+    cpse r22, r0
+    st X, r0
+    adiw XL, 1
+    dec r23
+    brne _re_inner
+    add XL, r21
+    adc XH, r1
+    dec r25
+    brne _re_outer
+    ret
+
+; Render a rectangle of a single color. Mainly useful to fill the screen quickly.
+;
+; Register Usage
+;   r21             delta
+;   r22             color (param)
+;   r23             counter
+;   r24             element width (param)
+;   r25             element height (param)
+;   X (r26:r27)     framebuffer pointer (param)
+render_rect:
+    ldi r21, DISPLAY_WIDTH
+    sub r21, r24
+_rr_outer:
+    mov r23, r24
+_rr_inner:
+    st X+, r22
+    dec r23
+    brne _rr_inner
+    add XL, r21
+    adc XH, r1
+    dec r25
+    brne _rr_outer
     ret
