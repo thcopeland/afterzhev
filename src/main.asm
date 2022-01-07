@@ -128,6 +128,7 @@ _idr_work:
 
     call read_controls
     call inventory_update_game
+    ; call explore_update_game
 
 _idr_reset_render_state:
     sti vid_row_repeat, DISPLAY_VERTICAL_STRETCH
@@ -136,6 +137,7 @@ _idr_reset_render_state:
 _idr_end:
     reti
 
+.include "math.asm"
 .include "controls.asm"
 .include "animation.asm"
 .include "render.asm"

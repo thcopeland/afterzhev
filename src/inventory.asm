@@ -50,14 +50,14 @@ _ihc_end:
     sts mode_clock, r21
     ret
 
-_placeholder_player_class: .db "HALFLING   16 / 20 /  9 / 13", 0
 _placeholder_item_description: .db "ANCIENT GLASS SWORD     300O", 10, "A favorite of thives and assassins, but prone to chipping.", 0
 _placeholder_item_stats: .db " -3 Str +0 Vit +1 Dex +1 Cng", 0, 0
 
 .equ INVENTORY_UI_HEADER_HEIGHT = 9
 .equ INVENTORY_UI_HEADER_COLOR = 0x1d
 .equ INVENTORY_UI_BODY_COLOR = 0x6e
-.equ INVENTORY_UI_STATS_MARGIN = 2*DISPLAY_WIDTH+2
+.equ INVENTORY_UI_CLASS_MARGIN = 2*DISPLAY_WIDTH+2
+.equ INVENTORY_UI_STATS_MARGIN = 2*DISPLAY_WIDTH+60
 .equ INVENTORY_UI_ROW1_MARGIN = DISPLAY_WIDTH*11+33
 .equ INVENTORY_UI_ROW2_MARGIN = DISPLAY_WIDTH*20+33
 .equ INVENTORY_UI_COL_WIDTH = STATIC_ITEM_WIDTH+3
@@ -65,9 +65,9 @@ _placeholder_item_stats: .db " -3 Str +0 Vit +1 Dex +1 Cng", 0, 0
 .equ INVENTORY_UI_WEAPON_MARGIN = INVENTORY_UI_CHARACTER_MARGIN-DISPLAY_WIDTH*3+16
 .equ INVENTORY_UI_ARMOR_MARGIN = INVENTORY_UI_CHARACTER_MARGIN+DISPLAY_WIDTH*6+16
 .equ INVENTORY_UI_HEALTH_ICON_MARGIN = DISPLAY_WIDTH*12+110
-.equ INVENTORY_UI_HEALTH_MARGIN = 13*DISPLAY_WIDTH+90
+.equ INVENTORY_UI_HEALTH_MARGIN = 13*DISPLAY_WIDTH+106
 .equ INVENTORY_UI_GOLD_ICON_MARGIN = DISPLAY_WIDTH*21+112
-.equ INVENTORY_UI_GOLD_MARGIN = 22*DISPLAY_WIDTH+94
+.equ INVENTORY_UI_GOLD_MARGIN = 22*DISPLAY_WIDTH+106
 
 inventory_render_game:
 _irg_render_background:
@@ -83,16 +83,36 @@ _irg_render_background:
     ldi r24, DISPLAY_WIDTH
     ldi r25, DISPLAY_HEIGHT-INVENTORY_UI_HEADER_HEIGHT
     call render_rect
-_irg_render_stats:
-    ldi YL, low(framebuffer+INVENTORY_UI_STATS_MARGIN)
-    ldi YH, high(framebuffer+INVENTORY_UI_STATS_MARGIN)
-    ldi ZL, byte3(2*_placeholder_player_class)
+_irg_render_class:
+    ldi YL, low(framebuffer+INVENTORY_UI_CLASS_MARGIN)
+    ldi YH, high(framebuffer+INVENTORY_UI_CLASS_MARGIN)
+    ldi ZL, byte3(2*class_table+CLASS_NAME_OFFSET)
     out RAMPZ, ZL
-    ldi ZL, low(2*_placeholder_player_class)
-    ldi ZH, high(2*_placeholder_player_class)
+    ldi ZL, low(2*class_table+CLASS_NAME_OFFSET)
+    ldi ZH, high(2*class_table+CLASS_NAME_OFFSET)
+    ldi r20, CLASS_MEMSIZE
+    lds r21, player_class
+    mul r20, r21
+    add ZL, r0
+    adc ZH, r1
+    clr r1
     ldi r23, 0
-    ldi r21, 29
+    ldi r21, 10
     call puts
+_irg_render_stats:
+    ldi XL, low(framebuffer+INVENTORY_UI_STATS_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_STATS_MARGIN)
+    ldi YL, low(player_stats)
+    ldi YH, high(player_stats)
+    ldi r20, STATS_COUNT
+_irg_render_stats_iter:
+    ld r21, Y+
+    call put8u
+    subi XL, low(-22)
+    sbci XH, high(-22)
+_irg_render_stats_check:
+    dec r20
+    brne _irg_render_stats_iter
 _irg_render_inventory:
     ldi ZL, byte3(2*static_item_sprite_table)
     out RAMPZ, ZL
@@ -131,7 +151,7 @@ _irg_render_character:
     ldi XH, high(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
     lds r25, player_weapon
     rcall render_item_with_underbar
-
+_irg_render_health:
     ldi XL, low(framebuffer+INVENTORY_UI_HEALTH_ICON_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_HEALTH_ICON_MARGIN)
     ldi r24, 7
@@ -141,7 +161,17 @@ _irg_render_character:
     ldi ZL, low(2*ui_heart_icon)
     ldi ZH, high(2*ui_heart_icon)
     call render_element
-
+    ldi XL, low(framebuffer+INVENTORY_UI_HEALTH_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_HEALTH_MARGIN)
+    lds r21, player_max_health
+    call put8u
+    ldi r22, '/'
+    call putc
+    subi XL, low(FONT_DISPLAY_WIDTH)
+    sbci XH, high(FONT_DISPLAY_WIDTH)
+    lds r21, player_health
+    call put8u
+_irg_render_gold:
     ldi XL, low(framebuffer+INVENTORY_UI_GOLD_ICON_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_GOLD_ICON_MARGIN)
     ldi r24, 4
@@ -151,29 +181,10 @@ _irg_render_character:
     ldi ZL, low(2*ui_coin_icon)
     ldi ZH, high(2*ui_coin_icon)
     call render_element
-
-_str1: .db "1453", 0
-    ldi YL, low(framebuffer+INVENTORY_UI_GOLD_MARGIN)
-    ldi YH, high(framebuffer+INVENTORY_UI_GOLD_MARGIN)
-    ldi ZL, byte3(2*_str1)
-    out RAMPZ, ZL
-    ldi ZL, low(2*_str1)
-    ldi ZH, high(2*_str1)
-    ldi r23, 0
-    ldi r21, 29
-    call puts
-
-_str2: .db "16/32", 0
-    ldi YL, low(framebuffer+INVENTORY_UI_HEALTH_MARGIN)
-    ldi YH, high(framebuffer+INVENTORY_UI_HEALTH_MARGIN)
-    ldi ZL, byte3(2*_str2)
-    out RAMPZ, ZL
-    ldi ZL, low(2*_str2)
-    ldi ZH, high(2*_str2)
-    ldi r23, 0
-    ldi r21, 29
-    call puts
-
+    ldi XL, low(framebuffer+INVENTORY_UI_GOLD_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_GOLD_MARGIN)
+    lds r21, player_gold
+    call put8u
 _irg_render_selection:
     lds r18, inventory_selection
     ldi ZL, low(player_inventory)

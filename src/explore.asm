@@ -71,16 +71,12 @@ _rg_render_loose_items_check:
 ; Register Usage
 ;   r18             previous button states
 ;   r19             current button state
-;   r19-r21         miscellaneous (player acceleration, velocity)
+;   r19-r21         miscellaneous
 ;   Z (r30:r31)     flash memory lookups
 handle_controls:
     lds r18, prev_controller_values
     lds r19, controller_values
-    lds ZL, player_class
-    lds ZH, player_class+1
-    subi ZL, low(-CLASS_ACC_OFFSET)
-    sbci ZH, high(-CLASS_ACC_OFFSET)
-    lpm r20, Z
+    lds r20, player_acceleration
 _hc_up:
     sbrs r19, CONTROLS_UP
     rjmp _hc_down
@@ -314,10 +310,14 @@ _rpm_switch_sector:
     call load_sector
     ret
 _rmp_resolve_collisions:
-    lds ZL, player_class
-    lds ZH, player_class+1
-    subi ZL, low(-CLASS_DIMS_OFFSET)
-    sbci ZH, high(-CLASS_DIMS_OFFSET)
+    ldi ZL, low(2*class_table+CLASS_DIMS_OFFSET)
+    ldi ZH, high(2*class_table+CLASS_DIMS_OFFSET)
+    lds r18, player_class
+    ldi r19, CLASS_MEMSIZE
+    mul r18, r19
+    add ZL, r0
+    adc ZH, r1
+    clr r1
     lpm r18, Z+
     lpm r19, Z
 _rpm_check_upper_left:

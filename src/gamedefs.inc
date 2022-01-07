@@ -32,7 +32,7 @@
 .equ DIRECTION_LEFT = 3
 
 .equ CHARACTER_PALADIN = 0  ; player class 1
-.equ CHARACTER_HALFLING = 1 ; player class 2 (hard, bold, and wicked!)
+.equ CHARACTER_HALFLING = 1 ; player class 2
 .equ CHARACTER_MAGE = 2     ; player class 3
 .equ CHARACTER_ZHEV = 3     ; boss
 .equ CHARACTER_BANDIT = 4   ; enemy 1

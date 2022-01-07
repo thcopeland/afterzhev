@@ -24,7 +24,8 @@ sector_loose_items: .byte 4*SECTOR_DYNAMIC_ITEM_COUNT
 camera_position_x:  .byte 2
 camera_position_y:  .byte 2
 
-player_class:       .byte 2
+player_class:       .byte 1
+player_acceleration:.byte 1
 player_subpixel_x:  .byte 1
 player_position_x:  .byte 2
 player_velocity_x:  .byte 1
@@ -32,13 +33,17 @@ player_subpixel_y:  .byte 1
 player_position_y:  .byte 2
 player_velocity_y:  .byte 1
 player_cooldown:    .byte 1
-
 player_character:   .byte 1
 player_weapon:      .byte 1
 player_armor:       .byte 1
 player_direction:   .byte 1
 player_action:      .byte 1
 player_frame:       .byte 1
+player_stats:       .byte 4
+player_augmented_stats: .byte 4
+player_health:      .byte 1
+player_max_health:  .byte 1
+player_gold:        .byte 1
 player_inventory:   .byte PLAYER_INVENTORY_SIZE
 
 inventory_selection: .byte 1
