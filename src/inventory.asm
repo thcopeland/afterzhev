@@ -19,23 +19,23 @@ _ihc_down:
     sbrs r19, CONTROLS_DOWN
     rjmp _ihc_right
     lds r22, inventory_selection
-    cpi r22, PLAYER_INVENTORY_SIZE/2+1
+    cpi r22, PLAYER_INVENTORY_SIZE/2
     brpl _ihc_right
-    subi r22, -(PLAYER_INVENTORY_SIZE/2+1)
+    subi r22, -PLAYER_INVENTORY_SIZE/2
     sts inventory_selection, r22
 _ihc_right:
     sbrs r19, CONTROLS_RIGHT
     rjmp _ihc_up
     lds r22, inventory_selection
-    cpi r22, PLAYER_INVENTORY_SIZE+1
-    brpl _ihc_up
     inc r22
+    cpi r22, PLAYER_INVENTORY_SIZE
+    brsh _ihc_up
     sts inventory_selection, r22
 _ihc_up:
     sbrs r19, CONTROLS_UP
     rjmp _ihc_left
     lds r22, inventory_selection
-    subi r22, PLAYER_INVENTORY_SIZE/2+1
+    subi r22, PLAYER_INVENTORY_SIZE/2
     brlo _ihc_left
     sts inventory_selection, r22
 _ihc_left:
@@ -113,44 +113,6 @@ _irg_render_stats_iter:
 _irg_render_stats_check:
     dec r20
     brne _irg_render_stats_iter
-_irg_render_inventory:
-    ldi ZL, byte3(2*static_item_sprite_table)
-    out RAMPZ, ZL
-    ldi XL, low(framebuffer+INVENTORY_UI_ROW1_MARGIN)
-    ldi XH, high(framebuffer+INVENTORY_UI_ROW1_MARGIN)
-    clr r20
-_irg_display_inventory_iter:
-    ldi ZL, low(player_inventory)
-    ldi ZH, high(player_inventory)
-    add ZL, r20
-    adc ZH, r1
-    ld r25, Z
-    movw YL, XL
-    rcall render_item_with_underbar
-    movw XL, YL
-    adiw XL, INVENTORY_UI_COL_WIDTH
-    inc r20
-    cpi r20, PLAYER_INVENTORY_SIZE/2+1
-    brne _irg_display_inventory_iter_next
-    ldi XL, low(framebuffer+INVENTORY_UI_ROW2_MARGIN)
-    ldi XH, high(framebuffer+INVENTORY_UI_ROW2_MARGIN)
-_irg_display_inventory_iter_next:
-    cpi r20, PLAYER_INVENTORY_SIZE+2
-    brlo _irg_display_inventory_iter
-_irg_render_character:
-    ldi XL, low(framebuffer+INVENTORY_UI_WEAPON_MARGIN)
-    ldi XH, high(framebuffer+INVENTORY_UI_WEAPON_MARGIN)
-    lds r25, player_armor
-    rcall render_item_with_underbar
-    ldi XL, low(framebuffer+INVENTORY_UI_CHARACTER_MARGIN)
-    ldi XH, high(framebuffer+INVENTORY_UI_CHARACTER_MARGIN)
-    ldi YL, low(player_character)
-    ldi YH, high(player_character)
-    call render_character_icon
-    ldi XL, low(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
-    ldi XH, high(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
-    lds r25, player_weapon
-    rcall render_item_with_underbar
 _irg_render_health:
     ldi XL, low(framebuffer+INVENTORY_UI_HEALTH_ICON_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_HEALTH_ICON_MARGIN)
@@ -185,6 +147,43 @@ _irg_render_gold:
     ldi XH, high(framebuffer+INVENTORY_UI_GOLD_MARGIN)
     lds r21, player_gold
     call put8u
+_irg_render_character:
+    ldi XL, low(framebuffer+INVENTORY_UI_WEAPON_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_WEAPON_MARGIN)
+    lds r25, player_armor
+    ldi r25, 1
+    rcall render_item_with_underbar
+    ldi XL, low(framebuffer+INVENTORY_UI_CHARACTER_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_CHARACTER_MARGIN)
+    ldi YL, low(player_character)
+    ldi YH, high(player_character)
+    call render_character_icon
+    ldi XL, low(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
+    lds r25, player_weapon
+    rcall render_item_with_underbar
+_irg_render_inventory:
+    ldi XL, low(framebuffer+INVENTORY_UI_ROW1_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_ROW1_MARGIN)
+    clr r20
+_irg_display_inventory_iter:
+    ldi ZL, low(player_inventory)
+    ldi ZH, high(player_inventory)
+    add ZL, r20
+    adc ZH, r1
+    ld r25, Z
+    movw YL, XL
+    rcall render_item_with_underbar
+    movw XL, YL
+    adiw XL, INVENTORY_UI_COL_WIDTH
+    inc r20
+    cpi r20, PLAYER_INVENTORY_SIZE/2
+    brne _irg_display_inventory_iter_next
+    ldi XL, low(framebuffer+INVENTORY_UI_ROW2_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_ROW2_MARGIN)
+_irg_display_inventory_iter_next:
+    cpi r20, PLAYER_INVENTORY_SIZE
+    brlo _irg_display_inventory_iter
 _irg_render_selection:
     lds r18, inventory_selection
     ldi ZL, low(player_inventory)
@@ -194,11 +193,11 @@ _irg_render_selection:
     ld r19, Z
     ldi XL, low(framebuffer+INVENTORY_UI_ROW1_MARGIN-DISPLAY_WIDTH-1)
     ldi XH, high(framebuffer+INVENTORY_UI_ROW1_MARGIN-DISPLAY_WIDTH-1)
-    cpi r18, PLAYER_INVENTORY_SIZE/2+1
+    cpi r18, PLAYER_INVENTORY_SIZE/2
     brlo _irg_calc_selection_offset
     ldi XL, low(framebuffer+INVENTORY_UI_ROW2_MARGIN-DISPLAY_WIDTH-1)
     ldi XH, high(framebuffer+INVENTORY_UI_ROW2_MARGIN-DISPLAY_WIDTH-1)
-    subi r18, PLAYER_INVENTORY_SIZE/2+1
+    subi r18, PLAYER_INVENTORY_SIZE/2
 _irg_calc_selection_offset:
     ldi r20, INVENTORY_UI_COL_WIDTH
     mul r18, r20
@@ -240,9 +239,9 @@ _irg_end:
 ; whether or not the item is present.
 ;
 ; Register Usage
-;   r25             item
-;   r22-r25         internal
-;   X (r26:r37)     framebuffer pointer
+;   r22-r24         internal
+;   r25             item (param)
+;   X (r26:r37)     framebuffer pointer (param)
 render_item_with_underbar:
     call render_item_icon
     subi XL, low(-(STATIC_ITEM_HEIGHT*DISPLAY_WIDTH-1))

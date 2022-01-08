@@ -955,6 +955,8 @@ render_item_icon:
     tst r25
     breq _rii_end
     dec r25
+    ldi ZL, byte3(2*static_item_sprite_table)
+    out RAMPZ, ZL
     ldi ZL, low(2*static_item_sprite_table)
     ldi ZH, high(2*static_item_sprite_table)
     ldi r22, STATIC_ITEM_MEMSIZE
