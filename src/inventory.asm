@@ -52,6 +52,8 @@ _ihc_end:
 
 .equ INVENTORY_UI_HEADER_HEIGHT = 9
 .equ INVENTORY_UI_HEADER_COLOR = 0x1d
+.equ INVENTORY_UI_SUBHEADER_HEIGHT = 7
+.equ INVENTORY_UI_SUBHEADER_OFFSET = 33*DISPLAY_WIDTH
 .equ INVENTORY_UI_BODY_COLOR = 0x6e
 .equ INVENTORY_UI_CLASS_MARGIN = 2*DISPLAY_WIDTH+2
 .equ INVENTORY_UI_STATS_MARGIN = 2*DISPLAY_WIDTH+60
@@ -65,8 +67,8 @@ _ihc_end:
 .equ INVENTORY_UI_HEALTH_MARGIN = 13*DISPLAY_WIDTH+106
 .equ INVENTORY_UI_GOLD_ICON_MARGIN = DISPLAY_WIDTH*21+112
 .equ INVENTORY_UI_GOLD_MARGIN = 22*DISPLAY_WIDTH+106
-.equ INVENTORY_UI_ITEM_NAME_MARGIN = 40*DISPLAY_WIDTH+2
-.equ INVENTORY_UI_ITEM_STATS_MARGIN = 59*DISPLAY_WIDTH+17
+.equ INVENTORY_UI_ITEM_NAME_MARGIN = 34*DISPLAY_WIDTH+2
+.equ INVENTORY_UI_ITEM_STATS_MARGIN = 41*DISPLAY_WIDTH+107
 
 ; Render the player's inventory and equipment, along with the currently selected
 ; item and information about it.
@@ -92,6 +94,12 @@ _irg_render_background:
     ldi r22, INVENTORY_UI_BODY_COLOR
     ldi r24, DISPLAY_WIDTH
     ldi r25, DISPLAY_HEIGHT-INVENTORY_UI_HEADER_HEIGHT
+    call render_rect
+    ldi XL, low(framebuffer+INVENTORY_UI_SUBHEADER_OFFSET)
+    ldi XH, high(framebuffer+INVENTORY_UI_SUBHEADER_OFFSET)
+    ldi r22, INVENTORY_UI_HEADER_COLOR
+    ldi r24, DISPLAY_WIDTH
+    ldi r25, INVENTORY_UI_SUBHEADER_HEIGHT
     call render_rect
 _irg_render_class:
     ldi YL, low(framebuffer+INVENTORY_UI_CLASS_MARGIN)
@@ -249,8 +257,8 @@ _irg_render_selected_item_name:
     ldi r21, 29
     call puts
 _irg_render_selected_item_description:
-    ldi YL, low(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN+DISPLAY_WIDTH*FONT_DISPLAY_HEIGHT)
-    ldi YH, high(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN+DISPLAY_WIDTH*FONT_DISPLAY_HEIGHT)
+    ldi YL, low(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN+DISPLAY_WIDTH*(FONT_DISPLAY_HEIGHT+1))
+    ldi YH, high(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN+DISPLAY_WIDTH*(FONT_DISPLAY_HEIGHT+1))
     ldi ZL, low(2*item_table+ITEM_DESC_PTR_OFFSET)
     ldi ZH, high(2*item_table+ITEM_DESC_PTR_OFFSET)
     ldi r19, ITEM_MEMSIZE
@@ -264,7 +272,7 @@ _irg_render_selected_item_description:
     subi ZL, low(-2*item_string_table)
     sbci ZH, high(-2*item_string_table)
     ldi r23, 0
-    ldi r21, 29
+    ldi r21, 22
     call puts
 _irg_render_item_stats:
     ldi YL, low(framebuffer+INVENTORY_UI_ITEM_STATS_MARGIN)
@@ -289,8 +297,8 @@ _irg_render_item_strength:
     ldi ZH, high(2*ui_str_strength_abbr)
     mov r25, r14
     rcall render_item_stat
-    subi YL, low(-FONT_DISPLAY_WIDTH*7)
-    sbci YH, high(-FONT_DISPLAY_WIDTH*7)
+    subi YL, low(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
+    sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
 _irg_render_item_vitality:
     tst r15
     breq _irg_render_item_dexterity
@@ -298,8 +306,8 @@ _irg_render_item_vitality:
     ldi ZH, high(2*ui_str_vitality_abbr)
     mov r25, r15
     rcall render_item_stat
-    subi YL, low(-FONT_DISPLAY_WIDTH*7)
-    sbci YH, high(-FONT_DISPLAY_WIDTH*7)
+    subi YL, low(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
+    sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
 _irg_render_item_dexterity:
     tst r16
     breq _irg_render_item_charisma
@@ -307,8 +315,8 @@ _irg_render_item_dexterity:
     ldi ZH, high(2*ui_str_dexterity_abbr)
     mov r25, r16
     rcall render_item_stat
-    subi YL, low(-FONT_DISPLAY_WIDTH*7)
-    sbci YH, high(-FONT_DISPLAY_WIDTH*7)
+    subi YL, low(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
+    sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
 _irg_render_item_charisma:
     tst r17
     breq _irg_end
@@ -353,8 +361,8 @@ render_item_stat:
     ldi r21, 6
     clr r23
     call puts
-    subi XL, low(4*FONT_DISPLAY_WIDTH+FONT_DISPLAY_WIDTH/2) ; puts changes X
-    sbci XH, high(4*FONT_DISPLAY_WIDTH+FONT_DISPLAY_WIDTH/2)
+    subi XL, low(4*FONT_DISPLAY_WIDTH+FONT_DISPLAY_WIDTH/3) ; puts changes X
+    sbci XH, high(4*FONT_DISPLAY_WIDTH+FONT_DISPLAY_WIDTH/3)
     pop r21
     ldi r23, 0x18
     ldi r20, '+'
