@@ -13,7 +13,7 @@ inventory_handle_controls:
     sts mode_clock, r1
 _ihc_handle_buttons:
     lds r21, mode_clock
-    andi r21, 0; 3
+    andi r21, 3
     brne _ihc_end
 _ihc_down:
     sbrs r19, CONTROLS_DOWN
@@ -50,9 +50,6 @@ _ihc_end:
     sts mode_clock, r21
     ret
 
-_placeholder_item_description: .db "ANCIENT GLASS SWORD     300O", 10, "A favorite of thives and assassins, but prone to chipping.", 0
-_placeholder_item_stats: .db " -3 Str +0 Vit +1 Dex +1 Cng", 0, 0
-
 .equ INVENTORY_UI_HEADER_HEIGHT = 9
 .equ INVENTORY_UI_HEADER_COLOR = 0x1d
 .equ INVENTORY_UI_BODY_COLOR = 0x6e
@@ -68,8 +65,21 @@ _placeholder_item_stats: .db " -3 Str +0 Vit +1 Dex +1 Cng", 0, 0
 .equ INVENTORY_UI_HEALTH_MARGIN = 13*DISPLAY_WIDTH+106
 .equ INVENTORY_UI_GOLD_ICON_MARGIN = DISPLAY_WIDTH*21+112
 .equ INVENTORY_UI_GOLD_MARGIN = 22*DISPLAY_WIDTH+106
+.equ INVENTORY_UI_ITEM_NAME_MARGIN = 40*DISPLAY_WIDTH+2
+.equ INVENTORY_UI_ITEM_STATS_MARGIN = 59*DISPLAY_WIDTH+17
 
+; Render the player's inventory and equipment, along with the currently selected
+; item and information about it.
+;
+; Register Usage
+;   r14-r16         preserve values across calls
+;   r18-r25         calculations
+;   X, Y, Z         framebuffer and memory pointers
 inventory_render_game:
+    push r14
+    push r15
+    push r16
+    push r17
 _irg_render_background:
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
@@ -186,11 +196,6 @@ _irg_display_inventory_iter_next:
     brlo _irg_display_inventory_iter
 _irg_render_selection:
     lds r18, inventory_selection
-    ldi ZL, low(player_inventory)
-    ldi ZH, high(player_inventory)
-    add ZL, r18
-    adc ZH, r1
-    ld r19, Z
     ldi XL, low(framebuffer+INVENTORY_UI_ROW1_MARGIN-DISPLAY_WIDTH-1)
     ldi XH, high(framebuffer+INVENTORY_UI_ROW1_MARGIN-DISPLAY_WIDTH-1)
     cpi r18, PLAYER_INVENTORY_SIZE/2
@@ -212,27 +217,110 @@ _irg_render_selection_cursor:
     ldi ZL, low(2*ui_item_selection_cursor)
     ldi ZH, high(2*ui_item_selection_cursor)
     call render_element
-_irg_render_item_description:
-    ldi YL, low(framebuffer+40*DISPLAY_WIDTH+2)
-    ldi YH, high(framebuffer+40*DISPLAY_WIDTH+2)
-    ldi ZL, byte3(2*_placeholder_item_description)
+_irg_render_item_name:
+    lds r16, inventory_selection
+    ldi ZL, low(player_inventory)
+    ldi ZH, high(player_inventory)
+    add ZL, r16
+    adc ZH, r1
+    ld r16, Z
+    tst r16
+    brne _irg_render_selected_item_name
+    rjmp _irg_end
+_irg_render_selected_item_name:
+    dec r16
+    ldi YL, low(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN)
+    ldi YH, high(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN)
+    ldi ZL, byte3(2*item_table)
     out RAMPZ, ZL
-    ldi ZL, low(2*_placeholder_item_description)
-    ldi ZH, high(2*_placeholder_item_description)
+    ldi ZL, low(2*item_table+ITEM_NAME_PTR_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_NAME_PTR_OFFSET)
+    ldi r19, ITEM_MEMSIZE
+    mul r16, r19
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r24, Z+
+    elpm r25, Z+
+    movw ZL, r24
+    subi ZL, low(-2*item_string_table)
+    sbci ZH, high(-2*item_string_table)
+    ldi r23, 0
+    ldi r21, 29
+    call puts
+_irg_render_selected_item_description:
+    ldi YL, low(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN+DISPLAY_WIDTH*FONT_DISPLAY_HEIGHT)
+    ldi YH, high(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN+DISPLAY_WIDTH*FONT_DISPLAY_HEIGHT)
+    ldi ZL, low(2*item_table+ITEM_DESC_PTR_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_DESC_PTR_OFFSET)
+    ldi r19, ITEM_MEMSIZE
+    mul r16, r19
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r24, Z+
+    elpm r25, Z+
+    movw ZL, r24
+    subi ZL, low(-2*item_string_table)
+    sbci ZH, high(-2*item_string_table)
     ldi r23, 0
     ldi r21, 29
     call puts
 _irg_render_item_stats:
-    ldi YL, low(framebuffer+59*DISPLAY_WIDTH+2)
-    ldi YH, high(framebuffer+59*DISPLAY_WIDTH+2)
-    ldi ZL, byte3(2*_placeholder_item_stats)
+    ldi YL, low(framebuffer+INVENTORY_UI_ITEM_STATS_MARGIN)
+    ldi YH, high(framebuffer+INVENTORY_UI_ITEM_STATS_MARGIN)
+    ldi ZL, low(2*item_table+ITEM_STATS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_STATS_OFFSET)
+    ldi r19, ITEM_MEMSIZE
+    mul r16, r19
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r14, Z+
+    elpm r15, Z+
+    elpm r16, Z+
+    elpm r17, Z+
+_irg_render_item_strength:
+    tst r14
+    breq _irg_render_item_vitality
+    ldi ZL, byte3(2*ui_str_strength_abbr)
     out RAMPZ, ZL
-    ldi ZL, low(2*_placeholder_item_stats)
-    ldi ZH, high(2*_placeholder_item_stats)
-    ldi r23, 0
-    ldi r21, 29
-    call puts
+    ldi ZL, low(2*ui_str_strength_abbr)
+    ldi ZH, high(2*ui_str_strength_abbr)
+    mov r25, r14
+    rcall render_item_stat
+    subi YL, low(-FONT_DISPLAY_WIDTH*7)
+    sbci YH, high(-FONT_DISPLAY_WIDTH*7)
+_irg_render_item_vitality:
+    tst r15
+    breq _irg_render_item_dexterity
+    ldi ZL, low(2*ui_str_vitality_abbr)
+    ldi ZH, high(2*ui_str_vitality_abbr)
+    mov r25, r15
+    rcall render_item_stat
+    subi YL, low(-FONT_DISPLAY_WIDTH*7)
+    sbci YH, high(-FONT_DISPLAY_WIDTH*7)
+_irg_render_item_dexterity:
+    tst r16
+    breq _irg_render_item_charisma
+    ldi ZL, low(2*ui_str_dexterity_abbr)
+    ldi ZH, high(2*ui_str_dexterity_abbr)
+    mov r25, r16
+    rcall render_item_stat
+    subi YL, low(-FONT_DISPLAY_WIDTH*7)
+    sbci YH, high(-FONT_DISPLAY_WIDTH*7)
+_irg_render_item_charisma:
+    tst r17
+    breq _irg_end
+    ldi ZL, low(2*ui_str_charisma_abbr)
+    ldi ZH, high(2*ui_str_charisma_abbr)
+    mov r25, r17
+    rcall render_item_stat
 _irg_end:
+    pop r17
+    pop r16
+    pop r15
+    pop r14
     ret
 
 ; Render an item icon with a nice-looking underbar. The underbar is rendered
@@ -250,4 +338,34 @@ render_item_with_underbar:
     ldi r24, INVENTORY_UI_COL_WIDTH-1
     ldi r25, 1
     call render_rect
+    ret
+
+; Render an item stat boost with color.
+;
+; Register Usage
+;   r21-24          calculations
+;   r25             stat boost value (param)
+;   X (r26:r27)     working framebuffer pointer
+;   Y (r28:r29)     framebuffer pointer (param)
+;   Z (r30:r31)     stat abbreviation pointer (param)
+render_item_stat:
+    push r25
+    ldi r21, 6
+    clr r23
+    call puts
+    subi XL, low(4*FONT_DISPLAY_WIDTH+FONT_DISPLAY_WIDTH/2) ; puts changes X
+    sbci XH, high(4*FONT_DISPLAY_WIDTH+FONT_DISPLAY_WIDTH/2)
+    pop r21
+    ldi r23, 0x18
+    ldi r20, '+'
+    cpi r21, 0
+    brge _rit_write_stat
+    ldi r23, 0x4
+    ldi r20, '-'
+    neg r21
+_rit_write_stat:
+    call put8u
+    mov r22, r20
+    call putc
+    clr r23
     ret

@@ -1065,6 +1065,7 @@ put8u:
 ;   r18-r19         storage across calls
 ;   r20             counter
 ;   r21             number of horizontal characters to print (param)
+;   r22             character
 ;   r23             foreground color (param)
 ;   X (r26:r27)     working framebuffer pointer
 ;   Y (r28:r29)     framebuffer pointer (param)

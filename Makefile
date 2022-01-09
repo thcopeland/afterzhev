@@ -9,7 +9,7 @@ OBJDUMP        = avr-objdump
 
 all: $(BIN)/main.hex $(BIN)/main.lst
 
-$(BIN)/%.hex: $(SRC)/%.asm $(SRC)/*.asm $(SRC)/*.inc
+$(BIN)/%.hex: $(SRC)/%.asm $(SRC)/*.asm $(SRC)/*.inc $(DATA)/*.asm
 	$(AS) $(DEFS) -I $(SRC) -I $(DATA) -o $@ -e /dev/null -d /dev/null $<
 
 $(BIN)/%.lst: $(BIN)/%.hex

@@ -18,6 +18,7 @@ init:
     sti player_inventory+2, 2
     sti player_inventory+10, 3
     sti player_inventory+1, 4
+    sti player_inventory, 1
 
     sti player_stats,   32
     sti player_stats+1, 0
