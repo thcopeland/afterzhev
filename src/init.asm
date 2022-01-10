@@ -12,13 +12,12 @@ init:
     sti player_velocity_y, 0
     sti player_character, 0
     sti player_weapon, 1
-    sti player_armor, 1
+    sti player_armor, 0
     sti player_action, ACTION_WALK
     sti player_frame, 0
     sti player_inventory+2, 2
     sti player_inventory+10, 3
     sti player_inventory+1, 4
-    sti player_inventory, 1
 
     sti player_stats,   32
     sti player_stats+1, 0
@@ -30,7 +29,7 @@ init:
 
     sti game_mode, MODE_EXPLORE
 
-    sti inventory_selection, 2
+    sti inventory_selection, 0
 
     stiw preplaced_item_availability, 0xffff
 

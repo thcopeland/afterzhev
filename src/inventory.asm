@@ -6,13 +6,15 @@ inventory_update_game:
 inventory_handle_controls:
     lds r18, prev_controller_values
     lds r19, controller_values
-    mov r20, r18
-    com r20
-    and r20, r19
+    com r18
+    and r18, r19
     breq _ihc_handle_buttons
     sts mode_clock, r1
+    rjmp _ihc_down
 _ihc_handle_buttons:
     lds r21, mode_clock
+    inc r21
+    sts mode_clock, r21
     andi r21, 3
     brne _ihc_end
 _ihc_down:
@@ -40,14 +42,75 @@ _ihc_up:
     sts inventory_selection, r22
 _ihc_left:
     sbrs r19, CONTROLS_LEFT
-    rjmp _ihc_end
+    rjmp _ihc_button1
     lds r22, inventory_selection
     dec r22
     brmi _ihc_end
     sts inventory_selection, r22
+_ihc_button1:
+    sbrc r19, CONTROLS_SPECIAL1
+    rcall inventory_equip_item
+_ihc_button2: ; use
+_ihc_button3: ; drop
+_ihc_button4: ; exit
 _ihc_end:
-    inc r21
-    sts mode_clock, r21
+    ret
+
+; Move the selected item to the weapon or armor slot, whichever is appropriate.
+; If the selected item is zero, unequip the current weapon or armor.
+;
+; Register Usage
+;   r18         selected item
+;   r19         calculations, equipped item
+;   r20         calculations
+inventory_equip_item:
+    ldi XL, low(player_inventory)
+    ldi XH, high(player_inventory)
+    lds r18, inventory_selection
+    add XL, r18
+    adc XH, r1
+    ld r18, X
+    tst r18
+    breq _iei_unequip_weapon
+    mov r20, r18
+    dec r20
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r19, ITEM_MEMSIZE
+    mul r20, r19
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r19, Z
+    andi r19, 3
+_iei_equip_weapon:
+    cpi r19, ITEM_WIELDABLE
+    brne _iei_equip_armor
+    lds r19, player_weapon
+    sts player_weapon, r18
+    st X, r19
+    rjmp _iei_end
+_iei_equip_armor:
+    cpi r19, ITEM_WEARABLE
+    brne _iei_end
+    lds r19, player_armor
+    sts player_armor, r18
+    st X, r19
+    rjmp _iei_end
+_iei_unequip_weapon:
+    lds r18, player_weapon
+    tst r18
+    breq _iei_unequip_armor
+    st X, r18
+    sts player_weapon, r1
+    rjmp _iei_end
+_iei_unequip_armor:
+    lds r18, player_armor
+    st X, r18
+    sts player_weapon, r1
+_iei_end:
     ret
 
 .equ INVENTORY_UI_HEADER_HEIGHT = 9
@@ -163,8 +226,7 @@ _irg_render_gold:
 _irg_render_character:
     ldi XL, low(framebuffer+INVENTORY_UI_WEAPON_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_WEAPON_MARGIN)
-    lds r25, player_armor
-    ldi r25, 1
+    lds r25, player_weapon
     rcall render_item_with_underbar
     ldi XL, low(framebuffer+INVENTORY_UI_CHARACTER_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_CHARACTER_MARGIN)
@@ -173,7 +235,7 @@ _irg_render_character:
     call render_character_icon
     ldi XL, low(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
-    lds r25, player_weapon
+    lds r25, player_armor
     rcall render_item_with_underbar
 _irg_render_inventory:
     ldi XL, low(framebuffer+INVENTORY_UI_ROW1_MARGIN)
