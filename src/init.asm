@@ -1,6 +1,8 @@
 init:
     clr r1
     stiw vid_fbuff_offset, framebuffer
+    sti vid_row_repeat, 0
+    sti vid_work_complete, 0
     stiw current_sector, 2*sector_table
     stiw camera_position_x, 0x0000
     stiw camera_position_y, 0x0200
@@ -14,7 +16,15 @@ init:
     sti player_weapon, 1
     sti player_armor, 0
     sti player_action, ACTION_WALK
+    sti player_direction, DIRECTION_DOWN
     sti player_frame, 0
+    ldi XL, low(player_inventory)
+    ldi XH, high(player_inventory)
+    ldi r18, PLAYER_INVENTORY_SIZE
+_init_clear_inventory_iter:
+    st X+, r1
+    dec r18
+    brne _init_clear_inventory_iter
     sti player_inventory+2, 2
     sti player_inventory+10, 3
     sti player_inventory+1, 4
@@ -28,10 +38,10 @@ init:
     sti player_health, 13
 
     sti game_mode, MODE_EXPLORE
-
     sti inventory_selection, 0
-
     stiw preplaced_item_availability, 0xffff
+    sti clock, 0
+    sti mode_clock, 0
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL

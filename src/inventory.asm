@@ -15,7 +15,7 @@ _ihc_handle_buttons:
     lds r21, mode_clock
     inc r21
     sts mode_clock, r21
-    andi r21, 3
+    andi r21, 15
     brne _ihc_end
 _ihc_down:
     sbrs r19, CONTROLS_DOWN
@@ -48,14 +48,14 @@ _ihc_left:
     brmi _ihc_end
     sts inventory_selection, r22
 _ihc_button1:
-    sbrc r19, CONTROLS_SPECIAL1
+    sbrc r18, CONTROLS_SPECIAL1
     rcall inventory_equip_item
 _ihc_button2: ; use
 _ihc_button3:
-    sbrc r19, CONTROLS_SPECIAL3
+    sbrc r18, CONTROLS_SPECIAL3
     rcall inventory_drop_item
 _ihc_button4:
-    sbrs r19, CONTROLS_SPECIAL4
+    sbrs r18, CONTROLS_SPECIAL4
     rjmp _ihc_end
     ldi r22, MODE_EXPLORE
     sts game_mode, r22
