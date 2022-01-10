@@ -151,6 +151,9 @@ _hmb_pickup_items:
     ldi ZH, high(sector_loose_items)
     ldi r20, SECTOR_DYNAMIC_ITEM_COUNT
 _hmb_loose_item_iter:
+    ldd r0, Z+SECTOR_ITEM_IDX_OFFSET
+    tst r0
+    breq _hmb_loose_item_next
     ldd r0, Z+SECTOR_ITEM_X_OFFSET
     cp r0, r18
     brne _hmb_loose_item_next

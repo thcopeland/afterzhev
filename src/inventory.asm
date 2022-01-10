@@ -51,8 +51,14 @@ _ihc_button1:
     sbrc r19, CONTROLS_SPECIAL1
     rcall inventory_equip_item
 _ihc_button2: ; use
-_ihc_button3: ; drop
-_ihc_button4: ; exit
+_ihc_button3:
+    sbrc r19, CONTROLS_SPECIAL3
+    rcall inventory_drop_item
+_ihc_button4:
+    sbrs r19, CONTROLS_SPECIAL4
+    rjmp _ihc_end
+    ldi r22, MODE_EXPLORE
+    sts game_mode, r22
 _ihc_end:
     ret
 
@@ -111,6 +117,50 @@ _iei_unequip_armor:
     st X, r18
     sts player_weapon, r1
 _iei_end:
+    ret
+
+; Remove the selected item from the player's inventory and into the current
+; sector's loose item list. If that list is full, the item is lost forever.
+;
+; Register Usage
+;   r18-r20         calculations
+;   r21             counter
+;   Z (r30:r31)     memory access
+inventory_drop_item:
+    ldi ZL, low(player_inventory)
+    ldi ZH, high(player_inventory)
+    lds r18, inventory_selection
+    add ZL, r18
+    adc ZH, r1
+    ld r18, Z
+    tst r18
+    breq _idi_end
+    st Z, r1
+    ldi ZL, low(sector_loose_items)
+    ldi ZH, high(sector_loose_items)
+    ldi r21, SECTOR_DYNAMIC_ITEM_COUNT
+_idi_loose_items_iter:
+    ld r20, Z
+    tst r20
+    brne _idi_loose_items_next
+    std Z+SECTOR_ITEM_IDX_OFFSET, r18
+    std Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET, r1
+    lds r18, player_position_x
+    lds r19, player_position_x+1
+    subi r18, -TILE_WIDTH/2
+    qmod r18, r19, TILE_WIDTH
+    std Z+SECTOR_ITEM_X_OFFSET, r19
+    lds r18, player_position_y
+    lds r19, player_position_y+1
+    subi r18, -TILE_HEIGHT/2
+    qmod r18, r19, TILE_HEIGHT
+    std Z+SECTOR_ITEM_Y_OFFSET, r19
+    rjmp _idi_end
+_idi_loose_items_next:
+    adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    dec r21
+    brne _idi_loose_items_iter
+_idi_end:
     ret
 
 .equ INVENTORY_UI_HEADER_HEIGHT = 9

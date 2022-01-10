@@ -127,8 +127,16 @@ _idr_work:
     sts clock+1, r25
 
     call read_controls
+    lds r18, game_mode
+    cpi r18, MODE_EXPLORE
+    breq _idr_explore
+_idr_inventory:
     call inventory_update_game
-    ; call explore_update_game
+    rjmp _idr_end_work
+_idr_explore:
+    call explore_update_game
+    rjmp _idr_end_work
+_idr_end_work:
 
 _idr_reset_render_state:
     sti vid_row_repeat, DISPLAY_VERTICAL_STRETCH
