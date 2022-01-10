@@ -69,6 +69,7 @@ _ihc_end:
 .equ INVENTORY_UI_GOLD_MARGIN = 22*DISPLAY_WIDTH+106
 .equ INVENTORY_UI_ITEM_NAME_MARGIN = 34*DISPLAY_WIDTH+2
 .equ INVENTORY_UI_ITEM_STATS_MARGIN = 41*DISPLAY_WIDTH+107
+.equ INVENTORY_UI_NO_ITEM_SELECTED_MARGIN = 59*DISPLAY_WIDTH+28
 
 ; Render the player's inventory and equipment, along with the currently selected
 ; item and information about it.
@@ -94,12 +95,6 @@ _irg_render_background:
     ldi r22, INVENTORY_UI_BODY_COLOR
     ldi r24, DISPLAY_WIDTH
     ldi r25, DISPLAY_HEIGHT-INVENTORY_UI_HEADER_HEIGHT
-    call render_rect
-    ldi XL, low(framebuffer+INVENTORY_UI_SUBHEADER_OFFSET)
-    ldi XH, high(framebuffer+INVENTORY_UI_SUBHEADER_OFFSET)
-    ldi r22, INVENTORY_UI_HEADER_COLOR
-    ldi r24, DISPLAY_WIDTH
-    ldi r25, INVENTORY_UI_SUBHEADER_HEIGHT
     call render_rect
 _irg_render_class:
     ldi YL, low(framebuffer+INVENTORY_UI_CLASS_MARGIN)
@@ -234,8 +229,14 @@ _irg_render_item_name:
     ld r16, Z
     tst r16
     brne _irg_render_selected_item_name
-    rjmp _irg_end
+    rjmp _irg_no_item_selected
 _irg_render_selected_item_name:
+    ldi XL, low(framebuffer+INVENTORY_UI_SUBHEADER_OFFSET)
+    ldi XH, high(framebuffer+INVENTORY_UI_SUBHEADER_OFFSET)
+    ldi r22, INVENTORY_UI_HEADER_COLOR
+    ldi r24, DISPLAY_WIDTH
+    ldi r25, INVENTORY_UI_SUBHEADER_HEIGHT
+    call render_rect
     dec r16
     ldi YL, low(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN)
     ldi YH, high(framebuffer+INVENTORY_UI_ITEM_NAME_MARGIN)
@@ -324,6 +325,15 @@ _irg_render_item_charisma:
     ldi ZH, high(2*ui_str_charisma_abbr)
     mov r25, r17
     rcall render_item_stat
+    rjmp _irg_end
+_irg_no_item_selected:
+    ldi YL, low(framebuffer+INVENTORY_UI_NO_ITEM_SELECTED_MARGIN)
+    ldi YH, high(framebuffer+INVENTORY_UI_NO_ITEM_SELECTED_MARGIN)
+    ldi ZL, low(2*ui_str_inventory_instructions)
+    ldi ZH, high(2*ui_str_inventory_instructions)
+    ldi r21, 29
+    clr r23
+    call puts
 _irg_end:
     pop r17
     pop r16

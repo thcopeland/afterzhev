@@ -25,6 +25,7 @@ ui_coin_icon:
     .db 0x77, 0x2f, 0x2f, 0x1f	; ,,----~~
     .db 0xc7, 0x2f, 0x1f, 0xc7	;   --~~
 
+ui_str_inventory_instructions:  .db "No item selected", 0, 0
 ui_str_strength_abbr:  .db "Str", 0
 ui_str_vitality_abbr:  .db "Vit", 0
 ui_str_dexterity_abbr: .db "Dex", 0
