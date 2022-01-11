@@ -3,6 +3,7 @@ explore_update_game:
     rcall handle_controls
     rcall move_player
     rcall update_player
+    call update_effects_progress
     rcall move_camera
     ret
 
@@ -22,7 +23,6 @@ render_game:
     lds r24, current_sector
     lds r25, current_sector+1
     call render_sector
-
 _rg_render_loose_items:
     clt
     ldi YL, low(sector_loose_items)
@@ -52,7 +52,6 @@ _rg_render_loose_items_check:
     adiw YL, SECTOR_DYNAMIC_ITEM_MEMSIZE
     dec r16
     brne _rg_render_loose_items_iter
-
     lds r22, player_position_x
     lds r23, player_position_x+1
     lds r24, player_position_y
@@ -403,16 +402,66 @@ _rpm_no_collision:
 _rpm_end:
     ret
 
+; Update the player's animation and general state.
+;
+; Register Usage
+;   r18-r19         calculations
 update_player:
-    lds r20, player_action
-    lds r21, player_frame
-    inc r21
-    andi r21, 3
-    sts player_frame, r21
+    lds r18, player_action
+_up_idle:
+    cpi r18, ACTION_IDLE
+    brne _up_walk
+_up_idle_check_speed:
+    lds r18, player_velocity_x
+    lds r19, player_velocity_y
+    or r18, r19
+    breq _up_idle_pass
+    ldi r18, ACTION_WALK
+    sts player_action, r18
+    sts player_frame, r1
+_up_idle_pass:
+    rjmp _up_end
+_up_walk:
+    cpi r18, ACTION_WALK
+    brne _up_hurt
+_up_walk_check_speed:
+    lds r18, player_velocity_x
+    lds r19, player_velocity_y
+    sbrc r18, 7
+    neg r18
+    sbrc r19, 7
+    neg r19
+    add r18, r19
+    brne _up_walk_vs_run
+_up_walk_to_idle:
+    ldi r18, ACTION_IDLE
+    sts player_action, r18
+    sts player_frame, r1
+    rjmp _up_end
+_up_walk_vs_run:
+    lds r19, clock
+    cpi r18, RUN_RECT_SPEED
+    brlo _up_walk_check_clock
+_up_run_check_clock:
+    andi r19, RUN_FRAME_DURATION_MASK
+_up_walk_check_clock:
+    andi r19, WALK_FRAME_DURATION_MASK
+    brne _up_walk_pass
+    lds r18, player_frame
+    inc r18
+    andi r18, 3
+    sts player_frame, r18
+_up_walk_pass:
+    rjmp _up_end
+_up_hurt:
+_up_attack1:
+_up_attack2:
+_up_attack3:
+_up_end:
     ret
 
 ; Change sectors. Every sector has its own set of items and npcs, these must be
-; changed as necessary.
+; loaded as necessary.
 ;
 ; Register Usage
 ;   r18-r24         calculations

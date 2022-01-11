@@ -3,6 +3,13 @@ inventory_update_game:
     rcall inventory_handle_controls
     ret
 
+; Handle all player input. The directional keys control selection (which is
+; limited to items within the inventory proper), button 1 is equip/unequip,
+; button 2 is use, button 3 is drop, and button 4 is (as usual) exit.
+;
+; Register Usage
+;   r18-r19         controller values
+;   r20-r22         calculations
 inventory_handle_controls:
     lds r18, prev_controller_values
     lds r19, controller_values

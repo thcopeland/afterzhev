@@ -44,7 +44,7 @@ _init_clear_effects_iter:
     sti player_gold, 153
     sti player_max_health, 16
     sti player_health, 13
-    sti game_mode, MODE_INVENTORY ;  MODE_EXPLORE
+    sti game_mode, MODE_EXPLORE
     sti inventory_selection, 0
     stiw preplaced_item_availability, 0xffff
     sti clock, 0
