@@ -1156,8 +1156,11 @@ _rr_inner:
 ;   r25             effect index (param)
 ;   r21-25          calculations
 ;   X (r26:r27)     framebuffer pointer (param)
+;   Y (r28:r29)     working framebuffer pointer
 ;   Z (r30:r31)     memory lookups
 render_effect_progress:
+    push YL
+    push YH
     ldi ZL, low(player_effects)
     ldi ZH, high(player_effects)
     lsl r25
@@ -1166,7 +1169,9 @@ render_effect_progress:
     ld r24, Z+
     ld r25, Z+
     tst r24
-    breq _rep_end
+    brne _rep_calculate_sprite
+    rjmp _rep_end
+_rep_calculate_sprite:
     dec r24
     ldi ZL, byte3(2*static_item_sprite_table)
     out RAMPZ, ZL
@@ -1176,20 +1181,84 @@ render_effect_progress:
     mul r24, r22
     add ZL, r0
     adc ZH, r1
-    ldi r22, STATIC_ITEM_HEIGHT
+    ldi r22, STATIC_ITEM_HEIGHT+1
     mul r25, r22
     sub r22, r1
     dec r22
-    ldi r21, DISPLAY_WIDTH
-    mul r22, r21
-    add XL, r0
-    adc XH, r1
     clr r1
-    ldi r21, STATIC_ITEM_WIDTH
     ldi r23, STATIC_ITEM_HEIGHT
-    sub r23, r22
-    clr r24
-    ldi r25, STATIC_ITEM_WIDTH
-    rcall write_sprite
+    movw YL, XL
+    ldi r24, TRANSPARENT
+    tst r22
+    breq _rep_row_iter2
+_rep_row_iter1:
+    elpm r0, Z+
+    mov r25, r0
+    andi r25, 0xb6
+    lsr r25
+    cpse r0, r24
+    st Y, r25
+    elpm r0, Z+
+    mov r25, r0
+    andi r25, 0xb6
+    lsr r25
+    cpse r0, r24
+    std Y+1, r25
+    elpm r0, Z+
+    mov r25, r0
+    andi r25, 0xb6
+    lsr r25
+    cpse r0, r24
+    std Y+2, r25
+    elpm r0, Z+
+    mov r25, r0
+    andi r25, 0xb6
+    lsr r25
+    cpse r0, r24
+    std Y+3, r25
+    elpm r0, Z+
+    mov r25, r0
+    andi r25, 0xb6
+    lsr r25
+    cpse r0, r24
+    std Y+4, r25
+    elpm r0, Z+
+    mov r25, r0
+    andi r25, 0xb6
+    lsr r25
+    cpse r0, r24
+    std Y+5, r25
+    subi YL, low(-DISPLAY_WIDTH)
+    sbci YH, high(-DISPLAY_WIDTH)
+    dec r23
+    dec r22
+    brne _rep_row_iter1
+    tst r23
+    breq _rep_end
+_rep_row_iter2:
+    elpm r0, Z+
+    cpse r0, r24
+    st Y, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+1, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+2, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+3, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+4, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+5, r0
+    subi YL, low(-DISPLAY_WIDTH)
+    sbci YH, high(-DISPLAY_WIDTH)
+    dec r23
+    brne _rep_row_iter2
 _rep_end:
+    pop YH
+    pop YL
     ret
