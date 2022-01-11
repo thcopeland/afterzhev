@@ -408,14 +408,19 @@ _rpm_end:
 ;   r18-r19         calculations
 update_player:
     lds r18, player_action
+    lds r20, player_velocity_x
+    lds r21, player_velocity_y
+    sbrc r20, 7
+    neg r20
+    sbrc r21, 7
+    neg r21
+    add r20, r21
 _up_idle:
     cpi r18, ACTION_IDLE
     brne _up_walk
 _up_idle_check_speed:
-    lds r18, player_velocity_x
-    lds r19, player_velocity_y
-    or r18, r19
-    breq _up_idle_pass
+    cpi r20, IDLE_MAX_SPEED ; there's an asymmetric transition between walk and idle, helps prevent jittering when running into objects
+    brlo _up_idle_pass
     ldi r18, ACTION_WALK
     sts player_action, r18
     sts player_frame, r1
@@ -425,23 +430,16 @@ _up_walk:
     cpi r18, ACTION_WALK
     brne _up_hurt
 _up_walk_check_speed:
-    lds r18, player_velocity_x
-    lds r19, player_velocity_y
-    sbrc r18, 7
-    neg r18
-    sbrc r19, 7
-    neg r19
-    add r18, r19
-    brne _up_walk_vs_run
+    lds r19, clock
+    cpi r20, RUN_MIN_SPEED
+    brsh _up_run_check_clock
+    tst r20
+    brne _up_walk_check_clock
 _up_walk_to_idle:
     ldi r18, ACTION_IDLE
     sts player_action, r18
     sts player_frame, r1
     rjmp _up_end
-_up_walk_vs_run:
-    lds r19, clock
-    cpi r18, RUN_RECT_SPEED
-    brlo _up_walk_check_clock
 _up_run_check_clock:
     andi r19, RUN_FRAME_DURATION_MASK
 _up_walk_check_clock:
