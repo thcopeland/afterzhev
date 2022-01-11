@@ -891,7 +891,7 @@ render_character_icon:
     ldi r23, CHARACTER_SPRITE_HEIGHT
     clr r24
     ldi r25, CHARACTER_SPRITE_WIDTH
-    call write_sprite
+    rcall write_sprite
     ldd r22, Y+CHARACTER_ARMOR_OFFSET
     tst r22, 0
     breq _rci_write_weapon_sprite
@@ -969,7 +969,7 @@ render_item_icon:
     ldi r23, STATIC_ITEM_HEIGHT
     clr r24
     ldi r25, STATIC_ITEM_WIDTH
-    call write_sprite
+    rcall write_sprite
 _rii_end:
     ret
 
@@ -1147,4 +1147,49 @@ _rr_inner:
     adc XH, r1
     dec r25
     brne _rr_outer
+    ret
+
+; Render a (player) effect icon. The less time remaining on the effect, the fewer
+; pixels rendered.
+;
+; Register Usage
+;   r25             effect index (param)
+;   r21-25          calculations
+;   X (r26:r27)     framebuffer pointer (param)
+;   Z (r30:r31)     memory lookups
+render_effect_progress:
+    ldi ZL, low(player_effects)
+    ldi ZH, high(player_effects)
+    lsl r25
+    add ZL, r25
+    adc ZH, r1
+    ld r24, Z+
+    ld r25, Z+
+    tst r24
+    breq _rep_end
+    dec r24
+    ldi ZL, byte3(2*static_item_sprite_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*static_item_sprite_table)
+    ldi ZH, high(2*static_item_sprite_table)
+    ldi r22, STATIC_ITEM_MEMSIZE
+    mul r24, r22
+    add ZL, r0
+    adc ZH, r1
+    ldi r22, STATIC_ITEM_HEIGHT
+    mul r25, r22
+    sub r22, r1
+    dec r22
+    ldi r21, DISPLAY_WIDTH
+    mul r22, r21
+    add XL, r0
+    adc XH, r1
+    clr r1
+    ldi r21, STATIC_ITEM_WIDTH
+    ldi r23, STATIC_ITEM_HEIGHT
+    sub r23, r22
+    clr r24
+    ldi r25, STATIC_ITEM_WIDTH
+    rcall write_sprite
+_rep_end:
     ret

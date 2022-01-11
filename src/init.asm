@@ -25,19 +25,25 @@ _init_clear_inventory_iter:
     st X+, r1
     dec r18
     brne _init_clear_inventory_iter
+    ldi XL, low(player_effects)
+    ldi XH, high(player_effects)
+    ldi r18, PLAYER_EFFECT_COUNT
+_init_clear_effects_iter:
+    st X+, r1
+    st X+, r1
+    dec r18
+    brne _init_clear_effects_iter
     sti player_inventory+2, 2
     sti player_inventory+10, 3
     sti player_inventory+1, 4
-
-    sti player_stats,   32
-    sti player_stats+1, 0
-    sti player_stats+2, 6
-    sti player_stats+3, 32
+    sti player_stats, 60
+    sti player_stats+1, 99
+    sti player_stats+2, 0
+    sti player_stats+3, 16
     sti player_gold, 153
     sti player_max_health, 16
     sti player_health, 13
-
-    sti game_mode, MODE_EXPLORE
+    sti game_mode, MODE_INVENTORY ;  MODE_EXPLORE
     sti inventory_selection, 0
     stiw preplaced_item_availability, 0xffff
     sti clock, 0

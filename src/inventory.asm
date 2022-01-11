@@ -50,7 +50,9 @@ _ihc_left:
 _ihc_button1:
     sbrc r18, CONTROLS_SPECIAL1
     rcall inventory_equip_item
-_ihc_button2: ; use
+_ihc_button2:
+    sbrc r18, CONTROLS_SPECIAL2
+    rcall inventory_use_item
 _ihc_button3:
     sbrc r18, CONTROLS_SPECIAL3
     rcall inventory_drop_item
@@ -119,6 +121,54 @@ _iei_unequip_armor:
 _iei_end:
     ret
 
+; If possible, use an item, applying its effects to the player.
+;
+; Register Usage
+;   r18-r21     calculations
+;   X, Z        memory lookups
+inventory_use_item:
+    ldi XL, low(player_inventory)
+    ldi XH, high(player_inventory)
+    lds r18, inventory_selection
+    add XL, r18
+    adc XH, r1
+    ld r18, X
+    tst r18
+    breq _iui_end
+    mov r19, r18
+    dec r19
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r20, ITEM_MEMSIZE
+    mul r19, r20
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r19, Z
+    andi r19, 3
+    cpi r19, ITEM_USABLE
+    brne _iui_end
+    ldi ZL, low(player_effects)
+    ldi ZH, high(player_effects)
+    ldi r20, PLAYER_EFFECT_COUNT
+_iui_effects_iter:
+    ldd r21, Z+PLAYER_EFFECT_IDX_OFFSET
+    tst r21
+    breq _iui_found_empty_slot
+    adiw ZL, PLAYER_EFFECT_MEMSIZE
+    dec r20
+    brne _iui_effects_iter
+    rjmp _iui_end
+_iui_found_empty_slot:
+    std Z+PLAYER_EFFECT_IDX_OFFSET, r18
+    ldi r20, 0xff
+    std Z+PLAYER_EFFECT_TIME_OFFSET, r20
+    st X, r1
+_iui_end:
+    ret
+
 ; Remove the selected item from the player's inventory and into the current
 ; sector's loose item list. If that list is full, the item is lost forever.
 ;
@@ -169,7 +219,9 @@ _idi_end:
 .equ INVENTORY_UI_SUBHEADER_OFFSET = 33*DISPLAY_WIDTH
 .equ INVENTORY_UI_BODY_COLOR = 0x6e
 .equ INVENTORY_UI_CLASS_MARGIN = 2*DISPLAY_WIDTH+2
-.equ INVENTORY_UI_STATS_MARGIN = 2*DISPLAY_WIDTH+60
+.equ INVENTORY_UI_STATS_MARGIN = 2*DISPLAY_WIDTH+45
+.equ INVENTORY_UI_EFFECTS_MARGIN = DISPLAY_WIDTH+111
+.equ INVENTORY_UI_EFFECTS_SEPARATION = STATIC_ITEM_WIDTH+2
 .equ INVENTORY_UI_ROW1_MARGIN = DISPLAY_WIDTH*11+33
 .equ INVENTORY_UI_ROW2_MARGIN = DISPLAY_WIDTH*20+33
 .equ INVENTORY_UI_COL_WIDTH = STATIC_ITEM_WIDTH+3
@@ -232,13 +284,28 @@ _irg_render_stats:
     ldi YH, high(player_stats)
     ldi r20, STATS_COUNT
 _irg_render_stats_iter:
+    movw r16, XL
     ld r21, Y+
     call put8u
-    subi XL, low(-22)
-    sbci XH, high(-22)
+    movw XL, r16
+    subi XL, low(-13)
+    sbci XH, high(-13)
 _irg_render_stats_check:
     dec r20
     brne _irg_render_stats_iter
+_irg_render_effects:
+    ldi XL, low(framebuffer+INVENTORY_UI_EFFECTS_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_EFFECTS_MARGIN)
+    clr r20
+_irg_render_effects_iter:
+    mov r25, r20
+    movw YL, XL
+    rcall render_effect_progress
+    movw XL, YL
+    sbiw XL, INVENTORY_UI_EFFECTS_SEPARATION
+    inc r20
+    cpi r20, PLAYER_EFFECT_COUNT
+    brne _irg_render_effects_iter
 _irg_render_health:
     ldi XL, low(framebuffer+INVENTORY_UI_HEALTH_ICON_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_HEALTH_ICON_MARGIN)
