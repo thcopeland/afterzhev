@@ -109,15 +109,15 @@ _ck_test_overflow_%:
 _ck_end_%:
 .endm
 
-; clamp an unsigned value to the given range
+; clamp a signed value to the given range
 .macro clampi ; r, min, max
-_ci_lt_%:
+_ci_le_%:
     cpi @0, @1
-    brpl _ci_gt_%
+    brge _ci_ge_%
     ldi @0, @1
-_ci_gt_%:
+_ci_ge_%:
     cpi @0, @2
-    brlo _ci_end_%
+    brlt _ci_end_%
     ldi @0, @2
 _ci_end_%:
 .endm

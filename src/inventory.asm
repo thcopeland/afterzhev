@@ -119,6 +119,7 @@ _iei_unequip_armor:
     st X, r18
     sts player_weapon, r1
 _iei_end:
+    call calculate_player_stats
     ret
 
 ; If possible, use an item, applying its effects to the player.
@@ -167,6 +168,7 @@ _iui_found_empty_slot:
     std Z+PLAYER_EFFECT_TIME_OFFSET, r20
     st X, r1
 _iui_end:
+    call calculate_player_stats
     ret
 
 ; Remove the selected item from the player's inventory and into the current
@@ -280,8 +282,8 @@ _irg_render_class:
 _irg_render_stats:
     ldi XL, low(framebuffer+INVENTORY_UI_STATS_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_STATS_MARGIN)
-    ldi YL, low(player_stats)
-    ldi YH, high(player_stats)
+    ldi YL, low(player_augmented_stats)
+    ldi YH, high(player_augmented_stats)
     ldi r20, STATS_COUNT
 _irg_render_stats_iter:
     movw r16, XL

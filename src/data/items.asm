@@ -12,9 +12,9 @@
 
 item_table:
     DECL_ITEM wood_stick, ITEM_WIELDABLE, 1, 10, 0, -1, -4
-    DECL_ITEM health_potion, ITEM_USABLE, 15, 2, 50, 2, 0
-    DECL_ITEM mint_soda, ITEM_USABLE, 3, 0, 0, 0, 1
-    DECL_ITEM mint_leaves, ITEM_USABLE, 1, 0, 0, 0, 1
+    DECL_ITEM health_potion, (0<<2)|ITEM_USABLE, 15, 2, 50, 2, 0
+    DECL_ITEM mint_soda, (3<<2)|ITEM_USABLE, 3, 0, 0, 0, 1
+    DECL_ITEM mint_leaves, (1<<2)|ITEM_USABLE, 1, 0, 0, 0, 1
 
 item_string_table:
 _item_str_wood_stick_name:      .db "Wood Stick", 0, 0

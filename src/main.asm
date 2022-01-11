@@ -149,6 +149,7 @@ _idr_end:
 .include "controls.asm"
 .include "animation.asm"
 .include "render.asm"
+.include "stats.asm"
 .include "explore.asm"
 .include "inventory.asm"
 .include "rodata.asm"

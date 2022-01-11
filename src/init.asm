@@ -36,10 +36,11 @@ _init_clear_effects_iter:
     sti player_inventory+2, 2
     sti player_inventory+10, 3
     sti player_inventory+1, 4
-    sti player_stats, 60
-    sti player_stats+1, 99
-    sti player_stats+2, 0
-    sti player_stats+3, 16
+    sti player_stats, 10
+    sti player_stats+1, 10
+    sti player_stats+2, 10
+    sti player_stats+3, 10
+    call calculate_player_stats
     sti player_gold, 153
     sti player_max_health, 16
     sti player_health, 13
