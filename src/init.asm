@@ -46,7 +46,8 @@ _init_clear_effects_iter:
     sti player_health, 13
     sti game_mode, MODE_EXPLORE
     sti inventory_selection, 0
-    stiw preplaced_item_availability, 0xffff
+    stiw preplaced_item_presence, 0xffff
+    stiw npc_presence, 0xffff
     sti clock, 0
     sti mode_clock, 0
 

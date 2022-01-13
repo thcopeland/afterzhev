@@ -40,6 +40,11 @@
 .equ CHARACTER_SNEAK = 6    ; enemy 3
 .equ CHARACTER_GHOUL = 7    ; enemy 4
 
+.equ NPC_ENEMY = 0
+.equ NPC_SHOPKEEPER = 1
+.equ NPC_TALKER = 2
+.equ NPC_SPECIAL = 3
+
 .equ RUN_FRAME_DURATION_MASK = 0x3
 .equ WALK_FRAME_DURATION_MASK = 0x7
 .equ IDLE_MAX_SPEED = 40

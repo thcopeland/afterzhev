@@ -69,7 +69,7 @@ _adnv_done_%:
 .endm
 
 ; read the nth bit of a register (the result is placed in the register). Only the
-; last three bits of n are considered.
+; last three bits of n are considered. The Z flag is set appropriately.
 .macro nbit ; r, n
     andi @1, 7
     breq _nbit_end_%
@@ -123,6 +123,7 @@ _ci_end_%:
 .endm
 
 ; approximate one step of 0.9375 exponential decay for a signed 8 bit number
+; TODO use reciprocal multiplication w/ 0xf0, should be > 2x faster
 .macro decay_94p ; x, tmp1, tmp2
     mov @1, @0
     sbrc @0, 7

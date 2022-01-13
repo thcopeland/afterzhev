@@ -18,8 +18,12 @@ controller_values:  .byte 1
 game_mode:          .byte 1
 current_sector:     .byte 2
 
-preplaced_item_availability: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
-sector_loose_items: .byte 4*SECTOR_DYNAMIC_ITEM_COUNT
+preplaced_item_presence: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
+sector_loose_items: .byte SECTOR_DYNAMIC_ITEM_MEMSIZE*SECTOR_DYNAMIC_ITEM_COUNT
+
+npc_presence:       .byte TOTAL_NPC_COUNT>>3
+sector_npcs:        .byte NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT
+character_render:   .byte CHARACTER_MEMSIZE
 
 camera_position_x:  .byte 2
 camera_position_y:  .byte 2
@@ -44,7 +48,8 @@ player_augmented_stats: .byte 4
 player_health:      .byte 1
 player_max_health:  .byte 1
 player_gold:        .byte 1
-player_effects:     .byte 2*PLAYER_EFFECT_COUNT
+player_xp:          .byte 2
+player_effects:     .byte PLAYER_EFFECT_MEMSIZE*PLAYER_EFFECT_COUNT
 player_inventory:   .byte PLAYER_INVENTORY_SIZE
 
 inventory_selection: .byte 1

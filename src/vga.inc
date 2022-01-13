@@ -1,4 +1,4 @@
-; VGA timing information for 640x480 on a 16Mhz processor
+; VGA timing information for 640x480 @ 60Hz on a 16Mhz processor
 .equ VGA_HORIZONTAL_ACTIVE_PIXELS = 640
 .equ VGA_HFRONT_PORCH_PIXELS = 16
 .equ VGA_HSYNC_WIDTH_PIXELS = 96

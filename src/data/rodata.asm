@@ -5,6 +5,7 @@
     .cseg
     .include "font.asm"
     .include "items.asm"
+    .include "npcs.asm"
     .include "classes.asm"
 
 ; Partition 2 (words 0x05000-0x0ffff): tiles and maps

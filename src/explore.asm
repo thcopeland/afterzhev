@@ -52,6 +52,80 @@ _rg_render_loose_items_check:
     adiw YL, SECTOR_DYNAMIC_ITEM_MEMSIZE
     dec r16
     brne _rg_render_loose_items_iter
+_rg_render_npcs:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r16, SECTOR_DYNAMIC_NPC_COUNT
+_rg_render_npcs_iter:
+    ldd r17, Y+NPC_IDX_OFFSET
+    dec r17
+    brmi _rg_render_npcs_next
+    ldi ZL, low(2*npc_table+NPC_TABLE_CHARACTER_OFFSET)
+    ldi ZH, high(2*npc_table+NPC_TABLE_CHARACTER_OFFSET)
+    ldi r18, NPC_TABLE_ENTRY_MEMSIZE
+    mul r17, r18
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    lpm r18, Z+
+_rg_render_static_npc:
+    cpi r18, 128
+    brlo _rg_render_dynamic_npc
+    andi r18, low(~128)
+    clt
+    ldi ZL, byte3(2*static_character_sprite_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*static_character_sprite_table)
+    ldi ZH, high(2*static_character_sprite_table)
+    ldi r19, CHARACTER_SPRITE_MEMSIZE
+    mul r18, r19
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    ldi r20, CHARACTER_SPRITE_WIDTH
+    ldi r21, CHARACTER_SPRITE_HEIGHT
+    ldd r22, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
+    ldd r23, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+    ldd r24, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
+    ldd r25, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+    call render_sprite
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+_rg_render_npcs_next:
+    adiw YL, NPC_MEMSIZE
+    dec r16
+    brne _rg_render_npcs_iter
+    rjmp _rg_render_player
+_rg_render_dynamic_npc:
+    sts character_render+CHARACTER_SPRITE_OFFSET, r18
+    lpm r18, Z+
+    sts character_render+CHARACTER_WEAPON_OFFSET, r18
+    lpm r18, Z+
+    sts character_render+CHARACTER_ARMOR_OFFSET, r18
+    ldd r18, Y+NPC_ANIM_OFFSET
+    mov r19, r18
+    andi r19, 3
+    sts character_render+CHARACTER_DIRECTION_OFFSET, r19
+    lsr r18
+    mov r19, r18
+    lsr r19
+    andi r19, 7
+    sts character_render+CHARACTER_FRAME_OFFSET, r19
+    swap r18
+    lsr r18
+    andi r18, 7
+    sts character_render+CHARACTER_ACTION_OFFSET, r18
+    ldd r22, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
+    ldd r23, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+    ldd r24, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
+    ldd r25, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+    movw r14, YL
+    ldi YL, low(character_render)
+    ldi YH, high(character_render)
+    call render_character
+    movw YL, r14
+    rjmp _rg_render_npcs_next
+_rg_render_player:
     lds r22, player_position_x
     lds r23, player_position_x+1
     lds r24, player_position_y
@@ -187,8 +261,8 @@ _hmb_empty_inventory_slot_found:
     lsr r20
     lsr r20
     lsr r20
-    ldi XL, low(preplaced_item_availability)
-    ldi XH, high(preplaced_item_availability)
+    ldi XL, low(preplaced_item_presence)
+    ldi XH, high(preplaced_item_presence)
     add XL, r20
     adc XH, r1
     ld r20, X
@@ -458,7 +532,7 @@ _up_attack3:
 _up_end:
     ret
 
-; Change sectors. Every sector has its own set of items and npcs, these must be
+; Change sectors. Every sector has its own set of items and NPCs, these must be
 ; loaded as necessary.
 ;
 ; Register Usage
@@ -482,9 +556,9 @@ _ls_clear_loose_items_iter:
     st Y+, r1
     dec r18
     brne _ls_clear_loose_items_iter
+_ls_load_preplaced_items:
     subi ZL, low(-SECTOR_ITEMS_OFFSET)
     sbci ZH, high(-SECTOR_ITEMS_OFFSET)
-_ls_load_preplaced_items:
     ldi YL, low(sector_loose_items)
     ldi YH, high(sector_loose_items)
     ldi r18, SECTOR_PREPLACED_ITEM_COUNT
@@ -493,8 +567,8 @@ _ls_load_preplaced_items_iter:
     elpm r20, Z+
     elpm r21, Z+
     elpm r22, Z+
-    ldi XL, low(preplaced_item_availability)
-    ldi XH, high(preplaced_item_availability)
+    ldi XL, low(preplaced_item_presence)
+    ldi XH, high(preplaced_item_presence)
     mov r23, r20
     mov r24, r20
     lsr r23
@@ -504,15 +578,82 @@ _ls_load_preplaced_items_iter:
     adc XH, r1
     ld r23, X
     nbit r23, r24 ; check that the item is still available
-    breq _ls_load_preplaced_items_check
+    breq _ls_load_preplaced_items_next
     st Y, r19
     std Y+1, r20
     std Y+2, r21
     std Y+3, r22
-_ls_load_preplaced_items_check:
+_ls_load_preplaced_items_next:
     adiw YL, SECTOR_PREPLACED_ITEM_MEMSIZE
     dec r18
     brne _ls_load_preplaced_items_iter
+_ls_clear_npcs:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r18, SECTOR_DYNAMIC_NPC_COUNT
+_ls_clear_npcs_iter:
+    st Y, r1
+    adiw YL, NPC_MEMSIZE
+    dec r18
+    brne _ls_clear_npcs_iter
+_ls_load_npcs:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    lds XL, current_sector
+    lds XH, current_sector+1
+    subi XL, low(-SECTOR_NPC_OFFSET)
+    sbci XH, high(-SECTOR_NPC_OFFSET)
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    ldi r18, SECTOR_NPC_COUNT
+_ls_load_npcs_iter:
+    movw ZL, XL
+    elpm r19, Z+
+    mov r20, r19
+    movw XL, ZL
+    dec r20
+    brmi _ls_npcs_loaded
+    mov r21, r20
+    mov r22, r20
+    lsr r22
+    lsr r22
+    lsr r22
+    ldi ZL, low(npc_presence)
+    ldi ZH, high(npc_presence)
+    add ZL, r22
+    adc ZH, r1
+    ld r23, Z
+    nbit r23, r21
+    breq _ls_load_npcs_next
+    std Y+NPC_IDX_OFFSET, r19
+    ldi ZL, low(2*npc_table+NPC_TABLE_DIRECTION_OFFSET)
+    ldi ZH, high(2*npc_table+NPC_TABLE_DIRECTION_OFFSET)
+    ldi r21, NPC_TABLE_ENTRY_MEMSIZE
+    mul r20, r21
+    add ZL, r0
+    add ZH, r1
+    clr r1
+    lpm r19, Z+    ; direction
+    std Y+NPC_ANIM_OFFSET, r19
+    lpm r19, Z+    ; x pos
+    std Y+NPC_X_POSITION_OFFSET+NPC_POSITION_SUBPIXEL_OFFSET, r1
+    std Y+NPC_X_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET, r1
+    std Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET, r19
+    std Y+NPC_X_VELOCITY_OFFSET, r1
+    lpm r19, Z+    ; y pos
+    std Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_SUBPIXEL_OFFSET, r1
+    std Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET, r1
+    std Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET, r19
+    std Y+NPC_X_VELOCITY_OFFSET, r1
+    adiw ZL, 1
+    lpm r19, Z      ; initial health
+    std Y+NPC_HEALTH_OFFSET, r19
+    std Y+NPC_STATUS_OFFSET, r1
+_ls_load_npcs_next:
+    adiw YL, NPC_MEMSIZE
+    dec r18
+    brne _ls_load_npcs_iter
+_ls_npcs_loaded:
     pop YH
     pop YL
     ret
