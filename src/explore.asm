@@ -133,6 +133,37 @@ _rg_render_player:
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character
+
+;     ldi XL, low(framebuffer+12)
+;     ldi XH, high(framebuffer+12)
+;     ldi YL, low(sector_npcs)
+;     ldi YH, high(sector_npcs)
+;     ldi r22, SECTOR_DYNAMIC_NPC_COUNT
+; _hmb_npc_iter:
+;     ldd r23, Y+NPC_IDX_OFFSET
+;     dec r23
+;     brmi _hmp_npc_next
+;     lds r18, player_position_x+1
+;     lds r19, player_position_x
+;     subi r19, low(-CHARACTER_SPRITE_WIDTH/2)
+;     qmod r19, r18, TILE_WIDTH
+;     ldd r19, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+;     sub r18, r19
+;     sbrc r18, 7
+;     neg r18
+;
+;     ; sbrc r18
+;     add XL, r18
+;     st X, r1
+;     sub XL, r18
+;
+; _hmp_npc_next:
+;     adiw YL, NPC_MEMSIZE
+;     subi XL, low(-2*DISPLAY_WIDTH)
+;     sbci XH, high(-2*DISPLAY_WIDTH)
+;     dec r22
+;     brne _hmb_npc_iter
+
     pop YH
     pop YL
     pop r17
@@ -237,7 +268,7 @@ _hmb_loose_item_next:
     adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
     dec r20
     brne _hmb_loose_item_iter
-    rjmp _hmb_end
+    rjmp _hmb_npc_interactions
 _hmb_nearby_item_found:
     ldi XL, low(player_inventory)
     ldi XH, high(player_inventory)
@@ -249,14 +280,14 @@ _hmb_inventory_iter:
 _hmb_inventory_next:
     dec r20
     brne _hmb_inventory_iter
-    rjmp _hmb_end
+    rjmp _hmb_npc_interactions
 _hmb_empty_inventory_slot_found:
     ldd r0, Z+SECTOR_ITEM_IDX_OFFSET
     st -X, r0   ; fill the empty slot
     std Z+SECTOR_ITEM_IDX_OFFSET, r1
     ldd r20, Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET
     tst r20
-    breq _hmb_end
+    breq _hmb_npc_interactions
     mov r21, r20    ; if a preplaced item, mark as unavailable
     lsr r20
     lsr r20
@@ -271,6 +302,125 @@ _hmb_empty_inventory_slot_found:
     com r22
     and r20, r22
     st X, r20
+_hmb_npc_interactions:
+;     ldi YL, low(sector_npcs)
+;     ldi YH, high(sector_npcs)
+;     lds r18, player_position_x
+;     lds r19, player_position_x+1
+;     lds r20, player_position_y
+;     lds r21, player_position_y+1
+;     lds r22, player_direction
+; _hmb_player_facing_down:
+;     cpi r22, DIRECTION_DOWN
+;     brne _hmb_player_facing_right
+;     subi r20, low(-CHARACTER_SPRITE_HEIGHT/4)
+;     inc r20
+; _hmb_player_facing_right:
+;     cpi r22, DIRECTION_RIGHT
+;     brne _hmb_player_facing_up
+;     subi r18, low(-CHARACTER_SPRITE_WIDTH/3)
+;     inc r19
+; _hmb_player_facing_up:
+;     cpi r22, DIRECTION_UP
+;     brne _hmb_player_facing_left
+;     subi r20, low(CHARACTER_SPRITE_HEIGHT/3)
+; _hmb_player_facing_left:
+;     cpi r22, DIRECTION_LEFT
+;     brne _hmb_prepare_npc_iter
+;     subi r18, low(CHARACTER_SPRITE_WIDTH/3)
+; ; _hmb_calculate_player_offset:
+; ;     ldi r22, TILE_WIDTH
+; ;     mul r22, r19
+; ;     clr r19
+; ;     add r18, r0
+; ;     adc r19, r1
+; ;     ldi r22, TILE_HEIGHT
+; ;     mul r22, r21
+; ;     clr r21
+; ;     add r20, r0
+; ;     adc r21, r1
+; ;     clr r1
+; _hmb_prepare_npc_iter:
+;     ldi r22, SECTOR_DYNAMIC_NPC_COUNT
+; _hmb_npc_iter:
+;     ldd r23, Y+NPC_IDX_OFFSET
+;     dec r23
+;     brmi _hmp_npc_next
+;     ldd r24, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
+;     ldd r25, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+;     sub r24, r18
+;     sub r25, r19
+;     ldi r26, TILE_WIDTH
+;     mulsu r25, r26
+;     clr r25
+;     add r24, r0
+;     adc r25, r1
+;     clr r1
+;     sub
+;     ; ldd r20, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+;     ; sub r20, r18
+;     ; brne _hmp_npc_next
+;     ; ldd r21, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+;     ; sub r21, r19
+;     ; brne _hmp_npc_next
+;
+;     sts framebuffer, r1
+; _hmp_npc_next:
+;     adiw YL, NPC_MEMSIZE
+;     dec r22
+;     brne _hmb_npc_iter
+
+
+; _hmb_npc_interactions:
+;     ldi YL, low(sector_npcs)
+;     ldi YH, high(sector_npcs)
+;     lds r18, player_position_x
+;     lds r19, player_position_x+1
+;     lds r20, player_position_y
+;     lds r21, player_position_y+1
+;     lds r22, player_direction
+; _hmb_player_facing_down:
+;     cpi r22, DIRECTION_DOWN
+;     brne _hmb_player_facing_right
+;     subi r20, low(-CHARACTER_SPRITE_HEIGHT/4)
+;     inc r20
+; _hmb_player_facing_right:
+;     cpi r22, DIRECTION_RIGHT
+;     brne _hmb_player_facing_up
+;     subi r18, low(-CHARACTER_SPRITE_WIDTH/3)
+;     inc r19
+; _hmb_player_facing_up:
+;     cpi r22, DIRECTION_UP
+;     brne _hmb_player_facing_left
+;     subi r20, low(CHARACTER_SPRITE_HEIGHT/3)
+; _hmb_player_facing_left:
+;     cpi r22, DIRECTION_LEFT
+;     brne _hmb_calculate_player_offset
+;     subi r18, low(CHARACTER_SPRITE_WIDTH/3)
+; _hmb_calculate_player_offset:
+;     qmod r18, r19, TILE_WIDTH
+;     qmod r20, r21, TILE_HEIGHT
+;     mov r18, r19
+;     mov r19, r21
+;     ldi r22, SECTOR_DYNAMIC_NPC_COUNT
+; _hmb_npc_iter:
+;     ldd r23, Y+NPC_IDX_OFFSET
+;     dec r23
+;     brmi _hmp_npc_next
+;     ldd r20, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+;     sub r20, r18
+;     brne _hmp_npc_next
+;     ldd r21, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+;     sub r21, r19
+;     brne _hmp_npc_next
+;
+;     sts framebuffer, r1
+; _hmp_npc_next:
+;     adiw YL, NPC_MEMSIZE
+;     dec r22
+;     brne _hmb_npc_iter
+
+
 _hmb_end:
     ret
 
@@ -374,8 +524,12 @@ _rpm_switch_sector:
     sts player_position_y, r24
     sts player_position_y+1, r25
     lpm r20, Z
-    ldi r21, SECTOR_MEMSIZE
+    ldi r21, SECTOR_MEMSIZE/4
     mul r20, r21
+    lsl r0
+    rol r1
+    lsl r0
+    rol r1
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     ldi ZL, low(2*sector_table)

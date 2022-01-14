@@ -130,6 +130,11 @@ _idr_work:
     lds r18, game_mode
     cpi r18, MODE_EXPLORE
     breq _idr_explore
+    cpi r18, MODE_INVENTORY
+    breq _idr_inventory
+_idr_shop:
+    call shop_update_game
+    rjmp _idr_end_work
 _idr_inventory:
     call inventory_update_game
     rjmp _idr_end_work
@@ -152,5 +157,6 @@ _idr_end:
 .include "stats.asm"
 .include "explore.asm"
 .include "inventory.asm"
+.include "shop.asm"
 .include "rodata.asm"
 .include "data.asm"

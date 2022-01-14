@@ -13,7 +13,7 @@
 .equ CAMERA_VERTICAL_PADDING_H = 1
 
 .equ TRANSPARENT = 0xc7 ; magenta
-.equ MIN_BLOCKING_TILE_IDX = 1 ; eventually to be 64 or so
+.equ MIN_BLOCKING_TILE_IDX = 18 ; eventually to be 64 or so
 
 .equ MODE_STARTUP = 0
 .equ MODE_ABOUT = 1
@@ -58,6 +58,7 @@
 .equ ACTION_ATTACK2 = 4
 .equ ACTION_ATTACK3 = 5
 
+.equ SHOP_INVENTORY_SIZE = 16
 .equ PLAYER_INVENTORY_SIZE = 12
 .equ PLAYER_EFFECT_COUNT = 3
 

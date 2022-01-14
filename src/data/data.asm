@@ -53,3 +53,6 @@ player_effects:     .byte PLAYER_EFFECT_MEMSIZE*PLAYER_EFFECT_COUNT
 player_inventory:   .byte PLAYER_INVENTORY_SIZE
 
 inventory_selection: .byte 1
+
+shop_inventory:     .byte SHOP_INVENTORY_SIZE
+shop_selection:     .byte 1
