@@ -4,14 +4,14 @@ init:
     sti vid_row_repeat, 0
     sti vid_work_complete, 0
     stiw current_sector, 2*sector_table
-    stiw camera_position_x, 0x0000
-    stiw camera_position_y, 0x0200
-    stiw player_position_x, 0x0600
-    stiw player_position_y, 0x0200
-    sti player_class, 1
-    sti player_acceleration, 12
+    sti camera_position_x, 00
+    sti camera_position_y, 12
+    sti player_position_x, 10
+    sti player_position_y, 40
     sti player_velocity_x, 0
     sti player_velocity_y, 0
+    sti player_class, 1
+    sti player_acceleration, 12
     sti player_character, 0
     sti player_weapon, 1
     sti player_armor, 0

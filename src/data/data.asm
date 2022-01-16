@@ -25,16 +25,17 @@ npc_presence:       .byte TOTAL_NPC_COUNT>>3
 sector_npcs:        .byte NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT
 character_render:   .byte CHARACTER_MEMSIZE
 
-camera_position_x:  .byte 2
-camera_position_y:  .byte 2
+camera_position_x:  .byte 1
+camera_position_y:  .byte 1
 
 player_class:       .byte 1
 player_acceleration:.byte 1
+player_position_data:
+player_position_x:  .byte 1
 player_subpixel_x:  .byte 1
-player_position_x:  .byte 2
 player_velocity_x:  .byte 1
+player_position_y:  .byte 1
 player_subpixel_y:  .byte 1
-player_position_y:  .byte 2
 player_velocity_y:  .byte 1
 player_cooldown:    .byte 1
 player_character:   .byte 1

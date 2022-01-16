@@ -153,6 +153,7 @@ _idr_end:
 .include "math.asm"
 .include "controls.asm"
 .include "animation.asm"
+.include "character.asm"
 .include "render.asm"
 .include "stats.asm"
 .include "explore.asm"

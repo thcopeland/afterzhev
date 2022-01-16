@@ -1,7 +1,10 @@
 explore_update_game:
     rcall render_game
     rcall handle_controls
-    rcall move_player
+    ldi YL, low(player_position_data)
+    ldi YH, high(player_position_data)
+    call move_character
+    rcall check_sector_bounds
     rcall update_player
     call update_effects_progress
     rcall move_camera
@@ -11,15 +14,21 @@ explore_update_game:
 ; the player must all be rendered.
 ;
 ; Register Usage
+;   r14-17          storing values across calls
+;   r18-r25         calculations, params
+;   Y (r28:r29)     memory pointer
+;   Z (r30:r31)     memory pointer
 render_game:
+    push r14
+    push r15
     push r16
     push r17
     push YL
     push YH
-    lds r20, camera_position_x
-    lds r21, camera_position_x+1
-    lds r22, camera_position_y
-    lds r23, camera_position_y+1
+    lds r18, camera_position_x
+    divmod12u r18, r21, r20
+    lds r18, camera_position_y
+    divmod12u r18, r23, r22
     lds r24, current_sector
     lds r25, current_sector+1
     call render_sector
@@ -29,26 +38,23 @@ _rg_render_loose_items:
     ldi YH, high(sector_loose_items)
     ldi r16, SECTOR_DYNAMIC_ITEM_COUNT
 _rg_render_loose_items_iter:
-    ld r18, Y
-    tst r18
-    breq _rg_render_loose_items_check
+    ldd r18, Y+SECTOR_ITEM_IDX_OFFSET
+    dec r18
+    brmi _rg_render_loose_items_next
     ldi ZL, byte3(2*static_item_sprite_table)
     out RAMPZ, ZL
     ldi r19, STATIC_ITEM_MEMSIZE
-    dec r18
     mul r18, r19
     movw ZL, r0
     clr r1
     subi ZL, low(-2*static_item_sprite_table)
     sbci ZH, high(-2*static_item_sprite_table)
-    ldi r20, STATIC_ITEM_WIDTH
-    ldi r21, STATIC_ITEM_HEIGHT
-    ldi r22, (TILE_WIDTH-STATIC_ITEM_WIDTH)/2
-    ldd r23, Y+2
-    ldi r24, (TILE_HEIGHT-STATIC_ITEM_HEIGHT)/2
-    ldd r25, Y+3
+    ldi r22, STATIC_ITEM_WIDTH
+    ldi r23, STATIC_ITEM_HEIGHT
+    ldd r24, Y+SECTOR_ITEM_X_OFFSET
+    ldd r25, Y+SECTOR_ITEM_Y_OFFSET
     call render_sprite
-_rg_render_loose_items_check:
+_rg_render_loose_items_next:
     adiw YL, SECTOR_DYNAMIC_ITEM_MEMSIZE
     dec r16
     brne _rg_render_loose_items_iter
@@ -82,12 +88,10 @@ _rg_render_static_npc:
     add ZL, r0
     adc ZH, r1
     clr r1
-    ldi r20, CHARACTER_SPRITE_WIDTH
-    ldi r21, CHARACTER_SPRITE_HEIGHT
-    ldd r22, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
-    ldd r23, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
-    ldd r24, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
-    ldd r25, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+    ldi r22, CHARACTER_SPRITE_WIDTH
+    ldi r23, CHARACTER_SPRITE_HEIGHT
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     call render_sprite
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
@@ -115,10 +119,8 @@ _rg_render_dynamic_npc:
     lsr r18
     andi r18, 7
     sts character_render+CHARACTER_ACTION_OFFSET, r18
-    ldd r22, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
-    ldd r23, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
-    ldd r24, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
-    ldd r25, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     movw r14, YL
     ldi YL, low(character_render)
     ldi YH, high(character_render)
@@ -126,48 +128,17 @@ _rg_render_dynamic_npc:
     movw YL, r14
     rjmp _rg_render_npcs_next
 _rg_render_player:
-    lds r22, player_position_x
-    lds r23, player_position_x+1
-    lds r24, player_position_y
-    lds r25, player_position_y+1
+    lds r24, player_position_x
+    lds r25, player_position_y
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character
-
-;     ldi XL, low(framebuffer+12)
-;     ldi XH, high(framebuffer+12)
-;     ldi YL, low(sector_npcs)
-;     ldi YH, high(sector_npcs)
-;     ldi r22, SECTOR_DYNAMIC_NPC_COUNT
-; _hmb_npc_iter:
-;     ldd r23, Y+NPC_IDX_OFFSET
-;     dec r23
-;     brmi _hmp_npc_next
-;     lds r18, player_position_x+1
-;     lds r19, player_position_x
-;     subi r19, low(-CHARACTER_SPRITE_WIDTH/2)
-;     qmod r19, r18, TILE_WIDTH
-;     ldd r19, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
-;     sub r18, r19
-;     sbrc r18, 7
-;     neg r18
-;
-;     ; sbrc r18
-;     add XL, r18
-;     st X, r1
-;     sub XL, r18
-;
-; _hmp_npc_next:
-;     adiw YL, NPC_MEMSIZE
-;     subi XL, low(-2*DISPLAY_WIDTH)
-;     sbci XH, high(-2*DISPLAY_WIDTH)
-;     dec r22
-;     brne _hmb_npc_iter
-
     pop YH
     pop YL
     pop r17
     pop r16
+    pop r15
+    pop r14
     ret
 
 ; Handle button presses.
@@ -175,7 +146,7 @@ _rg_render_player:
 ; Register Usage
 ;   r18             previous button states
 ;   r19             current button state
-;   r19-r21         miscellaneous
+;   r20-r21         miscellaneous
 ;   Z (r30:r31)     flash memory lookups
 handle_controls:
     lds r18, prev_controller_values
@@ -237,53 +208,55 @@ _hc_end:
 ; items, one of them is added to the player's inventory.
 ;
 ; Register Usage
-;   r18-r22         calculations
+;   r18-r23         calculations
 ;   X (r26:r27)     memory pointer 2
 ;   Z (r30:r31)     memory pointer
 handle_main_button:
 _hmb_pickup_items:
-    lds r18, player_position_y
-    lds r19, player_position_y+1
-    lds r20, player_position_x
-    lds r21, player_position_x+1
-    subi r18, -CHARACTER_SPRITE_HEIGHT/2
-    qmod r18, r19, TILE_HEIGHT
-    subi r20, -CHARACTER_SPRITE_WIDTH/2
-    qmod r20, r21, TILE_WIDTH
-    mov r18, r21
+    lds r18, player_position_x
+    lds r19, player_position_y
+    subi r18, -CHARACTER_SPRITE_WIDTH/2
+    subi r19, -CHARACTER_SPRITE_HEIGHT/2
     ldi ZL, low(sector_loose_items)
     ldi ZH, high(sector_loose_items)
-    ldi r20, SECTOR_DYNAMIC_ITEM_COUNT
+    ldi r22, SECTOR_DYNAMIC_ITEM_COUNT
 _hmb_loose_item_iter:
-    ldd r0, Z+SECTOR_ITEM_IDX_OFFSET
-    tst r0
+    ldd r23, Z+SECTOR_ITEM_IDX_OFFSET
+    tst r23
     breq _hmb_loose_item_next
-    ldd r0, Z+SECTOR_ITEM_X_OFFSET
-    cp r0, r18
-    brne _hmb_loose_item_next
-    ldd r0, Z+SECTOR_ITEM_Y_OFFSET
-    cp r0, r19
-    breq _hmb_nearby_item_found
+    ldd r20, Z+SECTOR_ITEM_X_OFFSET
+    ldd r21, Z+SECTOR_ITEM_Y_OFFSET
+    subi r20, -STATIC_ITEM_WIDTH/2
+    subi r21, -STATIC_ITEM_HEIGHT/2
+    sub r20, r18
+    sbrc r20, 7
+    neg r20
+    sub r21, r19
+    sbrc r21, 7
+    neg r21
+    cpi r20, 2*TILE_WIDTH/3
+    brsh _hmb_loose_item_next
+    cpi r21, 3*TILE_HEIGHT/4
+    brlo _hmb_nearby_item_found
 _hmb_loose_item_next:
     adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
-    dec r20
+    dec r22
     brne _hmb_loose_item_iter
     rjmp _hmb_npc_interactions
 _hmb_nearby_item_found:
     ldi XL, low(player_inventory)
     ldi XH, high(player_inventory)
-    ldi r20, PLAYER_INVENTORY_SIZE
+    ldi r22, PLAYER_INVENTORY_SIZE
 _hmb_inventory_iter:
-    ld r0, X+
-    tst r0
+    ld r21, X+
+    tst r21
     breq _hmb_empty_inventory_slot_found
 _hmb_inventory_next:
-    dec r20
+    dec r22
     brne _hmb_inventory_iter
     rjmp _hmb_npc_interactions
 _hmb_empty_inventory_slot_found:
-    ldd r0, Z+SECTOR_ITEM_IDX_OFFSET
-    st -X, r0   ; fill the empty slot
+    st -X, r23   ; fill the empty slot
     std Z+SECTOR_ITEM_IDX_OFFSET, r1
     ldd r20, Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET
     tst r20
@@ -303,337 +276,14 @@ _hmb_empty_inventory_slot_found:
     and r20, r22
     st X, r20
 _hmb_npc_interactions:
-;     ldi YL, low(sector_npcs)
-;     ldi YH, high(sector_npcs)
-;     lds r18, player_position_x
-;     lds r19, player_position_x+1
-;     lds r20, player_position_y
-;     lds r21, player_position_y+1
-;     lds r22, player_direction
-; _hmb_player_facing_down:
-;     cpi r22, DIRECTION_DOWN
-;     brne _hmb_player_facing_right
-;     subi r20, low(-CHARACTER_SPRITE_HEIGHT/4)
-;     inc r20
-; _hmb_player_facing_right:
-;     cpi r22, DIRECTION_RIGHT
-;     brne _hmb_player_facing_up
-;     subi r18, low(-CHARACTER_SPRITE_WIDTH/3)
-;     inc r19
-; _hmb_player_facing_up:
-;     cpi r22, DIRECTION_UP
-;     brne _hmb_player_facing_left
-;     subi r20, low(CHARACTER_SPRITE_HEIGHT/3)
-; _hmb_player_facing_left:
-;     cpi r22, DIRECTION_LEFT
-;     brne _hmb_prepare_npc_iter
-;     subi r18, low(CHARACTER_SPRITE_WIDTH/3)
-; ; _hmb_calculate_player_offset:
-; ;     ldi r22, TILE_WIDTH
-; ;     mul r22, r19
-; ;     clr r19
-; ;     add r18, r0
-; ;     adc r19, r1
-; ;     ldi r22, TILE_HEIGHT
-; ;     mul r22, r21
-; ;     clr r21
-; ;     add r20, r0
-; ;     adc r21, r1
-; ;     clr r1
-; _hmb_prepare_npc_iter:
-;     ldi r22, SECTOR_DYNAMIC_NPC_COUNT
-; _hmb_npc_iter:
-;     ldd r23, Y+NPC_IDX_OFFSET
-;     dec r23
-;     brmi _hmp_npc_next
-;     ldd r24, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET
-;     ldd r25, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
-;     sub r24, r18
-;     sub r25, r19
-;     ldi r26, TILE_WIDTH
-;     mulsu r25, r26
-;     clr r25
-;     add r24, r0
-;     adc r25, r1
-;     clr r1
-;     sub
-;     ; ldd r20, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
-;     ; sub r20, r18
-;     ; brne _hmp_npc_next
-;     ; ldd r21, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
-;     ; sub r21, r19
-;     ; brne _hmp_npc_next
-;
-;     sts framebuffer, r1
-; _hmp_npc_next:
-;     adiw YL, NPC_MEMSIZE
-;     dec r22
-;     brne _hmb_npc_iter
-
-
-; _hmb_npc_interactions:
-;     ldi YL, low(sector_npcs)
-;     ldi YH, high(sector_npcs)
-;     lds r18, player_position_x
-;     lds r19, player_position_x+1
-;     lds r20, player_position_y
-;     lds r21, player_position_y+1
-;     lds r22, player_direction
-; _hmb_player_facing_down:
-;     cpi r22, DIRECTION_DOWN
-;     brne _hmb_player_facing_right
-;     subi r20, low(-CHARACTER_SPRITE_HEIGHT/4)
-;     inc r20
-; _hmb_player_facing_right:
-;     cpi r22, DIRECTION_RIGHT
-;     brne _hmb_player_facing_up
-;     subi r18, low(-CHARACTER_SPRITE_WIDTH/3)
-;     inc r19
-; _hmb_player_facing_up:
-;     cpi r22, DIRECTION_UP
-;     brne _hmb_player_facing_left
-;     subi r20, low(CHARACTER_SPRITE_HEIGHT/3)
-; _hmb_player_facing_left:
-;     cpi r22, DIRECTION_LEFT
-;     brne _hmb_calculate_player_offset
-;     subi r18, low(CHARACTER_SPRITE_WIDTH/3)
-; _hmb_calculate_player_offset:
-;     qmod r18, r19, TILE_WIDTH
-;     qmod r20, r21, TILE_HEIGHT
-;     mov r18, r19
-;     mov r19, r21
-;     ldi r22, SECTOR_DYNAMIC_NPC_COUNT
-; _hmb_npc_iter:
-;     ldd r23, Y+NPC_IDX_OFFSET
-;     dec r23
-;     brmi _hmp_npc_next
-;     ldd r20, Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
-;     sub r20, r18
-;     brne _hmp_npc_next
-;     ldd r21, Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET
-;     sub r21, r19
-;     brne _hmp_npc_next
-;
-;     sts framebuffer, r1
-; _hmp_npc_next:
-;     adiw YL, NPC_MEMSIZE
-;     dec r22
-;     brne _hmb_npc_iter
-
-
+    ; TODO
 _hmb_end:
-    ret
-
-; Simple player physics. Horizontal and vertical movements are calculated separately
-; in order to allow sliding on collisions.
-;
-; Register Usage
-;   r18, r19        position
-;   r20             subpixel position
-;   r21, r22        velocity
-;   r22-r25         miscellaneous, also camera position
-move_player:
-_mp_horizontal_component:
-    lds r18, player_position_x
-    lds r19, player_position_x+1
-    lds r20, player_subpixel_x
-    lds r21, player_velocity_x
-    tst r21
-    breq _mp_vertical_component
-    ext r21, r22
-    add r20, r21
-    adc r18, r22
-    add r20, r21
-    adc r18, r22
-    qmod r18, r19, TILE_WIDTH
-    sts player_subpixel_x, r20
-    decay_94p r21, r22, r23     ; friction
-    sts player_velocity_x, r21
-    movw r22, r18
-    lds r24, player_position_y
-    lds r25, player_position_y+1
-    rcall resolve_player_movement
-_mp_vertical_component:
-    lds r18, player_position_y
-    lds r19, player_position_y+1
-    lds r20, player_subpixel_y
-    lds r21, player_velocity_y
-    tst r21
-    breq _mp_end
-    ext r21, r22
-    add r20, r21
-    adc r18, r22
-    add r20, r21
-    adc r18, r22
-    qmod r18, r19, TILE_WIDTH
-    sts player_subpixel_y, r20
-    decay_94p r21, r22, r23     ; friction
-    sts player_velocity_y, r21
-    lds r22, player_position_x
-    lds r23, player_position_x+1
-    movw r24, r18
-    rcall resolve_player_movement
-_mp_end:
-    ret
-
-; Check for collisions and sector swapping. If no collisions occur, the new
-; position values are saved.
-;
-; Register Usage
-; r18, r19      dimensions
-; r20, r21      calculations, corner location
-; r22           new x position low (param)
-; r23           new x position high (param)
-; r24           new y position low (param)
-; r25           new y position high (param)
-; Z (r30:r31)   sector pointer, flash memory pointer
-resolve_player_movement:
-    lds ZL, current_sector
-    lds ZH, current_sector+1
-    subi ZL, low(-SECTOR_AJD_OFFSET)
-    sbci ZH, high(-SECTOR_AJD_OFFSET)
-_rpm_check_sector_left:
-    cpi r23, 0
-    brge _rpm_check_sector_right
-    adiw ZL, 3
-    ldi r22, TILE_WIDTH-1
-    ldi r23, SECTOR_WIDTH-2
-    rjmp _rpm_switch_sector
-_rpm_check_sector_right:
-    cpi r23, SECTOR_WIDTH-1
-    brlt _rpm_check_sector_top
-    adiw ZL, 1
-    clr r22
-    clr r23
-    rjmp _rpm_switch_sector
-_rpm_check_sector_top:
-    cpi r25, 0
-    brge _rpm_check_sector_bottom
-    adiw ZL, 2
-    ldi r24, TILE_HEIGHT-1
-    ldi r25, SECTOR_HEIGHT-2
-    rjmp _rpm_switch_sector
-_rpm_check_sector_bottom:
-    cpi r25, SECTOR_HEIGHT-1
-    brlt _rmp_resolve_collisions
-    clr r24
-    clr r25
-_rpm_switch_sector:
-    sts player_position_x, r22
-    sts player_position_x+1, r23
-    sts player_position_y, r24
-    sts player_position_y+1, r25
-    lpm r20, Z
-    ldi r21, SECTOR_MEMSIZE/4
-    mul r20, r21
-    lsl r0
-    rol r1
-    lsl r0
-    rol r1
-    ldi ZL, byte3(2*sector_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*sector_table)
-    ldi ZH, high(2*sector_table)
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    call load_sector
-    ret
-_rmp_resolve_collisions:
-    ldi ZL, low(2*class_table+CLASS_DIMS_OFFSET)
-    ldi ZH, high(2*class_table+CLASS_DIMS_OFFSET)
-    lds r18, player_class
-    ldi r19, CLASS_MEMSIZE
-    mul r18, r19
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    lpm r18, Z+
-    lpm r19, Z
-_rpm_check_upper_left:
-    lds ZL, current_sector
-    lds ZH, current_sector+1
-    movw r20, r24
-    subi r20, -TILE_HEIGHT
-    sub r20, r19
-    qmod r20, r21, TILE_HEIGHT
-    ldi r20, SECTOR_WIDTH
-    mul r21, r20
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    movw r20, r22
-    subi r20, -TILE_WIDTH
-    sub r20, r18
-    qmod r20, r21, TILE_WIDTH
-    add ZL, r21
-    adc ZH, r1
-    lpm r20, Z
-    cpi r20, MIN_BLOCKING_TILE_IDX
-    brlo _rpm_check_upper_right
-    rjmp _rpm_collision
-_rpm_check_upper_right:
-    mov r0, r21
-    movw r20, r22
-    add r20, r18
-    qmod r20, r21, TILE_WIDTH
-    sub r21, r0
-    add ZL, r21
-    adc ZH, r1
-    lpm r20, Z
-    cpi r20, MIN_BLOCKING_TILE_IDX
-    brsh _rpm_collision
-_rpm_check_lower_left:
-    lds ZL, current_sector
-    lds ZH, current_sector+1
-    movw r20, r24
-    add r20, r19
-    qmod r20, r21, TILE_HEIGHT
-    ldi r20, SECTOR_WIDTH
-    mul r21, r20
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    movw r20, r22
-    subi r20, -TILE_WIDTH
-    sub r20, r18
-    qmod r20, r21, TILE_WIDTH
-    add ZL, r21
-    adc ZH, r1
-    lpm r20, Z
-    cpi r20, MIN_BLOCKING_TILE_IDX
-    brsh _rpm_collision
-_rpm_check_lower_right:
-    mov r0, r21
-    movw r20, r22
-    add r20, r18
-    qmod r20, r21, TILE_WIDTH
-    sub r21, r0
-    add ZL, r21
-    adc ZH, r1
-    lpm r20, Z
-    cpi r20, MIN_BLOCKING_TILE_IDX
-    brlo _rpm_no_collision
-_rpm_collision:
-    lds r20, player_position_x
-    cpse r20, r22
-    sts player_velocity_x, r1
-    lds r20, player_position_y
-    cpse r20, r24
-    sts player_velocity_y, r1
-    rjmp _rpm_end
-_rpm_no_collision:
-    sts player_position_x, r22
-    sts player_position_x+1, r23
-    sts player_position_y, r24
-    sts player_position_y+1, r25
-_rpm_end:
     ret
 
 ; Update the player's animation and general state.
 ;
 ; Register Usage
-;   r18-r19         calculations
+;   r18-r21         calculations
 update_player:
     lds r18, player_action
     lds r20, player_velocity_x
@@ -684,6 +334,66 @@ _up_attack1:
 _up_attack2:
 _up_attack3:
 _up_end:
+    ret
+
+; If the player is outside the sector bounds, load the appropriate adjacent
+; sector.
+;
+; Register Usage
+;   r24, r25        player position, calculations
+;   Z (r30:r31)     pointer to the adjacent sector
+check_sector_bounds:
+    lds r24, player_position_x
+    lds r25, player_position_y
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_AJD_OFFSET)
+    sbci ZH, high(-SECTOR_AJD_OFFSET)
+_csb_check_sector_left:
+    cpi r24, 255
+    brlo _csb_check_sector_right
+    adiw ZL, 3
+    ldi r24, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH
+    sts player_position_x, r24
+    subi r24, DISPLAY_WIDTH
+    sts camera_position_x, r24
+    rjmp _csb_switch_sector
+_csb_check_sector_right:
+    cpi r24, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH+1
+    brlo _csb_check_sector_top
+    adiw ZL, 1
+    sts player_position_x, r1
+    sts camera_position_x, r1
+    rjmp _csb_switch_sector
+_csb_check_sector_top:
+    cpi r25, 255
+    brlo _csb_check_sector_bottom
+    adiw ZL, 2
+    ldi r24, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT
+    sts player_position_y, r24
+    subi r24, DISPLAY_HEIGHT-FOOTER_HEIGHT
+    sts camera_position_y, r24
+    rjmp _csb_switch_sector
+_csb_check_sector_bottom:
+    cpi r25, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT+1
+    brlo _csb_end
+    sts player_position_y, r1
+    sts camera_position_y, r1
+_csb_switch_sector:
+    lpm r24, Z
+    ldi r25, SECTOR_MEMSIZE/2
+    mul r24, r25
+    lsl r0
+    rol r1
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*sector_table)
+    ldi ZH, high(2*sector_table)
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    rcall load_sector
+_csb_end:
     ret
 
 ; Change sectors. Every sector has its own set of items and NPCs, these must be
@@ -790,15 +500,13 @@ _ls_load_npcs_iter:
     lpm r19, Z+    ; direction
     std Y+NPC_ANIM_OFFSET, r19
     lpm r19, Z+    ; x pos
-    std Y+NPC_X_POSITION_OFFSET+NPC_POSITION_SUBPIXEL_OFFSET, r1
-    std Y+NPC_X_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET, r1
-    std Y+NPC_X_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET, r19
-    std Y+NPC_X_VELOCITY_OFFSET, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r19
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
     lpm r19, Z+    ; y pos
-    std Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_SUBPIXEL_OFFSET, r1
-    std Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_LOW_OFFSET, r1
-    std Y+NPC_Y_POSITION_OFFSET+NPC_POSITION_HIGH_OFFSET, r19
-    std Y+NPC_X_VELOCITY_OFFSET, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r19
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
     adiw ZL, 1
     lpm r19, Z      ; initial health
     std Y+NPC_HEALTH_OFFSET, r19
@@ -820,91 +528,49 @@ _ls_npcs_loaded:
 ;   r20, r21        camera position
 ;   r22, r23        player-camera position
 move_camera:
-    lds r18, player_position_x
-    lds r19, player_position_x+1
-    lds r20, camera_position_x
-    lds r21, camera_position_x+1
-    movw r22, r18
-    sub r22, r20
-    sub r23, r21
-    qmod r22, r23, TILE_WIDTH
-_mc_test_pad_left:
-    cpi r23, CAMERA_HORIZONTAL_PADDING_H
-    brlt _mc_pad_left
-    brne _mc_test_pad_right
-    cpi r22, CAMERA_HORIZONTAL_PADDING_L
-    brpl _mc_test_pad_right
+    lds r22, player_position_x
+    lds r23, camera_position_x
+    mov r24, r22
+    sub r24, r23
 _mc_pad_left:
-    movw r20, r18
-    subi r21, CAMERA_HORIZONTAL_PADDING_H
-    subi r20, CAMERA_HORIZONTAL_PADDING_L
-_mc_test_pad_right:
-    cpi r23, DISPLAY_HORIZONTAL_TILES-CAMERA_HORIZONTAL_PADDING_H-2
-    brlo _mc_fit_horiz_to_display
-    brne _mc_pad_right
-    cpi r22, CAMERA_HORIZONTAL_PADDING_L
-    brlo _mc_fit_horiz_to_display
+    cpi r24, CAMERA_HORIZONTAL_PADDING
+    brsh _mc_pad_right
+    mov r23, r22
+    subi r23, CAMERA_HORIZONTAL_PADDING
+    brsh _mc_save_horizontal
+    clr r23
+    rjmp _mc_save_horizontal
 _mc_pad_right:
-    movw r20, r18
-    subi r21, DISPLAY_HORIZONTAL_TILES-CAMERA_HORIZONTAL_PADDING_H-2
-    subi r20, CAMERA_HORIZONTAL_PADDING_L
-_mc_fit_horiz_to_display:
-    qmod r20, r21, TILE_WIDTH
-_mc_constrain_x_min:
-    cpi r21, 0
-    brge _mc_constrain_x_max
-    clr r20
-    clr r21
-_mc_constrain_x_max:
-    cpi r21, SECTOR_WIDTH-DISPLAY_HORIZONTAL_TILES
-    brlt _mc_save_horizontal_pos
-    clr r20
-    ldi r21, SECTOR_WIDTH-DISPLAY_HORIZONTAL_TILES
-_mc_save_horizontal_pos:
-    sts camera_position_x, r20
-    sts camera_position_x+1, r21
-_mc_vertical_padding:
-    lds r18, player_position_y
-    lds r19, player_position_y+1
-    lds r20, camera_position_y
-    lds r21, camera_position_y+1
-    movw r22, r18
-    sub r22, r20
-    sub r23, r21
-    qmod r22, r23, TILE_HEIGHT
-_mc_test_pad_top:
-    cpi r23, CAMERA_VERTICAL_PADDING_H
-    brlt _mc_pad_top
-    brne _mc_test_pad_bottom
-    cpi r22, CAMERA_VERTICAL_PADDING_L
-    brpl _mc_test_pad_bottom
+    cpi r24, DISPLAY_WIDTH-CAMERA_HORIZONTAL_PADDING-CHARACTER_SPRITE_WIDTH
+    brlo _mc_save_horizontal
+    mov r23, r22
+    subi r23, DISPLAY_WIDTH-CAMERA_HORIZONTAL_PADDING-CHARACTER_SPRITE_WIDTH
+    cpi r23, TILE_WIDTH*SECTOR_WIDTH-DISPLAY_WIDTH
+    brlo _mc_save_horizontal
+    ldi r23, TILE_WIDTH*SECTOR_WIDTH-DISPLAY_WIDTH
+_mc_save_horizontal:
+    sts camera_position_x, r23
+_mc_pad_vertical:
+    lds r22, player_position_y
+    lds r23, camera_position_y
+    mov r24, r22
+    sub r24, r23
 _mc_pad_top:
-    movw r20, r18
-    subi r21, CAMERA_VERTICAL_PADDING_H
-    subi r20, CAMERA_VERTICAL_PADDING_L
-_mc_test_pad_bottom:
-    cpi r23, DISPLAY_VERTICAL_TILES-CAMERA_VERTICAL_PADDING_H-2
-    brlo _mc_fit_vert_to_display
-    brne _mc_pad_bottom
-    cpi r22, CAMERA_VERTICAL_PADDING_L
-    brlo _mc_fit_vert_to_display
+    cpi r24, CAMERA_VERTICAL_PADDING
+    brsh _mc_pad_bottom
+    mov r23, r22
+    subi r23, CAMERA_VERTICAL_PADDING
+    brsh _mc_save_vertical
+    clr r23
+    rjmp _mc_save_vertical
 _mc_pad_bottom:
-    movw r20, r18
-    subi r21, DISPLAY_VERTICAL_TILES-CAMERA_VERTICAL_PADDING_H-2
-    subi r20, CAMERA_VERTICAL_PADDING_L
-_mc_fit_vert_to_display:
-    qmod r20, r21, TILE_HEIGHT
-_mc_constrain_y_min:
-    cpi r21, 0
-    brge _mc_constrain_y_max
-    clr r20
-    clr r21
-_mc_constrain_y_max:
-    cpi r21, SECTOR_HEIGHT-DISPLAY_VERTICAL_TILES
-    brlt _mc_save_vertical_pos
-    clr r20
-    ldi r21, SECTOR_HEIGHT-DISPLAY_VERTICAL_TILES
-_mc_save_vertical_pos:
-    sts camera_position_y, r20
-    sts camera_position_y+1, r21
+    cpi r24, (DISPLAY_HEIGHT-FOOTER_HEIGHT)-CAMERA_VERTICAL_PADDING-CHARACTER_SPRITE_HEIGHT
+    brlo _mc_save_vertical
+    mov r23, r22
+    subi r23, (DISPLAY_HEIGHT-FOOTER_HEIGHT)-CAMERA_VERTICAL_PADDING-CHARACTER_SPRITE_HEIGHT
+    cpi r23, TILE_HEIGHT*SECTOR_HEIGHT-(DISPLAY_HEIGHT-FOOTER_HEIGHT)
+    brlo _mc_save_vertical
+    ldi r23, TILE_HEIGHT*SECTOR_HEIGHT-(DISPLAY_HEIGHT-FOOTER_HEIGHT)
+_mc_save_vertical:
+    sts camera_position_y, r23
     ret

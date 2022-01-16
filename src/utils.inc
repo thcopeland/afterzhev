@@ -122,20 +122,18 @@ _ci_ge_%:
 _ci_end_%:
 .endm
 
-; approximate one step of 0.9375 exponential decay for a signed 8 bit number
-; TODO use reciprocal multiplication w/ 0xf0, should be > 2x faster
-.macro decay_94p ; x, tmp1, tmp2
+; for positive values, multiply by 0.95. For negative values, multiply the (positive)
+; magnitude by 0.95, keeping the sign. This is not pure multiplication, as it
+; is symmetric about x=0. This symmetry allows us to decay positive and negative
+; velocities identically.
+.macro decay_95p ; x, tmp, tmp2
     mov @1, @0
     sbrc @0, 7
     neg @1
-    lsr @1
-    mov @2, @1
-    lsr @2
-    add @1, @2
-    lsr @2
-    add @1, @2
-    lsr @2
-    add @1, @2
+    ldi @2, 0xf4 ; 0xf4/0xff ~~ 0.95
+    mul @1, @2
+    mov @1, r1
+    clr r1
     sbrc @0, 7
     neg @1
     mov @0, @1

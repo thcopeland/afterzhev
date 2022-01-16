@@ -12,7 +12,7 @@
 ;   base character - used for rendering (1 bytes)
 ;   weapon, armor - used for rendering (2 bytes)
 ;   direction - used for rendering and attacks (1 byte)
-;   x, y position - units are tiles/12px (2 bytes)
+;   x, y position - (2 bytes)
 ;   acceleration - used for movement (1 byte)
 ;   health - initial health (1 byte)
 ;   strength - related to damage (1 byte)
@@ -24,7 +24,7 @@
 ;   base character - used for rendering (1 byte) NOTE: if the MSB is clear, a static character is used and weapon, armor, and direction are ignored
 ;   weapon, armor - used for rendering, may be ignored (2 bytes)
 ;   direction - used for rendering, may be ignored (1 byte)
-;   x, y position - units are tiles/12px (2 bytes)
+;   x, y position - (2 bytes)
 ;   price adjustment - high 4 bits are a fixed-point increase factor, low 4 bits are a constant: Hx+L (1 byte)
 ;   inventory - 8 items for sale (8 bytes)
 ;
@@ -33,7 +33,7 @@
 ;   base character - used for rendering (1 bytes) NOTE: if the MSB is clear, a static character is used and weapon, armor, and direction are ignored
 ;   weapon, armor - used for rendering, may be ignored (2 bytes)
 ;   direction - used for rendering and attacks, may be ignored (1 byte)
-;   x, y position - units are tiles/12px (2 bytes)
+;   x, y position - (2 bytes)
 ;   conversations - (8 bytes)
 ;   end of conversations list - always NO_CONVERSATION (1 byte)
 ;
@@ -42,10 +42,10 @@
 ;   base character - used for rendering (1 bytes)
 ;   weapon, armor - used for rendering (2 bytes)
 ;   direction - used for rendering and attacks (1 byte)
-;   x, y position - units are tiles/12px (2 bytes)
+;   x, y position - (2 bytes)
 ;   custom data (9 bytes)
 
 npc_table:
-    .db NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 2, 1, 10, 100, 10, 10, 1, 2, 3, 3, 3
-    .db NPC_SHOPKEEPER, 128|0, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 3, 3, 1, 1, 1, 2, 2, 3, 3, 4, 4
-    .db NPC_TALKER, CHARACTER_PALADIN, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 3, 8, 1, 1, 1, 1, 1, 1, 1, 1, 0
+    .db NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 24, 12, 10, 100, 10, 10, 1, 2, 3, 3, 3
+    .db NPC_SHOPKEEPER, 128|0, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 36, 36, 1, 1, 1, 2, 2, 3, 3, 4, 4
+    .db NPC_TALKER, CHARACTER_PALADIN, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 30, 150, 1, 1, 1, 1, 1, 1, 1, 1, 0

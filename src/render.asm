@@ -634,127 +634,81 @@ _rs_write_inner_tile:
 ;
 ; Register Usage
 ;   T (SREG)        whether or not to mirror the sprite (param)
-;   r16, r17        screen x position
-;   r18, r19        screen y position, camera position
-;   r20, r21        sprite width (param), sprite height (param); calculations
-;   r22, r23        sprite x position (param), calculations
-;   r24, r25        sprite y position (param)
+;   r18-r21         camera position, calculations
+;   r22, r23        sprite width (param), sprite height (param); calculations
+;   r24, r25        sprite position (param)
 ;   X (r26:r27)     framebuffer pointer
-;   Z (r30:r21)     sprite pointer (param)
+;   Z (r30:r31)     sprite pointer (param)
 render_sprite:
-    push r16
-    push r17
-    push r20
-    push r21
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
 _rs_calc_vertical_offset:
-    lds r18, camera_position_y
-    lds r19, camera_position_y+1
-    sub r24, r18
-    sub r25, r19
-    qmod r24, r25, TILE_HEIGHT
-    movw r18, r24
-    cpi r25, 0
-    brlt _rs_calc_horizonal_offset
-    ldi r20, TILE_HEIGHT
-    mul r25, r20
-    add r24, r0
+    lds r20, camera_position_y
+    sub r25, r20
+    brlo _rs_check_vertical_offset
     ldi r20, DISPLAY_WIDTH
-    mul r24, r20
+    mul r25, r20
     add XL, r0
-    add XH, r1
+    adc XH, r1
     clr r1
+_rs_check_vertical_offset:
+    mov r20, r23
+    neg r20
+    cp r25, r20
+    brlt _rs_end
+    cpi r25, DISPLAY_HEIGHT-FOOTER_HEIGHT
+    brge _rs_end
 _rs_calc_horizonal_offset:
-    lds r16, camera_position_x
-    lds r17, camera_position_x+1
-    sub r22, r16
-    sub r23, r17
-    qmod r22, r23, TILE_WIDTH
-    movw r16, r22
-    cpi r23, 0
-    brlt _rs_check_display_bounds
-    ldi r20, TILE_WIDTH
-    mul r23, r20
-    add XL, r0
+    lds r20, camera_position_x
+    sub r24, r20
+    brlo _rs_check_horizontal_offset
+    add XL, r24
     adc XH, r1
-    clr r1
-    add XL, r22
-    adc XH, r1
-_rs_check_display_bounds:
-    pop r23
-    pop r25
-_rs_check_x_too_large:
-    movw r20, r16
-    cpi r21, DISPLAY_HORIZONTAL_TILES
+_rs_check_horizontal_offset:
+    mov r20, r22
+    neg r20
+    cp r24, r20
+    brlt _rs_end
+    cpi r24, DISPLAY_WIDTH
     brge _rs_end
-_rs_check_x_too_small:
-    cpi r21, 0
-    brge _rs_check_y_too_large
-    cpi r21, -1
-    brlt _rs_end
-    add r20, r25
-    cpi r20, TILE_WIDTH
-    brlt _rs_end
-_rs_check_y_too_large:
-    movw r20, r18
-    cpi r21, DISPLAY_VERTICAL_TILES
-    brge _rs_end
-_rs_check_y_too_small:
-    cpi r21, 0
-    brge _rs_render_sprite
-    cpi r21, -1
-    brlt _rs_end
-    add r20, r23
-    cpi r20, TILE_HEIGHT
-    brlt _rs_end
-_rs_render_sprite:
+    movw r18, r24
+    mov r21, r22
     clr r22
     clr r24
-    mov r21, r25
-_rs_test_left_cut:
-    cpi r17, 0
-    brge _rs_test_right_cut
-    ldi r24, TILE_WIDTH
-    sub r24, r16
-    sub r25, r24
-    rjmp _rs_test_top_cut
-_rs_test_right_cut:
-    cpi r17, DISPLAY_HORIZONTAL_TILES-1
-    brlt _rs_test_top_cut
-    ldi r24, TILE_WIDTH
-    mov r0, r24
-    sub r0, r16
-    clr r24
-    cp r0, r25
-    brge _rs_write_sprite
-    mov r25, r0
-_rs_test_top_cut:
+    mov r25, r21
+_rs_left_cut:
+    cpi r18, 0
+    brge _rs_right_cut
+    mov r24, r18
+    neg r24
+    add r25, r18
+_rs_right_cut:
+    ldi r20, DISPLAY_WIDTH
+    sub r20, r21
+    cp r18, r20
+    brlt _rs_top_cut
+    ldi r25, DISPLAY_WIDTH
+    sub r25, r18
+_rs_top_cut:
     cpi r19, 0
-    brge _rs_test_bottom_cut
-    ldi r22, TILE_HEIGHT
-    sub r22, r18
-    sub r23, r22
-    rjmp _rs_write_sprite
-_rs_test_bottom_cut:
-    cpi r19, DISPLAY_VERTICAL_TILES-1
+    brge _rs_bottom_cut
+    mov r22, r19
+    neg r22
+    add r23, r19
+_rs_bottom_cut:
+    ldi r20, DISPLAY_HEIGHT-FOOTER_HEIGHT
+    sub r20, r23
+    cp r19, r20
     brlt _rs_write_sprite
-    ldi r22, TILE_HEIGHT
-    mov r0, r22
-    sub r0, r18
-    clr r22
-    cp r0, r23
-    brge _rs_write_sprite
-    mov r23, r0
+    ldi r23, DISPLAY_HEIGHT-FOOTER_HEIGHT
+    sub r23, r19
 _rs_write_sprite:
-    brtc _rs_write_normal
+    brtc _rs_write_sprite_unflipped
     rcall write_sprite_flipped
-    rjmp _rs_end
-_rs_write_normal:
+    ret
+_rs_write_sprite_unflipped:
     rcall write_sprite
 _rs_end:
-    pop r17
-    pop r16
     ret
 
 ; Render a character, taking camera position, animations, and weapons into account.
@@ -762,28 +716,23 @@ _rs_end:
 ;   base sprite idx (1 byte)
 ;   weapon idx      (1 byte)
 ;   armor idx       (1 byte)
-;   direction       (1 byte) PERF: if memory is tight, direction, action, and frame could be packed into a single byte
+;   direction       (1 byte)
 ;   current action  (1 byte)
 ;   action frame    (1 byte)
 ;
 ; Register Usage
-;   r14, r15        character x position
-;   r16, r17        character x position
-;   r18-r21         calculations
-;   r22, r23        character x position (param)
-;   r24, r25        character y position (param)
+;   r16-r17         store character position
+;   r18-r23         calculations
+;   r24, r25        character position (param), calculations
 ;   X (r26:r27)     framebuffer pointer
 ;   Y (r28:r29)     character data pointer (param), character animation pointer
 ;   Z (r30:r21)     flash memory pointer, temporary pointer
 render_character:
-    push r14
-    push r15
     push r16
     push r17
-    movw r14, r22
     movw r16, r24
-    ldd r18, Y+CHARACTER_DIRECTION_OFFSET
-    cpi r18, DIRECTION_UP
+    ldd r20, Y+CHARACTER_DIRECTION_OFFSET
+    cpi r20, DIRECTION_UP
     brsh _rc_alpha_under
 _rc_alpha_over:
     clt
@@ -791,10 +740,10 @@ _rc_alpha_over:
     rcall _rc_render_weapon_sprite
     rjmp _rc_end
 _rc_alpha_under:
-    ldd r18, Y+CHARACTER_ACTION_OFFSET
-    subi r18, ACTION_ATTACK1
-    com r18
-    bst r18, 7
+    ldd r20, Y+CHARACTER_ACTION_OFFSET
+    subi r20, ACTION_ATTACK1
+    com r20
+    bst r20, 7
     rcall _rc_render_weapon_sprite
     clt
     rcall _rc_render_character_sprite
@@ -809,13 +758,12 @@ _rc_render_character_sprite:
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_character_sprite
-    ldi r20, CHARACTER_SPRITE_WIDTH
-    ldi r21, CHARACTER_SPRITE_HEIGHT
-    movw r22, r14
+    ldi r22, CHARACTER_SPRITE_WIDTH
+    ldi r23, CHARACTER_SPRITE_HEIGHT
     movw r24, r16
     rcall render_sprite
     ldd r22, Y+CHARACTER_ARMOR_OFFSET
-    cpi r22, 0
+    tst r22
     brne _rc_write_armor_sprite
     ret
 _rc_write_armor_sprite:
@@ -823,18 +771,15 @@ _rc_write_armor_sprite:
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_overlay_sprite
-    movw r22, r14
     movw r24, r16
     elpm r21, Z+
     splts r21, r20
-    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
-    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
-    add r22, r20
-    add r24, r21
-    qmod r22, r23, TILE_WIDTH
-    qmod r24, r25, TILE_HEIGHT
-    elpm r21, Z+
-    splt r21, r20
+    subi r20, -CHARACTER_SPRITE_WIDTH/2
+    subi r21, -CHARACTER_SPRITE_HEIGHT/2
+    add r24, r20
+    add r25, r21
+    elpm r23, Z+
+    splt r23, r22
     rcall render_sprite
     ret
 ; *** end of _rc_render_character_sprite ***
@@ -842,7 +787,7 @@ _rc_write_armor_sprite:
 ; not simply jumped to or entered.
 _rc_render_weapon_sprite:
     ldd r22, Y+CHARACTER_WEAPON_OFFSET
-    cpi r22, 0
+    tst r22
     brne _rc_write_weapon_sprite
     ret
 _rc_write_weapon_sprite:
@@ -850,26 +795,21 @@ _rc_write_weapon_sprite:
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_overlay_sprite
-    movw r22, r14
     movw r24, r16
     elpm r21, Z+
     splts r21, r20
-    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
-    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
-    add r22, r20
-    add r24, r21
-    qmod r22, r23, TILE_WIDTH
-    qmod r24, r25, TILE_HEIGHT
-    elpm r21, Z+
-    splt r21, r20
+    subi r20, -CHARACTER_SPRITE_WIDTH/2
+    subi r21, -CHARACTER_SPRITE_HEIGHT/2
+    add r24, r20
+    add r25, r21
+    elpm r23, Z+
+    splt r23, r22
     rcall render_sprite
     ret
 ; *** end of _rc_render_weapon_sprite ***
 _rc_end:
     pop r17
     pop r16
-    pop r15
-    pop r14
     ret
 
 ; Render the character in the down-idle position, for viewing in the UI.

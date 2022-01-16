@@ -205,14 +205,10 @@ _idi_loose_items_iter:
     std Z+SECTOR_ITEM_IDX_OFFSET, r18
     std Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET, r1
     lds r18, player_position_x
-    lds r19, player_position_x+1
-    subi r18, -TILE_WIDTH/2
-    qmod r18, r19, TILE_WIDTH
-    std Z+SECTOR_ITEM_X_OFFSET, r19
-    lds r18, player_position_y
-    lds r19, player_position_y+1
-    subi r18, -TILE_HEIGHT/2
-    qmod r18, r19, TILE_HEIGHT
+    subi r18, -CHARACTER_SPRITE_WIDTH/2
+    lds r19, player_position_y
+    subi r19, -CHARACTER_SPRITE_HEIGHT/2
+    std Z+SECTOR_ITEM_X_OFFSET, r18
     std Z+SECTOR_ITEM_Y_OFFSET, r19
     rjmp _idi_end
 _idi_loose_items_next:
