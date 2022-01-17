@@ -495,7 +495,7 @@ _ls_load_npcs_iter:
     ldi r21, NPC_TABLE_ENTRY_MEMSIZE
     mul r20, r21
     add ZL, r0
-    add ZH, r1
+    adc ZH, r1
     clr r1
     lpm r19, Z+    ; direction
     std Y+NPC_ANIM_OFFSET, r19
