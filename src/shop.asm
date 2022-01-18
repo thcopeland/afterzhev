@@ -338,10 +338,14 @@ _srg_selection_buy_price:
     ldi ZL, low(2*ui_str_buy_label)
     ldi ZH, high(2*ui_str_buy_label)
     ldi r21, 29
-    clr r23
     call puts
-
-    ; calculate and print 16 bit value
+    mov r25, r16
+    rcall calculate_buy_price
+    movw r18, r24
+    ldi XL, low(framebuffer+DISPLAY_WIDTH+SHOP_UI_PRICE_MARGIN-FONT_DISPLAY_WIDTH)
+    ldi XH, high(framebuffer+DISPLAY_WIDTH+SHOP_UI_PRICE_MARGIN-FONT_DISPLAY_WIDTH)
+    clr r23
+    call putw
     rjmp _srg_coin_icon
 _srg_selection_sell_price:
     ldi YL, low(framebuffer+SHOP_UI_PRICE_LABEL_MARGIN)
@@ -351,7 +355,12 @@ _srg_selection_sell_price:
     ldi r21, 29
     clr r23
     call puts
-    ; calculate and print 16 bit value
+    mov r25, r16
+    rcall calculate_sell_price
+    movw r18, r24
+    ldi XL, low(framebuffer+DISPLAY_WIDTH+SHOP_UI_PRICE_MARGIN-FONT_DISPLAY_WIDTH)
+    ldi XH, high(framebuffer+DISPLAY_WIDTH+SHOP_UI_PRICE_MARGIN-FONT_DISPLAY_WIDTH)
+    call putw
 _srg_coin_icon:
     ldi XL, low(framebuffer+SHOP_UI_PRICE_MARGIN)
     ldi XH, high(framebuffer+SHOP_UI_PRICE_MARGIN)
@@ -419,4 +428,78 @@ _sts_player2:
     add XL, r24
     adc XH, r1
 _sts_end:
+    ret
+
+; Calculate the price at which the player can buy the given item.
+;
+; Register Usage
+;   r24:r25         calculated price
+;   r25             item index (param)
+;   Z (r30:r31)     flash pointer
+calculate_buy_price:
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_COST_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_COST_OFFSET)
+    ldi r24, ITEM_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    elpm r20, Z+
+    elpm r21, Z+
+    ldi ZL, byte3(2*shop_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*shop_table+SHOP_PRICE_CONST_OFFSET)
+    ldi ZH, high(2*shop_table+SHOP_PRICE_CONST_OFFSET)
+    ldi r22, SHOP_MEMSIZE
+    lds r23, current_shop_index
+    mul r22, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r22, Z+
+    elpm r23, Z+
+    mul r20, r23
+    lsr r1
+    ror r0
+    lsr r1
+    ror r0
+    lsr r1
+    ror r0
+    lsr r1
+    ror r0
+    lsr r1
+    ror r0
+    movw r24, r0
+    mul r21, r23
+    lsl r0
+    rol r1
+    lsl r0
+    rol r1
+    lsl r0
+    rol r1
+    add r24, r0
+    adc r25, r1
+    clr r1
+    add r24, r22
+    adc r25, r1
+    ret
+
+; Calculate the price at which the player can sell the given item.
+;
+; Register Usage
+;   r24:r25         calculated price
+;   r25             item index (param)
+;   Z (r30:r31)     flash pointer
+calculate_sell_price:
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_COST_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_COST_OFFSET)
+    ldi r24, ITEM_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    elpm r24, Z+
+    elpm r25, Z+
     ret

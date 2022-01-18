@@ -18,7 +18,7 @@
 .endm
 
 shop_table:
-    DECL_SHOP_HDR butcher_bob, 2, 10, 0x20
+    DECL_SHOP_HDR butcher_bob, 2, 10, 0x4f
     DECL_SHOP_ITEMS 1, 1, 2, 2, 0, 3, 3, 4, 4
 
 shop_string_table:
