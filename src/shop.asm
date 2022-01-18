@@ -183,7 +183,7 @@ _sss_shop_inventory_empty_slot_found:
     lds r22, player_gold
     lds r23, player_gold+1
     add r22, r24
-    add r23, r25
+    adc r23, r25
     sts player_gold, r22
     sts player_gold+1, r23
     ld r20, X
