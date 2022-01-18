@@ -303,7 +303,6 @@ _hmb_npc_iter:
     adc ZH, r1
     clr r1
     lpm r20, Z
-    sts framebuffer, r1
     cpi r20, NPC_SHOPKEEPER
     breq _hmb_nearby_shopkeeper
 _hmb_npc_next:

@@ -41,7 +41,7 @@ _init_clear_effects_iter:
     sti player_stats+2, 10
     sti player_stats+3, 10
     call calculate_player_stats
-    stiw player_gold, 15030
+    stiw player_gold, 100
     sti player_max_health, 16
     sti player_health, 13
     sti game_mode, MODE_EXPLORE
@@ -50,6 +50,7 @@ _init_clear_effects_iter:
     stiw npc_presence, 0xffff
     sti clock, 0
     sti mode_clock, 0
+    sti current_shop_index, 0xff
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL

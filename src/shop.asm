@@ -4,7 +4,7 @@ shop_update_game:
     ret
 
 ; Populate shop_inventory with the items for the given shop and switch the game
-; mode.
+; mode. If the shop was the most recent one open, the inventory is not cleared.
 ;
 ; Register Usage
 ;   r20-r21         calculations
@@ -12,6 +12,9 @@ shop_update_game:
 ;   X (r26:r27)     memory pointer
 ;   Z (r30:r31)     flash pointer
 load_shop:
+    lds r20, current_shop_index
+    cp r20, r25
+    breq _ls_change_mode
     sts current_shop_index, r25
     sts shop_selection, r1
     ldi XL, low(shop_inventory)
@@ -38,12 +41,13 @@ _ls_load_inventory_iter:
 _ls_load_inventory_next:
     dec r20
     brne _ls_load_inventory_iter
+_ls_change_mode:
     ldi r20, MODE_SHOPPING
     sts game_mode, r20
     ret
 
-; Handle all player input. The directional keys control selection, button 1 is
-; buy, button 2 is sell, and button 4 is exit. Button 3 does nothing.
+; Handle all player input. The directional keys control selection, button 2 is
+; buy, button 3 is sell, and button 4 is exit. Button 1 does nothing.
 ;
 ; Register Usage
 ;   r18-r19         controller values
@@ -94,12 +98,98 @@ _shc_left:
     sts shop_selection, r22
 _shc_button1:
 _shc_button2:
+    sbrc r19, CONTROLS_SPECIAL2
+    rcall shop_buy_selected
+_shc_button3:
+    sbrc r19, CONTROLS_SPECIAL3
+    rcall shop_sell_selected
 _shc_button4:
     sbrs r18, CONTROLS_SPECIAL4
     rjmp _shc_end
     ldi r22, MODE_EXPLORE
     sts game_mode, r22
 _shc_end:
+    ret
+
+; Remove an item from the shop's inventory and place it in the player's. The
+; purchase will fail if the player has insufficient funds or no empty slots.
+;
+; Register Usage
+;   r20-r21,r24-r25 calculations
+;   r22-r23         player's gold
+;   X (r26:r27)     shop inventory pointer
+;   Y (r28:r29)     player inventory pointer
+shop_buy_selected:
+    rcall shop_determine_selection
+    tst r25
+    brne _sbs_end
+    ld r25, X
+    dec r25
+    brmi _sbs_end
+    rcall calculate_buy_price
+    lds r22, player_gold
+    lds r23, player_gold+1
+    sub r22, r24
+    sbc r23, r25
+    brmi _sbs_end
+    ldi YL, low(player_inventory)
+    ldi YH, high(player_inventory)
+    ldi r20, PLAYER_INVENTORY_SIZE
+_sbs_player_inventory_iter:
+    ld r21, Y+
+    tst r21
+    breq _sbs_player_inventory_empty_slot_found
+_sbs_player_inventory_next:
+    dec r20
+    brne _sbs_player_inventory_iter
+    rjmp _sbs_end
+_sbs_player_inventory_empty_slot_found:
+    sts player_gold, r22
+    sts player_gold+1, r23
+    ld r20, X
+    st X, r1
+    st -Y, r20
+_sbs_end:
+    ret
+
+; Move the selected item from the player's inventory to the shop's, if there
+; is an empty slot. If not, the last item is replaced.
+;
+; Register Usage
+;   r20-r21,r24-r25 calculations
+;   r22-r23         player's gold
+;   X (r26:r27)     player inventory pointer
+;   Y (r28:r29)     shop inventory pointer
+shop_sell_selected:
+    rcall shop_determine_selection
+    tst r25
+    breq _sss_end
+    ld r25, X
+    dec r25
+    brmi _sss_end
+    ldi YL, low(shop_inventory)
+    ldi YH, high(shop_inventory)
+    ldi r20, SHOP_INVENTORY_SIZE
+_sss_shop_inventory_iter:
+    ld r21, Y+
+    tst r21
+    breq _sss_shop_inventory_empty_slot_found
+_sss_shop_inventory_next:
+    dec r20
+    brne _sss_shop_inventory_iter
+    rjmp _sss_end
+_sss_shop_inventory_empty_slot_found:
+    rcall calculate_sell_price
+    lds r22, player_gold
+    lds r23, player_gold+1
+    add r22, r24
+    add r23, r25
+    sts player_gold, r22
+    sts player_gold+1, r23
+    ld r20, X
+    st X, r1
+    st -Y, r20
+_sss_end:
     ret
 
 .equ SHOP_UI_HEADER_COLOR = INVENTORY_UI_HEADER_COLOR
@@ -124,6 +214,9 @@ _shc_end:
 ; Render the shop and player inventories, as well as the selected item information.
 ;
 ; Register Usage
+;   r16-r17     saving across calls
+;   r18-r25     calculations
+;   X, Y, Z     framebuffer and data pointers
 shop_render_game:
 _srg_render_background:
     ldi XL, low(framebuffer)
@@ -331,35 +424,32 @@ _srg_selection_description:
     ldi r21, 22
     call puts
 _srg_selection_buy_price:
-    tst r17
-    brne _srg_selection_sell_price
     ldi YL, low(framebuffer+SHOP_UI_PRICE_LABEL_MARGIN)
     ldi YH, high(framebuffer+SHOP_UI_PRICE_LABEL_MARGIN)
+    ldi r21, 29
+    tst r17
+    brne _srg_selection_sell_price
     ldi ZL, low(2*ui_str_buy_label)
     ldi ZH, high(2*ui_str_buy_label)
-    ldi r21, 29
     call puts
     mov r25, r16
     rcall calculate_buy_price
     movw r18, r24
     ldi XL, low(framebuffer+DISPLAY_WIDTH+SHOP_UI_PRICE_MARGIN-FONT_DISPLAY_WIDTH)
     ldi XH, high(framebuffer+DISPLAY_WIDTH+SHOP_UI_PRICE_MARGIN-FONT_DISPLAY_WIDTH)
-    clr r23
+    ldi r23, 0x04
     call putw
     rjmp _srg_coin_icon
 _srg_selection_sell_price:
-    ldi YL, low(framebuffer+SHOP_UI_PRICE_LABEL_MARGIN)
-    ldi YH, high(framebuffer+SHOP_UI_PRICE_LABEL_MARGIN)
     ldi ZL, low(2*ui_str_sell_label)
     ldi ZH, high(2*ui_str_sell_label)
-    ldi r21, 29
-    clr r23
     call puts
     mov r25, r16
     rcall calculate_sell_price
     movw r18, r24
     ldi XL, low(framebuffer+DISPLAY_WIDTH+SHOP_UI_PRICE_MARGIN-FONT_DISPLAY_WIDTH)
     ldi XH, high(framebuffer+DISPLAY_WIDTH+SHOP_UI_PRICE_MARGIN-FONT_DISPLAY_WIDTH)
+    ldi r23, 0x18
     call putw
 _srg_coin_icon:
     ldi XL, low(framebuffer+SHOP_UI_PRICE_MARGIN)
