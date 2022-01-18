@@ -98,7 +98,7 @@ void render(void) {
             unsigned char color = avr->data[0x200 + row*GAME_DISPLAY_WIDTH+col];
             float red = (color&7) / 7.0,
                   green = ((color>>3)&7) / 7.0,
-                  blue = ((color>>6)&3) / 3.0;
+                  blue = ((color>>5)&6) / 7.0;
             glColor3f(red, green, blue);
             glVertex2f((float) col/GAME_DISPLAY_WIDTH, (float) row/GAME_DISPLAY_HEIGHT);
             glVertex2f((float) (col+1)/GAME_DISPLAY_WIDTH, (float) row/GAME_DISPLAY_HEIGHT);
