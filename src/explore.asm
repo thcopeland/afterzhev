@@ -93,8 +93,6 @@ _rg_render_static_npc:
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     call render_sprite
-    ldi ZL, byte3(2*npc_table)
-    out RAMPZ, ZL
 _rg_render_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r16
@@ -212,11 +210,11 @@ _hc_end:
 ;   X (r26:r27)     memory pointer 2
 ;   Z (r30:r31)     memory pointer
 handle_main_button:
-_hmb_pickup_items:
     lds r18, player_position_x
     lds r19, player_position_y
     subi r18, -CHARACTER_SPRITE_WIDTH/2
     subi r19, -CHARACTER_SPRITE_HEIGHT/2
+_hmb_pickup_items:
     ldi ZL, low(sector_loose_items)
     ldi ZH, high(sector_loose_items)
     ldi r22, SECTOR_DYNAMIC_ITEM_COUNT
@@ -276,7 +274,47 @@ _hmb_empty_inventory_slot_found:
     and r20, r22
     st X, r20
 _hmb_npc_interactions:
-    ; TODO
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r22, SECTOR_NPC_COUNT
+_hmb_npc_iter:
+    ldd r23, Y+NPC_IDX_OFFSET
+    dec r23
+    brmi _hmb_npc_next
+    ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    subi r20, -CHARACTER_SPRITE_WIDTH/2
+    subi r21, -CHARACTER_SPRITE_HEIGHT/2
+    sub r20, r18
+    sbrc r20, 7
+    neg r20
+    cpi r20, TILE_WIDTH
+    brsh _hmb_npc_next
+    sub r21, r19
+    sbrc r21, 7
+    neg r21
+    cpi r21, TILE_HEIGHT
+    brsh _hmb_npc_next
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r20, NPC_TABLE_ENTRY_MEMSIZE
+    mul r20, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    lpm r20, Z
+    sts framebuffer, r1
+    cpi r20, NPC_SHOPKEEPER
+    breq _hmb_nearby_shopkeeper
+_hmb_npc_next:
+    adiw YL, NPC_MEMSIZE
+    dec r22
+    brne _hmb_npc_iter
+    rjmp _hmb_end
+_hmb_nearby_shopkeeper:
+    adiw ZL, NPC_TABLE_SHOP_IDX_OFFSET
+    lpm r25, Z
+    call load_shop
 _hmb_end:
     ret
 

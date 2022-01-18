@@ -55,5 +55,6 @@ player_inventory:   .byte PLAYER_INVENTORY_SIZE
 
 inventory_selection: .byte 1
 
+current_shop_index: .byte 1
 shop_inventory:     .byte SHOP_INVENTORY_SIZE
 shop_selection:     .byte 1

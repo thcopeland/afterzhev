@@ -221,24 +221,24 @@ _idi_end:
 .equ INVENTORY_UI_HEADER_HEIGHT = 9
 .equ INVENTORY_UI_HEADER_COLOR = 0x1d
 .equ INVENTORY_UI_SUBHEADER_HEIGHT = 7
-.equ INVENTORY_UI_SUBHEADER_OFFSET = 33*DISPLAY_WIDTH
+.equ INVENTORY_UI_SUBHEADER_MARGIN = 39*DISPLAY_WIDTH
 .equ INVENTORY_UI_BODY_COLOR = 0x6e
 .equ INVENTORY_UI_CLASS_MARGIN = 2*DISPLAY_WIDTH+2
-.equ INVENTORY_UI_STATS_MARGIN = 2*DISPLAY_WIDTH+45
-.equ INVENTORY_UI_EFFECTS_MARGIN = DISPLAY_WIDTH+111
+.equ INVENTORY_UI_STATS_MARGIN = 2*DISPLAY_WIDTH+50
+.equ INVENTORY_UI_EFFECTS_MARGIN = 31*DISPLAY_WIDTH+111
 .equ INVENTORY_UI_EFFECTS_SEPARATION = STATIC_ITEM_WIDTH+2
-.equ INVENTORY_UI_ROW1_MARGIN = DISPLAY_WIDTH*11+33
-.equ INVENTORY_UI_ROW2_MARGIN = DISPLAY_WIDTH*20+33
+.equ INVENTORY_UI_ROW1_MARGIN = DISPLAY_WIDTH*15+33
+.equ INVENTORY_UI_ROW2_MARGIN = DISPLAY_WIDTH*24+33
 .equ INVENTORY_UI_COL_WIDTH = STATIC_ITEM_WIDTH+3
-.equ INVENTORY_UI_CHARACTER_MARGIN = DISPLAY_WIDTH*14+3
+.equ INVENTORY_UI_CHARACTER_MARGIN = DISPLAY_WIDTH*18+3
 .equ INVENTORY_UI_WEAPON_MARGIN = INVENTORY_UI_CHARACTER_MARGIN-DISPLAY_WIDTH*3+16
 .equ INVENTORY_UI_ARMOR_MARGIN = INVENTORY_UI_CHARACTER_MARGIN+DISPLAY_WIDTH*6+16
 .equ INVENTORY_UI_HEALTH_ICON_MARGIN = DISPLAY_WIDTH*12+110
 .equ INVENTORY_UI_HEALTH_MARGIN = 13*DISPLAY_WIDTH+106
 .equ INVENTORY_UI_GOLD_ICON_MARGIN = DISPLAY_WIDTH*21+112
 .equ INVENTORY_UI_GOLD_MARGIN = 22*DISPLAY_WIDTH+106
-.equ INVENTORY_UI_ITEM_NAME_MARGIN = 34*DISPLAY_WIDTH+2
-.equ INVENTORY_UI_ITEM_STATS_MARGIN = 41*DISPLAY_WIDTH+107
+.equ INVENTORY_UI_ITEM_NAME_MARGIN = 40*DISPLAY_WIDTH+2
+.equ INVENTORY_UI_ITEM_STATS_MARGIN = 47*DISPLAY_WIDTH+107
 .equ INVENTORY_UI_NO_ITEM_SELECTED_MARGIN = 59*DISPLAY_WIDTH+28
 
 ; Render the player's inventory and equipment, along with the currently selected
@@ -293,8 +293,8 @@ _irg_render_stats_iter:
     ld r21, Y+
     call put8u
     movw XL, r16
-    subi XL, low(-13)
-    sbci XH, high(-13)
+    subi XL, low(-18)
+    sbci XH, high(-18)
 _irg_render_stats_check:
     dec r20
     brne _irg_render_stats_iter
@@ -349,7 +349,7 @@ _irg_render_character:
     ldi XL, low(framebuffer+INVENTORY_UI_WEAPON_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_WEAPON_MARGIN)
     lds r25, player_weapon
-    rcall render_item_with_underbar
+    call render_item_with_underbar
     ldi XL, low(framebuffer+INVENTORY_UI_CHARACTER_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_CHARACTER_MARGIN)
     ldi YL, low(player_character)
@@ -358,7 +358,7 @@ _irg_render_character:
     ldi XL, low(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
     lds r25, player_armor
-    rcall render_item_with_underbar
+    call render_item_with_underbar
 _irg_render_inventory:
     ldi XL, low(framebuffer+INVENTORY_UI_ROW1_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_ROW1_MARGIN)
@@ -370,7 +370,7 @@ _irg_display_inventory_iter:
     adc ZH, r1
     ld r25, Z
     movw YL, XL
-    rcall render_item_with_underbar
+    call render_item_with_underbar
     movw XL, YL
     adiw XL, INVENTORY_UI_COL_WIDTH
     inc r20
@@ -415,8 +415,8 @@ _irg_render_item_name:
     brne _irg_render_selected_item_name
     rjmp _irg_no_item_selected
 _irg_render_selected_item_name:
-    ldi XL, low(framebuffer+INVENTORY_UI_SUBHEADER_OFFSET)
-    ldi XH, high(framebuffer+INVENTORY_UI_SUBHEADER_OFFSET)
+    ldi XL, low(framebuffer+INVENTORY_UI_SUBHEADER_MARGIN)
+    ldi XH, high(framebuffer+INVENTORY_UI_SUBHEADER_MARGIN)
     ldi r22, INVENTORY_UI_HEADER_COLOR
     ldi r24, DISPLAY_WIDTH
     ldi r25, INVENTORY_UI_SUBHEADER_HEIGHT
@@ -523,23 +523,6 @@ _irg_end:
     pop r16
     pop r15
     pop r14
-    ret
-
-; Render an item icon with a nice-looking underbar. The underbar is rendered
-; whether or not the item is present.
-;
-; Register Usage
-;   r22-r24         internal
-;   r25             item (param)
-;   X (r26:r37)     framebuffer pointer (param)
-render_item_with_underbar:
-    call render_item_icon
-    subi XL, low(-(STATIC_ITEM_HEIGHT*DISPLAY_WIDTH-1))
-    sbci XH, high(-(STATIC_ITEM_HEIGHT*DISPLAY_WIDTH-1))
-    ldi r22, 0x0
-    ldi r24, INVENTORY_UI_COL_WIDTH-1
-    ldi r25, 1
-    call render_rect
     ret
 
 ; Render an item stat boost with color.

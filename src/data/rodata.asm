@@ -5,6 +5,7 @@
     .cseg
     .include "font.asm"
     .include "items.asm"
+    .include "shops.asm"
     .include "npcs.asm"
     .include "classes.asm"
 

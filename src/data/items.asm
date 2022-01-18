@@ -5,9 +5,15 @@
 ; For wieldable items, bonus damage, for usable items, the duration of effects,
 ; for wearable items, nothing yet, and for special items, it depends.
 
+
+; ****************************************************************************
+; NOTE: IMPORTANT! For rendering reasons, no item may affect more than THREE
+; attributes. The game will overwrite memory (including the stack!) and crash.
+; ****************************************************************************
+
 .macro DECL_ITEM ; name, flags, cost, strength, vitality, dexterity, charisma
     .dw 2*(_item_str_@0_name-item_string_table), 2*(_item_str_@0_desc-item_string_table)
-    .db @1, @2, @3, @4, @5, @6
+    .db @1, low(@2), high(2), @3, @4, @5, @6, 0 ; final 0 for padding
 .endm
 
 item_table:
@@ -18,7 +24,7 @@ item_table:
 
 item_string_table:
 _item_str_wood_stick_name:      .db "Wood Stick", 0, 0
-_item_str_wood_stick_desc:      .db "Although outwardly un-assuming, this is the ancient weapon of the legendary Kalima-bah.", 0
+_item_str_wood_stick_desc:      .db "Although outwardly un-assuming, this is a truly legendary weapon.", 0
 _item_str_health_potion_name:   .db "Healing Potion", 0, 0
 _item_str_health_potion_desc:   .db "An elegant flask full of a blood-red liquid.", 0, 0
 _item_str_mint_soda_name:       .db "Questionable Liquid", 0

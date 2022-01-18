@@ -1202,3 +1202,20 @@ _rep_end:
     pop YH
     pop YL
     ret
+
+; Render an item icon with a nice-looking underbar. The underbar is rendered
+; whether or not the item is present.
+;
+; Register Usage
+;   r22-r24         internal
+;   r25             item (param)
+;   X (r26:r37)     framebuffer pointer (param)
+render_item_with_underbar:
+    rcall render_item_icon
+    subi XL, low(-(STATIC_ITEM_HEIGHT*DISPLAY_WIDTH-1))
+    sbci XH, high(-(STATIC_ITEM_HEIGHT*DISPLAY_WIDTH-1))
+    ldi r22, 0x0
+    ldi r24, INVENTORY_UI_COL_WIDTH-1
+    ldi r25, 1
+    rcall render_rect
+    ret

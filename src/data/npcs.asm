@@ -25,8 +25,8 @@
 ;   weapon, armor - used for rendering, may be ignored (2 bytes)
 ;   direction - used for rendering, may be ignored (1 byte)
 ;   x, y position - (2 bytes)
-;   price adjustment - high 4 bits are a fixed-point increase factor, low 4 bits are a constant: Hx+L (1 byte)
-;   inventory - 8 items for sale (8 bytes)
+;   shop id - (1 byte)
+;   empty - (8 bytes)
 ;
 ; Talker (16 bytes)
 ;   type - always NPC_TALKER (1 byte)
@@ -47,5 +47,5 @@
 
 npc_table:
     .db NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 24, 12, 10, 100, 10, 10, 1, 2, 3, 3, 3
-    .db NPC_SHOPKEEPER, 128|0, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 36, 36, 1, 1, 1, 2, 2, 3, 3, 4, 4
+    .db NPC_SHOPKEEPER, 128|0, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 36, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0
     .db NPC_TALKER, CHARACTER_PALADIN, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 30, 150, 1, 1, 1, 1, 1, 1, 1, 1, 0
