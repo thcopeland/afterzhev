@@ -163,6 +163,20 @@ _uep_shift2:
     st -Z, r1
     st Y+, r20
     st Y+, r21
+_uep_shift3:
+    ldi YL, low(player_effects+2*PLAYER_EFFECT_MEMSIZE)
+    ldi YH, high(player_effects+2*PLAYER_EFFECT_MEMSIZE)
+    ldi ZL, low(player_effects+3*PLAYER_EFFECT_MEMSIZE)
+    ldi ZH, high(player_effects+3*PLAYER_EFFECT_MEMSIZE)
+    ld r20, Y
+    tst r20
+    brne _uep_end
+    ld r20, Z+
+    ld r21, Z+
+    st -Z, r1
+    st -Z, r1
+    st Y+, r20
+    st Y+, r21
 _uep_end:
     movw YL, r24
     rcall calculate_player_stats
