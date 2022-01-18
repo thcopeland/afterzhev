@@ -231,13 +231,13 @@ _srg_render_health:
     ldi XL, low(framebuffer+SHOP_UI_HEALTH_MARGIN)
     ldi XH, high(framebuffer+SHOP_UI_HEALTH_MARGIN)
     lds r21, player_max_health
-    call put8u
+    call putb
     ldi r22, '/'
     call putc
     subi XL, low(FONT_DISPLAY_WIDTH)
     sbci XH, high(FONT_DISPLAY_WIDTH)
     lds r21, player_health
-    call put8u
+    call putb
 _srg_render_gold:
     ldi XL, low(framebuffer+SHOP_UI_GOLD_ICON_MARGIN)
     ldi XH, high(framebuffer+SHOP_UI_GOLD_ICON_MARGIN)
@@ -250,8 +250,9 @@ _srg_render_gold:
     call render_element
     ldi XL, low(framebuffer+SHOP_UI_GOLD_MARGIN)
     ldi XH, high(framebuffer+SHOP_UI_GOLD_MARGIN)
-    lds r21, player_gold
-    call put8u
+    lds r18, player_gold
+    lds r19, player_gold+1
+    call putw
 _srg_selection_cursor:
     lds r20, shop_selection
     ldi XL, low(framebuffer+SHOP_UI_SHOP_INVENTORY_ROW1_MARGIN-DISPLAY_WIDTH-1)

@@ -48,7 +48,7 @@ player_stats:       .byte 4
 player_augmented_stats: .byte 4
 player_health:      .byte 1
 player_max_health:  .byte 1
-player_gold:        .byte 1
+player_gold:        .byte 2
 player_xp:          .byte 2
 player_effects:     .byte PLAYER_EFFECT_MEMSIZE*PLAYER_EFFECT_COUNT
 player_inventory:   .byte PLAYER_INVENTORY_SIZE

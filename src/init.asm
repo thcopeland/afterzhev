@@ -41,7 +41,7 @@ _init_clear_effects_iter:
     sti player_stats+2, 10
     sti player_stats+3, 10
     call calculate_player_stats
-    sti player_gold, 153
+    stiw player_gold, 15030
     sti player_max_health, 16
     sti player_health, 13
     sti game_mode, MODE_EXPLORE

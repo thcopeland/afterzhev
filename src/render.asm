@@ -983,20 +983,35 @@ _putc_write_pixels:
 ;   r23             foreground color (param)
 ;   r22-25          calculations
 ;   X (r26:r27)     framebuffer (param)
-put8u:
-    mov r22, r21
-    div10u r21, r21, r24
-    mov r24, r21
-    lsl r24
-    sub r22, r24
-    lsl r24
-    lsl r24
-    sub r22, r24 ; mod 10
+putb:
+    divmod10u r21, r24, r22
+    mov r21, r24
     subi r22, -'0'
     rcall putc
     sbiw XL, FONT_DISPLAY_WIDTH
     tst r21
-    brne put8u
+    brne putb
+    ret
+
+; Write an unsigned 16 bit integer to the framebuffer in base 10. NOTE: the framebuffer
+; pointer is the upper-left corner of the rightmost character.
+;
+; Register Usage
+;   r18:r19         value (param)
+;   r23             foreground color (param)
+;   r22-25, r30-r31 calculations
+;   X (r26:r27)     framebuffer (param)
+putw:
+    divmodw10u r18, r19, r20, r21, r24, r25, r30, r31
+    movw r18, r20
+    mov r22, r24
+    subi r22, -'0'
+    rcall putc
+    sbiw XL, FONT_DISPLAY_WIDTH
+    tst r18
+    brne putw
+    tst r19
+    brne putw
     ret
 
 ; Write a string to the framebuffer.
