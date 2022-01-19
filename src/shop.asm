@@ -177,7 +177,6 @@ _sss_shop_inventory_iter:
 _sss_shop_inventory_next:
     dec r20
     brne _sss_shop_inventory_iter
-    rjmp _sss_end
 _sss_shop_inventory_empty_slot_found:
     rcall calculate_sell_price
     lds r22, player_gold
