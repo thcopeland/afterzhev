@@ -6,6 +6,7 @@
     .include "font.asm"
     .include "items.asm"
     .include "shops.asm"
+    .include "conversations.asm"
     .include "npcs.asm"
     .include "classes.asm"
 

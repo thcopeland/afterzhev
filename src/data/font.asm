@@ -5,7 +5,8 @@
 ; to lower the entire character by one row (used for lowercase and some special
 ; characters).
 ;
-; The font_character_table contains only the printable ASCII characters.
+; The font_character_table contains only the printable ASCII characters, and some
+; special graphical characters.
 font_character_table:
     .db 0x7f, 0xff
     .db 0x5b, 0x7d
@@ -103,3 +104,4 @@ font_character_table:
     .db 0x1b, 0xa9
     .db 0x43, 0xff
     .db 0x00, 0x00
+    .db 0x72, 0x0f

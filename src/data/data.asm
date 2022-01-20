@@ -25,6 +25,8 @@ npc_presence:       .byte TOTAL_NPC_COUNT>>3
 sector_npcs:        .byte NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT
 character_render:   .byte CHARACTER_MEMSIZE
 
+conversation_over:  .byte TOTAL_CONVERSATION_COUNT>>3
+
 camera_position_x:  .byte 1
 camera_position_y:  .byte 1
 
@@ -58,3 +60,6 @@ inventory_selection: .byte 1
 current_shop_index: .byte 1
 shop_inventory:     .byte SHOP_INVENTORY_SIZE
 shop_selection:     .byte 1
+
+conversation_frame: .byte 2
+selected_choice:    .byte 1

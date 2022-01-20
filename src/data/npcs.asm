@@ -1,6 +1,6 @@
 ; There are four different types of NPCs. The most common type, enemies, can
 ; move around, fight the player, and drop a somewhat random item on death. Talkers
-; are associated with a conversation and do not move. Shopkeepers have a several
+; are associated with up to three conversations and do not move. Shopkeepers have
 ; items that they can sell and also do not move. Special NPCs can do literally
 ; anything and are handled separately. These are used for important or unique
 ; chararacters.
@@ -21,7 +21,7 @@
 ;
 ; Shopkeeper (16 bytes)
 ;   type - always NPC_SHOPKEEPER (1 byte)
-;   base character - used for rendering (1 byte) NOTE: if the MSB is clear, a static character is used and weapon, armor, and direction are ignored
+;   base character - used for rendering (1 byte) NOTE: if the MSB is set, a static character is used and weapon, armor, and direction are ignored
 ;   weapon, armor - used for rendering, may be ignored (2 bytes)
 ;   direction - used for rendering, may be ignored (1 byte)
 ;   x, y position - (2 bytes)
@@ -30,12 +30,16 @@
 ;
 ; Talker (16 bytes)
 ;   type - always NPC_TALKER (1 byte)
-;   base character - used for rendering (1 bytes) NOTE: if the MSB is clear, a static character is used and weapon, armor, and direction are ignored
+;   base character - used for rendering (1 byte) NOTE: if the MSB is set, a static character is used and weapon, armor, and direction are ignored
 ;   weapon, armor - used for rendering, may be ignored (2 bytes)
 ;   direction - used for rendering and attacks, may be ignored (1 byte)
 ;   x, y position - (2 bytes)
-;   conversations - (8 bytes)
-;   end of conversations list - always NO_CONVERSATION (1 byte)
+;   conversation 1 id - used for checking if the conversation has happened. 0 is a special conversation that is never considered over (1 byte)
+;   conversation 1 ptr - first conversation (2 bytes)
+;   conversation 2 id -  (1 byte)
+;   conversation 2 ptr - second conversation, used if the first is over(2 bytes)
+;   conversation 3 id -  (1 byte)
+;   conversation 3 ptr - third conversation, used if the first and second are over (2 bytes)
 ;
 ; Special (16 bytes)
 ;   type - always NPC_SPECIAL (1 byte)
@@ -45,7 +49,31 @@
 ;   x, y position - (2 bytes)
 ;   custom data (9 bytes)
 
+.macro DECL_NPC ; type, base, weapon, armor, direction, x
+    .db @0, @1, @2, @3, @4, @5
+.endm
+
+.macro DECL_ENEMY_DATA ; y, acceleration, health, strength, agility, drop1 .. drop5
+    .db @0, @1, @2, @3, @4, @5, @6, @7, @8, @9
+.endm
+
+.macro DECL_SHOP_DATA ; y, shop id
+    .db @0, @1, 0, 0, 0, 0, 0, 0, 0, 0
+.endm
+
+.macro DECL_TALK_DATA ; y, id 1, conv 1, id 2, conv 2, id 3, conv 3
+    .db @0, @1
+    .dw 2*(_conv_@2-conversation_table)
+    .db @3, low(2*(_conv_@4-conversation_table)), high(2*(_conv_@4-conversation_table)), @5
+    .dw 2*(_conv_@6-conversation_table)
+.endm
+
 npc_table:
-    .db NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 24, 12, 10, 100, 10, 10, 1, 2, 3, 3, 3
-    .db NPC_SHOPKEEPER, 128|0, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 36, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    .db NPC_TALKER, CHARACTER_PALADIN, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 30, 150, 1, 1, 1, 1, 1, 1, 1, 1, 0
+    DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 24
+    DECL_ENEMY_DATA 12, 10, 100, 10, 10, 1, 2, 3, 3, 3
+
+    DECL_NPC        NPC_SHOPKEEPER, 128 | 0, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 36
+    DECL_SHOP_DATA  36, 0
+
+    DECL_NPC        NPC_TALKER, CHARACTER_PALADIN, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 30
+    DECL_TALK_DATA  150, 1, fisherman_greeting, 0, fisherman_laugh, 0, END_CONVERSATION

@@ -305,6 +305,8 @@ _hmb_npc_iter:
     lpm r20, Z
     cpi r20, NPC_SHOPKEEPER
     breq _hmb_nearby_shopkeeper
+    cpi r20, NPC_TALKER
+    breq _hmb_nearby_talker
 _hmb_npc_next:
     adiw YL, NPC_MEMSIZE
     dec r22
@@ -314,6 +316,42 @@ _hmb_nearby_shopkeeper:
     adiw ZL, NPC_TABLE_SHOP_IDX_OFFSET
     lpm r25, Z
     call load_shop
+    rjmp _hmb_end
+_hmb_nearby_talker:
+    adiw ZL, NPC_TABLE_TALKER_CONV1_OFFSET
+    ldi r20, NPC_TABLE_TALKER_CONV_COUNT
+_hmb_conversation_iter:
+    lpm r20, Z+
+    lpm r24, Z+
+    lpm r25, Z+
+    dec r20
+    brmi _hmb_available_conversation
+    mov r22, r20
+    mov r21, r20
+    lsr r22
+    lsr r22
+    lsr r22
+    ldi XL, low(conversation_over)
+    ldi XH, high(conversation_over)
+    add XL, r22
+    adc XH, r1
+    ld r23, X
+    mov r18, r23
+    nbit r18, r21
+    breq _hmb_conversation_next
+    ldi r22, 1
+    mpow2 r22, r20
+    com r22
+    and r23, r22
+    st X, r23
+_hmb_available_conversation:
+    subi r24, low(-2*conversation_table)
+    sbci r25, high(-2*conversation_table)
+    call load_conversation
+    rjmp _hmb_end
+_hmb_conversation_next:
+    dec r20
+    brne _hmb_conversation_iter
 _hmb_end:
     ret
 

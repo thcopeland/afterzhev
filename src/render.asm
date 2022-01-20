@@ -816,7 +816,7 @@ _rc_end:
 ;
 ; Register Usage
 ;   r18:r19         temporary storage
-;   r21-r25         calculations
+;   r20-r25         calculations
 ;   X (r26:r27)     framebuffer pointer (param)
 ;   Y (r28:r29)     character data pointer (param)
 ;   Z (r30:r21)     flash memory pointer, temporary pointer
@@ -845,6 +845,7 @@ render_character_icon:
     subi r20, -(CHARACTER_SPRITE_WIDTH/2)
     subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
     add XL, r20
+    adc XH, r1
     ldi r20, DISPLAY_WIDTH
     mul r20, r21
     add XL, r0
@@ -870,6 +871,7 @@ _rci_write_weapon_sprite:
     subi r20, -(CHARACTER_SPRITE_WIDTH/2)
     subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
     add XL, r20
+    adc XH, r1
     ldi r20, DISPLAY_WIDTH
     mul r20, r21
     add XL, r0
