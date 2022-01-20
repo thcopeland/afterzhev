@@ -1025,27 +1025,50 @@ putw:
 ;   Y (r28:r29)     framebuffer pointer (param)
 ;   Z (r30:r31)     string flash pointer (param)
 puts:
-    clr r20
+    mov r20, r21
+    lsl r20
     movw XL, YL
 _puts_loop:
-    inc r20
     elpm r22, Z+
-    movw r18, ZL
-    cpi r22, 10
-    breq _puts_newline
     cpi r22, 0
     breq _puts_end
+    cpi r22, 10 ; '\n'
+    breq _puts_newline
+    cpi r22, ' '
+    breq _puts_halfwidth
+    cpi r22, 'i'
+    breq _puts_halfwidth
+    cpi r22, '.'
+    breq _puts_halfwidth
+    cpi r22, '!'
+    breq _puts_halfwidth
+    cpi r22, ':'
+    breq _puts_halfwidth
+    cpi r22, 39 ; '\''
+    breq _puts_halfwidth
+_puts_char:
+    movw r18, ZL
     rcall putc
     movw ZL, r18
     adiw XL, FONT_DISPLAY_WIDTH
-    cp r20, r21
-    brne _puts_loop
+    subi r20, 2
+    brsh _puts_loop
 _puts_newline:
-    clr r20
+    mov r20, r21
+    lsl r20
     subi YL, low(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
     sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
     movw XL, YL
     rjmp _puts_loop
+_puts_halfwidth:
+    sbiw XL, FONT_DISPLAY_WIDTH/4
+    movw r18, ZL
+    rcall putc
+    movw ZL, r18
+    adiw XL, 3*FONT_DISPLAY_WIDTH/4
+    subi r20, 1
+    brsh _puts_loop
+    rjmp _puts_newline
 _puts_end:
     ret
 

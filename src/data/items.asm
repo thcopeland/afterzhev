@@ -24,7 +24,7 @@ item_table:
 
 item_string_table:
 _item_str_wood_stick_name:      .db "Wood Stick", 0, 0
-_item_str_wood_stick_desc:      .db "Although outwardly un-assuming, this is a truly legendary weapon.", 0
+_item_str_wood_stick_desc:      .db "Although outwardly unassuming, this is a truly legendary weapon.", 0, 0
 _item_str_health_potion_name:   .db "Healing Potion", 0, 0
 _item_str_health_potion_desc:   .db "An elegant flask full of a blood-red liquid.", 0, 0
 _item_str_mint_soda_name:       .db "Questionable Liquid", 0
