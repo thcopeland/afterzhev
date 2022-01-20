@@ -273,6 +273,7 @@ _hmb_empty_inventory_slot_found:
     com r22
     and r20, r22
     st X, r20
+    rjmp _hmb_end
 _hmb_npc_interactions:
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
