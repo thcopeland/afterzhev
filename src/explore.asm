@@ -8,23 +8,17 @@ explore_update_game:
     rcall update_player
     call update_effects_progress
     rcall move_camera
-    ret
+    jmp _loop_reenter
 
 ; Render the game while in the EXPLORE mode. The current sector, NPCs, items,
 ; the player must all be rendered.
 ;
 ; Register Usage
-;   r14-17          storing values across calls
+;   r14-17          storing values across calls, not preserved
 ;   r18-r25         calculations, params
 ;   Y (r28:r29)     memory pointer
 ;   Z (r30:r31)     memory pointer
 render_game:
-    push r14
-    push r15
-    push r16
-    push r17
-    push YL
-    push YH
     lds r18, camera_position_x
     divmod12u r18, r21, r20
     lds r18, camera_position_y
@@ -131,12 +125,6 @@ _rg_render_player:
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character
-    pop YH
-    pop YL
-    pop r17
-    pop r16
-    pop r15
-    pop r14
     ret
 
 ; Handle button presses.

@@ -1,7 +1,7 @@
 conversation_update_game:
     rcall conversation_render_game
     rcall conversation_handle_controls
-    ret
+    jmp _loop_reenter
 
 ; Handle controls in the conversation mode. If the current conversation frame is
 ; a "line", the first special button advances to the next frame. Otherwise, the

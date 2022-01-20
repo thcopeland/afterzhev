@@ -1,7 +1,7 @@
 inventory_update_game:
     rcall inventory_render_game
     rcall inventory_handle_controls
-    ret
+    jmp _loop_reenter
 
 ; Handle all player input. The directional keys control selection (which is
 ; limited to items within the inventory proper), button 1 is equip/unequip,

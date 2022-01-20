@@ -731,28 +731,32 @@ render_character:
     push r16
     push r17
     movw r16, r24
-    ldd r20, Y+CHARACTER_DIRECTION_OFFSET
-    cpi r20, DIRECTION_UP
-    brsh _rc_alpha_under
-_rc_alpha_over:
-    clt
-    rcall _rc_render_character_sprite
-    rcall _rc_render_weapon_sprite
-    rjmp _rc_end
-_rc_alpha_under:
-    ldd r20, Y+CHARACTER_ACTION_OFFSET
+    ldd r23, Y+CHARACTER_DIRECTION_OFFSET
+    cpi r23, DIRECTION_UP
+    brlo _rc_render_character
+_rc_render_weapon_below:
+    ldd r22, Y+CHARACTER_WEAPON_OFFSET
+    tst r22
+    breq _rc_render_character
+    ldd r24, Y+CHARACTER_ACTION_OFFSET
+    ldd r25, Y+CHARACTER_FRAME_OFFSET
+    mov r20, r24
+    call determine_overlay_sprite
     subi r20, ACTION_ATTACK1
     com r20
     bst r20, 7
-    rcall _rc_render_weapon_sprite
+    movw r24, r16
+    elpm r21, Z+
+    splts r21, r20
+    subi r20, -CHARACTER_SPRITE_WIDTH/2
+    subi r21, -CHARACTER_SPRITE_HEIGHT/2
+    add r24, r20
+    add r25, r21
+    elpm r23, Z+
+    splt r23, r22
+    rcall render_sprite
     clt
-    rcall _rc_render_character_sprite
-    rjmp _rc_end
-; _rc_render_character_sprite is sort of a sub-subroutine. It contains a ret, so
-; must be call'd, not simply jumped to or entered. It renders both the character
-; sprite and (if necessary) the armor sprite, since these are always drawn in
-; the same order.
-_rc_render_character_sprite:
+_rc_render_character:
     ldd r22, Y+CHARACTER_SPRITE_OFFSET
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     ldd r24, Y+CHARACTER_ACTION_OFFSET
@@ -764,8 +768,7 @@ _rc_render_character_sprite:
     rcall render_sprite
     ldd r22, Y+CHARACTER_ARMOR_OFFSET
     tst r22
-    brne _rc_write_armor_sprite
-    ret
+    breq _rc_render_weapon_above
 _rc_write_armor_sprite:
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     ldd r24, Y+CHARACTER_ACTION_OFFSET
@@ -781,17 +784,13 @@ _rc_write_armor_sprite:
     elpm r23, Z+
     splt r23, r22
     rcall render_sprite
-    ret
-; *** end of _rc_render_character_sprite ***
-; _rc_render_weapon_sprite is another sub-subroutine. It must also be call'd,
-; not simply jumped to or entered.
-_rc_render_weapon_sprite:
+_rc_render_weapon_above:
+    ldd r23, Y+CHARACTER_DIRECTION_OFFSET
+    cpi r23, DIRECTION_UP
+    brsh _rc_end
     ldd r22, Y+CHARACTER_WEAPON_OFFSET
     tst r22
-    brne _rc_write_weapon_sprite
-    ret
-_rc_write_weapon_sprite:
-    ldd r23, Y+CHARACTER_DIRECTION_OFFSET
+    breq _rc_end
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_overlay_sprite
@@ -805,8 +804,6 @@ _rc_write_weapon_sprite:
     elpm r23, Z+
     splt r23, r22
     rcall render_sprite
-    ret
-; *** end of _rc_render_weapon_sprite ***
 _rc_end:
     pop r17
     pop r16

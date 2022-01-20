@@ -1,7 +1,7 @@
 shop_update_game:
     rcall shop_render_game
     rcall shop_handle_controls
-    ret
+    jmp _loop_reenter
 
 ; Populate shop_inventory with the items for the given shop and switch the game
 ; mode. If the shop was the most recent one open, the inventory is not cleared.

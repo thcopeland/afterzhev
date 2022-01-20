@@ -8,7 +8,7 @@
     .org 0x0000
     jmp init
     .org OC1Aaddr
-    jmp isr_display_row
+    jmp isr_loop
 
 .include "init.asm"
 
@@ -56,19 +56,19 @@ _main_stall:
     sleep
     rjmp _main_stall
 
-isr_display_row:
+isr_loop:
     ; normally, ISRs should be as short as possible and preserve CPU state. Since
     ; everything is done within this ISR, however, that's unnecessary.
     lds r18, TCNT3L
     lds r19, TCNT3H
     cpiw r18, r19, DISPLAY_CLK_TOP, r20
-    brpl _idr_active_test2
-    rjmp _idr_work
-_idr_active_test2:
+    brpl _loop_active_test2
+    rjmp _loop_work
+_loop_active_test2:
     cpiw r18, r19, DISPLAY_CLK_BOTTOM, r20
-    brlo _idr_active_screen
-    rjmp _idr_work
-_idr_active_screen:
+    brlo _loop_active_screen
+    rjmp _loop_work
+_loop_active_screen:
     ; output a single row from the framebuffer as quickly as reasonably possible.
     lds XL, vid_fbuff_offset
     lds XH, vid_fbuff_offset+1
@@ -86,22 +86,22 @@ _idr_active_screen:
     sts vid_work_complete, r1 ; reset working state (somewhat out of place here, but simple)
     out PORTA, r1
     dec r16
-    brpl _idr_quick_work
+    brpl _loop_quick_work
     sts vid_fbuff_offset, XL
     sts vid_fbuff_offset+1, XH
     ldi r16, DISPLAY_VERTICAL_STRETCH-1
-_idr_quick_work:
+_loop_quick_work:
     sts vid_row_repeat, r16
     ; After writing a row to the screen, there's a brief period (~75 cycles) where
     ; we can do other work (this corresponds to the VGA front porch and sync pulse).
     ; In particular, we write the footer to the top of the video buffer. No
     ; registers need to be preserved.
-    rjmp _idr_end
-_idr_work:
+    rjmp _loop_end
+_loop_work:
     lds r18, vid_work_complete
     inc r18
     cpi r18, 1
-    brne _idr_reset_render_state
+    brne _loop_reset_render_state
     sts vid_work_complete, r18
     ; At this point, we've rendered a complete image (main image + footer) to the
     ; screen, and there's a fairly long gap (~99,300 cycles) where we fill the
@@ -127,32 +127,32 @@ _idr_work:
     sts clock+1, r25
 
     call read_controls
-    lds r18, game_mode
-    cpi r18, MODE_EXPLORE
-    breq _idr_explore
-    cpi r18, MODE_INVENTORY
-    breq _idr_inventory
-    cpi r18, MODE_SHOPPING
-    breq _idr_shop
-_idr_conversation:
-    call conversation_update_game
-    rjmp _idr_end_work
-_idr_shop:
-    call shop_update_game
-    rjmp _idr_end_work
-_idr_inventory:
-    call inventory_update_game
-    rjmp _idr_end_work
-_idr_explore:
-    call explore_update_game
-    rjmp _idr_end_work
-_idr_end_work:
 
-_idr_reset_render_state:
+    lds r18, game_mode
+_loop_explore:
+    cpi r18, MODE_EXPLORE
+    brne _loop_inventory
+    jmp explore_update_game
+_loop_inventory:
+    cpi r18, MODE_INVENTORY
+    brne _loop_shop
+    jmp inventory_update_game
+_loop_shop:
+    cpi r18, MODE_SHOPPING
+    brne _loop_conversation
+    jmp shop_update_game
+_loop_conversation:
+    cpi r18, MODE_CONVERSATION
+    brne _loop_reenter
+    jmp conversation_update_game
+
+_loop_reenter:
+
+_loop_reset_render_state:
     sti vid_row_repeat, DISPLAY_VERTICAL_STRETCH
     stiw vid_fbuff_offset, framebuffer
     sbi TIFR1, OCF1A ; clear any pending interrupts
-_idr_end:
+_loop_end:
     reti
 
 .include "math.asm"
