@@ -35,7 +35,7 @@ _chc_check_frame_type:
     cpi r20, CONVERSATION_BRANCH
     breq _chc_branch_button1
 _chc_line_button1:
-    sbrs r19, CONTROLS_SPECIAL1
+    sbrs r18, CONTROLS_SPECIAL1
     rjmp _chc_end
     adiw ZL, CONVERSATION_LINE_NEXT_OFFSET
     elpm r24, Z+
@@ -45,7 +45,7 @@ _chc_line_button1:
     call load_conversation
     rjmp _chc_end
 _chc_branch_button1:
-    sbrs r19, CONTROLS_SPECIAL1
+    sbrs r18, CONTROLS_SPECIAL1
     rjmp _chc_branch_down
     sts framebuffer, r1
     adiw ZL, CONVERSATION_BRANCH_CHOICE1_OFFSET+2
