@@ -156,7 +156,7 @@ _uep_shift2:
     ldi ZH, high(player_effects+2*PLAYER_EFFECT_MEMSIZE)
     ld r20, Y
     tst r20
-    brne _uep_end
+    brne _uep_shift3
     ld r20, Z+
     ld r21, Z+
     st -Z, r1
