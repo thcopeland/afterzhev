@@ -1,10 +1,6 @@
 explore_update_game:
     rcall render_game
     rcall handle_controls
-    ldi YL, low(player_position_data)
-    ldi YH, high(player_position_data)
-    call move_character
-    rcall check_sector_bounds
     rcall update_player
     call update_effects_progress
     rcall move_camera
@@ -346,64 +342,64 @@ _hmb_conversation_next:
 _hmb_end:
     ret
 
+; Begin an attack. Detects whether button 2 or 3 was pressed, and uses the correct
+; attack params.
+;
+; Register Usage
+;   r20-r21     calculations
 handle_attack_buttons:
-    sts framebuffer, r1
+    lds r20, player_cooldown
+    tst r20
+    brne _hab_end
+    lds r21, CONTROLLER_VALUES
+    sbrc r21, CONTROLS_SPECIAL3
+    rjmp _hab_attack2
+_hab_attack1:
+    ldi r20, ACTION_ATTACK1
+    sts player_action, r20
+    sts player_frame, r1
+    ldi r20, ATTACK1_COOLDOWN
+    sts player_cooldown, r20
+    rjmp _hab_reduce_speed
+_hab_attack2:
+    ldi r20, ACTION_ATTACK2
+    sts player_action, r20
+    sts player_frame, r1
+    ldi r20, ATTACK2_COOLDOWN
+    sts player_cooldown, r20
+_hab_reduce_speed:
+    lds r20, player_velocity_x
+    lds r21, player_velocity_y
+    asr r20
+    asr r21
+    sts player_velocity_x, r20
+    sts player_velocity_y, r21
+_hab_end:
     ret
 
 ; Update the player's animation and general state.
 ;
 ; Register Usage
-;   r18-r21         calculations
+;   r22-r25         calculations
 update_player:
-    lds r18, player_action
-    lds r20, player_velocity_x
-    lds r21, player_velocity_y
-    sbrc r20, 7
-    neg r20
-    sbrc r21, 7
-    neg r21
-    add r20, r21
-_up_idle:
-    cpi r18, ACTION_IDLE
-    brne _up_walk
-_up_idle_check_speed:
-    cpi r20, IDLE_MAX_SPEED ; there's an asymmetric transition between walk and idle, helps prevent jittering when running into objects
-    brlo _up_idle_pass
-    ldi r18, ACTION_WALK
-    sts player_action, r18
-    sts player_frame, r1
-_up_idle_pass:
-    rjmp _up_end
-_up_walk:
-    cpi r18, ACTION_WALK
-    brne _up_hurt
-_up_walk_check_speed:
-    lds r19, clock
-    cpi r20, RUN_MIN_SPEED
-    brsh _up_run_check_clock
-    tst r20
-    brne _up_walk_check_clock
-_up_walk_to_idle:
-    ldi r18, ACTION_IDLE
-    sts player_action, r18
-    sts player_frame, r1
-    rjmp _up_end
-_up_run_check_clock:
-    andi r19, RUN_FRAME_DURATION_MASK
-_up_walk_check_clock:
-    andi r19, WALK_FRAME_DURATION_MASK
-    brne _up_walk_pass
-    lds r18, player_frame
-    inc r18
-    andi r18, 3
-    sts player_frame, r18
-_up_walk_pass:
-    rjmp _up_end
-_up_hurt:
-_up_attack1:
-_up_attack2:
-_up_attack3:
-_up_end:
+    ldi YL, low(player_position_data)
+    ldi YH, high(player_position_data)
+    call move_character
+    rcall check_sector_bounds
+    lds r22, player_action
+    lds r23, player_frame
+    lds r24, player_velocity_x
+    lds r25, player_velocity_y
+    call update_character_animation
+    sts player_action, r22
+    sts player_frame, r23
+    sts player_velocity_x, r24
+    sts player_velocity_y, r25
+    lds r22, player_cooldown
+    dec r22
+    sbrc r22, 7
+    clr r22
+    sts player_cooldown, r22
     ret
 
 ; If the player is outside the sector bounds, load the appropriate adjacent
@@ -580,7 +576,6 @@ _ls_load_npcs_iter:
     adiw ZL, 1
     lpm r19, Z      ; initial health
     std Y+NPC_HEALTH_OFFSET, r19
-    std Y+NPC_STATUS_OFFSET, r1
 _ls_load_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r18

@@ -142,3 +142,71 @@ _rcm_collision:
     cpse r18, r25
     std Y+CHARACTER_POSITION_DY, r1
     ret
+
+; Update the character's animation and some general state.
+;
+; Register Usage
+;   r18-r21     calculations
+;   r22         character action (param)
+;   r23         character frame (param)
+;   r24         character velocity x (param)
+;   r25         character velocity y (param)
+update_character_animation:
+_uca_action_idle:
+    cpi r22, ACTION_IDLE
+    brne _uca_action_walk
+    movw r18, r24
+    sbrc r18, 7
+    neg r18
+    sbrc r19, 7
+    neg r19
+    add r18, r19
+    cpi r18, IDLE_MAX_SPEED
+    brlo _uca_end
+    ldi r22, ACTION_WALK
+    clr r23
+    ret
+_uca_action_walk:
+    cpi r22, ACTION_WALK
+    brne _uca_action_hurt
+    movw r18, r24
+    sbrc r18, 7
+    neg r18
+    sbrc r19, 7
+    neg r19
+    add r18, r19
+    breq _uca_walk_to_idle
+    lds r19, clock
+    cpi r18, RUN_MIN_SPEED
+    brsh _uca_walk_fast
+_uca_walk_slow:
+    andi r19, WALK_FRAME_DURATION_MASK
+    brne _uca_end
+    inc r23
+    andi r23, 3
+    ret
+_uca_walk_fast:
+    andi r19, RUN_FRAME_DURATION_MASK
+    brne _uca_end
+    inc r23
+    andi r23, 3
+    ret
+_uca_walk_to_idle:
+    ldi r22, ACTION_IDLE
+    clr r23
+    ret
+_uca_action_hurt:
+    cpi r22, ACTION_HURT
+    brne _uca_action_attack
+_uca_action_attack:
+    lds r19, clock
+    andi r19, ATTACK_FRAME_DURATION_MASK
+    brne _uca_end
+    inc r23
+    cpi r23, ITEM_ANIM_ATTACK_FRAMES
+    brlo _uca_end
+_uca_attack_to_idle:
+    ldi r22, ACTION_IDLE
+    clr r23
+_uca_end:
+    ret
