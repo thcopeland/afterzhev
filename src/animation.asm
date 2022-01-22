@@ -113,7 +113,7 @@ _das_test_action:
     cpi r24, ACTION_WALK
     breq _das_walk_animation
 _das_idle_animation:
-    subi r25, -ITEM_ANIM_IDLE_OFFSET_FRAMES
+    ldi r25, ITEM_ANIM_IDLE_OFFSET_FRAMES
     ldi r21, ITEM_ANIM_IDLE_FRAMES
     rjmp _das_determine_offsets
 _das_walk_animation:

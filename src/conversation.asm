@@ -100,6 +100,8 @@ _lc_load_conversation:
     sts selected_choice, r1
     ldi r20, MODE_CONVERSATION
     sts game_mode, r20
+    sts player_velocity_x, r1
+    sts player_velocity_y, r1
     ret
 
 .equ CONVERSATION_UI_BODY_COLOR = INVENTORY_UI_BODY_COLOR

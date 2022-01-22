@@ -3,6 +3,17 @@ inventory_update_game:
     rcall inventory_handle_controls
     jmp _loop_reenter
 
+; Switch to the inventory game mode.
+;
+; Register Usage
+;   r25     temporary value
+load_inventory:
+    ldi r25, MODE_INVENTORY
+    sts game_mode, r25
+    sts player_velocity_x, r1
+    sts player_velocity_y, r1
+    ret
+
 ; Handle all player input. The directional keys control selection (which is
 ; limited to items within the inventory proper), button 1 is equip/unequip,
 ; button 2 is use, button 3 is drop, and button 4 is (as usual) exit.

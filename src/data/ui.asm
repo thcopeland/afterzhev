@@ -27,7 +27,7 @@ ui_coin_icon:
 
 ui_str_inventory_instructions:  .db "No item selected", 0, 0
 ui_str_strength_abbr:  .db "Str", 0
-ui_str_vitality_abbr:  .db "Vit", 0
+ui_str_vitality_abbr:  .db "Vit ", 0, 0 ; the trailing space is a hack to ensure all abbreviations have the same width
 ui_str_dexterity_abbr: .db "Dex", 0
 ui_str_charisma_abbr:  .db "Chr", 0
 ui_str_buy_label:   .db "Buy", 10, "for", 0

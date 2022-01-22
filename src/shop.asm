@@ -44,6 +44,8 @@ _ls_load_inventory_next:
 _ls_change_mode:
     ldi r20, MODE_SHOPPING
     sts game_mode, r20
+    sts player_velocity_x, r1
+    sts player_velocity_y, r1
     ret
 
 ; Handle all player input. The directional keys control selection, button 2 is

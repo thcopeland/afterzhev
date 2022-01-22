@@ -178,15 +178,17 @@ _hc_button1:
     rcall handle_main_button
     rjmp _hc_end
 _hc_button2:
+    sbrc r19, CONTROLS_SPECIAL2
+    rcall handle_attack_buttons
 _hc_button3:
+    sbrc r19, CONTROLS_SPECIAL3
+    rcall handle_attack_buttons
 _hc_button4:
     sbrs r19, CONTROLS_SPECIAL4
     rjmp _hc_end
     sbrc r18, CONTROLS_SPECIAL4
     rjmp _hc_end
-    sts player_velocity_x, r1
-    sts player_velocity_y, r1
-    sti game_mode, MODE_INVENTORY
+    call load_inventory
 _hc_end:
     ret
 
@@ -342,6 +344,10 @@ _hmb_conversation_next:
     dec r20
     brne _hmb_conversation_iter
 _hmb_end:
+    ret
+
+handle_attack_buttons:
+    sts framebuffer, r1
     ret
 
 ; Update the player's animation and general state.
