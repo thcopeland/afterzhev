@@ -740,20 +740,20 @@ _rc_render_weapon_below:
     breq _rc_render_character
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
-    mov r20, r24
-    call determine_overlay_sprite
-    subi r20, ACTION_ATTACK1
-    com r20
-    bst r20, 7
+    call determine_weapon_sprite
     movw r24, r16
     elpm r21, Z+
     splts r21, r20
+    set
+    neg r20
     subi r20, -CHARACTER_SPRITE_WIDTH/2
     subi r21, -CHARACTER_SPRITE_HEIGHT/2
     add r24, r20
     add r25, r21
     elpm r23, Z+
     splt r23, r22
+    mov r20, r22
+    sub r24, r20
     rcall render_sprite
     clt
 _rc_render_character:
@@ -773,7 +773,7 @@ _rc_write_armor_sprite:
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
-    call determine_overlay_sprite
+    call determine_armor_sprite
     movw r24, r16
     elpm r21, Z+
     splts r21, r20
@@ -793,7 +793,7 @@ _rc_render_weapon_above:
     breq _rc_end
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
-    call determine_overlay_sprite
+    call determine_weapon_sprite
     movw r24, r16
     elpm r21, Z+
     splts r21, r20
@@ -830,12 +830,12 @@ render_character_icon:
     ldi r25, CHARACTER_SPRITE_WIDTH
     rcall write_sprite
     ldd r22, Y+CHARACTER_ARMOR_OFFSET
-    tst r22, 0
+    tst r22
     breq _rci_write_weapon_sprite
     ldi r23, DIRECTION_DOWN
     ldi r24, ACTION_IDLE
     clr r25
-    call determine_overlay_sprite
+    call determine_armor_sprite
     movw r18, XL
     elpm r21, Z+
     splts r21, r20
@@ -857,12 +857,12 @@ render_character_icon:
     movw XL, r18
 _rci_write_weapon_sprite:
     ldd r22, Y+CHARACTER_WEAPON_OFFSET
-    tst r22, 0
+    tst r22
     breq _rci_end
     ldi r23, DIRECTION_DOWN
     ldi r24, ACTION_IDLE
     clr r25
-    call determine_overlay_sprite
+    call determine_weapon_sprite
     elpm r21, Z+
     splts r21, r20
     subi r20, -(CHARACTER_SPRITE_WIDTH/2)

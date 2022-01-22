@@ -33,15 +33,16 @@ _init_clear_effects_iter:
     st X+, r1
     dec r18
     brne _init_clear_effects_iter
-    sti player_inventory+2, 2
-    sti player_inventory+10, 3
-    sti player_inventory+1, 4
+    sti player_inventory, 2
+    sti player_inventory+2, 3
+    sti player_inventory+10, 4
+    sti player_inventory+1, 5
     sti player_stats, 10
     sti player_stats+1, 10
     sti player_stats+2, 10
     sti player_stats+3, 10
     call calculate_player_stats
-    stiw player_gold, 100
+    stiw player_gold, 400
     sti player_max_health, 16
     sti player_health, 13
     sti game_mode, MODE_EXPLORE

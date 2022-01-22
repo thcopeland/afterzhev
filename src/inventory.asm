@@ -124,7 +124,7 @@ _iei_unequip_weapon:
 _iei_unequip_armor:
     lds r18, player_armor
     st X, r18
-    sts player_weapon, r1
+    sts player_armor, r1
 _iei_end:
     call calculate_player_stats
     ret

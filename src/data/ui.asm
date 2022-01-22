@@ -31,4 +31,4 @@ ui_str_vitality_abbr:  .db "Vit", 0
 ui_str_dexterity_abbr: .db "Dex", 0
 ui_str_charisma_abbr:  .db "Chr", 0
 ui_str_buy_label:   .db "Buy", 10, "for", 0
-ui_str_sell_label:  .db "Sell", 10, "for ", 0
+ui_str_sell_label:  .db "Sell", 10, " for", 0

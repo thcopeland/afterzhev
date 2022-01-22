@@ -18,6 +18,7 @@
 
 item_table:
     DECL_ITEM wood_stick, ITEM_WIELDABLE, 7, 10, 0, -1, -4
+    DECL_ITEM blue_shirt, ITEM_WEARABLE, 30, 2, 4, 0, 0
     DECL_ITEM health_potion, (0<<2)|ITEM_USABLE, 100, 2, 50, 2, 0
     DECL_ITEM mint_soda, (3<<2)|ITEM_USABLE, 20, 0, 0, 0, 1
     DECL_ITEM mint_leaves, (1<<2)|ITEM_USABLE, 10, 0, 0, 0, 1
@@ -25,6 +26,8 @@ item_table:
 item_string_table:
 _item_str_wood_stick_name:      .db "Wood Stick", 0, 0
 _item_str_wood_stick_desc:      .db "Although outwardly unassuming, this is a truly legendary weapon.", 0, 0
+_item_str_blue_shirt_name:      .db "Blue Shirt", 0, 0
+_item_str_blue_shirt_desc:      .db "A comfortable blue shirt.", 0
 _item_str_health_potion_name:   .db "Healing Potion", 0, 0
 _item_str_health_potion_desc:   .db "An elegant flask full of a blood-red liquid.", 0, 0
 _item_str_mint_soda_name:       .db "Questionable Liquid", 0

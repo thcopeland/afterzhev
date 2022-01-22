@@ -17,7 +17,7 @@
 
 shop_table:
     DECL_SHOP_HDR butcher_bob, 10, 0x4f
-    DECL_SHOP_ITEMS 1, 1, 2, 2, 0, 3, 3, 4, 4
+    DECL_SHOP_ITEMS 1, 1, 3, 3, 2, 4, 5, 5
 
 shop_string_table:
 _shop_str_butcher_bob_name:     .db "Bob the Butcher", 0
