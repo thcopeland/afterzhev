@@ -69,3 +69,6 @@
 .equ ITEM_WEARABLE = 1
 .equ ITEM_USABLE = 2
 .equ ITEM_SPECIAL = 3
+
+.equ EVENT_ENTER = 0
+.equ EVENT_EXIT = 1

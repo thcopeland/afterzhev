@@ -10,50 +10,59 @@
 ;   y velocity (1 byte)
 ;
 ; Register Usage
-;   r18-r24         calculations
+;   r20-r24         calculations
+;   r26             whether to apply friction (param)
 ;   Y (r28:r29)     character data pointer (param)
 move_character:
 _mc_horizontal_component:
-    ldd r18, Y+CHARACTER_POSITION_X_H
-    ldd r19, Y+CHARACTER_POSITION_X_L
-    ldd r20, Y+CHARACTER_POSITION_DX
-    tst r20
+    ldd r20, Y+CHARACTER_POSITION_X_H
+    ldd r21, Y+CHARACTER_POSITION_X_L
+    ldd r22, Y+CHARACTER_POSITION_DX
+    tst r22
     breq _mc_vertical_component
-    ext r20, r21
-    add r19, r20
-    adc r18, r21
-    add r19, r20
-    adc r18, r21
-    std Y+CHARACTER_POSITION_X_L, r19
-    decay_95p r20, r21, r22     ; friction
-    std Y+CHARACTER_POSITION_DX, r20
-    mov r24, r18
+    ext r22, r23
+    add r21, r22
+    adc r20, r23
+    add r21, r22
+    adc r20, r23
+    std Y+CHARACTER_POSITION_X_L, r21
+    tst r26
+    breq _mc_post_horizontal_friction
+    decay_95p r22, r23, r24     ; friction
+_mc_post_horizontal_friction:
+    std Y+CHARACTER_POSITION_DX, r22
+    mov r24, r20
     ldd r25, Y+CHARACTER_POSITION_Y_H
     rcall resolve_character_movement
 _mc_vertical_component:
-    ldd r18, Y+CHARACTER_POSITION_Y_H
-    ldd r19, Y+CHARACTER_POSITION_Y_L
-    ldd r20, Y+CHARACTER_POSITION_DY
-    tst r20
+    ldd r20, Y+CHARACTER_POSITION_Y_H
+    ldd r21, Y+CHARACTER_POSITION_Y_L
+    ldd r22, Y+CHARACTER_POSITION_DY
+    tst r22
     breq _mc_end
-    ext r20, r21
-    add r19, r20
-    adc r18, r21
-    add r19, r20
-    adc r18, r21
-    std Y+CHARACTER_POSITION_Y_L, r19
-    decay_95p r20, r21, r22     ; friction
-    std Y+CHARACTER_POSITION_DY, r20
+    ext r22, r23
+    add r21, r22
+    adc r20, r23
+    add r21, r22
+    adc r20, r23
+    std Y+CHARACTER_POSITION_Y_L, r21
+    tst r26
+    breq _mc_post_vertical_friction
+    decay_95p r22, r23, r24     ; friction
+_mc_post_vertical_friction:
+    std Y+CHARACTER_POSITION_DY, r22
     ldd r24, Y+CHARACTER_POSITION_X_H
-    mov r25, r18
+    mov r25, r20
     rcall resolve_character_movement
 _mc_end:
     ret
 
 ; Check for collisions. If none occur, the new position is saved.
 ;
+; TODO - could this be inlined into move_character?
+;
 ; Register Usage
-;   r20-r23         calculations
+;   r18-r23         calculations
 ;   r24             new x position (param)
 ;   r25             new y position (param)
 ;   Y (r28:r29)     character position pointer (param)

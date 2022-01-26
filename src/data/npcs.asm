@@ -13,11 +13,12 @@
 ;   weapon, armor - used for rendering (2 bytes)
 ;   direction - used for rendering and attacks (1 byte)
 ;   x, y position - (2 bytes)
+;   x, y velocity - (2 bytes)
 ;   acceleration - used for movement (1 byte)
 ;   health - initial health (1 byte)
 ;   strength - related to damage (1 byte)
 ;   agility - related to defence (1 byte)
-;   drop 1,2,3,4,5 - one is randomly dropped upon death (5 bytes)
+;   drop 1,2,3 - one is randomly dropped upon death (3 bytes)
 ;
 ; Shopkeeper (16 bytes)
 ;   type - always NPC_SHOPKEEPER (1 byte)
@@ -53,7 +54,7 @@
     .db @0, @1, @2, @3, @4, @5
 .endm
 
-.macro DECL_ENEMY_DATA ; y, acceleration, health, strength, agility, drop1 .. drop5
+.macro DECL_ENEMY_DATA ; y, xvel, yvel, acceleration, health, strength, agility, drop1, drop2, drop3
     .db @0, @1, @2, @3, @4, @5, @6, @7, @8, @9
 .endm
 
@@ -70,7 +71,7 @@
 
 npc_table:
     DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 24
-    DECL_ENEMY_DATA 12, 10, 100, 10, 10, 1, 2, 3, 3, 3
+    DECL_ENEMY_DATA 12, 100, 100, 10, 100, 10, 10, 1, 2, 3
 
     DECL_NPC        NPC_SHOPKEEPER, 128 | 0, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 36
     DECL_SHOP_DATA  36, 0

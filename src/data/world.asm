@@ -2,12 +2,14 @@
 ; and containing various challenges and whatnot. Each entry in the sector table
 ; has the following layout:
 ;
-; Sector Table Entry (328 bytes)
+; Sector Table Entry (332 bytes)
 ;   tile data, an array of each tile in the sector stored in row major order (300 bytes)
 ;   four adjacent sector indexs, stored in down, right, up, left order (4 bytes)
 ;   a list of NPCs (8 bytes)
 ;   a list of preplaced loose items, each item occupies four bytes: item index,
 ;       loose item index (used to track whether an item was picked up), x, y. (16 bytes)
+;   update subroutine (2 bytes)
+;   event handling subroutine (2 bytes)
 
 .equ NO_NPC = 0
 .equ NO_ITEM = 0
@@ -32,6 +34,7 @@ sector_table:
     .db 0, 0, 1, 0
     .db 1, 2, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
     .db 1, 1, 24, 24, 3, 3, 96, 60, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+    .dw sector_0_update, sector_0_event
     ; sector 1
     .db 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, \
         10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, \
@@ -51,3 +54,4 @@ sector_table:
     .db 0, 1, 1, 1
     .db 3, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
     .db 4, 4, 24, 156, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+    .dw 0x0000, 0x0000

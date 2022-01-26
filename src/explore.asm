@@ -4,6 +4,22 @@ explore_update_game:
     rcall update_player
     call update_effects_progress
     rcall move_camera
+
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_HANDLERS_OFFSET)
+    sbci ZH, high(-SECTOR_HANDLERS_OFFSET)
+    elpm r24, Z+
+    tst r24
+    breq _eup_end
+    elpm r25, Z+
+    tst r25
+    breq _eup_end
+    movw ZL, r24
+    icall
+_eup_end:
     jmp _loop_reenter
 
 ; Render the game while in the EXPLORE mode. The current sector, NPCs, items,
@@ -382,6 +398,7 @@ _hab_end:
 ; Register Usage
 ;   r22-r25         calculations
 update_player:
+    ldi r26, 1
     ldi YL, low(player_position_data)
     ldi YH, high(player_position_data)
     call move_character
@@ -542,7 +559,7 @@ _ls_load_npcs_iter:
     mov r20, r19
     movw XL, ZL
     dec r20
-    brmi _ls_npcs_loaded
+    brmi _ls_run_handler
     mov r21, r20
     mov r22, r20
     lsr r22
@@ -568,11 +585,13 @@ _ls_load_npcs_iter:
     lpm r19, Z+    ; x pos
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L, r1
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r19
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
     lpm r19, Z+    ; y pos
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L, r1
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r19
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
+    lpm r19, Z+    ; initial x velocity
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r19
+    lpm r19, Z+    ; initial y velocity
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r19
     adiw ZL, 1
     lpm r19, Z      ; initial health
     std Y+NPC_HEALTH_OFFSET, r19
@@ -580,7 +599,23 @@ _ls_load_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r18
     brne _ls_load_npcs_iter
-_ls_npcs_loaded:
+_ls_run_handler:
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-(SECTOR_HANDLERS_OFFSET+2))
+    sbci ZH, high(-(SECTOR_HANDLERS_OFFSET+2))
+    elpm r24, Z+
+    tst r24
+    breq _ls_end
+    elpm r25, Z+
+    tst r25
+    breq _ls_end
+    movw ZL, r24
+    ldi r25, EVENT_ENTER
+    icall
+_ls_end:
     pop YH
     pop YL
     ret

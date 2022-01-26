@@ -47,7 +47,6 @@ _chc_line_button1:
 _chc_branch_button1:
     sbrs r18, CONTROLS_SPECIAL1
     rjmp _chc_branch_down
-    sts framebuffer, r1
     adiw ZL, CONVERSATION_BRANCH_CHOICE1_OFFSET+2
     lds r20, selected_choice
     ldi r21, CONVERSATION_BRANCH_CHOICE_MEMSIZE
