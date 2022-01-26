@@ -17,8 +17,8 @@ write_entire_tile:
     add ZL, r0
     adc ZH, r1
     clr r1
-    subi ZL, low(-(tile_table*2+TILE_DATA_OFFSET))  ; *2 to convert word address->byte address
-    sbci ZH, high(-(tile_table*2+TILE_DATA_OFFSET))
+    subi ZL, low(-2*tile_table)
+    sbci ZH, high(-2*tile_table)
     inc r22
     rjmp _wet_loop_chk
 _wet_loop:
@@ -76,8 +76,8 @@ write_partial_tile:
     clr r1
     add ZL, r23
     adc ZH, r1
-    subi ZL, low(-(tile_table*2+TILE_DATA_OFFSET))
-    sbci ZH, high(-(tile_table*2+TILE_DATA_OFFSET))
+    subi ZL, low(-2*tile_table)
+    sbci ZH, high(-2*tile_table)
     ldi r23, TILE_WIDTH
     sub r23, r24
     ldi r21, DISPLAY_WIDTH

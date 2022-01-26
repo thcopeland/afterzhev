@@ -73,8 +73,7 @@
 
 .equ TILE_WIDTH = 12
 .equ TILE_HEIGHT = 12
-.equ TILE_MEMSIZE = TILE_WIDTH*TILE_HEIGHT + 2
-.equ TILE_DATA_OFFSET = 2
+.equ TILE_MEMSIZE = TILE_WIDTH*TILE_HEIGHT
 
 .if TILE_WIDTH != 12 || TILE_HEIGHT != 12
 .error "Collision and sector rendering assume a tile width and height of 12 (replace these occurrences of divmod12u and div12u)."
