@@ -14,10 +14,12 @@
 ; game.
 
 sector_0_update:
-    lds r23, sector_npcs+NPC_ANIM_OFFSET
-    ldi YL, low(sector_npcs+NPC_POSITION_OFFSET)
-    ldi YH, high(sector_npcs+NPC_POSITION_OFFSET)
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
     call enemy_patrol
+    ldi YL, low(sector_npcs+NPC_MEMSIZE)
+    ldi YH, high(sector_npcs+NPC_MEMSIZE)
+    call enemy_charge
     ret
 
 sector_0_event:

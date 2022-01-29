@@ -398,7 +398,7 @@ _hab_end:
 ; Register Usage
 ;   r22-r25         calculations
 update_player:
-    ldi r26, 1
+    ser r26
     ldi YL, low(player_position_data)
     ldi YH, high(player_position_data)
     call move_character

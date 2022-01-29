@@ -41,13 +41,13 @@
 
 conversation_table:
 _conv_END_CONVERSATION:         .dw 0 ; placeholder
-_conv_fisherman_greeting:       DECL_LINE 3, fisherman, fisherman_greeting, respond_to_greeting
-_conv_fisherman_laugh:          DECL_LINE 3, fisherman, fisherman_laugh, END_CONVERSATION
+_conv_fisherman_greeting:       DECL_LINE 4, fisherman, fisherman_greeting, respond_to_greeting
+_conv_fisherman_laugh:          DECL_LINE 4, fisherman, fisherman_laugh, END_CONVERSATION
 _conv_respond_to_greeting:      DECL_BRANCH 3
                                 DECL_CHOICE choose_polite_agreement, END_CONVERSATION
                                 DECL_CHOICE choose_no_time, END_CONVERSATION
                                 DECL_CHOICE choose_share, none_to_spare
-_conv_none_to_spare:            DECL_LINE 3, fisherman, none_to_spare, END_CONVERSATION
+_conv_none_to_spare:            DECL_LINE 4, fisherman, none_to_spare, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder

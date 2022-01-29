@@ -54,7 +54,7 @@
     brvc _adnv_done_%
     ldi @0, 127
     sbrc @1, 7
-    com @0
+    ldi @0, -128
 _adnv_done_%:
 .endm
 
@@ -64,7 +64,7 @@ _adnv_done_%:
     brvc _adnv_done_%
     ldi @0, 127
     sbrs @1, 7
-    com @0
+    ldi @0, -128
 _adnv_done_%:
 .endm
 
