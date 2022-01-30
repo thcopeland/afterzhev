@@ -22,6 +22,15 @@ explore_update_game:
 _eup_end:
     jmp _loop_reenter
 
+.equ EXPLORE_UI_EFFECTS_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)-8
+.equ EXPLORE_UI_EFFECTS_SEPARATION = 7
+.equ EXPLORE_UI_XP_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+14
+.equ EXPLORE_UI_XP_ICON_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+23
+.equ EXPLORE_UI_GOLD_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+45
+.equ EXPLORE_UI_GOLD_ICON_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+50
+.equ EXPLORE_UI_HEALTH_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+77
+.equ EXPLORE_UI_HEALTH_ICON_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+82
+
 ; Render the game while in the EXPLORE mode. The current sector, NPCs, items,
 ; the player must all be rendered.
 ;
@@ -137,6 +146,76 @@ _rg_render_player:
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character
+_rg_footer_background:
+    ldi XL, low(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
+    ldi XH, high(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
+    ldi r22, INVENTORY_UI_HEADER_COLOR
+    ldi r24, DISPLAY_WIDTH
+    ldi r25, FOOTER_HEIGHT
+    call render_rect
+_rg_player_health:
+    ldi XL, low(framebuffer+EXPLORE_UI_HEALTH_ICON_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_HEALTH_ICON_MARGIN)
+    ldi r24, 5
+    ldi r25, 4
+    ldi ZL, byte3(2*ui_small_heart_icon)
+    out RAMPZ, ZL
+    ldi ZL, low(2*ui_small_heart_icon)
+    ldi ZH, high(2*ui_small_heart_icon)
+    call render_element
+    ldi XL, low(framebuffer+EXPLORE_UI_HEALTH_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_HEALTH_MARGIN)
+    lds r21, player_max_health
+    call putb_small
+    ldi r22, '/'
+    call putc_small
+    subi XL, low(FONT_DISPLAY_WIDTH)
+    sbci XH, high(FONT_DISPLAY_WIDTH)
+    lds r21, player_health
+    call putb_small
+_rg_player_gold:
+    ldi XL, low(framebuffer+EXPLORE_UI_GOLD_ICON_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_GOLD_ICON_MARGIN)
+    ldi r24, 3
+    ldi r25, 4
+    ldi ZL, byte3(2*ui_small_coin_icon)
+    out RAMPZ, ZL
+    ldi ZL, low(2*ui_small_coin_icon)
+    ldi ZH, high(2*ui_small_coin_icon)
+    call render_element
+    ldi XL, low(framebuffer+EXPLORE_UI_GOLD_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_GOLD_MARGIN)
+    lds r18, player_gold
+    lds r19, player_gold+1
+    call putw_small
+_rg_player_xp:
+    ldi XL, low(framebuffer+EXPLORE_UI_XP_ICON_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_XP_ICON_MARGIN)
+    ldi r23, 0x82
+    ldi r22, 'P'
+    call putc_small
+    sbiw XL, FONT_DISPLAY_WIDTH
+    ldi r22, 'X'
+    call putc_small
+    ldi XL, low(framebuffer+EXPLORE_UI_XP_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_XP_MARGIN)
+    lds r18, player_xp
+    lds r19, player_xp+1
+    clr r23
+    call putw_small
+_rg_effects:
+    ldi XL, low(framebuffer+EXPLORE_UI_EFFECTS_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_EFFECTS_MARGIN)
+    clr r20
+_rg_effects_iter:
+    mov r25, r20
+    movw YL, XL
+    rcall render_effect_progress
+    movw XL, YL
+    sbiw XL, EXPLORE_UI_EFFECTS_SEPARATION
+    inc r20
+    cpi r20, PLAYER_EFFECT_COUNT
+    brne _rg_effects_iter
     ret
 
 ; Handle button presses.

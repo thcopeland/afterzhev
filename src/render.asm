@@ -974,6 +974,55 @@ _putc_write_pixels:
     std Z+2, r23
     ret
 
+; Print a single character to the framebuffer using the small font variant.
+;
+; Register Usage
+;   r22, r23        character (param), foreground color (param)
+;   r24, r25        character data
+;   X (r26:r27)     framebuffer pointer (param, preserved)
+;   Z (r30:r31)     flash pointer, working framebuffer pointer
+putc_small:
+    ldi ZL, low(2*small_font_character_table)
+    ldi ZH, high(2*small_font_character_table)
+    subi r22, 32
+    lsl r22
+    add ZL, r22
+    adc ZH, r1
+    lpm r25, Z+
+    lpm r24, Z
+    movw ZL, XL
+    sbrs r25, 6
+    st Z, r23
+    sbrs r25, 5
+    std Z+1, r23
+    sbrs r25, 4
+    std Z+2, r23
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    sbrs r25, 3
+    st Z, r23
+    sbrs r25, 2
+    std Z+1, r23
+    sbrs r25, 1
+    std Z+2, r23
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    sbrs r25, 0
+    st Z, r23
+    sbrs r24, 7
+    std Z+1, r23
+    sbrs r24, 6
+    std Z+2, r23
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    sbrs r24, 5
+    st Z, r23
+    sbrs r24, 4
+    std Z+1, r23
+    sbrs r24, 3
+    std Z+2, r23
+    ret
+
 ; Write an unsigned 8 bit integer to the framebuffer in base 10. NOTE: the framebuffer
 ; pointer is the upper-left corner of the rightmost character.
 ;
@@ -990,6 +1039,24 @@ putb:
     sbiw XL, FONT_DISPLAY_WIDTH
     tst r21
     brne putb
+    ret
+
+; Write an unsigned 8 bit integer to the framebuffer in base 10 using the small
+; font variant.
+;
+; Register Usage
+;   r21             value (param)
+;   r23             foreground color (param)
+;   r22-25          calculations
+;   X (r26:r27)     framebuffer (param)
+putb_small:
+    divmod10u r21, r24, r22
+    mov r21, r24
+    subi r22, -'0'
+    rcall putc_small
+    sbiw XL, FONT_DISPLAY_WIDTH
+    tst r21
+    brne putb_small
     ret
 
 ; Write an unsigned 16 bit integer to the framebuffer in base 10. NOTE: the framebuffer
@@ -1011,6 +1078,27 @@ putw:
     brne putw
     tst r19
     brne putw
+    ret
+
+; Write an unsigned 16 bit integer to the framebuffer in base 10 using the small
+; font variant.
+;
+; Register Usage
+;   r18:r19         value (param)
+;   r23             foreground color (param)
+;   r22-25, r30-r31 calculations
+;   X (r26:r27)     framebuffer (param)
+putw_small:
+    divmodw10u r18, r19, r20, r21, r24, r25, r30, r31
+    movw r18, r20
+    mov r22, r24
+    subi r22, -'0'
+    rcall putc_small
+    sbiw XL, FONT_DISPLAY_WIDTH
+    tst r18
+    brne putw_small
+    tst r19
+    brne putw_small
     ret
 
 ; Write a string to the framebuffer.

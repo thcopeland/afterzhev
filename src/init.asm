@@ -42,9 +42,10 @@ _init_clear_effects_iter:
     sti player_stats+2, 10
     sti player_stats+3, 10
     call calculate_player_stats
-    stiw player_gold, 400
+    stiw player_gold, 1600
     sti player_max_health, 16
     sti player_health, 13
+    stiw player_xp, 1600
     sti game_mode, MODE_EXPLORE
     sti inventory_selection, 0
     stiw preplaced_item_presence, 0xffff
