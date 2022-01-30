@@ -54,6 +54,7 @@ _init_clear_effects_iter:
     sti mode_clock, 0
     sti current_shop_index, 0xff
     stiw conversation_over, 0xffff
+    stiw seed, 1
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL

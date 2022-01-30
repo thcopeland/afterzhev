@@ -11,6 +11,7 @@ vid_row_repeat:     .byte 1
 vid_work_complete:  .byte 1
 clock:              .byte 2
 mode_clock:         .byte 1
+seed:               .byte 2
 
 prev_controller_values: .byte 1
 controller_values:  .byte 1
