@@ -52,7 +52,7 @@ _chc_branch_button1:
     ldi r21, CONVERSATION_BRANCH_CHOICE_MEMSIZE
     mul r20, r21
     add ZL, r0
-    add ZH, r1
+    adc ZH, r1
     clr r1
     elpm r24, Z+
     elpm r25, Z+
