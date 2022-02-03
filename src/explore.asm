@@ -54,16 +54,25 @@ _rg_render_loose_items:
     ldi r16, SECTOR_DYNAMIC_ITEM_COUNT
 _rg_render_loose_items_iter:
     ldd r18, Y+SECTOR_ITEM_IDX_OFFSET
-    dec r18
-    brmi _rg_render_loose_items_next
+    tst r18
+    breq _rg_render_loose_items_next
     ldi ZL, byte3(2*static_item_sprite_table)
     out RAMPZ, ZL
+    cpi r18, 128
+    brlo _rg_render_item
+_rg_render_gold:
+    ldi ZL, low(2*static_item_gold_sprite)
+    ldi ZH, high(2*static_item_gold_sprite)
+    rjmp _rg_render_item_sprite
+_rg_render_item:
+    dec r18
     ldi r19, STATIC_ITEM_MEMSIZE
     mul r18, r19
     movw ZL, r0
     clr r1
     subi ZL, low(-2*static_item_sprite_table)
     sbci ZH, high(-2*static_item_sprite_table)
+_rg_render_item_sprite:
     ldi r22, STATIC_ITEM_WIDTH
     ldi r23, STATIC_ITEM_HEIGHT
     ldd r24, Y+SECTOR_ITEM_X_OFFSET
@@ -325,6 +334,18 @@ _hmb_loose_item_next:
 _hmb_nearby_item_found:
     ldi XL, low(player_inventory)
     ldi XH, high(player_inventory)
+    cpi r23, 128
+    brlo _hmb_pickup_item
+_hmb_pickup_gold:
+    lds r21, player_gold
+    lds r22, player_gold+1
+    subi r23, 128
+    add r21, r23
+    adc r22, r1
+    sts player_gold, r21
+    sts player_gold+1, r22
+    rjmp _hmb_remove_item
+_hmb_pickup_item:
     ldi r22, PLAYER_INVENTORY_SIZE
 _hmb_inventory_iter:
     ld r21, X+
@@ -336,6 +357,7 @@ _hmb_inventory_next:
     rjmp _hmb_npc_interactions
 _hmb_empty_inventory_slot_found:
     st -X, r23   ; fill the empty slot
+_hmb_remove_item:
     std Z+SECTOR_ITEM_IDX_OFFSET, r1
     ldd r20, Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET
     tst r20
