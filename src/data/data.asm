@@ -55,8 +55,8 @@ player_gold:        .byte 2
 player_xp:          .byte 2
 player_effects:     .byte PLAYER_EFFECT_MEMSIZE*PLAYER_EFFECT_COUNT
 player_inventory:   .byte PLAYER_INVENTORY_SIZE
-; sector_data:        .byte 16
-; global_data:        .byte 8
+sector_data:        .byte 16
+global_data:        .byte 8
 
 inventory_selection: .byte 1
 

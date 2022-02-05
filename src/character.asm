@@ -28,7 +28,7 @@ _mc_horizontal_component:
     std Y+CHARACTER_POSITION_X_L, r21
     tst r26
     breq _mc_post_horizontal_friction
-    decay_95p r22, r23, r24     ; friction
+    decay_90p r22, r23, r24     ; friction
 _mc_post_horizontal_friction:
     std Y+CHARACTER_POSITION_DX, r22
     mov r24, r20
@@ -48,7 +48,7 @@ _mc_vertical_component:
     std Y+CHARACTER_POSITION_Y_L, r21
     tst r26
     breq _mc_post_vertical_friction
-    decay_95p r22, r23, r24     ; friction
+    decay_90p r22, r23, r24     ; friction
 _mc_post_vertical_friction:
     std Y+CHARACTER_POSITION_DY, r22
     ldd r24, Y+CHARACTER_POSITION_X_H
@@ -218,4 +218,50 @@ _uca_attack_to_idle:
     ldi r22, ACTION_IDLE
     clr r23
 _uca_end:
+    ret
+
+; Adjust the given characters's velocity in a way that resembles bouncing off an
+; obstacle. In fact, it acts more like a force field.
+;
+; Register Usage
+;   r18-r22         calculations
+;   r23             character rebound acceleration (param)
+;   r24-r25         obstacle position (param)
+;   Y (r28:r29)     character position pointer (param)
+collide_character:
+    ldd r18, Y+CHARACTER_POSITION_X_H
+    ldd r19, Y+CHARACTER_POSITION_Y_H
+    movw r20, r18
+    sub r20, r24
+    sbrc r20, 7
+    neg r20
+    sub r21, r25
+    sbrc r21, 7
+    neg r21
+    mov r22, r20
+    add r22, r21
+    cpi r22, (CHARACTER_COLLIDER_WIDTH+CHARACTER_COLLIDER_HEIGHT)/2+3
+    brsh _cc_end ; TODO take distance into account
+_cc_rebound_x:
+    cp r20, r21
+    brlo _cc_rebound_y
+    ldd r22, Y+CHARACTER_POSITION_DX
+    cp r24, r18
+    brlo _cc_accelerate_x
+    neg r23
+_cc_accelerate_x:
+    adnv r22, r23
+    std Y+CHARACTER_POSITION_DX, r22
+    rjmp _cc_end
+_cc_rebound_y:
+    ldd r22, Y+CHARACTER_POSITION_DY
+    cp r25, r19
+    brlo _cc_accelerate_y
+    neg r23
+_cc_accelerate_y:
+    adnv r22, r23
+    std Y+CHARACTER_POSITION_DY, r22
+_cc_end:
+    sbrc r23, 7
+    neg r23
     ret

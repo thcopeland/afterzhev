@@ -132,11 +132,16 @@ _ec_calculate_distance:
     sub r23, r19
     sbrc r23, 7
     neg r23
-    cpi r22, STRIKING_DISTANCE-1 ; approach a little closer than strictly necessary
-    brsh _ec_approach_player
-    cpi r23, STRIKING_DISTANCE-1
+    mov r25, r22
+    add r25, r23
+    cpi r25, STRIKING_DISTANCE
     brsh _ec_approach_player
 _ec_attack_player:
+    andi r24, 0x1f
+    ori r24, ACTION_ATTACK1<<5
+    std Y+NPC_ANIM_OFFSET, r24
+    ldi r20, ATTACK1_COOLDOWN
+    std Y+NPC_COOLDOWN_OFFSET, r20
     ret
 _ec_approach_player:
     ldi ZL, byte3(2*npc_table)
@@ -171,14 +176,97 @@ _ec_vertical_movement:
     brsh _ec_vertical_direction
     lsr r27
     cpi r23, STRIKING_DISTANCE/2
-    brlo _ec_save_velocity
+    brlo _ec_random_boost
 _ec_vertical_direction:
     cp r19, r21
     brsh _ec_acc_y
     neg r27
 _ec_acc_y:
     adnv r25, r27
+_ec_random_boost:
+    lds r22, clock
+    andi r22, 0x1f
+    brne _ec_save_velocity
+    call rand
+    movw r20, r0
+    clr r1
+    asr r20
+    asr r20
+    asr r21
+    asr r21
+    adnv r24, r20
+    adnv r25, r21
 _ec_save_velocity:
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r24
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r25
+    ret
+
+; Update the enemy's animations, resolve attacks, and check for collisions.
+;
+; Register Usage
+;   r18-r27
+;   Y (r28:r29)     enemy pointer (param)
+enemy_update:
+    ldd r23, Y+NPC_ANIM_OFFSET
+    lsr r23
+    mov r22, r23
+    lsr r23
+    andi r23, 7
+    swap r22
+    andi r22, 7
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+    call update_character_animation
+    ldd r24, Y+NPC_ANIM_OFFSET
+    andi r24, 3
+    swap r22
+    lsl r22
+    or r24, r22
+    lsl r23
+    lsl r23
+    or r24, r23
+    std Y+NPC_ANIM_OFFSET, r24
+    ldd r22, Y+NPC_COOLDOWN_OFFSET
+    dec r22
+    brmi _eu_collisions
+    std Y+NPC_COOLDOWN_OFFSET, r22
+_eu_collisions:
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table+NPC_TABLE_ENEMY_ACC_OFFSET)
+    ldi ZH, high(2*npc_table+NPC_TABLE_ENEMY_ACC_OFFSET)
+    ldd r20, Y+NPC_IDX_OFFSET
+    dec r20
+    ldi r21, NPC_TABLE_ENTRY_MEMSIZE
+    mul r20, r21
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    ldd r27, Y+NPC_IDX_OFFSET
+    elpm r23, Z
+    lds r24, player_position_x
+    lds r25, player_position_y
+    adiw YL, NPC_POSITION_OFFSET
+    call collide_character
+_eu_npc_on_npc_collision:
+    ldi ZL, low(sector_npcs)
+    ldi ZH, high(sector_npcs)
+    ; PERF: if cycles get tight, alternately check odd and even NPCs
+    ldi r26, SECTOR_DYNAMIC_NPC_COUNT
+    lsr r23
+_eu_npc_iter:
+    ldd r20, Z+NPC_IDX_OFFSET
+    tst r20
+    breq _eu_npc_next
+    cp r20, r27
+    breq _eu_npc_next
+    ldd r24, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    call collide_character
+_eu_npc_next:
+    adiw ZL, NPC_MEMSIZE
+    dec r26
+    brne _eu_npc_iter
+_eu_end:
+    sbiw YL, NPC_POSITION_OFFSET
     ret

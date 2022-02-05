@@ -138,7 +138,6 @@ _rg_render_dynamic_npc:
     andi r19, 7
     sts character_render+CHARACTER_FRAME_OFFSET, r19
     swap r18
-    lsr r18
     andi r18, 7
     sts character_render+CHARACTER_ACTION_OFFSET, r18
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
@@ -518,6 +517,24 @@ update_player:
     sbrc r22, 7
     clr r22
     sts player_cooldown, r22
+_up_npc_player_collision:
+    ldi ZL, low(sector_npcs)
+    ldi ZH, high(sector_npcs)
+    ldi YL, low(player_position_data)
+    ldi YH, high(player_position_data)
+    ldi r26, SECTOR_DYNAMIC_NPC_COUNT
+    lds r23, player_acceleration
+_up_npc_iter:
+    ldd r20, Z+NPC_IDX_OFFSET
+    tst r20
+    breq _up_npc_next
+    ldd r24, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    call collide_character
+_up_npc_next:
+    adiw ZL, NPC_MEMSIZE
+    dec r26
+    brne _up_npc_iter
     ret
 
 ; If the player is outside the sector bounds, load the appropriate adjacent
@@ -696,6 +713,7 @@ _ls_load_npcs_iter:
     adiw ZL, 1
     lpm r19, Z      ; initial health
     std Y+NPC_HEALTH_OFFSET, r19
+    std Y+NPC_COOLDOWN_OFFSET, r1
 _ls_load_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r18

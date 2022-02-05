@@ -16,10 +16,12 @@
 sector_0_update:
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
-    call enemy_patrol
+    call enemy_charge
+    call enemy_update
     ldi YL, low(sector_npcs+NPC_MEMSIZE)
     ldi YH, high(sector_npcs+NPC_MEMSIZE)
     call enemy_charge
+    call enemy_update
     ret
 
 sector_0_event:

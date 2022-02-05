@@ -32,7 +32,8 @@
 .equ NPC_ANIM_OFFSET = 1 ; action:3, frame:3, direction:2
 .equ NPC_POSITION_OFFSET = 2
 .equ NPC_HEALTH_OFFSET = 8
-.equ NPC_MEMSIZE = 9
+.equ NPC_COOLDOWN_OFFSET = 9
+.equ NPC_MEMSIZE = 10
 
 .equ NPC_TABLE_ENTRY_MEMSIZE = 16
 .equ NPC_TABLE_TYPE_OFFSET = 0

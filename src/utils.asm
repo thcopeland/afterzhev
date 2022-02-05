@@ -122,15 +122,15 @@ _ci_ge_%:
 _ci_end_%:
 .endm
 
-; for positive values, multiply by 0.95. For negative values, multiply the (positive)
-; magnitude by 0.95, keeping the sign. This is not pure multiplication, as it
+; for positive values, multiply by 0.9. For negative values, multiply the (positive)
+; magnitude by 0.9, keeping the sign. This is not pure multiplication, as it
 ; is symmetric about x=0. This symmetry allows us to decay positive and negative
 ; velocities identically.
-.macro decay_95p ; x, tmp, tmp2
+.macro decay_90p ; x, tmp, tmp2
     mov @1, @0
     sbrc @0, 7
     neg @1
-    ldi @2, 0xf4 ; 0xf4/0xff ~~ 0.95
+    ldi @2, 0xe6 ; 0xe6/0xff ~~ 0.9
     mul @1, @2
     mov @1, r1
     clr r1
