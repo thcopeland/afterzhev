@@ -253,7 +253,6 @@ _eu_npc_on_npc_collision:
     ldi ZH, high(sector_npcs)
     ; PERF: if cycles get tight, alternately check odd and even NPCs
     ldi r26, SECTOR_DYNAMIC_NPC_COUNT
-    lsr r23
 _eu_npc_iter:
     ldd r20, Z+NPC_IDX_OFFSET
     tst r20
