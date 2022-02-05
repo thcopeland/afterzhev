@@ -1,8 +1,8 @@
-.include "device.inc"
-.include "vga.inc"
-.include "utils.inc"
-.include "dimensions.inc"
-.include "gamedefs.inc"
+.include "device.asm"
+.include "vga.asm"
+.include "utils.asm"
+.include "layout.asm"
+.include "gamedefs.asm"
 
 .cseg
     .org 0x0000
