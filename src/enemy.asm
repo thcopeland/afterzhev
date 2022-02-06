@@ -269,3 +269,36 @@ _eu_npc_next:
 _eu_end:
     sbiw YL, NPC_POSITION_OFFSET
     ret
+
+; Constrain the enemy to the sector bounds.
+;
+; Register Usage
+;   r20-r21         calculations
+;   Y (r28:r29)     enemy pointer (param)
+enemy_sector_bounds:
+    ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+_esb_left_edge:
+    cpi r20, 250
+    brlo _esb_right_edge
+    clr r20
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
+_esb_right_edge:
+    cpi r20, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH
+    brlo _esb_top_edge
+    ldi r20, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
+_esb_top_edge:
+    cpi r21, 250
+    brlo _esb_bottom_edge
+    clr r21
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
+_esb_bottom_edge:
+    cpi r21, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT
+    brlo _esb_save_position
+    ldi r21, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
+_esb_save_position:
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r20
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r21
+    ret

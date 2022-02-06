@@ -22,6 +22,7 @@ sector_0_update:
     ldi YH, high(sector_npcs+NPC_MEMSIZE)
     call enemy_charge
     call enemy_update
+    call enemy_sector_bounds
     ret
 
 sector_0_event:
