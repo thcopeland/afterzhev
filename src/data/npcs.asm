@@ -17,7 +17,7 @@
 ;   acceleration - used for movement (1 byte)
 ;   health - initial health (1 byte)
 ;   strength - related to damage (1 byte)
-;   agility - related to defence (1 byte)
+;   dexterity - related to defense (1 byte)
 ;   drop 1,2,3 - one is randomly dropped upon death (3 bytes)
 ;
 ; Shopkeeper (16 bytes)

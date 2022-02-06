@@ -236,7 +236,7 @@ _rg_effects_iter:
 handle_controls:
     lds r18, prev_controller_values
     lds r19, controller_values
-    lds r20, player_acceleration
+    call calculate_acceleration
 _hc_up:
     sbrs r19, CONTROLS_UP
     rjmp _hc_down
@@ -522,7 +522,8 @@ _up_npc_player_collision:
     ldi YL, low(player_position_data)
     ldi YH, high(player_position_data)
     ldi r26, SECTOR_DYNAMIC_NPC_COUNT
-    lds r23, player_acceleration
+    call calculate_rebound_acc
+    mov r23, r25
 _up_npc_iter:
     ldd r20, Z+NPC_IDX_OFFSET
     tst r20

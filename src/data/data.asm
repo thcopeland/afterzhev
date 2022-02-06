@@ -32,7 +32,6 @@ camera_position_x:  .byte 1
 camera_position_y:  .byte 1
 
 player_class:       .byte 1
-player_acceleration:.byte 1
 player_position_data:
 player_position_x:  .byte 1
 player_subpixel_x:  .byte 1

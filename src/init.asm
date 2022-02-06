@@ -11,7 +11,6 @@ init:
     sti player_velocity_x, 0
     sti player_velocity_y, 0
     sti player_class, 1
-    sti player_acceleration, 12
     sti player_character, 0
     sti player_weapon, 1
     sti player_armor, 0

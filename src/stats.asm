@@ -181,3 +181,44 @@ _uep_end:
     movw YL, r24
     rcall calculate_player_stats
     ret
+
+; Calculate the damage done in an attack.
+;   damage = max(0, S1 + (D1 - D2)/2)
+;
+; Register Usage
+;   r23     attacker strength (param)
+;   r24     attacker dexterity (param)
+;   r25     defender dexterity (param)
+calculate_damage:
+    sub r24, r25
+    asr r24
+    sub r23, r24
+    sbrc r23, 7
+    clr r23
+    ret
+
+; Calculate the player's acceleration.
+;   acceleration = 2 + dexterity/2
+;
+; Register Usage
+;   r20     acceleration
+calculate_acceleration:
+    lds r20, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    lsr r20
+    subi r20, -2
+    ret
+
+; Calculate the player's acceleration when pushed.
+;   acceleration = 5 + dexterity/2 - strength/4
+;
+; Register Usage
+;   r24     calculations
+;   r25     acceleration
+calculate_rebound_acc:
+    lds r24, player_augmented_stats+STATS_STRENGTH_OFFSET
+    lsr r24
+    lds r25, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    sub r25, r24
+    asr r25
+    subi r25, -5
+    ret
