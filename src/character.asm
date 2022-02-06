@@ -241,16 +241,12 @@ collide_character:
     mov r22, r20
     add r22, r21
     mov r0, r23
-_cc_attenuate_force:
-    cpi r22, (CHARACTER_COLLIDER_WIDTH+CHARACTER_COLLIDER_HEIGHT)/2
-    brlo _cc_check_distance
-    lsr r0
 _cc_check_distance:
     cpi r22, (CHARACTER_COLLIDER_WIDTH+CHARACTER_COLLIDER_HEIGHT)/2+3
     brsh _cc_end
 _cc_rebound_x:
-    cp r20, r21
-    brlo _cc_rebound_y
+    sub r0, r20
+    brlo _cc_end
     ldd r22, Y+CHARACTER_POSITION_DX
     cp r24, r18
     brlo _cc_accelerate_x
@@ -258,8 +254,10 @@ _cc_rebound_x:
 _cc_accelerate_x:
     adnv r22, r0
     std Y+CHARACTER_POSITION_DX, r22
-    rjmp _cc_end
 _cc_rebound_y:
+    mov r0, r23
+    sub r0, r21
+    brlo _cc_end
     ldd r22, Y+CHARACTER_POSITION_DY
     cp r25, r19
     brlo _cc_accelerate_y

@@ -18,8 +18,20 @@ sector_0_update:
     ldi YH, high(sector_npcs)
     call enemy_charge
     call enemy_update
-    ldi YL, low(sector_npcs+NPC_MEMSIZE)
-    ldi YH, high(sector_npcs+NPC_MEMSIZE)
+    call enemy_sector_bounds
+    adiw YL, NPC_MEMSIZE
+    call enemy_charge
+    call enemy_update
+    call enemy_sector_bounds
+    adiw YL, 2*NPC_MEMSIZE
+    call enemy_charge
+    call enemy_update
+    call enemy_sector_bounds
+    adiw YL, NPC_MEMSIZE
+    call enemy_charge
+    call enemy_update
+    call enemy_sector_bounds
+    adiw YL, NPC_MEMSIZE
     call enemy_charge
     call enemy_update
     call enemy_sector_bounds
