@@ -75,9 +75,12 @@ void keyrelease(unsigned char c, int x, int y) {
     }
 }
 
+unsigned t = 0;
+
 void *run_game(void *x) {
     while (1) {
         int state = avr_run(avr);
+        t++;
 
         // usleep(100);
 
@@ -91,23 +94,27 @@ void *run_game(void *x) {
 }
 
 void render(void) {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glBegin(GL_QUADS);
-    for (int row = 0; row < GAME_DISPLAY_HEIGHT; row++) {
-        for (int col = 0; col < GAME_DISPLAY_WIDTH; col++) {
-            unsigned char color = avr->data[0x200 + row*GAME_DISPLAY_WIDTH+col];
-            float red = (color&7) / 7.0,
-                  green = ((color>>3)&7) / 7.0,
-                  blue = ((color>>5)&6) / 7.0;
-            glColor3f(red, green, blue);
-            glVertex2f((float) col/GAME_DISPLAY_WIDTH, (float) row/GAME_DISPLAY_HEIGHT);
-            glVertex2f((float) (col+1)/GAME_DISPLAY_WIDTH, (float) row/GAME_DISPLAY_HEIGHT);
-            glVertex2f((float) (col+1)/GAME_DISPLAY_WIDTH, (float) (row+1)/GAME_DISPLAY_HEIGHT);
-            glVertex2f((float) col/GAME_DISPLAY_WIDTH, (float) (row+1)/GAME_DISPLAY_HEIGHT);
+    if (avr->pc < 1000 && t > 26660) {
+        t = 0;
+        glClear(GL_COLOR_BUFFER_BIT);
+        glBegin(GL_QUADS);
+        for (int row = 0; row < GAME_DISPLAY_HEIGHT; row++) {
+            for (int col = 0; col < GAME_DISPLAY_WIDTH; col++) {
+                unsigned char color = avr->data[0x200 + row*GAME_DISPLAY_WIDTH+col];
+                float red = (color&7) / 7.0,
+                      green = ((color>>3)&7) / 7.0,
+                      blue = ((color>>5)&6) / 7.0;
+                glColor3f(red, green, blue);
+                glVertex2f((float) col/GAME_DISPLAY_WIDTH, (float) row/GAME_DISPLAY_HEIGHT);
+                glVertex2f((float) (col+1)/GAME_DISPLAY_WIDTH, (float) row/GAME_DISPLAY_HEIGHT);
+                glVertex2f((float) (col+1)/GAME_DISPLAY_WIDTH, (float) (row+1)/GAME_DISPLAY_HEIGHT);
+                glVertex2f((float) col/GAME_DISPLAY_WIDTH, (float) (row+1)/GAME_DISPLAY_HEIGHT);
+            }
         }
+        glEnd();
+        glFlush();
     }
-    glEnd();
-    glFlush();
+    usleep(15000);
     glutPostRedisplay();
 }
 
