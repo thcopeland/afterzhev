@@ -160,7 +160,7 @@ _ec_approach_player:
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
 _ec_horizontal_movement:
-    cpi r22, 2*STRIKING_DISTANCE
+    cpi r22, STRIKING_DISTANCE
     brsh _ec_horizontal_direction
     lsr r26
     cpi r22, STRIKING_DISTANCE/2
@@ -172,7 +172,7 @@ _ec_horizontal_direction:
 _ec_acc_x:
     adnv r24, r26
 _ec_vertical_movement:
-    cpi r23, 2*STRIKING_DISTANCE
+    cpi r23, STRIKING_DISTANCE
     brsh _ec_vertical_direction
     lsr r27
     cpi r23, STRIKING_DISTANCE/2
@@ -284,7 +284,7 @@ _esb_left_edge:
     clr r20
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
 _esb_right_edge:
-    cpi r20, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH
+    cpi r20, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH+1
     brlo _esb_top_edge
     ldi r20, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
@@ -294,7 +294,7 @@ _esb_top_edge:
     clr r21
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
 _esb_bottom_edge:
-    cpi r21, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT
+    cpi r21, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT+1
     brlo _esb_save_position
     ldi r21, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
