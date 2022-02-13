@@ -204,8 +204,9 @@ _ec_save_velocity:
 ; Update the enemy's animations, resolve attacks, and check for collisions.
 ;
 ; Register Usage
-;   r18-r27
+;   r22-r25         calculations
 ;   Y (r28:r29)     enemy pointer (param)
+;   Z (r30:r31)     aux enemy pointer, flash pointer
 enemy_update:
     ldd r23, Y+NPC_ANIM_OFFSET
     lsr r23
@@ -231,43 +232,22 @@ enemy_update:
     brmi _eu_collisions
     std Y+NPC_COOLDOWN_OFFSET, r22
 _eu_collisions:
-    ldi ZL, byte3(2*npc_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*npc_table+NPC_TABLE_ENEMY_ACC_OFFSET)
-    ldi ZH, high(2*npc_table+NPC_TABLE_ENEMY_ACC_OFFSET)
-    ldd r20, Y+NPC_IDX_OFFSET
-    dec r20
-    ldi r21, NPC_TABLE_ENTRY_MEMSIZE
-    mul r20, r21
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    ldd r27, Y+NPC_IDX_OFFSET
-    elpm r23, Z
-    lds r24, player_position_x
-    lds r25, player_position_y
-    adiw YL, NPC_POSITION_OFFSET
-    call collide_character
+    rcall enemy_fighting_space
 _eu_npc_on_npc_collision:
     ldi ZL, low(sector_npcs)
     ldi ZH, high(sector_npcs)
-    ; PERF: if cycles get tight, alternately check odd and even NPCs
-    ldi r26, SECTOR_DYNAMIC_NPC_COUNT
 _eu_npc_iter:
-    ldd r20, Z+NPC_IDX_OFFSET
-    tst r20
+    ldd r22, Z+NPC_IDX_OFFSET
+    tst r22
     breq _eu_npc_next
-    cp r20, r27
-    breq _eu_npc_next
-    ldd r24, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
-    ldd r25, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    call collide_character
+    cp YL, ZL
+    cpc YH, ZH
+    breq _eu_end
+    rcall enemy_personal_space
 _eu_npc_next:
     adiw ZL, NPC_MEMSIZE
-    dec r26
-    brne _eu_npc_iter
+    rjmp _eu_npc_iter
 _eu_end:
-    sbiw YL, NPC_POSITION_OFFSET
     ret
 
 ; Constrain the enemy to the sector bounds.
@@ -301,4 +281,100 @@ _esb_bottom_edge:
 _esb_save_position:
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r20
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r21
+    ret
+
+; Apply a repulsive force between an enemy and another nearby enemy to ensure
+; that they don't overlap.
+;
+; Register Usage
+;   r22-25          calculations
+;   Y (r28:r29)     enemy 1 (param)
+;   Z (r30:r31)     enemy 2 (param)
+enemy_personal_space:
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    ldd r24, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+_eps_horiz:
+    sub r22, r24
+    ldi r24, NPC_NPC_REPULSION
+    brsh _eps_vert
+    neg r22
+    neg r24
+_eps_vert:
+    sub r23, r25
+    ldi r25, NPC_NPC_REPULSION
+    brsh _eps_check_dist
+    neg r23
+    neg r25
+_eps_check_dist:
+    cpi r22, CHARACTER_COLLIDER_WIDTH+1
+    brsh _eps_end
+    cpi r23, CHARACTER_COLLIDER_HEIGHT+1
+    brsh _eps_end
+    add r22, r23
+    cpi r22, (CHARACTER_COLLIDER_WIDTH+CHARACTER_COLLIDER_HEIGHT+6)/2
+    brsh _eps_end
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+    adnv r22, r24
+    adnv r23, r25
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r22
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r23
+    ldd r22, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    ldd r23, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+    sbnv r22, r24
+    sbnv r23, r25
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r22
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r23
+_eps_end:
+    ret
+
+; Apply a repulsive force on an enemy so that it and the player don't overlap.
+;
+; Register Usage
+;   r22-25          calculations
+;   Y (r28:r29)     enemy (param)
+enemy_fighting_space:
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    lds r24, player_position_x
+    lds r25, player_position_y
+_efs_horiz:
+    sub r22, r24
+    ldi r24, NPC_PLAYER_REPULSION ; TODO something like 2 + (player's strength >> 3)
+    brsh _efs_vert
+    neg r22
+    neg r24
+_efs_vert:
+    sub r23, r25
+    ldi r25, NPC_PLAYER_REPULSION
+    brsh _efs_check_dist
+    neg r23
+    neg r25
+_efs_check_dist:
+    cpi r22, CHARACTER_COLLIDER_WIDTH
+    brsh _efs_end
+    cpi r23, CHARACTER_COLLIDER_HEIGHT
+    brsh _efs_end
+    add r22, r23
+    cpi r22, (CHARACTER_COLLIDER_WIDTH+CHARACTER_COLLIDER_HEIGHT+2)/2
+    brsh _efs_end
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+    adnv r22, r24
+    adnv r23, r25
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r22
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r23
+    mov r24, r21
+    ldi r21, 0xcc ; 0xcc / 0xff ~~ 0.8
+    lds r22, player_velocity_x
+    lds r23, player_velocity_y
+    mulsu r22, r21
+    sts player_velocity_x, r1
+    mulsu r23, r21
+    sts player_velocity_y, r1
+    clr r1
+    mov r21, r24 ; preserve r21
+_efs_end:
     ret

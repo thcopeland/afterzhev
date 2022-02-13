@@ -207,18 +207,3 @@ calculate_acceleration:
     lsr r20
     subi r20, -2
     ret
-
-; Calculate the player's acceleration when pushed.
-;   acceleration = 5 + dexterity/2 - strength/4
-;
-; Register Usage
-;   r24     calculations
-;   r25     acceleration
-calculate_rebound_acc:
-    lds r24, player_augmented_stats+STATS_STRENGTH_OFFSET
-    lsr r24
-    lds r25, player_augmented_stats+STATS_DEXTERITY_OFFSET
-    sub r25, r24
-    asr r25
-    subi r25, -5
-    ret
