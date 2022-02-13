@@ -338,17 +338,17 @@ _eps_end:
 enemy_fighting_space:
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    lds r24, player_position_x
-    lds r25, player_position_y
+    call calculate_push_acceleration
+    mov r24, r25
 _efs_horiz:
-    sub r22, r24
-    ldi r24, NPC_PLAYER_REPULSION ; TODO something like 2 + (player's strength >> 3)
+    lds r0, player_position_x
+    sub r22, r0
     brsh _efs_vert
     neg r22
     neg r24
 _efs_vert:
-    sub r23, r25
-    ldi r25, NPC_PLAYER_REPULSION
+    lds r0, player_position_y
+    sub r23, r0
     brsh _efs_check_dist
     neg r23
     neg r25
@@ -367,7 +367,7 @@ _efs_check_dist:
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r22
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r23
     mov r24, r21
-    ldi r21, 0xcc ; 0xcc / 0xff ~~ 0.8
+    call calculate_push_resistance
     lds r22, player_velocity_x
     lds r23, player_velocity_y
     mulsu r22, r21

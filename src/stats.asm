@@ -207,3 +207,33 @@ calculate_acceleration:
     lsr r20
     subi r20, -2
     ret
+
+; Calculate the acceration applied to an enemy when colliding with the player.
+;   acceleration = 2 + strength/8
+;
+; Register Usage
+;   r25     acceleration
+calculate_push_acceleration:
+    lds r25, player_augmented_stats+STATS_STRENGTH_OFFSET
+    lsr r25
+    lsr r25
+    lsr r25
+    subi r25, -2
+    ret
+
+; Calculate the resistance factor applied to the player when running through enemies.
+;   resistance = (float) (190 + dexterity/2 + strength) / 0xff
+;
+; Register Usage
+;   r21     resistance
+;   r22     calculations
+calculate_push_resistance:
+    lds r21, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    lsr r21
+    lds r22, player_augmented_stats+STATS_STRENGTH_OFFSET
+    add r21, r22
+    subi r21, low(-190)
+    brmi _cpr_end
+    ldi r21, 0xff
+_cpr_end:
+    ret
