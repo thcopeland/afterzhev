@@ -59,6 +59,11 @@ _mc_end:
 
 ; Check for collisions. If none occur, the new position is saved.
 ;
+; NOTE - when the character is near the edge of the map, the collision box
+; corners may fall outside the sector. We treat these cases as if there were no
+; collision and rely on other code to check and handle this situation (for the
+; player, switch sectors, for enemies, restrict to the sector.)
+;
 ; TODO - could this be inlined into move_character?
 ;
 ; Register Usage
@@ -75,7 +80,9 @@ _rcm_check_upper_left:
     lds ZH, current_sector+1
     movw r18, r24
     subi r18, low(-(TILE_WIDTH-CHARACTER_COLLIDER_WIDTH)/2)
+    brlt _rcm_no_collision_trampoline
     subi r19, low(-(TILE_HEIGHT-CHARACTER_COLLIDER_HEIGHT)/2)
+    brlt _rcm_no_collision_trampoline
     div12u r18, r20
     div12u r19, r21
     ldi r22, SECTOR_WIDTH
@@ -94,6 +101,8 @@ _rcm_check_upper_right:
     lds ZH, current_sector+1
     mov r18, r24
     subi r18, low(-(TILE_WIDTH+CHARACTER_COLLIDER_WIDTH-1)/2)
+    cpi r18, SECTOR_WIDTH*TILE_WIDTH
+    brsh _rcm_no_collision_trampoline
     div12u r18, r20
     ldi r22, SECTOR_WIDTH
     mul r21, r22
@@ -104,13 +113,18 @@ _rcm_check_upper_right:
     adc ZH, r1
     elpm r22, Z
     cpi r22, MIN_BLOCKING_TILE_IDX
-    brsh _rcm_collision
+    brlo _rcm_check_lower_left
+    rjmp _rcm_collision
+_rcm_no_collision_trampoline:
+    rjmp _rcm_no_collision
 _rcm_check_lower_left:
     lds ZL, current_sector
     lds ZH, current_sector+1
     movw r18, r24
     subi r18, low(-(TILE_WIDTH-CHARACTER_COLLIDER_WIDTH)/2)
     subi r19, low(-(TILE_HEIGHT+CHARACTER_COLLIDER_HEIGHT-1)/2)
+    cpi r19, SECTOR_HEIGHT*TILE_HEIGHT
+    brsh _rcm_no_collision
     div12u r18, r20
     div12u r19, r21
     ldi r22, SECTOR_WIDTH
