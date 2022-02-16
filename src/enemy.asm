@@ -366,15 +366,13 @@ _efs_check_dist:
     adnv r23, r25
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r22
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r23
-    mov r24, r21
     call calculate_push_resistance
-    lds r22, player_velocity_x
-    lds r23, player_velocity_y
-    mulsu r22, r21
+    lds r23, player_velocity_x
+    mulsu r23, r22
     sts player_velocity_x, r1
-    mulsu r23, r21
+    lds r23, player_velocity_y
+    mulsu r23, r22
     sts player_velocity_y, r1
     clr r1
-    mov r21, r24 ; preserve r21
 _efs_end:
     ret

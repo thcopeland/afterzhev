@@ -225,15 +225,15 @@ calculate_push_acceleration:
 ;   resistance = (float) (190 + dexterity/2 + strength) / 0xff
 ;
 ; Register Usage
-;   r21     resistance
-;   r22     calculations
+;   r22     resistance
+;   r23     calculations
 calculate_push_resistance:
-    lds r21, player_augmented_stats+STATS_DEXTERITY_OFFSET
-    lsr r21
-    lds r22, player_augmented_stats+STATS_STRENGTH_OFFSET
-    add r21, r22
-    subi r21, low(-190)
+    lds r22, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    lsr r22
+    lds r23, player_augmented_stats+STATS_STRENGTH_OFFSET
+    add r22, r23
+    subi r22, low(-190)
     brmi _cpr_end
-    ldi r21, 0xff
+    ldi r22, 0xff
 _cpr_end:
     ret
