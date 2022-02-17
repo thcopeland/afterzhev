@@ -159,6 +159,7 @@ _loop_end:
 .include "controls.asm"
 .include "animation.asm"
 .include "character.asm"
+.include "battle.asm"
 .include "render.asm"
 .include "stats.asm"
 .include "enemy.asm"

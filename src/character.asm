@@ -233,3 +233,39 @@ _uca_attack_to_idle:
     clr r23
 _uca_end:
     ret
+
+; Calculate the distance between two characters, accounting for the facing direction
+; of the reference character.
+;
+; Register Usage
+;   r22             reference character x (param), calculated horizontal distance
+;   r23             reference character y (param), calculated vertical distance
+;   r24             second character x (param), calculations
+;   r25             second character y (param), manhattan distance
+;   r26             reference character direction (param)
+biased_character_distance:
+    cpi r26, DIRECTION_DOWN
+    brne _bdc_facing_right
+    subi r23, -DIRECTION_BIAS
+_bdc_facing_right:
+    cpi r26, DIRECTION_RIGHT
+    brne _bdc_facing_up
+    subi r22, -DIRECTION_BIAS
+_bdc_facing_up:
+    cpi r26, DIRECTION_UP
+    brne _bdc_facing_left
+    subi r23, DIRECTION_BIAS
+_bdc_facing_left:
+    cpi r26, DIRECTION_LEFT
+    brne _bdc_calculate_distance
+    subi r22, DIRECTION_BIAS
+_bdc_calculate_distance:
+    sub r22, r24
+    sbrc r22, 7
+    neg r22
+    sub r23, r25
+    sbrc r23, 7
+    neg r23
+    mov r25, r22
+    add r25, r23
+    ret

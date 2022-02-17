@@ -35,6 +35,7 @@ sector_0_update:
     call enemy_charge
     call enemy_update
     call enemy_sector_bounds
+    call resolve_attacks
     ret
 
 sector_0_event:

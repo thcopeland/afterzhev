@@ -54,7 +54,7 @@
     .db @0, @1, @2, @3, @4, @5
 .endm
 
-.macro DECL_ENEMY_DATA ; y, xvel, yvel, acceleration, health, strength, agility, drop1, drop2, drop3
+.macro DECL_ENEMY_DATA ; y, xvel, yvel, acceleration, health, strength, dexterity, drop1, drop2, drop3
     .db @0, @1, @2, @3, @4, @5, @6, @7, @8, @9
 .endm
 

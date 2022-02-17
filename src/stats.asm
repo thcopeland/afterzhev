@@ -183,18 +183,19 @@ _uep_end:
     ret
 
 ; Calculate the damage done in an attack.
-;   damage = max(0, S1 + (D1 - D2)/2)
+;   damage = max(0, S1 + (D1 - D2)/2) + 1
 ;
 ; Register Usage
-;   r23     attacker strength (param)
+;   r23     attacker strength (param), damage
 ;   r24     attacker dexterity (param)
 ;   r25     defender dexterity (param)
 calculate_damage:
     sub r24, r25
     asr r24
-    sub r23, r24
+    add r23, r24
     sbrc r23, 7
     clr r23
+    inc r23
     ret
 
 ; Calculate the player's acceleration.

@@ -95,48 +95,29 @@ enemy_charge:
 _ec_orient_horizontal:
     ldi r25, DIRECTION_LEFT
     cp r20, r18
-    brsh _ec_facing_down
+    brsh _ec_save_direction
     ldi r25, DIRECTION_RIGHT
-    rjmp _ec_facing_down
+    rjmp _ec_save_direction
 _ec_orient_vertical:
     ldi r25, DIRECTION_UP
     cp r21, r19
-    brsh _ec_facing_down
+    brsh _ec_save_direction
     ldi r25, DIRECTION_DOWN
-_ec_facing_down:
-    movw r22, r20
-    cpi r25, DIRECTION_DOWN
-    brne _ec_facing_right
-    subi r23, -DIRECTION_BIAS
-_ec_facing_right:
-    cpi r25, DIRECTION_RIGHT
-    brne _ec_facing_up
-    subi r22, -DIRECTION_BIAS
-_ec_facing_up:
-    cpi r25, DIRECTION_UP
-    brne _ec_facing_left
-    subi r23, DIRECTION_BIAS
-_ec_facing_left:
-    cpi r25, DIRECTION_LEFT
-    brne _ec_write_facing
-    subi r22, DIRECTION_BIAS
-_ec_write_facing:
+_ec_save_direction:
     ldd r24, Y+NPC_ANIM_OFFSET
     andi r24, 0xfc
     or r24, r25
     std Y+NPC_ANIM_OFFSET, r24
 _ec_calculate_distance:
-    sub r22, r18
-    sbrc r22, 7
-    neg r22
-    sub r23, r19
-    sbrc r23, 7
-    neg r23
-    mov r25, r22
-    add r25, r23
+    movw r22, r20
+    mov r26, r25
+    lds r24, player_position_x
+    lds r25, player_position_y
+    call biased_character_distance
     cpi r25, STRIKING_DISTANCE
     brsh _ec_approach_player
 _ec_attack_player:
+    ldd r24, Y+NPC_ANIM_OFFSET
     andi r24, 0x1f
     ori r24, ACTION_ATTACK1<<5
     std Y+NPC_ANIM_OFFSET, r24
