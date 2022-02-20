@@ -182,6 +182,22 @@ _uep_end:
     rcall calculate_player_stats
     ret
 
+; Calculate the player's maximum health.
+;   health = strength + dexterity + vitality + charisma
+;
+; Register Usage
+;   r24     calculations
+;   r25     health
+calculate_max_health:
+    lds r25, player_stats + STATS_STRENGTH_OFFSET
+    lds r24, player_stats + STATS_DEXTERITY_OFFSET
+    add r25, r24
+    lds r24, player_stats + STATS_VITALITY_OFFSET
+    add r25, r24
+    lds r24, player_stats + STATS_CHARISMA_OFFSET
+    add r25, r24
+    ret
+
 ; Calculate the damage done in an attack.
 ;   damage = max(0, S1/2 + (D1 - D2)/4) + 1
 ;
@@ -200,14 +216,14 @@ calculate_damage:
     ret
 
 ; Calculate the player's acceleration.
-;   acceleration = 2 + dexterity/2
+;   acceleration = 4 + dexterity/2
 ;
 ; Register Usage
 ;   r20     acceleration
 calculate_acceleration:
     lds r20, player_augmented_stats+STATS_DEXTERITY_OFFSET
     lsr r20
-    subi r20, -2
+    subi r20, -4
     ret
 
 ; Calculate the acceration applied to an enemy when colliding with the player.

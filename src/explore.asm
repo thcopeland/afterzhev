@@ -173,7 +173,8 @@ _rg_player_health:
     call render_element
     ldi XL, low(framebuffer+EXPLORE_UI_HEALTH_MARGIN)
     ldi XH, high(framebuffer+EXPLORE_UI_HEALTH_MARGIN)
-    lds r21, player_max_health
+    call calculate_max_health
+    mov r21, r25
     call putb_small
     ldi r22, '/'
     call putc_small

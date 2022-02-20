@@ -334,7 +334,8 @@ _irg_render_health:
     call render_element
     ldi XL, low(framebuffer+INVENTORY_UI_HEALTH_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_HEALTH_MARGIN)
-    lds r21, player_max_health
+    call calculate_max_health
+    mov r21, r25
     call putb
     ldi r22, '/'
     call putc
