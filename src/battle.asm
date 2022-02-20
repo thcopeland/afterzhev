@@ -43,6 +43,11 @@ _rea_damage:
     lds r24, player_health
     sub r24, r23
     sts player_health, r24
+    brsh _rea_push
+    sts player_health, r1
+    ldi r25, GAME_OVER_DEAD
+    call load_gameover
+    rjmp _rea_end
 _rea_push:
     lsl r23
     mov r22, r23
@@ -75,16 +80,20 @@ _rea_end:
 ;   Y (r28:r29)     enemy pointer (param)
 ;   Z (r30:r31)     npc table pointer (param)
 resolve_player_attack:
+    ldd r25, Y+NPC_IDX_OFFSET
+    breq _rpa_end_trampoline
     lds r25, clock
     andi r25, ATTACK_FRAME_DURATION_MASK
-    brne  _rpa_end
+    brne  _rpa_end_trampoline
 _rpa_check_action:
     lds r25, player_action
     cpi r25, ACTION_ATTACK1
-    brlo _rpa_end
+    brlo _rpa_end_trampoline
     lds r25, player_frame
     cpi r25, ATTACK_DAMAGE_FRAME
-    brlo _rpa_end
+    brsh _rpa_check_distance
+_rpa_end_trampoline:
+    rjmp _rpa_end
 _rpa_check_distance:
     lds r22, player_position_x
     lds r23, player_position_y

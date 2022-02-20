@@ -12,8 +12,6 @@ explore_update_game:
     subi ZL, low(-SECTOR_HANDLERS_OFFSET)
     sbci ZH, high(-SECTOR_HANDLERS_OFFSET)
     elpm r24, Z+
-    tst r24
-    breq _eup_end
     elpm r25, Z+
     tst r25
     breq _eup_end

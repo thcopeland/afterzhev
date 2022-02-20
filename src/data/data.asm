@@ -10,7 +10,7 @@ vid_fbuff_offset:   .byte 2
 vid_row_repeat:     .byte 1
 vid_work_complete:  .byte 1
 clock:              .byte 2
-mode_clock:         .byte 1
+mode_clock:         .byte 2
 seed:               .byte 2
 
 prev_controller_values: .byte 1
@@ -64,3 +64,5 @@ shop_selection:     .byte 1
 
 conversation_frame: .byte 2
 selected_choice:    .byte 1
+
+gameover_state:     .byte 1

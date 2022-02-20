@@ -22,7 +22,10 @@
 .equ MODE_INVENTORY = 6
 .equ MODE_SHOPPING = 7
 .equ MODE_CONVERSATION = 8
-.equ MODE_ENDGAME = 9
+.equ MODE_GAMEOVER = 9
+
+.equ GAME_OVER_DEAD = 0
+.equ GAME_OVER_WIN = 1
 
 .equ DIRECTION_DOWN = 0 ; ordering is convenient for reusing sprites
 .equ DIRECTION_RIGHT = 1
