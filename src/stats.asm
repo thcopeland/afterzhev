@@ -183,7 +183,7 @@ _uep_end:
     ret
 
 ; Calculate the damage done in an attack.
-;   damage = max(0, S1 + (D1 - D2)/2) + 1
+;   damage = max(0, S1/2 + (D1 - D2)/4) + 1
 ;
 ; Register Usage
 ;   r23     attacker strength (param), damage
@@ -193,6 +193,7 @@ calculate_damage:
     sub r24, r25
     asr r24
     add r23, r24
+    asr r23
     sbrc r23, 7
     clr r23
     inc r23

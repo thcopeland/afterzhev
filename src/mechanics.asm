@@ -16,26 +16,33 @@
 sector_0_update:
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
+_s0u_enemy_iter:
+    ldd r25, Y+NPC_IDX_OFFSET
+    dec r25
+    brmi _s0u_enemy_next
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _s0u_enemy_next
+    movw r16, ZL
     call enemy_charge
     call enemy_update
     call enemy_sector_bounds
+    movw ZL, r16
+    call resolve_enemy_attack
+    call resolve_player_attack
+_s0u_enemy_next:
     adiw YL, NPC_MEMSIZE
-    call enemy_charge
-    call enemy_update
-    call enemy_sector_bounds
-    adiw YL, 2*NPC_MEMSIZE
-    call enemy_charge
-    call enemy_update
-    call enemy_sector_bounds
-    adiw YL, NPC_MEMSIZE
-    call enemy_charge
-    call enemy_update
-    call enemy_sector_bounds
-    adiw YL, NPC_MEMSIZE
-    call enemy_charge
-    call enemy_update
-    call enemy_sector_bounds
-    call resolve_attacks
+    cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
+    brlo _s0u_enemy_iter
     ret
 
 sector_0_event:
