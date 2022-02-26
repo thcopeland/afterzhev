@@ -118,11 +118,14 @@ _ec_calculate_distance:
     brsh _ec_approach_player
 _ec_attack_player:
     ldd r24, Y+NPC_ANIM_OFFSET
+    cpi r24, ACTION_ATTACK1<<5
+    brsh _ec_attack_end
     andi r24, 0x1f
     ori r24, ACTION_ATTACK1<<5
     std Y+NPC_ANIM_OFFSET, r24
     ldi r20, ATTACK1_COOLDOWN
     std Y+NPC_COOLDOWN_OFFSET, r20
+_ec_attack_end:
     ret
 _ec_approach_player:
     ldi ZL, byte3(2*npc_table)
