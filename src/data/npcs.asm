@@ -38,7 +38,7 @@
 ;   conversation 1 id - used for checking if the conversation has happened. 0 is a special conversation that is never considered over (1 byte)
 ;   conversation 1 ptr - first conversation (2 bytes)
 ;   conversation 2 id -  (1 byte)
-;   conversation 2 ptr - second conversation, used if the first is over(2 bytes)
+;   conversation 2 ptr - second conversation, used if the first is over (2 bytes)
 ;   conversation 3 id -  (1 byte)
 ;   conversation 3 ptr - third conversation, used if the first and second are over (2 bytes)
 ;
@@ -70,23 +70,26 @@
 .endm
 
 npc_table:
+    DECL_NPC        NPC_SPECIAL, 128, NO_ITEM, NO_ITEM, NO_ITEM, 0
+    DECL_SHOP_DATA  0, 0
+
     DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, 2, DIRECTION_RIGHT, 24
-    DECL_ENEMY_DATA 12, 40, 127, 8, 100, 10, 10, 1, 2, 3
+    DECL_ENEMY_DATA 12, 40, 127, 8, 20, 10, 10, 1, 2, 3
 
     DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 48
-    DECL_ENEMY_DATA 12, 0, 0, 8, 100, 10, 10, 1, 2, 3
+    DECL_ENEMY_DATA 12, 0, 0, 8, 20, 10, 10, 1, 2, 3
 
-    DECL_NPC        NPC_SHOPKEEPER, 128 | 0, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 36
+    DECL_NPC        NPC_SHOPKEEPER, 128 | 1, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 36
     DECL_SHOP_DATA  36, 0
 
     DECL_NPC        NPC_TALKER, CHARACTER_PALADIN, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 30
     DECL_TALK_DATA  150, 1, fisherman_greeting, 0, fisherman_laugh, 0, END_CONVERSATION
 
     DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 48
-    DECL_ENEMY_DATA 80, 0, 0, 8, 100, 10, 10, 1, 2, 3
+    DECL_ENEMY_DATA 80, 0, 0, 8, 20, 10, 10, 1, 2, 3
 
     DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 100
-    DECL_ENEMY_DATA 80, 0, 0, 8, 100, 10, 10, 1, 2, 3
+    DECL_ENEMY_DATA 80, 0, 0, 8, 20, 10, 10, 1, 2, 3
 
     DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 130
-    DECL_ENEMY_DATA 100, 0, 0, 8, 100, 10, 10, 1, 2, 3
+    DECL_ENEMY_DATA 100, 0, 0, 8, 20, 10, 10, 1, 2, 3

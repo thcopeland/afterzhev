@@ -12,6 +12,7 @@
 
 .equ TRANSPARENT = 0xc7 ; magenta
 .equ MIN_BLOCKING_TILE_IDX = 18 ; eventually to be 64 or so
+.equ CORPSE_NPC = 1
 
 .equ MODE_STARTUP = 0
 .equ MODE_ABOUT = 1

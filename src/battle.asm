@@ -97,9 +97,7 @@ _rpa_check_action:
     brlo _rpa_end_trampoline
     lds r25, player_frame
     cpi r25, ATTACK_DAMAGE_FRAME
-    brsh _rpa_check_distance
-_rpa_end_trampoline:
-    rjmp _rpa_end
+    brne _rpa_end_trampoline
 _rpa_check_distance:
     lds r22, player_position_x
     lds r23, player_position_y
@@ -108,7 +106,9 @@ _rpa_check_distance:
     lds r26, player_direction
     call biased_character_distance
     cpi r25, STRIKING_DISTANCE
-    brsh _rpa_end
+    brlo _rpa_damage_effect
+_rpa_end_trampoline:
+    rjmp _rpa_end
 _rpa_damage_effect:
     ldd r22, Y+NPC_EFFECT_OFFSET
     cpi r22, 1<<4
@@ -125,6 +125,28 @@ _rpa_damage:
     ldd r24, Y+NPC_HEALTH_OFFSET
     sub r24, r23
     std Y+NPC_HEALTH_OFFSET, r24
+    brsh _rpa_push
+_rpa_kill_enemy:
+    ldd r25, Y+NPC_IDX_OFFSET
+    dec r25
+    mov r24, r25
+    movw r22, ZL
+    lsr r25
+    lsr r25
+    lsr r25
+    ldi ZL, low(npc_presence)
+    ldi ZH, high(npc_presence)
+    add ZL, r25
+    adc ZH, r1
+    ld r0, Z
+    ldi r25, 1
+    mpow2 r25, r24
+    eor r0, r25
+    st Z, r0
+    movw ZL, r22
+    ldi r25, CORPSE_NPC
+    std Y+NPC_IDX_OFFSET, r25
+    rjmp _rpa_end
 _rpa_push:
     lsl r23
     mov r22, r23
