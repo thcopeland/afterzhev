@@ -38,7 +38,7 @@ _grg_end:
     ret
 
 ; Perform a closing effect on the screen. The player cannot move, but NPCs continue
-; to move but slower.
+; to move.
 ;
 ; Register Usage
 ;   r24-r25         calculations
@@ -46,8 +46,7 @@ _grg_end:
 gameover_fade_screen:
     lds r25, mode_clock
     andi r25, 0x3
-    brne _gfs_end
-    call render_game
+    breq _gfs_render
     call update_player
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
@@ -61,6 +60,9 @@ gameover_fade_screen:
     breq _gfs_fade
     movw ZL, r24
     icall
+    rjmp _gfs_end
+_gfs_render:
+    call render_game
 _gfs_fade:
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
