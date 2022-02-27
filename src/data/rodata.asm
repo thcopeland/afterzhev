@@ -20,6 +20,7 @@
     .org 0x10000
     .include "character_sprites.asm"
     .include "item_sprites.asm"
+    .include "other_sprites.asm"
 
 ; Partion 4 (words 0x15000-0x1ffff): sounds
     .org 0x15000

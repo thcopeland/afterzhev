@@ -169,12 +169,34 @@ _rcm_collision:
 ; Update the character's animation and some general state.
 ;
 ; Register Usage
-;   r18-r21     calculations
+;   r18-r20     calculations
+;   r21         character effect (param)
 ;   r22         character action (param)
 ;   r23         character frame (param)
 ;   r24         character velocity x (param)
 ;   r25         character velocity y (param)
 update_character_animation:
+_uca_check_effect:
+    cpi r21, 1<<4
+    brlo _uca_action_idle
+_uca_effect_damage:
+    cpi r21, (EFFECT_DAMAGE+1)<<4
+    brsh _uca_effect_heal
+    lds r20, clock
+    andi r20, EFFECT_DAMAGE_FRAME_DURATION_MASK
+    brne _uca_action_idle
+    ldi r20, EFFECT_DAMAGE_DURATION
+_uca_effect_heal:
+_uca_effect_upgrade:
+_uca_update_effect:
+    inc r21
+    mov r19, r21
+    andi r19, 0xf
+    breq _uca_clear_effects
+    cp r19, r20
+    brlo _uca_action_idle
+_uca_clear_effects:
+    clr r21
 _uca_action_idle:
     cpi r22, ACTION_IDLE
     brne _uca_action_walk
@@ -191,7 +213,7 @@ _uca_action_idle:
     ret
 _uca_action_walk:
     cpi r22, ACTION_WALK
-    brne _uca_action_hurt
+    brne _uca_action_attack
     movw r18, r24
     sbrc r18, 7
     neg r18
@@ -218,9 +240,6 @@ _uca_walk_to_idle:
     ldi r22, ACTION_IDLE
     clr r23
     ret
-_uca_action_hurt:
-    cpi r22, ACTION_HURT
-    brne _uca_action_attack
 _uca_action_attack:
     lds r19, clock
     andi r19, ATTACK_FRAME_DURATION_MASK

@@ -51,8 +51,6 @@ determine_weapon_sprite:
     ret
 _dws_test_idle_animation:
     cpi r24, ACTION_IDLE
-    breq _dws_use_idle_animation
-    cpi r24, ACTION_HURT
     brne _dws_test_walk_animation
 _dws_use_idle_animation:
     subi r25, -ITEM_ANIM_IDLE_OFFSET_FRAMES

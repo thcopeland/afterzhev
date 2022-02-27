@@ -17,6 +17,7 @@ init:
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_DOWN
     sti player_frame, 0
+    sti player_effect, 0
     ldi XL, low(player_inventory)
     ldi XH, high(player_inventory)
     ldi r18, PLAYER_INVENTORY_SIZE

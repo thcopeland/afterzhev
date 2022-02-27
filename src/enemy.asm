@@ -123,8 +123,6 @@ _ec_attack_player:
     andi r24, 0x1f
     ori r24, ACTION_ATTACK1<<5
     std Y+NPC_ANIM_OFFSET, r24
-    ldi r20, ATTACK1_COOLDOWN
-    std Y+NPC_COOLDOWN_OFFSET, r20
 _ec_attack_end:
     ret
 _ec_approach_player:
@@ -188,10 +186,11 @@ _ec_save_velocity:
 ; Update the enemy's animations, resolve attacks, and check for collisions.
 ;
 ; Register Usage
-;   r22-r25         calculations
+;   r21-r25         calculations
 ;   Y (r28:r29)     enemy pointer (param)
 ;   Z (r30:r31)     aux enemy pointer, flash pointer
 enemy_update:
+    ldd r21, Y+NPC_EFFECT_OFFSET
     ldd r23, Y+NPC_ANIM_OFFSET
     lsr r23
     mov r22, r23
@@ -202,6 +201,7 @@ enemy_update:
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
     call update_character_animation
+    std Y+NPC_EFFECT_OFFSET, r21
     ldd r24, Y+NPC_ANIM_OFFSET
     andi r24, 3
     swap r22
@@ -211,10 +211,6 @@ enemy_update:
     lsl r23
     or r24, r23
     std Y+NPC_ANIM_OFFSET, r24
-    ldd r22, Y+NPC_COOLDOWN_OFFSET
-    dec r22
-    brmi _eu_collisions
-    std Y+NPC_COOLDOWN_OFFSET, r22
 _eu_collisions:
     rcall enemy_fighting_space
 _eu_npc_on_npc_collision:

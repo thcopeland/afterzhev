@@ -719,6 +719,7 @@ _rs_end:
 ;   direction       (1 byte)
 ;   current action  (1 byte)
 ;   action frame    (1 byte)
+;   effect          (1 byte) 4:effect, 4:frame
 ;
 ; Register Usage
 ;   r16-r17         store character position
@@ -768,7 +769,7 @@ _rc_render_character:
     rcall render_sprite
     ldd r22, Y+CHARACTER_ARMOR_OFFSET
     tst r22
-    breq _rc_render_weapon_above
+    breq _rc_write_effect
 _rc_write_armor_sprite:
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     ldd r24, Y+CHARACTER_ACTION_OFFSET
@@ -784,6 +785,33 @@ _rc_write_armor_sprite:
     elpm r23, Z+
     splt r23, r22
     rcall render_sprite
+_rc_write_effect:
+    ldd r22, Y+CHARACTER_EFFECT_OFFSET
+    cpi r22, 1<<4
+    brlo _rc_render_weapon_above
+    ldi ZL, byte3(2*damage_effect_sprites)
+    out RAMPZ, ZL
+_rc_effect_damage:
+    cpi r22, (EFFECT_DAMAGE+1)<<4
+    brsh _rc_effect_heal
+    ldi ZL, low(2*damage_effect_sprites)
+    ldi ZH, high(2*damage_effect_sprites)
+    andi r22, 0xf
+    ldi r23, EFFECT_DAMAGE_WIDTH*EFFECT_DAMAGE_HEIGHT
+    mul r22, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    ldi r22, EFFECT_DAMAGE_WIDTH
+    ldi r23, EFFECT_DAMAGE_HEIGHT
+    movw r24, r16
+    subi r24, -(CHARACTER_SPRITE_WIDTH-EFFECT_DAMAGE_WIDTH)/2
+    subi r25, -(CHARACTER_SPRITE_HEIGHT-EFFECT_DAMAGE_HEIGHT)/2
+    rjmp _rc_write_effect_sprite
+_rc_effect_heal:
+_rc_effect_upgrade:
+_rc_write_effect_sprite:
+    call render_sprite
 _rc_render_weapon_above:
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     cpi r23, DIRECTION_UP

@@ -46,6 +46,7 @@ player_armor:       .byte 1
 player_direction:   .byte 1
 player_action:      .byte 1
 player_frame:       .byte 1
+player_effect:      .byte 1
 player_stats:       .byte 4
 player_augmented_stats: .byte 4
 player_health:      .byte 1

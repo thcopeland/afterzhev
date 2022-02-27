@@ -138,6 +138,8 @@ _rg_render_dynamic_npc:
     swap r18
     andi r18, 7
     sts character_render+CHARACTER_ACTION_OFFSET, r18
+    ldd r18, Y+NPC_EFFECT_OFFSET
+    sts character_render+CHARACTER_EFFECT_OFFSET, r18
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     movw r14, YL
@@ -494,18 +496,20 @@ _hab_end:
 ; Update the player's animation and general state.
 ;
 ; Register Usage
-;   r22-r25         calculations
+;   r21-r26         calculations
 update_player:
     ser r26
     ldi YL, low(player_position_data)
     ldi YH, high(player_position_data)
     call move_character
     rcall check_sector_bounds
+    lds r21, player_effect
     lds r22, player_action
     lds r23, player_frame
     lds r24, player_velocity_x
     lds r25, player_velocity_y
     call update_character_animation
+    sts player_effect, r21
     sts player_action, r22
     sts player_frame, r23
     sts player_velocity_x, r24
@@ -693,7 +697,7 @@ _ls_load_npcs_iter:
     adiw ZL, 1
     lpm r19, Z      ; initial health
     std Y+NPC_HEALTH_OFFSET, r19
-    std Y+NPC_COOLDOWN_OFFSET, r1
+    std Y+NPC_EFFECT_OFFSET, r1
 _ls_load_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r18
