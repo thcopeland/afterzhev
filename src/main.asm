@@ -172,6 +172,6 @@ _loop_end:
 .include "shop.asm"
 .include "conversation.asm"
 .include "gameover.asm"
-.include "mechanics.asm"
+.include "logic.asm"
 .include "rodata.asm"
 .include "data.asm"
