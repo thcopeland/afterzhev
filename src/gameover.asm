@@ -74,20 +74,40 @@ _gfs_fade:
     ror r25
     lsr r24
     ror r25
-_gfs_outer:
-    ldi r24, DISPLAY_WIDTH>>2
-_gfs_inner:
-    st X+, r1
-    st -Z, r1
-    st X+, r1
-    st -Z, r1
-    st X+, r1
-    st -Z, r1
+_gfs_black_outer:
+    ldi r24, DISPLAY_WIDTH
+_gfs_black_inner:
     st X+, r1
     st -Z, r1
     dec r24
-    brne _gfs_inner
+    brne _gfs_black_inner
     dec r25
-    brpl _gfs_outer
+    brpl _gfs_black_outer
+    ldi r24, DISPLAY_WIDTH
+_gfs_dim1:
+    ld r25, X
+    andi r25, 0x24
+    lsr r25
+    lsr r25
+    st X+, r25
+    ld r25, -Z
+    andi r25, 0x24
+    lsr r25
+    lsr r25
+    st Z, r25
+    dec r24
+    brne _gfs_dim1
+    ldi r24, DISPLAY_WIDTH
+_gfs_dim2:
+    ld r25, X
+    andi r25, 0xb6
+    lsr r25
+    st X+, r25
+    ld r25, -Z
+    andi r25, 0xb6
+    lsr r25
+    st Z, r25
+    dec r24
+    brne _gfs_dim2
 _gfs_end:
     ret
