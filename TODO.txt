@@ -1,0 +1,21 @@
+# Game Engine
+* Improve enemy death
+* Improve player death
+* Player stamina and health bars
+* Enemy health bars
+* Implement second attack
+* Optimize RAM usage
+* Sound generation
+* Sound effects
+* Music (optional, or probably 2560/2561 only)
+* Opening/loading screen
+* Credits screen
+* Prologue screens (maybe 2560/2561 only?)
+* Help screen
+* About screen
+
+# Story
+* What is the plot? How does it differ for halfling, paladin, mage?
+* What about bosses?
+* Create dozens of sprites and tiles...
+* Ask someone talented to make prologue screens
