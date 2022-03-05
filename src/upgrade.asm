@@ -48,7 +48,7 @@ _luin_level_up:
     sts player_augmented_stats+STATS_STRENGTH_OFFSET, r1
     sts player_augmented_stats+STATS_DEXTERITY_OFFSET, r1
     sts player_augmented_stats+STATS_VITALITY_OFFSET, r1
-    sts player_augmented_stats+STATS_CHARISMA_OFFSET, r1
+    sts player_augmented_stats+STATS_INTELLECT_OFFSET, r1
     ldi r25, MODE_UPGRADE
     sts game_mode, r25
 _luin_end:
@@ -140,10 +140,10 @@ _uhc_other:
     lds r21, player_stats+STATS_DEXTERITY_OFFSET
     add r20, r21
     sts player_stats+STATS_DEXTERITY_OFFSET, r20
-    lds r20, player_augmented_stats+STATS_CHARISMA_OFFSET
-    lds r21, player_stats+STATS_CHARISMA_OFFSET
+    lds r20, player_augmented_stats+STATS_INTELLECT_OFFSET
+    lds r21, player_stats+STATS_INTELLECT_OFFSET
     add r20, r21
-    sts player_stats+STATS_CHARISMA_OFFSET, r20
+    sts player_stats+STATS_INTELLECT_OFFSET, r20
     ldi r20, MODE_EXPLORE
     sts game_mode, r20
     call calculate_player_stats
@@ -157,8 +157,8 @@ _uhc_end:
 .equ UPGRADE_UI_HEADER_TEXT_MARGIN = DISPLAY_WIDTH*2+44
 .equ UPGRADE_UI_BODY_COLOR = INVENTORY_UI_BODY_COLOR
 .equ UPGRADE_UI_REMAINING_MARGIN = DISPLAY_WIDTH*59+16
-.equ UPGRADE_UI_STATS_MARGIN = DISPLAY_WIDTH*13+8
-.equ UPGRADE_UI_STAT_BAR_MARGIN = UPGRADE_UI_STATS_MARGIN+DISPLAY_WIDTH*2+35
+.equ UPGRADE_UI_STATS_MARGIN = DISPLAY_WIDTH*13+6
+.equ UPGRADE_UI_STAT_BAR_MARGIN = UPGRADE_UI_STATS_MARGIN+DISPLAY_WIDTH*2+38
 .equ UPGRADE_UI_STAT_SPACING = DISPLAY_WIDTH*11
 
 ; Render the upgrade screen.
@@ -237,20 +237,20 @@ _urg_render_dexterity:
     ldi r24, 0x26
     ldi r25, STATS_DEXTERITY_OFFSET
     rcall render_stat_progress
-_urg_render_charisma:
+_urg_render_intellect:
     ldi YL, low(framebuffer+UPGRADE_UI_STATS_MARGIN+3*UPGRADE_UI_STAT_SPACING)
     ldi YH, high(framebuffer+UPGRADE_UI_STATS_MARGIN+3*UPGRADE_UI_STAT_SPACING)
     movw XL, YL
-    ldi r25, STATS_CHARISMA_OFFSET
+    ldi r25, STATS_INTELLECT_OFFSET
     rcall render_stat_selector
-    ldi ZL, low(2*ui_str_charisma)
-    ldi ZH, high(2*ui_str_charisma)
+    ldi ZL, low(2*ui_str_intellect)
+    ldi ZH, high(2*ui_str_intellect)
     ldi r21, 10
     call puts
     ldi XL, low(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN+3*UPGRADE_UI_STAT_SPACING)
     ldi XH, high(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN+3*UPGRADE_UI_STAT_SPACING)
     ldi r24, 0x94
-    ldi r25, STATS_CHARISMA_OFFSET
+    ldi r25, STATS_INTELLECT_OFFSET
     rcall render_stat_progress
 _urg_render_remaining_points:
     ldi YL, low(framebuffer+UPGRADE_UI_REMAINING_MARGIN)
@@ -278,8 +278,8 @@ render_stat_selector:
     clr r23
     ret
 _rss_selected:
-    subi XL, low(5*FONT_DISPLAY_WIDTH/3)
-    sbci XH, high(5*FONT_DISPLAY_WIDTH/3)
+    subi XL, low(5*FONT_DISPLAY_WIDTH/3-1)
+    sbci XH, high(5*FONT_DISPLAY_WIDTH/3-1)
     ldi r22, 128
     ldi r23, 0x04
     call putc

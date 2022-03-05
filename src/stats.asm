@@ -10,7 +10,7 @@ calculate_player_stats:
     lds r18, player_stats+STATS_STRENGTH_OFFSET
     lds r19, player_stats+STATS_VITALITY_OFFSET
     lds r20, player_stats+STATS_DEXTERITY_OFFSET
-    lds r21, player_stats+STATS_CHARISMA_OFFSET
+    lds r21, player_stats+STATS_INTELLECT_OFFSET
     ldi ZL, byte3(2*item_table)
     out RAMPZ, ZL
 _cps_weapon_boost:
@@ -88,7 +88,7 @@ _cps_effect_next:
     sts player_augmented_stats+STATS_STRENGTH_OFFSET, r18
     sts player_augmented_stats+STATS_VITALITY_OFFSET, r19
     sts player_augmented_stats+STATS_DEXTERITY_OFFSET, r20
-    sts player_augmented_stats+STATS_CHARISMA_OFFSET, r21
+    sts player_augmented_stats+STATS_INTELLECT_OFFSET, r21
     ret
 
 ; Update the progress of each effect, clearing if necessary. At the end, calls
@@ -183,7 +183,7 @@ _uep_end:
     ret
 
 ; Calculate the player's maximum health.
-;   health = strength + dexterity + vitality + charisma
+;   health = strength + dexterity + vitality + intellect
 ;
 ; Register Usage
 ;   r24     calculations
@@ -194,7 +194,7 @@ calculate_max_health:
     add r25, r24
     lds r24, player_stats + STATS_VITALITY_OFFSET
     add r25, r24
-    lds r24, player_stats + STATS_CHARISMA_OFFSET
+    lds r24, player_stats + STATS_INTELLECT_OFFSET
     add r25, r24
     ret
 

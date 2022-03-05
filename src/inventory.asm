@@ -509,18 +509,18 @@ _irg_render_item_vitality:
     sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
 _irg_render_item_dexterity:
     tst r16
-    breq _irg_render_item_charisma
+    breq _irg_render_item_intellect
     ldi ZL, low(2*ui_str_dexterity_abbr)
     ldi ZH, high(2*ui_str_dexterity_abbr)
     mov r25, r16
     rcall render_item_stat
     subi YL, low(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
     sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
-_irg_render_item_charisma:
+_irg_render_item_intellect:
     tst r17
     breq _irg_end
-    ldi ZL, low(2*ui_str_charisma_abbr)
-    ldi ZH, high(2*ui_str_charisma_abbr)
+    ldi ZL, low(2*ui_str_intellect_abbr)
+    ldi ZH, high(2*ui_str_intellect_abbr)
     mov r25, r17
     rcall render_item_stat
     rjmp _irg_end

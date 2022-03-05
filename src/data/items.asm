@@ -11,7 +11,7 @@
 ; attributes. The game will overwrite memory (including the stack!) and crash.
 ; ****************************************************************************
 
-.macro DECL_ITEM ; name, flags, cost, strength, vitality, dexterity, charisma
+.macro DECL_ITEM ; name, flags, cost, strength, vitality, dexterity, intellect
     .dw 2*(_item_str_@0_name-item_string_table), 2*(_item_str_@0_desc-item_string_table)
     .db @1, low(@2), high(2), @3, @4, @5, @6, 0 ; final 0 for padding
 .endm
