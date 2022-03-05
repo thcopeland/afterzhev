@@ -143,8 +143,12 @@ _loop_shop:
     jmp shop_update_game
 _loop_conversation:
     cpi r18, MODE_CONVERSATION
-    brne _loop_gameover
+    brne _loop_upgrade
     jmp conversation_update_game
+_loop_upgrade:
+    cpi r18, MODE_UPGRADE
+    brne _loop_gameover
+    jmp upgrade_update_game
 _loop_gameover:
     cpi r18, MODE_GAMEOVER
     brne _loop_reenter
@@ -171,6 +175,7 @@ _loop_end:
 .include "inventory.asm"
 .include "shop.asm"
 .include "conversation.asm"
+.include "upgrade.asm"
 .include "gameover.asm"
 .include "logic.asm"
 .include "rodata.asm"

@@ -262,6 +262,7 @@ _srg_render_header_text:
     ldi ZH, high(2*class_table+CLASS_NAME_OFFSET)
     ldi r20, CLASS_MEMSIZE
     lds r21, player_class
+    andi r21, 0xf
     mul r20, r21
     add ZL, r0
     adc ZH, r1

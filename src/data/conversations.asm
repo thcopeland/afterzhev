@@ -41,19 +41,19 @@
 
 conversation_table:
 _conv_END_CONVERSATION:         .dw 0 ; placeholder
-_conv_fisherman_greeting:       DECL_LINE 4, fisherman, fisherman_greeting, respond_to_greeting
-_conv_fisherman_laugh:          DECL_LINE 4, fisherman, fisherman_laugh, END_CONVERSATION
+_conv_fisherman_greeting:       DECL_LINE 5, fisherman, fisherman_greeting, respond_to_greeting
+_conv_fisherman_laugh:          DECL_LINE 5, fisherman, fisherman_laugh, END_CONVERSATION
 _conv_respond_to_greeting:      DECL_BRANCH 3
                                 DECL_CHOICE choose_polite_agreement, END_CONVERSATION
                                 DECL_CHOICE choose_no_time, END_CONVERSATION
                                 DECL_CHOICE choose_share, none_to_spare
-_conv_none_to_spare:            DECL_LINE 4, fisherman, none_to_spare, END_CONVERSATION
+_conv_none_to_spare:            DECL_LINE 5, fisherman, none_to_spare, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
 _conv_speaker_fisherman_str:        .db "Provincial Fisherman", 0, 0
 _conv_line_fisherman_greeting_str:  .db "Nice day for fishing, ain", 39, "t it?", 0
-_conv_line_fisherman_laugh_str:     .db "Hua-ha!", 0
+_conv_line_fisherman_laugh_str:     .db "Huah hah!", 0
 _conv_choose_polite_agreement_str:  .db "Indeed it is.", 0
 _conv_choose_no_time_str:           .db "I", 39, "ve no time for fish... or stupid fishermen.", 0
 _conv_choose_share_str:             .db "Yup... say, you wouldn", 39, "t happen to have any extra?", 0, 0

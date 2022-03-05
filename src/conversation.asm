@@ -210,6 +210,7 @@ _crg_render_player:
     ldi ZL, low(2*class_table+CLASS_NAME_OFFSET)
     ldi ZH, high(2*class_table+CLASS_NAME_OFFSET)
     lds r20, player_class
+    andi r20, 0xf
     ldi r21, CLASS_MEMSIZE
     mul r20, r21
     add ZL, r0
@@ -247,6 +248,7 @@ _crg_render_branch:
     ldi ZL, low(2*class_table+CLASS_NAME_OFFSET)
     ldi ZH, high(2*class_table+CLASS_NAME_OFFSET)
     lds r20, player_class
+    andi r20, 0xf
     ldi r21, CLASS_MEMSIZE
     mul r20, r21
     add ZL, r0

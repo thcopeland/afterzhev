@@ -31,7 +31,7 @@ conversation_over:  .byte TOTAL_CONVERSATION_COUNT>>3
 camera_position_x:  .byte 1
 camera_position_y:  .byte 1
 
-player_class:       .byte 1
+player_class:       .byte 1 ; 4:level 4:class
 player_position_data:
 player_position_x:  .byte 1
 player_subpixel_x:  .byte 1
@@ -65,5 +65,8 @@ shop_selection:     .byte 1
 
 conversation_frame: .byte 2
 selected_choice:    .byte 1
+
+upgrade_points:     .byte 1
+upgrade_selection:  .byte 1
 
 gameover_state:     .byte 1

@@ -1,8 +1,8 @@
 explore_update_game:
     rcall render_game
     rcall handle_controls
-    rcall update_player
     call update_effects_progress
+    rcall update_player
     rcall move_camera
 
     ldi ZL, byte3(2*sector_table)
@@ -565,6 +565,7 @@ _csb_check_sector_bottom:
     sts player_position_y, r1
     sts camera_position_y, r1
 _csb_switch_sector:
+    call load_upgrade_if_necessary
     lpm r24, Z
     ldi r25, SECTOR_MEMSIZE/2
     mul r24, r25

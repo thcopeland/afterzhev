@@ -23,7 +23,8 @@
 .equ MODE_INVENTORY = 6
 .equ MODE_SHOPPING = 7
 .equ MODE_CONVERSATION = 8
-.equ MODE_GAMEOVER = 9
+.equ MODE_UPGRADE = 9
+.equ MODE_GAMEOVER = 10
 
 .equ GAME_OVER_DEAD = 0
 .equ GAME_OVER_WIN = 1
@@ -32,6 +33,18 @@
 .equ DIRECTION_RIGHT = 1
 .equ DIRECTION_UP = 2
 .equ DIRECTION_LEFT = 3
+
+.equ CLASS_PALADIN = 0
+.equ CLASS_HALFLING = 1
+.equ CLASS_MAGE = 2
+
+.equ LEVEL_1_XP = 100
+.equ LEVEL_2_XP = 600
+.equ LEVEL_3_XP = 3600
+
+.equ UPGRADE_1_POINTS = 8
+.equ UPGRADE_2_POINTS = 8
+.equ UPGRADE_3_POINTS = 6
 
 .equ CHARACTER_PALADIN = 0  ; player class 1
 .equ CHARACTER_HALFLING = 1 ; player class 2
