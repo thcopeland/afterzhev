@@ -18,7 +18,7 @@
 ;   health - initial health (1 byte)
 ;   strength - related to damage (1 byte)
 ;   dexterity - related to defense (1 byte)
-;   drop 1,2,3 - one is randomly dropped upon death (3 bytes)
+;   drop 1,2,3 - one is randomly dropped upon death (3 bytes) NOTE: prob distribution 50% 25% 25%
 ;
 ; Shopkeeper (16 bytes)
 ;   type - always NPC_SHOPKEEPER (1 byte)

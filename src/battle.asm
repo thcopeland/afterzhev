@@ -127,27 +127,7 @@ _rpa_damage:
     std Y+NPC_HEALTH_OFFSET, r24
     brsh _rpa_push
 _rpa_kill_enemy:
-    ldd r25, Y+NPC_IDX_OFFSET
-    dec r25
-    mov r24, r25
-    movw r22, ZL
-    lsr r25
-    lsr r25
-    lsr r25
-    ldi ZL, low(npc_presence)
-    ldi ZH, high(npc_presence)
-    add ZL, r25
-    adc ZH, r1
-    ld r0, Z
-    ldi r25, 1
-    mpow2 r25, r24
-    eor r0, r25
-    st Z, r0
-    movw ZL, r22
-    ldi r25, CORPSE_NPC
-    std Y+NPC_IDX_OFFSET, r25
-    ldi r24, EFFECT_BLOOD<<4
-    std Y+NPC_EFFECT_OFFSET, r24
+    rcall resolve_enemy_death
     rjmp _rpa_end
 _rpa_push:
     lsl r23
@@ -171,4 +151,91 @@ _rpa_push_y:
     adnv r25, r23
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r25
 _rpa_end:
+    ret
+
+; Record an enemy's death, add a corpse, and handle drops.
+;
+; Register Usage
+;   r22-r25         calculations
+;   Y (r28:r29)     enemy pointer, preserved (param)
+;   Z (r30:r31)     enemy data pointer, preserved (param)
+resolve_enemy_death:
+    movw r22, ZL
+    adiw ZL, NPC_TABLE_ENEMY_DROPS_OFFSET
+    call rand
+    mov r25, r1
+    clr r1
+    andi r25, 0x3
+    cpi r25, NPC_TABLE_ENEMY_DROPS_COUNT
+    brlo _red_determine_drop
+    clr r25
+_red_determine_drop:
+    add ZL, r25
+    adc ZH, r1
+    elpm r25, Z
+    tst r25
+    breq _red_record_death
+    ldi ZL, low(sector_loose_items)
+    ldi ZH, high(sector_loose_items)
+    ldi r24, SECTOR_DYNAMIC_ITEM_COUNT
+_red_loose_items_iter:
+    ld r0, Z
+    tst r0
+    brne _red_loose_items_next
+    std Z+SECTOR_ITEM_IDX_OFFSET, r25
+    std Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET, r1
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    subi r25, -(CHARACTER_SPRITE_WIDTH-STATIC_ITEM_WIDTH)/2
+    std Z+SECTOR_ITEM_X_OFFSET, r25
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    subi r25, -CHARACTER_SPRITE_HEIGHT/2
+    std Z+SECTOR_ITEM_Y_OFFSET, r25
+    rjmp _red_record_death
+_red_loose_items_next:
+    adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    dec r24
+    brne _red_loose_items_iter
+_red_record_death:
+    ldd r25, Y+NPC_IDX_OFFSET
+    dec r25
+    mov r24, r25
+    lsr r25
+    lsr r25
+    lsr r25
+    ldi ZL, low(npc_presence)
+    ldi ZH, high(npc_presence)
+    add ZL, r25
+    adc ZH, r1
+    ld r0, Z
+    ldi r25, 1
+    mpow2 r25, r24
+    eor r0, r25
+    st Z, r0
+    movw ZL, r22
+    ldi r25, CORPSE_NPC
+    std Y+NPC_IDX_OFFSET, r25
+    ldi r24, EFFECT_BLOOD<<4
+    std Y+NPC_EFFECT_OFFSET, r24
+_red_player_xp:
+    adiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET
+    elpm r22, Z+ ; acceleration
+    lsl r22
+    elpm r25, Z+ ; health
+    add r22, r25
+    clr r23
+    adc r23, r1
+    elpm r25, Z+ ; strength
+    lsl r25
+    add r22, r25
+    adc r23, r1
+    elpm r25, Z+ ; dexterity
+    add r22, r25
+    adc r23, r1
+    sbiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET+4
+    lds r24, player_xp
+    lds r25, player_xp+1
+    add r24, r22
+    adc r25, r23
+    sts player_xp, r24
+    sts player_xp+1, r25
     ret

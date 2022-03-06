@@ -1,6 +1,6 @@
 # Game Engine
-* Enemy deaths should give XP and items
 * Improve player death
+* Implement healing
 * Player stamina and health bars
 * Enemy health bars
 * Implement second attack
