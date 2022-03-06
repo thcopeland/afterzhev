@@ -356,3 +356,27 @@ _efs_check_dist:
     clr r1
 _efs_end:
     ret
+
+; Update a corpse. All dead, only one thing to do.
+;
+; Register Usage
+;   r24-r25         calculations
+;   Y (r28:r29)     npc pointer (param)
+corpse_update:
+    ldd r25, Y+NPC_EFFECT_OFFSET
+    mov r24, r25
+    swap r25
+    andi r24, 0xf
+    andi r25, 0xf
+    cpi r25, EFFECT_BLOOD
+    brne _cu_later
+    cpi r24, EFFECT_BLOOD_DURATION-1
+    brsh _cu_later
+    lds r25, clock
+    andi r25, EFFECT_BLOOD_FRAME_DURATION_MASK
+    brne _cu_later
+    ldd r25, Y+NPC_EFFECT_OFFSET
+    inc r25
+    std Y+NPC_EFFECT_OFFSET, r25
+_cu_later:
+    ret

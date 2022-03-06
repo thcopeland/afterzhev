@@ -115,6 +115,10 @@ _rg_render_static_npc:
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     call render_sprite
+    ldd r22, Y+NPC_EFFECT_OFFSET
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    call render_effect_animation
 _rg_render_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r16

@@ -146,6 +146,8 @@ _rpa_kill_enemy:
     movw ZL, r22
     ldi r25, CORPSE_NPC
     std Y+NPC_IDX_OFFSET, r25
+    ldi r24, EFFECT_BLOOD<<4
+    std Y+NPC_EFFECT_OFFSET, r24
     rjmp _rpa_end
 _rpa_push:
     lsl r23

@@ -787,31 +787,8 @@ _rc_write_armor_sprite:
     rcall render_sprite
 _rc_write_effect:
     ldd r22, Y+CHARACTER_EFFECT_OFFSET
-    cpi r22, 1<<4
-    brlo _rc_render_weapon_above
-    ldi ZL, byte3(2*damage_effect_sprites)
-    out RAMPZ, ZL
-_rc_effect_damage:
-    cpi r22, (EFFECT_DAMAGE+1)<<4
-    brsh _rc_effect_heal
-    ldi ZL, low(2*damage_effect_sprites)
-    ldi ZH, high(2*damage_effect_sprites)
-    andi r22, 0xf
-    ldi r23, EFFECT_DAMAGE_WIDTH*EFFECT_DAMAGE_HEIGHT
-    mul r22, r23
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    ldi r22, EFFECT_DAMAGE_WIDTH
-    ldi r23, EFFECT_DAMAGE_HEIGHT
     movw r24, r16
-    subi r24, -(CHARACTER_SPRITE_WIDTH-EFFECT_DAMAGE_WIDTH)/2
-    subi r25, -(CHARACTER_SPRITE_HEIGHT-EFFECT_DAMAGE_HEIGHT)/2
-    rjmp _rc_write_effect_sprite
-_rc_effect_heal:
-_rc_effect_upgrade:
-_rc_write_effect_sprite:
-    call render_sprite
+    rcall render_effect_animation
 _rc_render_weapon_above:
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     cpi r23, DIRECTION_UP
@@ -909,6 +886,48 @@ _rci_write_weapon_sprite:
     mov r25, r21
     rcall write_sprite
 _rci_end:
+    ret
+
+; Render an effect animation. This is used for several things, including blood
+; splashes, fire, healing.
+;
+; Register Usage
+;   r22             effect data, effect:4 frame:4 (param)
+;   r23             calculations
+;   r24, r25        effect location (param)
+;   Z (r30:r31)     effect pointer
+render_effect_animation:
+    mov r23, r22
+    swap r23
+    andi r23, 0xf
+    breq _rce_end
+    ldi ZL, byte3(2*effect_damage_sprites)
+    out RAMPZ, ZL
+_rce_effect_damage:
+    cpi r23, EFFECT_DAMAGE
+    brne _rce_effect_blood
+    ldi ZL, low(2*effect_damage_sprites)
+    ldi ZH, high(2*effect_damage_sprites)
+    rjmp _rce_write_effect_sprite
+_rce_effect_blood:
+    cpi r23, EFFECT_BLOOD
+    brne _rce_effect_heal
+    ldi ZL, low(2*effect_blood_sprites)
+    ldi ZH, high(2*effect_blood_sprites)
+    rjmp _rce_write_effect_sprite
+_rce_effect_heal:
+_rce_effect_upgrade:
+_rce_write_effect_sprite:
+    andi r22, 0xf
+    ldi r23, EFFECT_WIDTH*EFFECT_HEIGHT
+    mul r22, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    ldi r22, EFFECT_WIDTH
+    ldi r23, EFFECT_HEIGHT
+    rcall render_sprite
+_rce_end:
     ret
 
 ; Render an item for viewing in the UI.
