@@ -235,7 +235,7 @@ _idi_end:
 .equ INVENTORY_UI_SUBHEADER_MARGIN = 39*DISPLAY_WIDTH
 .equ INVENTORY_UI_BODY_COLOR = 0x6e
 .equ INVENTORY_UI_CLASS_MARGIN = 2*DISPLAY_WIDTH+2
-.equ INVENTORY_UI_STATS_MARGIN = 1*DISPLAY_WIDTH+36
+.equ INVENTORY_UI_STATS_MARGIN = 2*DISPLAY_WIDTH+60
 .equ INVENTORY_UI_EFFECTS_MARGIN = 31*DISPLAY_WIDTH+111
 .equ INVENTORY_UI_EFFECTS_SEPARATION = STATIC_ITEM_WIDTH+2
 .equ INVENTORY_UI_ROW1_MARGIN = DISPLAY_WIDTH*15+33
@@ -297,24 +297,33 @@ _irg_render_class:
 _irg_render_stats:
     ldi XL, low(framebuffer+INVENTORY_UI_STATS_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_STATS_MARGIN)
-    ldi r24, STATS_STRENGTH_COLOR
-    ldi r25, STATS_STRENGTH_OFFSET
-    rcall render_player_stat
-    ldi XL, low(framebuffer+INVENTORY_UI_STATS_MARGIN+2*DISPLAY_WIDTH)
-    ldi XH, high(framebuffer+INVENTORY_UI_STATS_MARGIN+2*DISPLAY_WIDTH)
-    ldi r24, STATS_VITALITY_COLOR
-    ldi r25, STATS_VITALITY_OFFSET
-    rcall render_player_stat
-    ldi XL, low(framebuffer+INVENTORY_UI_STATS_MARGIN+4*DISPLAY_WIDTH)
-    ldi XH, high(framebuffer+INVENTORY_UI_STATS_MARGIN+4*DISPLAY_WIDTH)
-    ldi r24, STATS_DEXTERITY_COLOR
-    ldi r25, STATS_DEXTERITY_OFFSET
-    rcall render_player_stat
-    ldi XL, low(framebuffer+INVENTORY_UI_STATS_MARGIN+6*DISPLAY_WIDTH)
-    ldi XH, high(framebuffer+INVENTORY_UI_STATS_MARGIN+6*DISPLAY_WIDTH)
-    ldi r24, STATS_INTELLECT_COLOR
-    ldi r25, STATS_INTELLECT_OFFSET
-    rcall render_player_stat
+    ldi YL, low(player_augmented_stats)
+    ldi YH, high(player_augmented_stats)
+    ldi r20, STATS_COUNT
+_irg_render_stats_iter:
+    movw r16, XL
+    ld r21, Y
+    call putb
+    movw XL, r16
+    adiw XL, 4
+    ldi r22, '+'
+    ldi r23, 0x18
+    movw ZL, YL
+    sbiw ZL, player_augmented_stats-player_stats
+    ld r24, Y+
+    ld r25, Z
+    cp r24, r25
+    breq _irg_render_stats_check
+    brsh _irg_render_stat_change
+    ldi r22, '-'
+    ldi r23, 0x04
+_irg_render_stat_change:
+    call putc
+_irg_render_stats_check:
+    adiw XL, 12
+    clr r23
+    dec r20
+    brne _irg_render_stats_iter
 _irg_render_effects:
     ldi XL, low(framebuffer+INVENTORY_UI_EFFECTS_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_EFFECTS_MARGIN)
@@ -572,55 +581,4 @@ _rit_write_stat:
     mov r22, r20
     call putc
     clr r23
-    ret
-
-; Render a stat progressbar.
-;
-; Register Usage
-;   r22-r23         calculations
-;   r24             color (param)
-;   r25             stat number (param)
-;   X (r26:r27)     framebuffer pointer (param)
-render_player_stat:
-    ldi ZL, low(player_stats)
-    ldi ZH, high(player_stats)
-    add ZL, r25
-    adc ZH, r1
-    ld r0, Z
-    subi ZL, low(player_stats-player_augmented_stats)
-    sbci ZH, high(player_stats-player_augmented_stats)
-    ld r22, Z
-    sub r22, r0
-    ldi r23, 80
-    mul r0, r23
-    lsl r0
-    rol r1
-    lsl r0
-    rol r1
-_rps_base_iter:
-    st X+, r24
-    dec r1
-    brne _rps_base_iter
-    mulsu r22, r23
-    lsl r0
-    rol r1
-    lsl r0
-    rol r1
-    cpi r22, 0
-    breq _rps_end
-    brlt _rps_stat_negative
-_rps_stat_positive:
-    ori r24, 0x49
-_rps_aug_iter1:
-    st X+, r24
-    dec r1
-    brne _rps_aug_iter1
-    rjmp _rps_end
-_rps_stat_negative:
-    ldi r24, INVENTORY_UI_HEADER_COLOR
-_rps_aug_iter2:
-    st -X, r24
-    inc r1
-    brne _rps_aug_iter2
-_rps_end:
     ret
