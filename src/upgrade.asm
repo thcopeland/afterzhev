@@ -204,7 +204,7 @@ _urg_render_strength:
     call puts
     ldi XL, low(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN)
     ldi XH, high(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN)
-    ldi r24, 0x22
+    ldi r24, STATS_STRENGTH_COLOR
     ldi r25, STATS_STRENGTH_OFFSET
     rcall render_stat_progress
 _urg_render_vitality:
@@ -219,7 +219,7 @@ _urg_render_vitality:
     call puts
     ldi XL, low(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN+UPGRADE_UI_STAT_SPACING)
     ldi XH, high(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN+UPGRADE_UI_STAT_SPACING)
-    ldi r24, 0x0e
+    ldi r24, STATS_VITALITY_COLOR
     ldi r25, STATS_VITALITY_OFFSET
     rcall render_stat_progress
 _urg_render_dexterity:
@@ -234,7 +234,7 @@ _urg_render_dexterity:
     call puts
     ldi XL, low(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN+2*UPGRADE_UI_STAT_SPACING)
     ldi XH, high(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN+2*UPGRADE_UI_STAT_SPACING)
-    ldi r24, 0x26
+    ldi r24, STATS_DEXTERITY_COLOR
     ldi r25, STATS_DEXTERITY_OFFSET
     rcall render_stat_progress
 _urg_render_intellect:
@@ -249,7 +249,7 @@ _urg_render_intellect:
     call puts
     ldi XL, low(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN+3*UPGRADE_UI_STAT_SPACING)
     ldi XH, high(framebuffer+UPGRADE_UI_STAT_BAR_MARGIN+3*UPGRADE_UI_STAT_SPACING)
-    ldi r24, 0x94
+    ldi r24, STATS_INTELLECT_COLOR
     ldi r25, STATS_INTELLECT_OFFSET
     rcall render_stat_progress
 _urg_render_remaining_points:
