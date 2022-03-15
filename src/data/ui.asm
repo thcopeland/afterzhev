@@ -41,10 +41,16 @@ ui_str_points_remaining:    .db "   ability points remaining", 0
 ui_str_strength:    .db "Strength", 0, 0
 ui_str_vitality:    .db "Vitality", 0, 0
 ui_str_dexterity:   .db "Dexterity", 0
-ui_str_intellect:    .db "Intellect", 0
-ui_str_strength_abbr:  .db "Str", 0
-ui_str_vitality_abbr:  .db "Vit ", 0, 0 ; the trailing space is a hack to ensure all abbreviations have the same width
-ui_str_dexterity_abbr: .db "Dex", 0
+ui_str_intellect:   .db "Intellect", 0
+ui_str_strength_abbr:   .db "Str", 0
+ui_str_vitality_abbr:   .db "Vit ", 0, 0 ; the trailing space is a hack to ensure all abbreviations have the same width
+ui_str_dexterity_abbr:  .db "Dex", 0
 ui_str_intellect_abbr:  .db "Int", 0
 ui_str_buy_label:   .db "Buy", 10, "for", 0
 ui_str_sell_label:  .db "Sell", 10, " for", 0
+ui_str_you_died:    .db "YOU  DIED", 0
+ui_str_you_win: .db "YOU  WIN", 0, 0
+ui_str_death_message1:  .db "With a hollow thud, your maimed", 10, "and broken body falls to the", 10, "ground.", 0, 0
+ui_str_death_message2:  .db "The best hope of Haldir has died with you.", 0, 0
+ui_str_death_message3:  .db "In the coming weeks, Haldirian", 10, "cities and towns will fall one", 10, "by one.", 0
+ui_str_press_any_button:.db 10, 10, "Press any button to start over.", 0

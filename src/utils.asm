@@ -139,6 +139,61 @@ _ci_end_%:
     mov @0, @1
 .endm
 
+; Perform an accurate B2G3R3 color fade. Unlike the shifting approximations I've
+; used in other places, this supports all 8 levels of brightness. It's also much
+; slower.
+.macro fade_color ; color, tmp1, tmp2, fade
+    mov @1, @0
+    mov @2, @0
+    andi @0, 0x07
+    andi @1, 0x38
+_fc_fade_red_%:
+    sub @0, @3
+    brsh _fc_fade_green_%
+    clr @0
+_fc_fade_green_%:
+    lsl @3
+    lsl @3
+    lsl @3
+    sub @1, @3
+    brsh _fc_fade_blue_%
+    clr @1
+_fc_fade_blue_%:
+    lsl @3
+    lsl @3
+    sub @2, @3
+    brsh _fc_combine_channels_%
+    clr @2
+_fc_combine_channels_%:
+    andi @2, 0xc0
+    or @0, @1
+    or @0, @2
+.endm
+
+; Perform an accurate B2G3R3 color fade with an immediate fade amount.
+.macro fade_color_imm ; color, tmp1, tmp2, fade
+    mov @1, @0
+    mov @2, @0
+    andi @0, 0x07
+    andi @1, 0x38
+_fc_fade_red_%:
+    subi @0, @3
+    brsh _fc_fade_green_%
+    clr @0
+_fc_fade_green_%:
+    subi @1, low(@3 << 3)
+    brsh _fc_fade_blue_%
+    clr @1
+_fc_fade_blue_%:
+    subi @2, low(@3 << 5)
+    brsh _fc_combine_channels_%
+    clr @2
+_fc_combine_channels_%:
+    andi @2, 0xc0
+    or @0, @1
+    or @0, @2
+.endm
+
 ; rapidly write 12 pixels to the given port
 ; clobbers r0
 .macro write_12_pixels ; port, X|Y|Z

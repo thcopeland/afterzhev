@@ -1,5 +1,4 @@
 # Game Engine
-* Improve player death
 * Implement healing
 * Player stamina and health bars
 * Enemy health bars
