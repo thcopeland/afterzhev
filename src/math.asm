@@ -81,6 +81,22 @@
     sbc @5, @7
 .endm
 
+; Calculate the nearest power of 2, minus 1.
+.macro po2 ; val, tmp
+    dec @0
+    mov @1, @0
+    lsr @1
+    or @0, @1
+    mov @1, @0
+    lsr @1
+    lsr @1
+    or @0, @1
+    mov @1, @0
+    swap @1
+    andi @1, 0x0f
+    or @0, @1
+.endm
+
 ; Generate a 16-bit pseudorandom number using the xorshift generator with triple
 ; 7, 9, 8.
 ;

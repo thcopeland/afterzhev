@@ -1,5 +1,4 @@
 # Game Engine
-* Implement healing
 * Player stamina and health bars
 * Enemy health bars
 * Implement second attack
