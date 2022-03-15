@@ -183,7 +183,7 @@ _uep_end:
     ret
 
 ; Calculate the player's maximum health.
-;   health = strength + dexterity + vitality + intellect
+;   health = (strength + dexterity)/2 + intellect + 2*vitality
 ;
 ; Register Usage
 ;   r24     calculations
@@ -192,7 +192,9 @@ calculate_max_health:
     lds r25, player_stats + STATS_STRENGTH_OFFSET
     lds r24, player_stats + STATS_DEXTERITY_OFFSET
     add r25, r24
+    lsr r25
     lds r24, player_stats + STATS_VITALITY_OFFSET
+    add r25, r24
     add r25, r24
     lds r24, player_stats + STATS_INTELLECT_OFFSET
     add r25, r24
