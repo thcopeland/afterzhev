@@ -51,6 +51,7 @@ ui_str_sell_label:  .db "Sell", 10, " for", 0
 ui_str_you_died:    .db "YOU  DIED", 0
 ui_str_you_win: .db "YOU  WIN", 0, 0
 ui_str_death_message1:  .db "With a hollow thud, your maimed", 10, "and broken body falls to the", 10, "ground.", 0, 0
+ui_str_poisoned_message1:   .db "Your withered corpse gently topples forward onto the ground.", 0, 0
 ui_str_death_message2:  .db "The best hope of Haldir has died with you.", 0, 0
 ui_str_death_message3:  .db "In the coming weeks, Haldirian", 10, "cities and towns will fall one", 10, "by one.", 0
 ui_str_press_any_button:.db 10, 10, "Press any button to start over.", 0

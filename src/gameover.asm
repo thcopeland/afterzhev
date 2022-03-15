@@ -11,10 +11,11 @@ gameover_update_game:
 ; and losses.
 ;
 ; Register Usage
+;   r24     calculations
 ;   r25     game status (param)
 load_gameover:
-    lds r25, game_mode
-    cpi r25, MODE_GAMEOVER
+    lds r24, game_mode
+    cpi r24, MODE_GAMEOVER
     breq _lg_end
     sts gameover_state, r25
     ldi r25, MODE_GAMEOVER
@@ -35,16 +36,17 @@ gameover_render_game:
     lds r24, mode_clock
     lds r25, mode_clock+1
     cpiw r24, r25, GAMEOVER_TIMING_FADE_END, r23
-    brsh _grg_check_state
+    brsh _grg_check_win
     rcall gameover_fade_screen
     rjmp _grg_end
-_grg_check_state:
+_grg_check_win:
     lds r25, gameover_state
-    cpi r25, GAME_OVER_DEAD
-    rcall gameover_render_dead
-    rjmp _grg_end
     cpi r25, GAME_OVER_WIN
+    brne _grg_check_death
     rcall gameover_render_win
+    rjmp _grg_end
+_grg_check_death:
+    rcall gameover_render_dead
 _grg_end:
     ret
 
@@ -85,8 +87,16 @@ _grd_message_line1:
     ldi r25, 66
     ldi YL, low(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
     ldi YH, high(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
+    lds r20, gameover_state
+    cpi r20, GAME_OVER_POISONED
+    breq _grd_line1_poisoned
     ldi ZL, low(2*ui_str_death_message1)
     ldi ZH, high(2*ui_str_death_message1)
+    rjmp _grd_write_line1
+_grd_line1_poisoned:
+    ldi ZL, low(2*ui_str_poisoned_message1)
+    ldi ZH, high(2*ui_str_poisoned_message1)
+_grd_write_line1:
     rcall gameover_fade_text
 _grd_message_line2:
     ldi r23, 0x05
@@ -188,7 +198,7 @@ gameover_fade_screen:
     elpm r24, Z+
     elpm r25, Z+
     tst r25
-    breq _gfs_fade
+    breq _gfs_end
     movw ZL, r24
     icall
     rjmp _gfs_end

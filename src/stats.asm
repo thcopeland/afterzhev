@@ -212,6 +212,7 @@ _uph_check_clock:
     brge _uph_save_health
     ldi r25, GAME_OVER_POISONED
     call load_gameover
+    ret
 _uph_save_health:
     cp r25, r24
     brlo _uph_end
