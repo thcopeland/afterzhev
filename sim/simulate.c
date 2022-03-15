@@ -13,7 +13,15 @@
 #define GAME_DISPLAY_HEIGHT 69
 #define SCALE 8
 
+#define RAMEND 0x2200
+#ifndef TRACE
+#define TRACE 0
+#endif
+
 avr_t *avr;
+unsigned t = 0;
+unsigned best_sp = RAMEND;
+unsigned long stack_sizes[40];
 
 void keypress(unsigned char c, int x, int y) {
     switch(c) {
@@ -42,6 +50,12 @@ void keypress(unsigned char c, int x, int y) {
             avr->data[0x26] &= ~(1 << 0);
             break;
         case 27:
+            #if TRACE != 0
+            printf("Stack size frequencies:\n");
+            for (int i = 0; i < 40; i++) {
+                printf("%02i: %li\n", i, stack_sizes[i]);
+            }
+            #endif
             exit(0);
     }
 }
@@ -75,14 +89,25 @@ void keyrelease(unsigned char c, int x, int y) {
     }
 }
 
-unsigned t = 0;
-
 void *run_game(void *x) {
     while (1) {
         int state = avr_run(avr);
         t++;
 
-        // usleep(100);
+        #if TRACE != 0
+        // log stack usage
+        unsigned char spl = avr->data[0x5d],
+                      sph = avr->data[0x5e];
+        unsigned sp = (sph<<8)|spl;
+        unsigned stack_size = RAMEND-sp;
+        stack_sizes[stack_size]++;
+        if (sp < best_sp) {
+            best_sp = sp;
+            printf("0x%04X: (%02u bytes) ", avr->pc, stack_size);
+            for (int i = sp; i < RAMEND; i++) printf("%02x ", avr->data[i]);
+            printf("\n");
+        }
+        #endif
 
         if (state == cpu_Done) {
             exit(0);
