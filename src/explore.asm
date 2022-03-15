@@ -523,22 +523,7 @@ update_player:
     sbrc r22, 7
     clr r22
     sts player_cooldown, r22
-    lds r25, player_augmented_stats + STATS_VITALITY_OFFSET
-    neg r25
-    subi r25, low(-STATS_RANGE-2)
-    lsl r25
-    lsl r25
-    po2 r25, r24
-    lds r24, clock
-    and r25, r24
-    brne _up_end
-    call calculate_max_health
-    lds r24, player_health
-    cp r24, r25
-    brsh _up_end
-    inc r24
-    sts player_health, r24
-_up_end:
+    call update_player_health
     ret
 
 ; If the player is outside the sector bounds, load the appropriate adjacent

@@ -122,6 +122,8 @@ _uep_effect_iter:
     elpm r22, Z
     lsr r22
     lsr r22
+    ror r22
+    brcs _uep_effect_next
     lds r23, clock
     and r22, r23
     brne _uep_effect_next
@@ -182,6 +184,41 @@ _uep_end:
     rcall calculate_player_stats
     ret
 
+; Update the player's health. Once every few frames, health is either
+; incremented or decremented. If the player dies, the game ends.
+;   update interval = next_power_of_2(4*(STATS_RANGE+2-|vitality|))
+;
+; Register Usage
+;   r23-r25     calculations
+update_player_health:
+    lds r25, player_augmented_stats + STATS_VITALITY_OFFSET
+    ldi r23, 1
+    cpi r25, 0
+    brge _uph_check_clock
+    neg r25
+    neg r23
+_uph_check_clock:
+    neg r25
+    subi r25, low(-STATS_RANGE-2)
+    lsl r25
+    lsl r25
+    po2 r25, r24
+    lds r24, clock
+    and r25, r24
+    brne _uph_end
+    call calculate_max_health
+    lds r24, player_health
+    add r24, r23
+    brge _uph_save_health
+    ldi r25, GAME_OVER_POISONED
+    call load_gameover
+_uph_save_health:
+    cp r25, r24
+    brlo _uph_end
+    sts player_health, r24
+_uph_end:
+    ret
+
 ; Calculate the player's maximum health.
 ;   health = (strength + dexterity)/2 + intellect + 2*vitality
 ;
@@ -224,7 +261,9 @@ calculate_damage:
 ;   r20     acceleration
 calculate_acceleration:
     lds r20, player_augmented_stats+STATS_DEXTERITY_OFFSET
-    lsr r20
+    asr r20
+    sbrc r20, 7
+    clr r20
     subi r20, -4
     ret
 

@@ -53,5 +53,5 @@ sector_table:
         10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
     .db 0, 1, 1, 1
     .db 5, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-    .db 4, 4, 24, 156, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+    .db 4, 4, 24, 156, 6, 6, 60, 150, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
     .dw 0x0000, 0x0000

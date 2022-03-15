@@ -19,18 +19,21 @@
 item_table:
     DECL_ITEM wood_stick, ITEM_WIELDABLE, 7, 10, 0, -1, -4
     DECL_ITEM blue_shirt, ITEM_WEARABLE, 30, 2, 4, 0, 0
-    DECL_ITEM health_potion, (0<<2)|ITEM_USABLE, 100, 2, 64, 2, 0
-    DECL_ITEM mint_soda, (3<<2)|ITEM_USABLE, 20, 0, 0, 0, 1
-    DECL_ITEM mint_leaves, (1<<2)|ITEM_USABLE, 10, 0, 0, 0, 1
+    DECL_ITEM health_potion, (0x0<<2)|ITEM_USABLE, 100, 2, 64, 2, 0
+    DECL_ITEM mint_soda, (0x6<<2)|ITEM_USABLE, 20, 0, 0, 0, 1
+    DECL_ITEM mint_leaves, (0x2<<2)|ITEM_USABLE, 10, 0, 0, 0, 1
+    DECL_ITEM curse_of_ullimar, (0x1<<2)|ITEM_USABLE, 75, 0, -75, 0, 0
 
 item_string_table:
-_item_str_wood_stick_name:      .db "Wood Stick", 0, 0
-_item_str_wood_stick_desc:      .db "Although outwardly unassuming, this is a truly legendary weapon.", 0, 0
-_item_str_blue_shirt_name:      .db "Blue Shirt", 0, 0
-_item_str_blue_shirt_desc:      .db "A comfortable blue shirt.", 0
-_item_str_health_potion_name:   .db "Healing Potion", 0, 0
-_item_str_health_potion_desc:   .db "An elegant flask full of a blood-red liquid.", 0, 0
-_item_str_mint_soda_name:       .db "Questionable Liquid", 0
-_item_str_mint_soda_desc:       .db "Peculiarly, it smells strongly of mint.", 0
-_item_str_mint_leaves_name:     .db "Useless Mint Leaves", 0
-_item_str_mint_leaves_desc:     .db "Aromatic, but useless.", 0, 0
+_item_str_wood_stick_name:          .db "Wood Stick", 0, 0
+_item_str_wood_stick_desc:          .db "Although outwardly unassuming, this is a truly legendary weapon.", 0, 0
+_item_str_blue_shirt_name:          .db "Blue Shirt", 0, 0
+_item_str_blue_shirt_desc:          .db "A comfortable blue shirt.", 0
+_item_str_health_potion_name:       .db "Healing Potion", 0, 0
+_item_str_health_potion_desc:       .db "An elegant flask full of a blood-red liquid.", 0, 0
+_item_str_mint_soda_name:           .db "Questionable Liquid", 0
+_item_str_mint_soda_desc:           .db "Peculiarly, it smells strongly of mint.", 0
+_item_str_mint_leaves_name:         .db "Useless Mint Leaves", 0
+_item_str_mint_leaves_desc:         .db "Aromatic, but useless.", 0, 0
+_item_str_curse_of_ullimar_name:    .db "Curse of Ullimar", 0, 0
+_item_str_curse_of_ullimar_desc:    .db "An ice-cold vial of a strangely viscous black liquid.", 0

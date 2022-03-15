@@ -297,30 +297,30 @@ _irg_render_class:
 _irg_render_stats:
     ldi XL, low(framebuffer+INVENTORY_UI_STATS_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_STATS_MARGIN)
-    ldi YL, low(player_augmented_stats)
-    ldi YH, high(player_augmented_stats)
+    ldi YL, low(player_stats)
+    ldi YH, high(player_stats)
     ldi r20, STATS_COUNT
 _irg_render_stats_iter:
     movw r16, XL
-    ld r21, Y
-    call putb
-    movw XL, r16
-    adiw XL, 4
-    ldi r22, '+'
-    ldi r23, 0x18
-    movw ZL, YL
-    sbiw ZL, player_augmented_stats-player_stats
-    ld r24, Y+
-    ld r25, Z
-    cp r24, r25
-    breq _irg_render_stats_check
-    brsh _irg_render_stat_change
-    ldi r22, '-'
+    ldd r18, Y+(player_augmented_stats-player_stats)
+    ld r19, Y+
+    mov r21, r18
+    sbrc r21, 7
+    neg r21
+    sub r19, r18
+    breq _irg_render_stat
     ldi r23, 0x04
-_irg_render_stat_change:
+    sbrc r19, 7
+    ldi r23, 0x10
+_irg_render_stat:
+    call putb
+    cpi r18, 0
+    brge _irg_render_stats_next
+    ldi r22, '-'
     call putc
-_irg_render_stats_check:
-    adiw XL, 12
+_irg_render_stats_next:
+    movw XL, r16
+    adiw XL, 16
     clr r23
     dec r20
     brne _irg_render_stats_iter
