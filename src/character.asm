@@ -288,3 +288,34 @@ _bdc_calculate_distance:
     mov r25, r22
     add r25, r23
     ret
+
+; Calculate the striking distance of the given weapon.
+;
+; Register Usage
+;   r0      result
+;   r24     calculations
+;   r25     weapon id (param)
+character_striking_distance:
+    dec r25
+    brmi _csd_end
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r24, ITEM_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    elpm r25, Z
+    andi r25, 0xc0
+    swap r25
+    lsr r25
+    lsr r25
+    inc r25
+    ldi r24, STRIKING_DISTANCE
+    mul r24, r25
+    lsr r1
+    ror r0
+    clr r1
+_csd_end:
+    ret

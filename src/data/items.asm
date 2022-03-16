@@ -23,7 +23,7 @@
 .equ USABLE_ETERNAL = (1 << 2)
 
 item_table:
-    DECL_ITEM wood_stick, (1<<3)|ITEM_WIELDABLE, 7, 10, 0, -1, -4
+    DECL_ITEM wood_stick, (1<<6)|(1<<3)|ITEM_WIELDABLE, 7, 10, 0, -1, -4
     DECL_ITEM blue_shirt, ITEM_WEARABLE, 30, 2, 4, 0, 0
     DECL_ITEM health_potion, (0x0<<2)|ITEM_USABLE, 100, 2, 64, 2, 0
     DECL_ITEM mint_soda, (0x6<<2)|ITEM_USABLE, 20, 0, 0, 0, 1

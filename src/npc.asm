@@ -114,7 +114,21 @@ _ec_calculate_distance:
     lds r24, player_position_x
     lds r25, player_position_y
     call biased_character_distance
-    cpi r25, STRIKING_DISTANCE
+    mov r26, r25
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table+NPC_TABLE_WEAPON_OFFSET)
+    ldi ZH, high(2*npc_table+NPC_TABLE_WEAPON_OFFSET)
+    ldd r24, Y+NPC_IDX_OFFSET
+    ldi r25, NPC_TABLE_ENTRY_MEMSIZE
+    dec r24
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    call character_striking_distance
+    cp r26, r0
     brsh _ec_approach_player
 _ec_attack_player:
     ldd r24, Y+NPC_ANIM_OFFSET
@@ -126,8 +140,6 @@ _ec_attack_player:
 _ec_attack_end:
     ret
 _ec_approach_player:
-    ldi ZL, byte3(2*npc_table)
-    out RAMPZ, ZL
     ldi ZL, low(2*npc_table+NPC_TABLE_ENEMY_ACC_OFFSET)
     ldi ZH, high(2*npc_table+NPC_TABLE_ENEMY_ACC_OFFSET)
     ldd r24, Y+NPC_IDX_OFFSET

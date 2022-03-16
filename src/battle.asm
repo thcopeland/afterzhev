@@ -31,7 +31,13 @@ _rea_check_distance:
     lds r25, player_position_y
     andi r26, 0x3
     call biased_character_distance
-    cpi r25, STRIKING_DISTANCE
+    mov r26, r25
+    movw r22, ZL ; save regs
+    adiw ZL, NPC_TABLE_WEAPON_OFFSET
+    elpm r25, Z
+    call character_striking_distance
+    movw ZL, r22
+    cp r26, r0
     brsh _rea_end
 _rea_damage_effect:
     lds r22, player_effect
@@ -82,7 +88,7 @@ _rea_end:
 ; acceleration is damage << 1.
 ;
 ; Register Usage
-;   r22-r25         calculations
+;   r22-r26         calculations
 ;   Y (r28:r29)     enemy pointer (param)
 ;   Z (r30:r31)     npc table pointer (param)
 resolve_player_attack:
@@ -105,7 +111,12 @@ _rpa_check_distance:
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     lds r26, player_direction
     call biased_character_distance
-    cpi r25, STRIKING_DISTANCE
+    mov r26, r25
+    movw r22, ZL ; save regs
+    lds r25, player_weapon
+    call character_striking_distance
+    movw ZL, r22 ; restore regs
+    cp r26, r0
     brlo _rpa_damage_effect
 _rpa_end_trampoline:
     rjmp _rpa_end

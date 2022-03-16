@@ -70,7 +70,7 @@
 .equ RUN_MIN_SPEED = 100
 .equ ATTACK_FRAME_DURATION_MASK = 0x7
 
-.equ STRIKING_DISTANCE = 10
+.equ STRIKING_DISTANCE = 10 ; base striking distance, scaled by individual weapons
 .equ DIRECTION_BIAS = 5
 .equ ATTACK_DAMAGE_FRAME = 2
 
