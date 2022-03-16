@@ -1,9 +1,9 @@
 ; Some items, like weapons and armor, are overlaid on character sprites, and are
-; therefore animated. Weapons have 16 sprites: 8 for walking, 2 for idle, 6 for
-; the two attacks (3 frames each). Wearable items have 20 sprites: 16 for
-; walking and 4 for idle. For weapon animations, the down-facing and right-facing
-; sprites are mirrored and reused as the up-facing and left-facing sprites. This
-; isn't the case for wearable items which should look different from different views.
+; therefore animated. Weapons have 14 sprites: 8 for walking, 2 for idle, 4 for
+; the attack. Wearable items have 20 sprites: 16 for walking and 4 for idle. For
+; weapon animations, the down-facing and right-facing sprites are mirrored and
+; reused as the up-facing and left-facing sprites. This doesn't work for
+; wearable items which should look different from different views.
 ;
 ; To save memory and cycles, each sprite has specific dimensions and offsets from
 ; the wielding character. This is stored in the first two bytes of the sprite
@@ -11,15 +11,14 @@
 ; Since each sprite may be a different size, a pointer to the sprite is stored
 ; in a lookup table. This also allows us to reuse sprites within an animation.
 ;
-; Animated Sprite LUT Entry (64 bytes)
+; Animated Sprite LUT Entry (56 bytes)
 ;   relative pointer to walk down sprite 1 (2 bytes)
 ;   relative pointer to walk down sprite 2 (2 bytes)
 ;   relative pointer to walk down sprite 3 (2 bytes)
 ;   relative pointer to walk down sprite 4 (2 bytes)
 ;   ... 12 walk right, up, left
 ;   ... 4 idle (up and left are ignored for weapons)
-;   ... 6 attack 1 (3 frames, down and right. These are ignored for wearable items)
-;   ... 6 attack 2
+;   ... 8 attack (four each for down and right. These are ignored for wearable items)
 ;
 ; Non-animated items, like potions and amulets, have only a single fixed-size
 ; sprite, stored in the static_item_sprite_table. All animated items also have
@@ -66,21 +65,11 @@ animated_item_sprite_lut:
     item_animation_entry __wooden_stick_attack1_down_0
     item_animation_entry __wooden_stick_attack1_down_1
     item_animation_entry __wooden_stick_attack1_down_2
+    item_animation_entry __wooden_stick_attack1_down_3
     item_animation_entry __wooden_stick_attack1_right_0
     item_animation_entry __wooden_stick_attack1_right_1
     item_animation_entry __wooden_stick_attack1_right_2
-    empty_animation_entry
-    empty_animation_entry
-    empty_animation_entry
-    empty_animation_entry
-    empty_animation_entry
-    empty_animation_entry
-    ; item_animation_entry __wooden_stick_attack2_down_0
-    ; item_animation_entry __wooden_stick_attack2_down_1
-    ; item_animation_entry __wooden_stick_attack2_down_2
-    ; item_animation_entry __wooden_stick_attack2_right_0
-    ; item_animation_entry __wooden_stick_attack2_right_1
-    ; item_animation_entry __wooden_stick_attack2_right_2
+    item_animation_entry __wooden_stick_attack1_right_3
 
     item_animation_entry __blue_shirt_walk_down_0
     item_animation_entry __blue_shirt_walk_down_1
@@ -102,10 +91,6 @@ animated_item_sprite_lut:
     item_animation_entry __blue_shirt_idle_right
     item_animation_entry __blue_shirt_idle_up
     item_animation_entry __blue_shirt_idle_left
-    empty_animation_entry
-    empty_animation_entry
-    empty_animation_entry
-    empty_animation_entry
     empty_animation_entry
     empty_animation_entry
     empty_animation_entry
@@ -209,6 +194,14 @@ __wooden_stick_attack1_down_2:
     .db 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc7, 0xc7, 0x0a, 0x0a
     .db 0x13, 0x0a, 0x13, 0x0a, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x0a
     .db 0x0a, 0xc7, 0xc7, 0xc7
+__wooden_stick_attack1_down_3:
+    item_sprite_header 0, 0, 9, 6
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xff, 0xc7, 0xc7, 0xc7
+    .db 0xc7, 0xc7, 0xc7, 0xff, 0xc7, 0xff, 0xff, 0xc7, 0x0a, 0x0a
+    .db 0xc7, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc7, 0xc7, 0x0a, 0x13
+    .db 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc7, 0xc7, 0x0a, 0x0a
+    .db 0x13, 0x0a, 0x13, 0x0a, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x0a
+    .db 0x0a, 0xc7, 0xc7, 0xc7
 __wooden_stick_attack1_right_0:
     item_sprite_header 0, 0, 5, 7
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0x0a, 0xc7
@@ -226,6 +219,13 @@ __wooden_stick_attack1_right_1:
     .db 0x0a, 0x13, 0xc7, 0x0a, 0x0a, 0x13, 0xc7, 0xc7
     .db 0xc7, 0xc7
 __wooden_stick_attack1_right_2:
+    item_sprite_header 0, 0, 7, 5
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xff, 0xc7, 0xc7
+    .db 0xc7, 0xff, 0xc7, 0xff, 0xff, 0xff, 0xc7, 0xc7
+    .db 0xc7, 0xff, 0xff, 0xff, 0xff, 0x0a, 0x0a, 0x13
+    .db 0x0a, 0xff, 0xff, 0x0a, 0xc7, 0xc7, 0x0a, 0x0a
+    .db 0x0a, 0x13, 0x0a, PADDING
+__wooden_stick_attack1_right_3:
     item_sprite_header 0, 0, 7, 5
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xff, 0xc7, 0xc7
     .db 0xc7, 0xff, 0xc7, 0xff, 0xff, 0xff, 0xc7, 0xc7

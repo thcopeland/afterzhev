@@ -473,19 +473,19 @@ handle_attack_buttons:
     brne _hab_end
     lds r21, CONTROLLER_VALUES
     sbrc r21, CONTROLS_SPECIAL3
-    rjmp _hab_attack2
-_hab_attack1:
-    ldi r20, ACTION_ATTACK1
+    rjmp _hab_dash
+_hab_attack:
+    ldi r20, ACTION_ATTACK
     sts player_action, r20
     sts player_frame, r1
-    ldi r20, ATTACK1_COOLDOWN
+    ldi r20, ATTACK_COOLDOWN
     sts player_cooldown, r20
     rjmp _hab_reduce_speed
-_hab_attack2:
-    ldi r20, ACTION_ATTACK2
+_hab_dash:
+    ldi r20, ACTION_DASH
     sts player_action, r20
     sts player_frame, r1
-    ldi r20, ATTACK2_COOLDOWN
+    ldi r20, DASH_COOLDOWN
     sts player_cooldown, r20
 _hab_reduce_speed:
     lds r20, player_velocity_x

@@ -70,8 +70,9 @@
 .equ RUN_MIN_SPEED = 100
 .equ ATTACK_FRAME_DURATION_MASK = 0x7
 
-.equ ATTACK1_COOLDOWN = 30
-.equ ATTACK2_COOLDOWN = 90
+; TODO have per-item attack cooldown, calculate dash cooldown from character
+.equ ATTACK_COOLDOWN = 30
+.equ DASH_COOLDOWN = 90
 .equ STRIKING_DISTANCE = 10
 .equ DIRECTION_BIAS = 5
 .equ ATTACK_DAMAGE_FRAME = 2
@@ -81,8 +82,8 @@
 
 .equ ACTION_IDLE = 0
 .equ ACTION_WALK = 1
-.equ ACTION_ATTACK1 = 2
-.equ ACTION_ATTACK2 = 3
+.equ ACTION_ATTACK = 2
+.equ ACTION_DASH = 3    ; DASH must be >= ATTACK for dashing to do damage, see battle.asm
 
 .equ EFFECT_WIDTH = 12
 .equ EFFECT_HEIGHT = 12

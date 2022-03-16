@@ -47,29 +47,26 @@ _dcs_foyle:
 ;   Z (r30:r31) calculated sprite pointer
 determine_weapon_sprite:
     dec r22
-    brpl _dws_test_idle_animation
-    ret
-_dws_test_idle_animation:
-    cpi r24, ACTION_IDLE
-    brne _dws_test_walk_animation
-_dws_use_idle_animation:
-    subi r25, -ITEM_ANIM_IDLE_OFFSET_FRAMES
-    ldi r21, ITEM_ANIM_IDLE_FRAMES
+    brmi _dws_end
 _dws_test_walk_animation:
     cpi r24, ACTION_WALK
-    brne _dws_test_attack1_animation
+    brne _dws_test_attack_animation
     subi r25, -ITEM_ANIM_WALK_OFFSET_FRAMES
     ldi r21, ITEM_ANIM_WALK_FRAMES
-_dws_test_attack1_animation:
-    cpi r24, ACTION_ATTACK1
-    brne _dws_test_attack2_animation
+    rjmp _dws_determine_offsets
+_dws_test_attack_animation:
+    cpi r24, ACTION_ATTACK
+    brne _dws_test_idle_animation
     subi r25, -ITEM_ANIM_ATTACK_OFFSET_FRAMES
     ldi r21, ITEM_ANIM_ATTACK_FRAMES
-_dws_test_attack2_animation:
-    cpi r24, ACTION_ATTACK2
-    brne _dws_determine_offsets
-    subi r25, -(ITEM_ANIM_ATTACK_OFFSET_FRAMES + ITEM_ANIM_ATTACK_TOTAL_FRAMES)
-    ldi r21, ITEM_ANIM_ATTACK_FRAMES
+    rjmp _dws_determine_offsets
+_dws_test_idle_animation:
+    cpi r25, ITEM_ANIM_IDLE_FRAMES-1
+    brlo _dws_apply_idle_animation
+    clr r25
+_dws_apply_idle_animation:
+    subi r25, -ITEM_ANIM_IDLE_OFFSET_FRAMES
+    ldi r21, ITEM_ANIM_IDLE_FRAMES
 _dws_determine_offsets:
     sbrc r23, 0
     add r25, r21
@@ -90,6 +87,7 @@ _dws_determine_offsets:
     subi r24, low(-2*animated_item_sprite_table)
     sbci r25, high(-2*animated_item_sprite_table)
     movw ZL, r24
+_dws_end:
     ret
 
 ; Calculate a pointer to an armor sprite. Armor sprites have distinct sprites

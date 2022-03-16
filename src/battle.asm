@@ -20,7 +20,7 @@ _rea_check_action:
     brne _rea_end_trampoline
     swap r25
     andi r25, 0x7
-    cpi r25, ACTION_ATTACK1
+    cpi r25, ACTION_ATTACK
     brsh _rea_check_distance
 _rea_end_trampoline:
     rjmp _rea_end
@@ -93,7 +93,7 @@ resolve_player_attack:
     brne  _rpa_end_trampoline
 _rpa_check_action:
     lds r25, player_action
-    cpi r25, ACTION_ATTACK1
+    cpi r25, ACTION_ATTACK
     brlo _rpa_end_trampoline
     lds r25, player_frame
     cpi r25, ATTACK_DAMAGE_FRAME
