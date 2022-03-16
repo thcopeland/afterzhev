@@ -31,7 +31,7 @@ conversation_over:  .byte TOTAL_CONVERSATION_COUNT>>3
 camera_position_x:  .byte 1
 camera_position_y:  .byte 1
 
-player_class:       .byte 1 ; 4:level 4:class
+player_class:       .byte 1 ; [level:4][class:4]
 player_position_data:
 player_position_x:  .byte 1
 player_subpixel_x:  .byte 1
@@ -39,7 +39,8 @@ player_velocity_x:  .byte 1
 player_position_y:  .byte 1
 player_subpixel_y:  .byte 1
 player_velocity_y:  .byte 1
-player_cooldown:    .byte 1
+player_attack_cooldown: .byte 1
+player_dash_cooldown: .byte 1
 player_character:   .byte 1
 player_weapon:      .byte 1
 player_armor:       .byte 1

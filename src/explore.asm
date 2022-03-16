@@ -466,27 +466,43 @@ _hmb_end:
 ; attack params.
 ;
 ; Register Usage
-;   r20-r21     calculations
+;   r20-r21         calculations
+;   Z (r30:r31)     flash pointer
 handle_attack_buttons:
-    lds r20, player_cooldown
-    tst r20
-    brne _hab_end
     lds r21, CONTROLLER_VALUES
     sbrc r21, CONTROLS_SPECIAL3
     rjmp _hab_dash
 _hab_attack:
+    lds r20, player_attack_cooldown
+    tst r20
+    brne _hab_end
+    lds r20, player_weapon
+    dec r20
+    brmi _hab_end
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r21, ITEM_MEMSIZE
+    mul r20, r21
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r20, Z
+    lsl r20
+    andi r20, 0x70
+    subi r20, -((ATTACK_FRAME_DURATION_MASK+1)*ITEM_ANIM_ATTACK_FRAMES)
+    sts player_attack_cooldown, r20
     ldi r20, ACTION_ATTACK
     sts player_action, r20
     sts player_frame, r1
-    ldi r20, ATTACK_COOLDOWN
-    sts player_cooldown, r20
     rjmp _hab_reduce_speed
 _hab_dash:
-    ldi r20, ACTION_DASH
-    sts player_action, r20
-    sts player_frame, r1
-    ldi r20, DASH_COOLDOWN
-    sts player_cooldown, r20
+    ; ldi r20, ACTION_DASH
+    ; sts player_action, r20
+    ; sts player_frame, r1
+    ; ldi r20, DASH_COOLDOWN
+    ; sts player_cooldown, r20
 _hab_reduce_speed:
     lds r20, player_velocity_x
     lds r21, player_velocity_y
@@ -518,12 +534,18 @@ update_player:
     sts player_frame, r23
     sts player_velocity_x, r24
     sts player_velocity_y, r25
-    lds r22, player_cooldown
-    dec r22
-    sbrc r22, 7
-    clr r22
-    sts player_cooldown, r22
     call update_player_health
+_up_attack_cooldown:
+    lds r20, player_attack_cooldown
+    subi r20, 1
+    brlo _up_dash_cooldown
+    sts player_attack_cooldown, r20
+_up_dash_cooldown:
+    lds r20, player_dash_cooldown
+    subi r20, 1
+    brlo _up_end
+    sts player_dash_cooldown, r20
+_up_end:
     ret
 
 ; If the player is outside the sector bounds, load the appropriate adjacent

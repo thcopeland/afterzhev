@@ -70,9 +70,6 @@
 .equ RUN_MIN_SPEED = 100
 .equ ATTACK_FRAME_DURATION_MASK = 0x7
 
-; TODO have per-item attack cooldown, calculate dash cooldown from character
-.equ ATTACK_COOLDOWN = 30
-.equ DASH_COOLDOWN = 90
 .equ STRIKING_DISTANCE = 10
 .equ DIRECTION_BIAS = 5
 .equ ATTACK_DAMAGE_FRAME = 2
