@@ -89,6 +89,12 @@ _cps_effect_next:
     sts player_augmented_stats+STATS_VITALITY_OFFSET, r19
     sts player_augmented_stats+STATS_DEXTERITY_OFFSET, r20
     sts player_augmented_stats+STATS_INTELLECT_OFFSET, r21
+    rcall calculate_max_health
+    lds r24, player_health
+    cp r25, r24
+    brsh _cps_end
+    sts player_health, r25
+_cps_end:
     ret
 
 ; Update the progress of each effect, clearing if necessary. At the end, calls
@@ -221,20 +227,42 @@ _uph_end:
     ret
 
 ; Calculate the player's maximum health.
-;   health = (strength + dexterity)/2 + intellect + 2*vitality
+;   health = (strength + dexterity + intellect)/2 + 2*vitality + armor boost
 ;
 ; Register Usage
 ;   r24     calculations
 ;   r25     health
 calculate_max_health:
-    lds r25, player_stats + STATS_STRENGTH_OFFSET
+    lds r25, player_armor
+    dec r25
+    brpl _cmh_armor
+    clr r25
+    rjmp _cmh_stat
+_cmh_armor:
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r24, ITEM_MEMSIZE
+    mul r25, r24
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    lsr r25
+    andi r25, 0x1e
+    sbrc r25, 4
+    ori r25, 0xe0
+_cmh_stat:
+    lds r24, player_stats + STATS_STRENGTH_OFFSET
+    add r25, r24
     lds r24, player_stats + STATS_DEXTERITY_OFFSET
+    add r25, r24
+    lds r24, player_stats + STATS_INTELLECT_OFFSET
     add r25, r24
     lsr r25
     lds r24, player_stats + STATS_VITALITY_OFFSET
     add r25, r24
-    add r25, r24
-    lds r24, player_stats + STATS_INTELLECT_OFFSET
     add r25, r24
     ret
 
@@ -256,16 +284,39 @@ calculate_damage:
     ret
 
 ; Calculate the player's acceleration.
-;   acceleration = 4 + dexterity/2
+;   acceleration = 2 + dexterity/2 + armor boost
 ;
 ; Register Usage
-;   r20     acceleration
+;   r20             acceleration
+;   r21             calculations
+;   Z (r30:r31)     flash pointer
 calculate_acceleration:
-    lds r20, player_augmented_stats+STATS_DEXTERITY_OFFSET
-    asr r20
-    sbrc r20, 7
+    lds r20, player_armor
+    dec r20
+    brpl _ca_armor
     clr r20
-    subi r20, -4
+    rjmp _ca_stat
+_ca_armor:
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r21, ITEM_MEMSIZE
+    mul r20, r21
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r20, Z
+    swap r20
+    lsr r20
+    andi r20, 0x06
+_ca_stat:
+    lds r21, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    asr r21
+    sbrc r21, 7
+    clr r21
+    subi r21, -2
+    add r20, r21
     ret
 
 ; Calculate the acceration applied to an enemy when colliding with the player.
