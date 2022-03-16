@@ -49,6 +49,7 @@ _s0u_npc_next:
     adiw YL, NPC_MEMSIZE
     cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
     brlo _s0u_npc_iter
+    call reorder_npcs
     ret
 
 sector_0_event:
