@@ -1,5 +1,6 @@
 gameover_update_game:
-    rcall gameover_render_game
+    rjmp gameover_render_game
+_gug_return:
     lds r24, mode_clock
     lds r25, mode_clock+1
     adiw r24, 1
@@ -37,8 +38,7 @@ gameover_render_game:
     lds r25, mode_clock+1
     cpiw r24, r25, GAMEOVER_TIMING_FADE_END, r23
     brsh _grg_check_win
-    rcall gameover_fade_screen
-    rjmp _grg_end
+    rjmp gameover_fade_screen
 _grg_check_win:
     lds r25, gameover_state
     cpi r25, GAME_OVER_WIN
@@ -47,8 +47,9 @@ _grg_check_win:
     rjmp _grg_end
 _grg_check_death:
     rcall gameover_render_dead
+_grg_return:
 _grg_end:
-    ret
+    rjmp _gug_return
 
 .equ GAMEOVER_UI_HEADER_TEXT_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FONT_DISPLAY_HEIGHT)/2 + (DISPLAY_WIDTH-FONT_DISPLAY_WIDTH*8)/2
 .equ GAMEOVER_UI_DEATH_MESSAGE_MARGIN = DISPLAY_WIDTH*44 + 4
@@ -251,4 +252,4 @@ _gfs_dim2:
     dec r24
     brne _gfs_dim2
 _gfs_end:
-    ret
+    rjmp _grg_return
