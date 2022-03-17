@@ -21,7 +21,7 @@ _rea_check_action:
     swap r25
     andi r25, 0x7
     cpi r25, ACTION_ATTACK
-    brsh _rea_check_distance
+    breq _rea_check_distance
 _rea_end_trampoline:
     rjmp _rea_end
 _rea_check_distance:
@@ -100,7 +100,7 @@ resolve_player_attack:
 _rpa_check_action:
     lds r25, player_action
     cpi r25, ACTION_ATTACK
-    brlo _rpa_end_trampoline
+    brne _rpa_end_trampoline
     lds r25, player_frame
     cpi r25, ATTACK_DAMAGE_FRAME
     brne _rpa_end_trampoline
@@ -199,7 +199,7 @@ _red_loose_items_iter:
     subi r25, -(CHARACTER_SPRITE_WIDTH-STATIC_ITEM_WIDTH)/2
     std Z+SECTOR_ITEM_X_OFFSET, r25
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    subi r25, -CHARACTER_SPRITE_HEIGHT/2
+    subi r25, -(CHARACTER_SPRITE_HEIGHT-STATIC_ITEM_HEIGHT+4)/2
     std Z+SECTOR_ITEM_Y_OFFSET, r25
     rjmp _red_record_death
 _red_loose_items_next:
@@ -225,8 +225,6 @@ _red_record_death:
     movw ZL, r22
     ldi r25, CORPSE_NPC
     std Y+NPC_IDX_OFFSET, r25
-    ldi r24, EFFECT_BLOOD<<4
-    std Y+NPC_EFFECT_OFFSET, r24
 _red_player_xp:
     adiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET
     elpm r22, Z+ ; acceleration

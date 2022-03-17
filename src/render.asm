@@ -905,15 +905,9 @@ render_effect_animation:
     out RAMPZ, ZL
 _rce_effect_damage:
     cpi r23, EFFECT_DAMAGE
-    brne _rce_effect_blood
+    brne _rce_effect_heal
     ldi ZL, low(2*effect_damage_sprites)
     ldi ZH, high(2*effect_damage_sprites)
-    rjmp _rce_write_effect_sprite
-_rce_effect_blood:
-    cpi r23, EFFECT_BLOOD
-    brne _rce_effect_heal
-    ldi ZL, low(2*effect_blood_sprites)
-    ldi ZH, high(2*effect_blood_sprites)
     rjmp _rce_write_effect_sprite
 _rce_effect_heal:
 _rce_effect_upgrade:

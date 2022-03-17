@@ -437,15 +437,17 @@ corpse_update:
     swap r25
     andi r24, 0xf
     andi r25, 0xf
-    cpi r25, EFFECT_BLOOD
+    cpi r25, EFFECT_DAMAGE
     brne _cu_later
-    cpi r24, EFFECT_BLOOD_DURATION-1
-    brsh _cu_later
     lds r25, clock
-    andi r25, EFFECT_BLOOD_FRAME_DURATION_MASK
+    andi r25, EFFECT_DAMAGE_FRAME_DURATION_MASK
     brne _cu_later
     ldd r25, Y+NPC_EFFECT_OFFSET
     inc r25
+    cpi r25, (EFFECT_DAMAGE<<4)|EFFECT_DAMAGE_DURATION
+    brlo _cu_save
+    clr r25
+_cu_save:
     std Y+NPC_EFFECT_OFFSET, r25
 _cu_later:
     ret

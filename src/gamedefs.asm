@@ -81,17 +81,14 @@
 
 .equ ACTION_IDLE = 0
 .equ ACTION_WALK = 1
-.equ ACTION_ATTACK = 2
-.equ ACTION_DASH = 3    ; DASH must be >= ATTACK for dashing to do damage, see battle.asm
+.equ ACTION_DASH = 2
+.equ ACTION_ATTACK = 3
 
 .equ EFFECT_WIDTH = 12
 .equ EFFECT_HEIGHT = 12
 .equ EFFECT_DAMAGE = 1 ; used when a character is injured
 .equ EFFECT_DAMAGE_DURATION = 4
 .equ EFFECT_DAMAGE_FRAME_DURATION_MASK = 0x7
-.equ EFFECT_BLOOD = 2 ; used on the corpse when a character dies
-.equ EFFECT_BLOOD_DURATION = 4
-.equ EFFECT_BLOOD_FRAME_DURATION_MASK = 0xf
 
 .equ SHOP_INVENTORY_SIZE = 12
 .equ PLAYER_INVENTORY_SIZE = 12
