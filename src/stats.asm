@@ -348,3 +348,20 @@ calculate_push_resistance:
     ldi r22, 0xff
 _cpr_end:
     ret
+
+; Calculate the dash cooldown time.
+;   cooldown = max(255 - 8*dexterity, 32)
+;
+; Register Usage
+;   r25     cooldown time
+calculate_dash_cooldown:
+    lds r25, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    lsl r25
+    lsl r25
+    lsl r25
+    com r25
+    cpi r25, 32
+    brsh _cdc_end
+    ldi r25, 32
+_cdc_end:
+    ret

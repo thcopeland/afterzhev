@@ -241,14 +241,34 @@ _uca_walk_to_idle:
     clr r23
     ret
 _uca_action_attack:
+    cpi r22, ACTION_ATTACK
+    brne _uca_action_dash
     lds r19, clock
     andi r19, ATTACK_FRAME_DURATION_MASK
     brne _uca_end
     inc r23
     cpi r23, ITEM_ANIM_ATTACK_FRAMES
     brlo _uca_end
+    tst r24
+    brne _uca_attack_to_walk
+    tst r25
+    brne _uca_attack_to_walk
 _uca_attack_to_idle:
     ldi r22, ACTION_IDLE
+    clr r23
+    rjmp _uca_end
+_uca_attack_to_walk:
+    ldi r22, ACTION_WALK
+    clr r23
+_uca_action_dash:
+    cpi r22, ACTION_DASH
+    brne _uca_end
+    lds r19, clock
+    andi r19, DASH_FRAME_DURATION_MASK
+    inc r23
+    cpi r23, DASH_DURATION
+    brlo _uca_end
+    ldi r22, ACTION_WALK
     clr r23
 _uca_end:
     ret

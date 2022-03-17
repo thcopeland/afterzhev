@@ -40,7 +40,8 @@ player_position_y:  .byte 1
 player_subpixel_y:  .byte 1
 player_velocity_y:  .byte 1
 player_attack_cooldown: .byte 1
-player_dash_cooldown: .byte 1
+player_dash_cooldown:   .byte 1
+player_dash_direction:  .byte 1
 player_character:   .byte 1
 player_weapon:      .byte 1
 player_armor:       .byte 1

@@ -496,20 +496,24 @@ _hab_attack:
     ldi r20, ACTION_ATTACK
     sts player_action, r20
     sts player_frame, r1
-    rjmp _hab_reduce_speed
-_hab_dash:
-    ; ldi r20, ACTION_DASH
-    ; sts player_action, r20
-    ; sts player_frame, r1
-    ; ldi r20, DASH_COOLDOWN
-    ; sts player_cooldown, r20
-_hab_reduce_speed:
     lds r20, player_velocity_x
     lds r21, player_velocity_y
     asr r20
     asr r21
     sts player_velocity_x, r20
     sts player_velocity_y, r21
+    rjmp _hab_end
+_hab_dash:
+    lds r20, player_dash_cooldown
+    tst r20
+    brne _hab_end
+    ldi r20, ACTION_DASH
+    sts player_action, r20
+    sts player_frame, r1
+    call calculate_dash_cooldown
+    sts player_dash_cooldown, r25
+    lds r20, player_direction
+    sts player_dash_direction, r20
 _hab_end:
     ret
 
@@ -523,6 +527,39 @@ update_player:
     ldi YH, high(player_position_data)
     call move_character
     rcall check_sector_bounds
+_up_dash:
+    lds r20, player_action
+    cpi r20, ACTION_DASH
+    brne _up_animation
+    lds r20, player_dash_direction
+_up_dash_up:
+    cpi r20, DIRECTION_UP
+    brne _up_dash_down
+    ldi r20, -128
+    sts player_velocity_y, r20
+_up_dash_down:
+    cpi r20, DIRECTION_DOWN
+    brne _up_dash_left
+    ldi r20, 127
+    sts player_velocity_y, r20
+_up_dash_left:
+    cpi r20, DIRECTION_LEFT
+    brne _up_dash_right
+    ldi r20, -128
+    sts player_velocity_x, r20
+_up_dash_right:
+    cpi r20, DIRECTION_RIGHT
+    brne _up_dash_move_again1
+    ldi r20, 127
+    sts player_velocity_x, r20
+_up_dash_move_again1:
+    lds r20, player_frame
+    cpi r20, DASH_DURATION/4
+    brsh _up_dash_move_again2
+    call move_character
+_up_dash_move_again2:
+    call move_character
+_up_animation:
     lds r21, player_effect
     lds r22, player_action
     lds r23, player_frame
