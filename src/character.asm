@@ -177,21 +177,23 @@ _rcm_collision:
 ;   r25         character velocity y (param)
 update_character_animation:
 _uca_check_effect:
-    cpi r21, 1<<4
-    brlo _uca_action_idle
+    mov r20, r21
+    andi r20, 0x38
+    breq _uca_action_idle
 _uca_effect_damage:
-    cpi r21, (EFFECT_DAMAGE+1)<<4
-    brsh _uca_effect_heal
+    cpi r20, EFFECT_DAMAGE<<3
+    brne _uca_effect_heal
     lds r20, clock
     andi r20, EFFECT_DAMAGE_FRAME_DURATION_MASK
     brne _uca_action_idle
     ldi r20, EFFECT_DAMAGE_DURATION
+    rjmp _uca_update_effect
 _uca_effect_heal: ; TODO
 _uca_effect_upgrade:
 _uca_update_effect:
     inc r21
     mov r19, r21
-    andi r19, 0xf
+    andi r19, 0x7
     breq _uca_clear_effects
     cp r19, r20
     brlo _uca_action_idle

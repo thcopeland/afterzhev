@@ -111,16 +111,16 @@ inventory_equip_item:
     clr r1
     elpm r19, Z
     andi r19, 3
+    cpi r19, ITEM_USABLE
+    breq _iei_end
 _iei_equip_weapon:
-    cpi r19, ITEM_WIELDABLE
-    brne _iei_equip_armor
+    cpi r19, ITEM_WEARABLE
+    breq _iei_equip_armor
     lds r19, player_weapon
     sts player_weapon, r18
     st X, r19
     rjmp _iei_end
 _iei_equip_armor:
-    cpi r19, ITEM_WEARABLE
-    brne _iei_end
     lds r19, player_armor
     sts player_armor, r18
     st X, r19
@@ -331,7 +331,7 @@ _irg_render_effects:
 _irg_render_effects_iter:
     mov r25, r20
     movw YL, XL
-    rcall render_effect_progress
+    call render_effect_progress
     movw XL, YL
     sbiw XL, INVENTORY_UI_EFFECTS_SEPARATION
     inc r20

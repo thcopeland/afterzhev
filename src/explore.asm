@@ -46,7 +46,6 @@ render_game:
     lds r25, current_sector+1
     call render_sector
 _rg_render_loose_items:
-    clt
     ldi YL, low(sector_loose_items)
     ldi YH, high(sector_loose_items)
     ldi r16, SECTOR_DYNAMIC_ITEM_COUNT
@@ -100,7 +99,6 @@ _rg_render_static_npc:
     cpi r18, 128
     brlo _rg_render_dynamic_npc
     andi r18, low(~128)
-    clt
     ldi ZL, byte3(2*static_character_sprite_table)
     out RAMPZ, ZL
     ldi ZL, low(2*static_character_sprite_table)
@@ -471,8 +469,8 @@ _hmb_end:
 handle_attack_buttons:
     lds r21, CONTROLLER_VALUES
     sbrc r21, CONTROLS_SPECIAL3
-    rjmp _hab_dash
-_hab_attack:
+    rjmp _hab_test_dash
+_hab_test_attack:
     lds r20, player_attack_cooldown
     tst r20
     brne _hab_end
@@ -489,6 +487,17 @@ _hab_attack:
     adc ZH, r1
     clr r1
     elpm r20, Z
+_hab_test_high_level_intellect:
+    mov r21, r20
+    andi r21, 0x3
+    cpi r21, ITEM_MAGIC
+    brne _hab_attack
+    sbrs r20, 2
+    rjmp _hab_attack
+    lds r21, player_augmented_stats+STATS_INTELLECT_OFFSET
+    cpi r21, ITEM_HIGH_LEVEL_INTELLECT
+    brlo _hab_end
+_hab_attack:
     lsl r20
     andi r20, 0x70
     subi r20, -((ATTACK_FRAME_DURATION_MASK+1)*ITEM_ANIM_ATTACK_FRAMES)
@@ -503,7 +512,7 @@ _hab_attack:
     sts player_velocity_x, r20
     sts player_velocity_y, r21
     rjmp _hab_end
-_hab_dash:
+_hab_test_dash:
     lds r20, player_dash_cooldown
     tst r20
     brne _hab_end

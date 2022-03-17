@@ -30,7 +30,7 @@
 .equ GAME_OVER_POISONED = 1
 .equ GAME_OVER_WIN = 2
 
-.equ DIRECTION_DOWN = 0 ; ordering is convenient for reusing sprites
+.equ DIRECTION_DOWN = 0 ; ordering is convenient for reusing sprites and bitwise checks, do not change lightly
 .equ DIRECTION_RIGHT = 1
 .equ DIRECTION_UP = 2
 .equ DIRECTION_LEFT = 3
@@ -86,18 +86,22 @@
 
 .equ EFFECT_WIDTH = 12
 .equ EFFECT_HEIGHT = 12
+.equ EFFECT_MEMSIZE = EFFECT_WIDTH*EFFECT_HEIGHT
 .equ EFFECT_DAMAGE = 1 ; used when a character is injured
 .equ EFFECT_DAMAGE_DURATION = 4
 .equ EFFECT_DAMAGE_FRAME_DURATION_MASK = 0x7
+.equ EFFECT_ATTACK_FIRE = 2
 
 .equ SHOP_INVENTORY_SIZE = 12
 .equ PLAYER_INVENTORY_SIZE = 12
 .equ PLAYER_EFFECT_COUNT = 4
 
 .equ ITEM_WIELDABLE = 0
-.equ ITEM_WEARABLE = 1
-.equ ITEM_USABLE = 2
-.equ ITEM_SPECIAL = 3
+.equ ITEM_MAGIC = 1
+.equ ITEM_WEARABLE = 2
+.equ ITEM_USABLE = 3
+
+.equ ITEM_HIGH_LEVEL_INTELLECT = 20
 
 .equ EVENT_ENTER = 0
 .equ EVENT_EXIT = 1

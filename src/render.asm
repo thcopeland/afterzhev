@@ -237,7 +237,7 @@ _ws_end:
 ;   X (r26:r27)     framebuffer pointer (param)
 ;   Y (r28:r29)     working framebuffer pointer (it'd be more natural to use X, but the std instruction supports only Y and Z)
 ;   Z (r30:r31)     sprite pointer (param)
-write_sprite_flipped:
+write_sprite_vflipped:
     push YL
     push YH
     mul r21, r22
@@ -256,12 +256,12 @@ write_sprite_flipped:
     add r24, r25
     add r24, r25
     clr r25
-    subi r24, low(-_wsf_loop)
-    sbci r25, high(-_wsf_loop)
+    subi r24, low(-_wsvf_loop)
+    sbci r25, high(-_wsvf_loop)
     inc r23
     ldi r22, TRANSPARENT
     rjmp _ws_loop_check
-_wsf_loop:
+_wsvf_loop:
     elpm r0, Z+
     cpse r0, r22
     std Y+11, r0
@@ -302,16 +302,111 @@ _wsf_loop:
     adc ZH, r1
     subi YL, low(-DISPLAY_WIDTH)
     sbci YH, high(-DISPLAY_WIDTH)
-_wsf_loop_check:
+_wsvf_loop_check:
     dec r23
-    breq _wsf_end
+    breq _wsvf_end
     push r24
     push r25
 .if defined(__atmega2560) || defined(__atmega2561)
     push r1
 .endif
     ret
-_wsf_end:
+_wsvf_end:
+    pop YH
+    pop YL
+    ret
+
+; Render any rectangular section of a sprite flipped across the horizontal axis.
+; The final result is the same as flipping the original sprite, then rendering
+; it with write_sprite.
+;
+; Register Usage
+;   r21             sprite width (param), delta sprite pointer
+;   r22             slice min y (param), reused to hold transparency value
+;   r23             slice height (param)
+;   r24             slice min x (param), reused for jump low
+;   r25             slice width (param), reused for jump high
+;   X (r26:r27)     framebuffer pointer (param)
+;   Y (r28:r29)     working framebuffer pointer (it'd be more natural to use X, but the std instruction supports only Y and Z)
+;   Z (r30:r31)     sprite pointer (param)
+write_sprite_hflipped:
+    push YL
+    push YH
+    add ZL, r24
+    adc ZH, r1
+    ldi r24, DISPLAY_WIDTH
+    mul r23, r24
+    add XL, r0
+    adc XH, r1
+    clr r1
+    subi XL, low(DISPLAY_WIDTH)
+    sbci XH, high(DISPLAY_WIDTH)
+    sub r21, r25
+    ldi r24, TILE_WIDTH
+    sub r24, r25
+    movw YL, XL
+    sub YL, r24
+    sbc YH, r1
+    mov r25, r24 ; multiply r24 by 3
+    add r24, r25
+    add r24, r25
+    clr r25
+    subi r24, low(-_wshf_loop)
+    sbci r25, high(-_wshf_loop)
+    inc r23
+    ldi r22, TRANSPARENT
+    rjmp _ws_loop_check
+_wshf_loop:
+    elpm r0, Z+
+    cpse r0, r22
+    st Y, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+1, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+2, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+3, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+4, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+5, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+6, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+7, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+8, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+9, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+10, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+11, r0
+    add ZL, r21
+    adc ZH, r1
+    subi YL, low(DISPLAY_WIDTH)
+    sbci YH, high(DISPLAY_WIDTH)
+_wshf_loop_check:
+    dec r23
+    breq _wshf_end
+    push r24
+    push r25
+    .if defined(__atmega2560) || defined(__atmega2561)
+    push r1
+    .endif
+    ret
+_wshf_end:
     pop YH
     pop YL
     ret
@@ -632,8 +727,11 @@ _rs_write_inner_tile:
 ; account and cropping the sprite as necessary to prevent exceeding the display
 ; edges.
 ;
+; If the width is negative, the sprite is flipped horizontally. If the height
+; is negative, the sprite is flipped vertically. If both or neither are negative,
+; the sprite is rendered as usual.
+;
 ; Register Usage
-;   T (SREG)        whether or not to mirror the sprite (param)
 ;   r18-r21         camera position, calculations
 ;   r22, r23        sprite width (param), sprite height (param); calculations
 ;   r24, r25        sprite position (param)
@@ -642,6 +740,19 @@ _rs_write_inner_tile:
 render_sprite:
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
+_rs_check_hflipped:
+    clr r20
+    cpi r23, 128
+    brlo _rs_check_vflipped
+    neg r23
+    ori r20, 0x01
+_rs_check_vflipped:
+    cpi r22, 128
+    brlo _rs_write_flipped
+    neg r22
+    ori r20, 0x02
+_rs_write_flipped:
+    push r20
 _rs_calc_vertical_offset:
     lds r20, camera_position_y
     sub r25, r20
@@ -703,12 +814,22 @@ _rs_bottom_cut:
     ldi r23, DISPLAY_HEIGHT-FOOTER_HEIGHT
     sub r23, r19
 _rs_write_sprite:
-    brtc _rs_write_sprite_unflipped
-    rcall write_sprite_flipped
+    pop r20
+_rs_write_sprite_hflipped:
+    cpi r20, 1
+    brne _rs_write_sprite_vflipped
+    rcall write_sprite_hflipped
+    ret
+_rs_write_sprite_vflipped:
+    cpi r20, 2
+    brne _rs_write_sprite_unflipped
+    rcall write_sprite_vflipped
     ret
 _rs_write_sprite_unflipped:
     rcall write_sprite
+    ret
 _rs_end:
+    pop r20
     ret
 
 ; Render a character, taking camera position, animations, and weapons into account.
@@ -719,7 +840,7 @@ _rs_end:
 ;   direction       (1 byte)
 ;   current action  (1 byte)
 ;   action frame    (1 byte)
-;   effect          (1 byte) 4:effect, 4:frame
+;   effect          (1 byte) [direction:2][effect:3][frame:3]
 ;
 ; Register Usage
 ;   r16-r17         store character position
@@ -745,7 +866,6 @@ _rc_render_weapon_below:
     movw r24, r16
     elpm r21, Z+
     splts r21, r20
-    set
     neg r20
     subi r20, -CHARACTER_SPRITE_WIDTH/2
     subi r21, -CHARACTER_SPRITE_HEIGHT/2
@@ -755,8 +875,8 @@ _rc_render_weapon_below:
     splt r23, r22
     mov r20, r22
     sub r24, r20
+    neg r22 ; flip horizontally
     rcall render_sprite
-    clt
 _rc_render_character:
     ldd r22, Y+CHARACTER_SPRITE_OFFSET
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
@@ -891,35 +1011,59 @@ _rci_end:
 ; Render an effect animation. This is used for several things, including blood
 ; splashes, fire, healing.
 ;
+; NOTE: The calculations are messy because different effects have different
+;   numbers of frames and because some effects don't have a rotated variant.
+;
 ; Register Usage
-;   r22             effect data, effect:4 frame:4 (param)
+;   r21             calculations
+;   r22             effect data, [direction:2][effect:3][frame:3] (param)
 ;   r23             calculations
 ;   r24, r25        effect location (param)
 ;   Z (r30:r31)     effect pointer
 render_effect_animation:
     mov r23, r22
-    swap r23
-    andi r23, 0xf
+    lsr r23
+    lsr r23
+    lsr r23
+    andi r23, 0x7
     breq _rce_end
+    mov r21, r22
+    andi r21, 0xc0
+    andi r22, 0x7
     ldi ZL, byte3(2*effect_damage_sprites)
     out RAMPZ, ZL
+    ; At this point, r21 - direction, r22 - frame, r23 - effect
 _rce_effect_damage:
     cpi r23, EFFECT_DAMAGE
-    brne _rce_effect_heal
+    brne _rce_effect_attack_fire
     ldi ZL, low(2*effect_damage_sprites)
     ldi ZH, high(2*effect_damage_sprites)
-    rjmp _rce_write_effect_sprite
-_rce_effect_heal:
-_rce_effect_upgrade:
-_rce_write_effect_sprite:
-    andi r22, 0xf
-    ldi r23, EFFECT_WIDTH*EFFECT_HEIGHT
+    rjmp _rce_render_effect_sprite
+_rce_effect_attack_fire:
+    cpi r23, EFFECT_ATTACK_FIRE
+    brne _rce_render_effect_sprite
+    ldi ZL, low(2*effect_attack_fire_sprites)
+    ldi ZH, high(2*effect_attack_fire_sprites)
+    lsl r22
+    sbrc r21, 6
+    inc r22
+_rce_render_effect_sprite:
+    ldi r23, EFFECT_MEMSIZE
     mul r22, r23
     add ZL, r0
     adc ZH, r1
     clr r1
     ldi r22, EFFECT_WIDTH
     ldi r23, EFFECT_HEIGHT
+_rce_check_up:
+    cpi r21, DIRECTION_UP<<6
+    brne _rce_check_left
+    neg r23
+_rce_check_left:
+    cpi r21, DIRECTION_LEFT<<6
+    brne _rce_render_sprite
+    neg r22
+_rce_render_sprite:
     rcall render_sprite
 _rce_end:
     ret

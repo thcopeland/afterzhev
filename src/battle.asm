@@ -41,9 +41,9 @@ _rea_check_distance:
     brsh _rea_end
 _rea_damage_effect:
     lds r22, player_effect
-    cpi r22, 1<<4
-    brsh _rea_damage
-    ldi r22, EFFECT_DAMAGE<<4
+    andi r22, 0x38
+    brne _rea_damage
+    ldi r22, EFFECT_DAMAGE<<3
     sts player_effect, r22
 _rea_damage:
     adiw ZL, NPC_TABLE_ENEMY_STRENGTH_OFFSET
@@ -122,9 +122,9 @@ _rpa_end_trampoline:
     rjmp _rpa_end
 _rpa_damage_effect:
     ldd r22, Y+NPC_EFFECT_OFFSET
-    cpi r22, 1<<4
-    brsh _rpa_damage
-    ldi r22, EFFECT_DAMAGE<<4
+    andi r22, 0x38
+    brne _rpa_damage
+    ldi r22, EFFECT_DAMAGE<<3
     std Y+NPC_EFFECT_OFFSET, r22
 _rpa_damage:
     lds r23, player_augmented_stats+STATS_STRENGTH_OFFSET

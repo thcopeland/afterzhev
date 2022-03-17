@@ -433,10 +433,10 @@ _rn_fast_next:
 ;   Y (r28:r29)     npc pointer (param)
 corpse_update:
     ldd r25, Y+NPC_EFFECT_OFFSET
-    mov r24, r25
-    swap r25
-    andi r24, 0xf
-    andi r25, 0xf
+    lsr r25
+    lsr r25
+    lsr r25
+    andi r25, 0x7
     cpi r25, EFFECT_DAMAGE
     brne _cu_later
     lds r25, clock
@@ -444,7 +444,7 @@ corpse_update:
     brne _cu_later
     ldd r25, Y+NPC_EFFECT_OFFSET
     inc r25
-    cpi r25, (EFFECT_DAMAGE<<4)|EFFECT_DAMAGE_DURATION
+    cpi r25, (EFFECT_DAMAGE<<3)|EFFECT_DAMAGE_DURATION
     brlo _cu_save
     clr r25
 _cu_save:

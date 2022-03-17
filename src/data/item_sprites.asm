@@ -100,6 +100,35 @@ animated_item_sprite_lut:
     empty_animation_entry
     empty_animation_entry
 
+    item_animation_entry __wooden_stick_walk_down_0
+    item_animation_entry __wooden_stick_walk_down_1
+    item_animation_entry __wooden_stick_walk_down_2
+    item_animation_entry __wooden_stick_walk_down_3
+    item_animation_entry __wooden_stick_walk_right_0
+    item_animation_entry __wooden_stick_walk_right_1
+    item_animation_entry __wooden_stick_walk_right_2
+    item_animation_entry __wooden_stick_walk_right_3
+    empty_animation_entry ; walk up
+    empty_animation_entry
+    empty_animation_entry
+    empty_animation_entry
+    empty_animation_entry ; walk left
+    empty_animation_entry
+    empty_animation_entry
+    empty_animation_entry
+    item_animation_entry __wooden_stick_idle_down
+    item_animation_entry __wooden_stick_idle_right
+    empty_animation_entry ; idle up
+    empty_animation_entry ; idle left
+    item_animation_entry __wooden_stick_attack1_down_0
+    item_animation_entry __wooden_stick_attack1_down_1
+    item_animation_entry __wooden_stick_attack1_down_2
+    item_animation_entry __wooden_stick_attack1_down_3
+    item_animation_entry __wooden_stick_attack1_right_0
+    item_animation_entry __wooden_stick_attack1_right_1
+    item_animation_entry __wooden_stick_attack1_right_2
+    item_animation_entry __wooden_stick_attack1_right_3
+
 animated_item_sprite_table:
 __wooden_stick_walk_down_0:
     item_sprite_header -5, 1, 5, 5
@@ -366,6 +395,13 @@ __blue_shirt:
     .db 0x49, 0x91, 0x91, 0x49, 0x49, 0x91	;   XXXXWWWW
     .db 0xc7, 0x91, 0x91, 0x49, 0x49, 0xc7	;   XXXXWWWW
     .db 0xc7, 0x91, 0x91, 0x49, 0x49, 0xc7	;   XXXXWWWW
+__wooden_staff:
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0x13, 0x91	;         XXXX
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0x13, 0x0a	;         XXWW
+    .db 0xc7, 0xc7, 0xc7, 0x13, 0x5d, 0xc7	;       XX~~
+    .db 0xc7, 0xc7, 0x13, 0x0a, 0xc7, 0xc7	;     XXWW
+    .db 0xc7, 0x5d, 0x0a, 0xc7, 0xc7, 0xc7	;   ~~WW
+    .db 0x13, 0x0a, 0xc7, 0xc7, 0xc7, 0xc7	; XXWW
 __red_potion:
     .db 0xc7, 0x54, 0x13, 0x13, 0x0a, 0xc7	;   xxXXXXWW
     .db 0xc7, 0xff, 0x5f, 0x5f, 0xfe, 0xc7	;     ----..

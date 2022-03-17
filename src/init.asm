@@ -34,9 +34,9 @@ _init_clear_effects_iter:
     dec r18
     brne _init_clear_effects_iter
     sti player_inventory, 2
-    sti player_inventory+2, 3
-    sti player_inventory+10, 4
-    sti player_inventory+1, 5
+    sti player_inventory+2, 4
+    sti player_inventory+10, 5
+    sti player_inventory+1, 6
     sti player_stats, 10
     sti player_stats+1, 10
     sti player_stats+2, 20
