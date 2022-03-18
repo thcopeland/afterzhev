@@ -162,10 +162,15 @@ _rg_render_active_effects:
     ldi YH, high(active_effects)
     ldi r16, ACTIVE_EFFECT_COUNT
 _rg_active_effect_iter:
-    ld r22, Y+
-    ld r24, Y+
-    ld r25, Y+
+    ldd r23, Y+ACTIVE_EFFECT_DATA2_OFFSET
+    andi r23, 0x0c
+    brne _rg_active_effect_iter_next
+    ldd r22, Y+ACTIVE_EFFECT_DATA_OFFSET
+    ldd r24, Y+ACTIVE_EFFECT_X_OFFSET
+    ldd r25, Y+ACTIVE_EFFECT_Y_OFFSET
     call render_effect_animation
+_rg_active_effect_iter_next:
+    adiw YL, ACTIVE_EFFECT_MEMSIZE
     dec r16
     brne _rg_active_effect_iter
 _rg_footer_background:
@@ -563,11 +568,18 @@ _hab_test_dash:
 _hab_end:
     ret
 
-; Update the active effects, such as spells or features of the sector.
+; Update the active effects, such as spells or features of the sector. Active
+; effects should have the following layout
+;
+; Active Effect Layout:
+;   data [direction:2][effect:3][frame:3]
+;   data2 [unused:2][speed:2][delay:2][role:2]
+;   x coordinate
+;   y coordinate
 ;
 ; Register Usage
-;   r20-r24         calculations
-;   Z (r28:r29)     memory pointer
+;   r20-r25         calculations
+;   Z (r30:r31)     memory pointer
 update_active_effects:
     ldi ZL, low(active_effects)
     ldi ZH, high(active_effects)
@@ -577,6 +589,43 @@ _uae_active_effect_iter:
     mov r22, r21
     andi r22, 0x38  ; effect
     breq _uae_active_effect_next
+    ldd r23, Z+ACTIVE_EFFECT_DATA2_OFFSET
+    mov r24, r23
+    andi r24, 0x0c ; delay
+    breq _uae_update_effect_position
+_uae_update_effect_delay:
+    lds r25, clock
+    andi r25, EFFECT_DELAY_FRAME_DRURATION_MASK
+    brne _uae_active_effect_next
+    subi r24, 1<<2
+    andi r23, 0xf3
+    or r23, r24
+    std Z+ACTIVE_EFFECT_DATA2_OFFSET, r23
+    rjmp _uae_active_effect_next
+_uae_update_effect_position:
+    swap r23
+    andi r23, 0x03  ; speed
+    breq _uae_update_effect_frame
+    lds r24, clock
+    andi r24, 0x01
+    sbrc r23, 1
+    inc r24
+    mov r23, r21
+    andi r23, 0xc0  ; direction
+    sbrc r23, 7
+    neg r24
+    mov r25, r24
+    sbrc r23, 6
+    clr r25
+    sbrs r23, 6
+    clr r24
+    ldd r23, Z+ACTIVE_EFFECT_X_OFFSET
+    add r23, r24
+    std Z+ACTIVE_EFFECT_X_OFFSET, r23
+    ldd r23, Z+ACTIVE_EFFECT_Y_OFFSET
+    add r23, r25
+    std Z+ACTIVE_EFFECT_Y_OFFSET, r23
+_uae_update_effect_frame:
     mov r23, r21
     andi r21, 0x07  ; frame
     andi r23, 0xc0  ; direction
