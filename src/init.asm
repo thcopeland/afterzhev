@@ -54,6 +54,11 @@ _init_clear_effects_iter:
     sti current_shop_index, 0xff
     stiw conversation_over, 0xffff
     stiw seed, 1
+    sti gameover_state, 0xc0
+
+    sti active_effects, 0b00010000
+    sti active_effects+1, 30
+    sti active_effects+2, 40
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL

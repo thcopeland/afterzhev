@@ -105,7 +105,7 @@ _cps_end:
 ;   r24:r25         pointer storage
 ;   Y (r28:r29)     memory pointer
 ;   Z (r30:r31)     flash and memory pointer
-update_effects_progress:
+update_player_stat_effects:
     movw r24, YL
     ldi r20, PLAYER_EFFECT_COUNT
     ldi YL, low(player_effects)

@@ -1048,13 +1048,13 @@ _rce_effect_attack_fire:
     sbrc r21, 6
     inc r22
 _rce_render_effect_sprite:
-    ldi r23, EFFECT_MEMSIZE
+    ldi r23, EFFECT_SPRITE_MEMSIZE
     mul r22, r23
     add ZL, r0
     adc ZH, r1
     clr r1
-    ldi r22, EFFECT_WIDTH
-    ldi r23, EFFECT_HEIGHT
+    ldi r22, EFFECT_SPRITE_WIDTH
+    ldi r23, EFFECT_SPRITE_HEIGHT
 _rce_check_up:
     cpi r21, DIRECTION_UP<<6
     brne _rce_check_left

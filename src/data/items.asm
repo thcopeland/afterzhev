@@ -4,12 +4,16 @@
 ; what can be done with the item. The upper six bits provide additional information.
 ;
 ; Wieldable Flags: [range:2][cooldown:3][unused:1][type:2]
+; Wieldable Extra: [unused:8]
 ;
 ; Magic Flags: [range:2][cooldown:3][high level:1][type:2]
+; Magic Extra: [extra damage:5][effect:3]
 ;
 ; Wearable Flags: [speed:2][health:4][type:2]
+; Wearable Extra: [unused:8]
 ;
 ; Usable Flags: [interval mask:5][eternal:1][type:2]
+; Usable Extra: [unused:8]
 ;
 ; ****************************************************************************
 ; NOTE: IMPORTANT! For rendering reasons, no item may affect more than THREE
@@ -27,7 +31,7 @@
 item_table:
     DECL_ITEM wood_stick,       (1<<6)|(1<<3)|ITEM_WIELDABLE,       7,  10, 0,  -1, -4, PADDING
     DECL_ITEM blue_shirt,       (0<<6)|((1&0xf)<<2)|ITEM_WEARABLE,  30, 2,  4,  0,  0, PADDING
-    DECL_ITEM wood_staff,       (1<<6)|(3<<3)|ITEM_MAGIC,           80, 0,  10, -3, 0, (16<<2)|(0)
+    DECL_ITEM wood_staff,       (2<<6)|(3<<3)|ITEM_MAGIC,           80, 0,  10, -3, 0, (16<<3)|(EFFECT_ATTACK_FIRE)
     DECL_ITEM health_potion,    (0x0<<2)|ITEM_USABLE,               100,2,  64, 2,  0, PADDING
     DECL_ITEM mint_soda,        (0x6<<2)|ITEM_USABLE,               20, 0,  0,  0,  1, PADDING
     DECL_ITEM mint_leaves,      (0x2<<2)|ITEM_USABLE,               10, 0,  0,  0,  1, PADDING
