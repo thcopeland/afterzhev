@@ -92,23 +92,6 @@ _mpow2_lp_%:
 _mpow2_end_%:
 .endm
 
-; peform a single iteration of an iterative modulo operation (mod K) for
-; signed numbers
-.macro qmod ; low, high, K
-_ck_test_undeflow_%:
-    cpi @0, 0
-    brge _ck_test_overflow_%
-    subi @0, -@2
-    dec @1
-    rjmp _ck_end_%
-_ck_test_overflow_%:
-    cpi @0, @2
-    brlo _ck_end_%
-    subi @0, @2
-    inc @1
-_ck_end_%:
-.endm
-
 ; clamp a signed value to the given range
 .macro clampi ; r, min, max
 _ci_le_%:
@@ -222,20 +205,3 @@ _fc_combine_channels_%:
     ld r0, @1+
     out @0, r0
 .endm
-
-.ifdef DEV
-.macro display_byte ; r, offset
-    ldi ZL, low(framebuffer+@1)
-    ldi ZH, high(framebuffer+@1)
-    ldi r18, 0xff
-    ldi r19, 8
-_db_lp_%:
-    st Z, r1
-    sbrc @0, 0
-    st Z, r18
-    adiw ZL, 1
-    lsr @0
-    dec r19
-    brne _db_lp_%
-.endm
-.endif
