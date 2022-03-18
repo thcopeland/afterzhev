@@ -298,10 +298,10 @@ _hc_button1:
     rjmp _hc_end
 _hc_button2:
     sbrc r19, CONTROLS_SPECIAL2
-    rcall handle_attack_buttons
+    rcall player_attack
 _hc_button3:
     sbrc r19, CONTROLS_SPECIAL3
-    rcall handle_attack_buttons
+    rcall player_dash
 _hc_button4:
     sbrs r19, CONTROLS_SPECIAL4
     rjmp _hc_end
@@ -477,23 +477,36 @@ _hmb_conversation_next:
 _hmb_end:
     ret
 
-; Begin an attack. Detects whether button 2 or 3 was pressed, and uses the correct
-; attack params.
+; Begin to dash in the facing direction.
+;
+; Register Usage
+;   r20         calculations
+player_dash:
+    lds r20, player_dash_cooldown
+    tst r20
+    brne _pd_end
+    ldi r20, ACTION_DASH
+    sts player_action, r20
+    sts player_frame, r1
+    call calculate_dash_cooldown ; TODO: inline?
+    sts player_dash_cooldown, r25
+    lds r20, player_direction
+    sts player_dash_direction, r20
+_pd_end:
+    ret
+
+; Begin an attack.
 ;
 ; Register Usage
 ;   r20-r25         calculations
 ;   Z (r30:r31)     flash pointer
-handle_attack_buttons:
-    lds r21, CONTROLLER_VALUES
-    sbrc r21, CONTROLS_SPECIAL3
-    rjmp _hab_test_dash
-_hab_test_attack:
+player_attack:
     lds r20, player_attack_cooldown
     tst r20
-    brne _hab_end_trampoline
+    brne _pa_end
     lds r20, player_weapon
     dec r20
-    brmi _hab_end_trampoline
+    brmi _pa_end
     ldi ZL, byte3(2*item_table)
     out RAMPZ, ZL
     ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
@@ -504,68 +517,28 @@ _hab_test_attack:
     adc ZH, r1
     clr r1
     elpm r20, Z
-_hab_test_high_level_intellect:
+_pa_test_high_level_intellect:
     mov r21, r20
     andi r21, 0x3
-    cpi r21, ITEM_MAGIC
-    brne _hab_attack
+    cpi r21, ITEM_RANGED
+    brne _pa_attack
     sbrs r20, 2
-    rjmp _hab_magic_effect
+    rjmp _pa_attack
     lds r21, player_augmented_stats+STATS_INTELLECT_OFFSET
     cpi r21, ITEM_HIGH_LEVEL_INTELLECT
-    brlo _hab_end
-_hab_magic_effect:
-    lds r22, player_direction
-    lds r24, player_position_x
-    lds r25, player_position_y
-_hab_facing_up:
-    cpi r22, DIRECTION_UP
-    brne _hab_facing_down
-    subi r25, EFFECT_SPRITE_HEIGHT
-_hab_facing_down:
-    cpi r22, DIRECTION_DOWN
-    brne _hab_facing_left
-    subi r25, -EFFECT_SPRITE_HEIGHT
-_hab_facing_left:
-    cpi r22, DIRECTION_LEFT
-    brne _hab_facing_right
-    subi r24, EFFECT_SPRITE_WIDTH
-_hab_facing_right:
-    cpi r22, DIRECTION_RIGHT
-    brne _hab_add_effect
-    subi r24, -EFFECT_SPRITE_WIDTH
-_hab_add_effect:
-    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
-    elpm r23, Z
-    andi r23, 0x07
-    lsl r23
-    swap r22
-    or r23, r22
-    lsl r23
-    lsl r23
-    rcall add_active_effect
-_hab_attack:
-    lsl r20
-    andi r20, 0x70
-    subi r20, -((ATTACK_FRAME_DURATION_MASK+1)*ITEM_ANIM_ATTACK_FRAMES)
-    sts player_attack_cooldown, r20
-    ldi r20, ACTION_ATTACK
-    sts player_action, r20
+    brlo _pa_end
+_pa_attack:
+    mov r21, r20
+    lsl r21
+    andi r21, 0x70
+    subi r21, -((ATTACK_FRAME_DURATION_MASK+1)*ITEM_ANIM_ATTACK_FRAMES)
+    sts player_attack_cooldown, r21
+    ldi r21, ACTION_ATTACK
+    sts player_action, r21
     sts player_frame, r1
-_hab_end_trampoline:
-    rjmp _hab_end
-_hab_test_dash:
-    lds r20, player_dash_cooldown
-    tst r20
-    brne _hab_end
-    ldi r20, ACTION_DASH
-    sts player_action, r20
-    sts player_frame, r1
-    call calculate_dash_cooldown
-    sts player_dash_cooldown, r25
-    lds r20, player_direction
-    sts player_dash_direction, r20
-_hab_end:
+    mov r21, r20
+    andi r21, 0x3
+_pa_end:
     ret
 
 ; Update the active effects, such as spells or features of the sector. Active
@@ -595,7 +568,7 @@ _uae_active_effect_iter:
     breq _uae_update_effect_position
 _uae_update_effect_delay:
     lds r25, clock
-    andi r25, EFFECT_DELAY_FRAME_DRURATION_MASK
+    andi r25, EFFECT_DELAY_FRAME_DURATION_MASK
     brne _uae_active_effect_next
     subi r24, 1<<2
     andi r23, 0xf3
@@ -652,26 +625,27 @@ _uae_active_effect_next:
 ; Add an effect to the list. If there are no empty slots, replace a random one.
 ;
 ; Register Usage
-;   r21             calculations
-;   r22             counter
-;   r23             effect data (param)
+;   r20-r21         calculations
+;   r22             effect data 1 (param)
+;   r23             effect data 2 (param)
 ;   r24, r25        position (param)
 ;   Z (r30:r31)     memory pointer
 add_active_effect:
     ldi ZL, low(active_effects)
     ldi ZH, high(active_effects)
-    ldi r22, ACTIVE_EFFECT_COUNT
+    ldi r20, ACTIVE_EFFECT_COUNT
 _aae_iter:
     ldd r21, Z+ACTIVE_EFFECT_DATA_OFFSET
     andi r21, 0x38
     brne _aae_next
-    std Z+ACTIVE_EFFECT_DATA_OFFSET, r23
+    std Z+ACTIVE_EFFECT_DATA_OFFSET, r22
+    std Z+ACTIVE_EFFECT_DATA2_OFFSET, r23
     std Z+ACTIVE_EFFECT_X_OFFSET, r24
     std Z+ACTIVE_EFFECT_Y_OFFSET, r25
     ret
 _aae_next:
     adiw ZL, ACTIVE_EFFECT_MEMSIZE
-    dec r22
+    dec r20
     brne _aae_iter
     lds r21, clock
     ; restrict to [0, ACTIVE_EFFECT_COUNT-1]
@@ -682,12 +656,13 @@ _aae_next:
 _aae_replace:
     ldi ZL, low(active_effects)
     ldi ZH, high(active_effects)
-    ldi r22, ACTIVE_EFFECT_MEMSIZE
-    mul r21, r22
+    ldi r20, ACTIVE_EFFECT_MEMSIZE
+    mul r21, r20
     add ZL, r0
     adc ZH, r1
     clr r1
-    std Z+ACTIVE_EFFECT_DATA_OFFSET, r23
+    std Z+ACTIVE_EFFECT_DATA_OFFSET, r22
+    std Z+ACTIVE_EFFECT_DATA2_OFFSET, r23
     std Z+ACTIVE_EFFECT_X_OFFSET, r24
     std Z+ACTIVE_EFFECT_Y_OFFSET, r25
     ret
@@ -695,7 +670,7 @@ _aae_replace:
 ; Update the player's animation and general state.
 ;
 ; Register Usage
-;   r21-r26         calculations
+;   r20-r26         calculations
 update_player:
     ser r26
     ldi YL, low(player_position_data)
@@ -705,7 +680,7 @@ update_player:
 _up_dash:
     lds r20, player_action
     cpi r20, ACTION_DASH
-    brne _up_animation
+    brne _up_ranged_attack
     lds r20, player_dash_direction
 _up_dash_up:
     cpi r20, DIRECTION_UP
@@ -734,6 +709,68 @@ _up_dash_move_again1:
     call move_character
 _up_dash_move_again2:
     call move_character
+_up_ranged_attack:
+    lds r20, player_action
+    cpi r20, ACTION_ATTACK
+    brne _up_animation
+    lds r20, clock
+    andi r20, ATTACK_FRAME_DURATION_MASK
+    brne _up_animation
+    lds r20, player_frame
+    cpi r20, ATTACK_DAMAGE_FRAME-2
+    brne _up_animation
+    lds r20, player_weapon
+    dec r20
+    brmi _up_animation ; unlikely but technically possible
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r21, ITEM_MEMSIZE
+    mul r20, r21
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r20, Z
+_up_check_ranged:
+    mov r21, r20
+    andi r21, 0x03
+    cpi r21, ITEM_RANGED
+    brne _up_animation
+    lds r22, player_direction
+    lds r24, player_position_x
+    lds r25, player_position_y
+_up_facing_up:
+    cpi r22, DIRECTION_UP
+    brne _up_facing_down
+    subi r25, EFFECT_SPRITE_HEIGHT
+_up_facing_down:
+    cpi r22, DIRECTION_DOWN
+    brne _up_facing_left
+    subi r25, -EFFECT_SPRITE_HEIGHT
+_up_facing_left:
+    cpi r22, DIRECTION_LEFT
+    brne _up_facing_right
+    subi r24, EFFECT_SPRITE_WIDTH
+_up_facing_right:
+    cpi r22, DIRECTION_RIGHT
+    brne _up_add_effect
+    subi r24, -EFFECT_SPRITE_WIDTH
+_up_add_effect:
+    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
+    elpm r23, Z
+    andi r23, 0x07
+    lsl r23
+    swap r22
+    or r22, r23
+    lsl r22
+    lsl r22
+    andi r20, 0xc0
+    lsr r20
+    lsr r20
+    ldi r23, EFFECT_ROLE_DAMAGE_NPCS
+    or r23, r20
+    rcall add_active_effect
 _up_animation:
     lds r21, player_effect
     lds r22, player_action

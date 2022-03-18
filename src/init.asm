@@ -56,11 +56,6 @@ _init_clear_effects_iter:
     stiw seed, 1
     sti gameover_state, 0xc0
 
-    sti active_effects+ACTIVE_EFFECT_MEMSIZE+ACTIVE_EFFECT_DATA_OFFSET, 0b00010000
-    sti active_effects+ACTIVE_EFFECT_MEMSIZE+ACTIVE_EFFECT_DATA2_OFFSET, 0b00011100
-    sti active_effects+ACTIVE_EFFECT_MEMSIZE+ACTIVE_EFFECT_X_OFFSET, 30
-    sti active_effects+ACTIVE_EFFECT_MEMSIZE+ACTIVE_EFFECT_Y_OFFSET, 40
-
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     ldi ZL, low(2*sector_table)
