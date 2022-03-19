@@ -21,14 +21,18 @@ explore_update_game:
 _eup_end:
     jmp _loop_reenter
 
-.equ EXPLORE_UI_EFFECTS_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)-8
-.equ EXPLORE_UI_EFFECTS_SEPARATION = 7
-.equ EXPLORE_UI_XP_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+14
-.equ EXPLORE_UI_XP_ICON_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+23
-.equ EXPLORE_UI_GOLD_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+45
-.equ EXPLORE_UI_GOLD_ICON_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+50
-.equ EXPLORE_UI_HEALTH_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+77
-.equ EXPLORE_UI_HEALTH_ICON_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+82
+.equ EXPLORE_UI_EFFECTS_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)-9
+.equ EXPLORE_UI_EFFECTS_SEPARATION = 8
+.equ EXPLORE_UI_XP_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+15
+.equ EXPLORE_UI_XP_ICON_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+24
+.equ EXPLORE_UI_GOLD_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+47
+.equ EXPLORE_UI_GOLD_ICON_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+52
+.equ EXPLORE_UI_HEALTH_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+78
+.equ EXPLORE_UI_HEALTH_ICON_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+83
+.equ EXPLORE_UI_COOLDOWN_BAR_LENGTH = 4
+.equ EXPLORE_UI_ATTACK_COOLDOWN_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+EXPLORE_UI_COOLDOWN_BAR_LENGTH)+90
+.equ EXPLORE_UI_DASH_COOLDOWN_MARGIN = EXPLORE_UI_ATTACK_COOLDOWN_MARGIN+4
+
 
 ; Render the game while in the EXPLORE mode. The current sector, NPCs, items,
 ; the player must all be rendered.
@@ -231,6 +235,100 @@ _rg_player_xp:
     lds r19, player_xp+1
     clr r23
     call putw_small
+_rg_calc_attack_cooldown:
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    clr r24
+    lds r20, player_weapon
+    dec r20
+    brmi _rg_render_attack_cooldown
+    ldi r21, ITEM_MEMSIZE
+    mul r20, r21
+    add ZL, r0
+    adc ZH, r1
+    elpm r22, Z
+    lsl r22
+    andi r22, 0x70
+    subi r22, -((ATTACK_FRAME_DURATION_MASK+1)*ITEM_ANIM_ATTACK_FRAMES)
+    clr r23
+    lds r24, player_attack_cooldown
+    ldi r25, EXPLORE_UI_COOLDOWN_BAR_LENGTH
+    mul r24, r25
+    movw r24, r0
+    call divmodw
+    tst r22
+    breq _rg_clamp_attack_cooldown
+    inc r24
+_rg_clamp_attack_cooldown:
+    cpi r24, EXPLORE_UI_COOLDOWN_BAR_LENGTH
+    brlo _rg_render_attack_cooldown
+    ldi r24, EXPLORE_UI_COOLDOWN_BAR_LENGTH
+_rg_render_attack_cooldown:
+    ldi ZL, low(framebuffer+EXPLORE_UI_ATTACK_COOLDOWN_MARGIN)
+    ldi ZH, high(framebuffer+EXPLORE_UI_ATTACK_COOLDOWN_MARGIN)
+    ldi r20, 0b01001100
+    ldi r21, 0b01001010
+    ldi r25, EXPLORE_UI_COOLDOWN_BAR_LENGTH
+_rg_attack_cooldown_iter1:
+    st Z, r20
+    std Z+1, r21
+    subi ZL, low(DISPLAY_WIDTH)
+    sbci ZH, high(DISPLAY_WIDTH)
+    dec r25
+    brne _rg_attack_cooldown_iter1
+    tst r24
+    breq _rg_calc_dash_cooldown
+    ldi r20, 0xa4
+    ldi r21, 0x5b
+_rg_attack_cooldown_iter2:
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    st Z, r20
+    std Z+1, r21
+    dec r24
+    brne _rg_attack_cooldown_iter2
+_rg_calc_dash_cooldown:
+    call calculate_dash_cooldown
+    mov r22, r25
+    clr r23
+    ldi r24, EXPLORE_UI_COOLDOWN_BAR_LENGTH
+    lds r25, player_dash_cooldown
+    mul r24, r25
+    movw r24, r0
+    call divmodw
+    tst r22
+    breq _rg_clamp_dash_cooldown
+    inc r24
+_rg_clamp_dash_cooldown:
+    cpi r24, EXPLORE_UI_COOLDOWN_BAR_LENGTH
+    brlo _rg_render_dash_cooldown
+    ldi r24, EXPLORE_UI_COOLDOWN_BAR_LENGTH
+_rg_render_dash_cooldown:
+    ldi ZL, low(framebuffer+EXPLORE_UI_DASH_COOLDOWN_MARGIN)
+    ldi ZH, high(framebuffer+EXPLORE_UI_DASH_COOLDOWN_MARGIN)
+    ldi r20, 0x1a
+    ldi r21, 0x11
+    ldi r25, EXPLORE_UI_COOLDOWN_BAR_LENGTH
+_rg_dash_cooldown_iter1:
+    st Z, r20
+    std Z+1, r21
+    subi ZL, low(DISPLAY_WIDTH)
+    sbci ZH, high(DISPLAY_WIDTH)
+    dec r25
+    brne _rg_dash_cooldown_iter1
+    tst r24
+    breq _rg_effects
+    ldi r20, 0xa4
+    ldi r21, 0x5b
+_rg_dash_cooldown_iter2:
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    st Z, r20
+    std Z+1, r21
+    dec r24
+    brne _rg_dash_cooldown_iter2
 _rg_effects:
     ldi XL, low(framebuffer+EXPLORE_UI_EFFECTS_MARGIN)
     ldi XH, high(framebuffer+EXPLORE_UI_EFFECTS_MARGIN)
@@ -496,6 +594,7 @@ _pd_end:
     ret
 
 ; Begin an attack.
+;   cooldown = 2*weapon_cooldown + (ATTACK_FRAME_DURATION_MASK+1)*ITEM_ANIM_ATTACK_FRAMES
 ;
 ; Register Usage
 ;   r20-r25         calculations

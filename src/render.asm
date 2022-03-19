@@ -1250,7 +1250,7 @@ putb_small:
 ; Register Usage
 ;   r18:r19         value (param)
 ;   r23             foreground color (param)
-;   r22-25, r30-r31 calculations
+;   r20-25, r30-r31 calculations
 ;   X (r26:r27)     framebuffer (param)
 putw:
     divmodw10u r18, r19, r20, r21, r24, r25, r30, r31
@@ -1271,7 +1271,7 @@ putw:
 ; Register Usage
 ;   r18:r19         value (param)
 ;   r23             foreground color (param)
-;   r22-25, r30-r31 calculations
+;   r20-25, r30-r31 calculations
 ;   X (r26:r27)     framebuffer (param)
 putw_small:
     divmodw10u r18, r19, r20, r21, r24, r25, r30, r31

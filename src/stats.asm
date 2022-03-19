@@ -150,34 +150,6 @@ _uep_shift1:
     ldi ZH, high(player_effects+PLAYER_EFFECT_MEMSIZE)
     ld r20, Y
     tst r20
-    brne _uep_shift2
-    ld r20, Z+
-    ld r21, Z+
-    st -Z, r1
-    st -Z, r1
-    st Y+, r20
-    st Y+, r21
-_uep_shift2:
-    ldi YL, low(player_effects+PLAYER_EFFECT_MEMSIZE)
-    ldi YH, high(player_effects+PLAYER_EFFECT_MEMSIZE)
-    ldi ZL, low(player_effects+2*PLAYER_EFFECT_MEMSIZE)
-    ldi ZH, high(player_effects+2*PLAYER_EFFECT_MEMSIZE)
-    ld r20, Y
-    tst r20
-    brne _uep_shift3
-    ld r20, Z+
-    ld r21, Z+
-    st -Z, r1
-    st -Z, r1
-    st Y+, r20
-    st Y+, r21
-_uep_shift3:
-    ldi YL, low(player_effects+2*PLAYER_EFFECT_MEMSIZE)
-    ldi YH, high(player_effects+2*PLAYER_EFFECT_MEMSIZE)
-    ldi ZL, low(player_effects+3*PLAYER_EFFECT_MEMSIZE)
-    ldi ZH, high(player_effects+3*PLAYER_EFFECT_MEMSIZE)
-    ld r20, Y
-    tst r20
     brne _uep_end
     ld r20, Z+
     ld r21, Z+
@@ -192,25 +164,25 @@ _uep_end:
 
 ; Update the player's health. Once every few frames, health is either
 ; incremented or decremented. If the player dies, the game ends.
-;   update interval = next_power_of_2(4*(STATS_RANGE+2-|vitality|))
+;   update interval = 4*(STATS_RANGE+2-|vitality|)
 ;
 ; Register Usage
 ;   r23-r25     calculations
 update_player_health:
-    lds r25, player_augmented_stats + STATS_VITALITY_OFFSET
+    lds r24, player_augmented_stats + STATS_VITALITY_OFFSET
     ldi r23, 1
-    cpi r25, 0
+    cpi r24, 0
     brge _uph_check_clock
-    neg r25
+    neg r24
     neg r23
 _uph_check_clock:
-    neg r25
-    subi r25, low(-STATS_RANGE-2)
-    lsl r25
-    lsl r25
-    po2 r25, r24
-    lds r24, clock
-    and r25, r24
+    neg r24
+    subi r24, low(-STATS_RANGE-2)
+    lsl r24
+    lsl r24
+    lds r25, clock
+    call divmodb
+    tst r24
     brne _uph_end
     call calculate_max_health
     lds r24, player_health
