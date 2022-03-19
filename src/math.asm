@@ -81,22 +81,6 @@
     sbc @5, @7
 .endm
 
-; Calculate the nearest power of 2, minus 1.
-.macro po2 ; val, tmp
-    dec @0
-    mov @1, @0
-    lsr @1
-    or @0, @1
-    mov @1, @0
-    lsr @1
-    lsr @1
-    or @0, @1
-    mov @1, @0
-    swap @1
-    andi @1, 0x0f
-    or @0, @1
-.endm
-
 ; Generate a 16-bit pseudorandom number using the xorshift generator with triple
 ; 7, 9, 8.
 ;
@@ -123,3 +107,65 @@ rand:
     sts seed, r0
     sts seed+1, r1
     ret
+
+; Divide an 8-bit unsigned value by another 8-bit unsigned value. Based on Atmel
+; App Note AVR200, which is a really clever implementation.
+;
+; Register Usage
+;   r0-r1   used, r1 set zero
+;   r24     divisor/remainder (param)
+;   r25     dividend/quotient (param)
+divmodb:
+    mov r0, r24
+    ldi r24, 9
+    mov r1, r24
+    sub r24, r24
+_dmb_1:
+    rol r25
+    dec r1
+    brne _dmb_2
+    ret
+_dmb_2:
+    rol r24
+    sub r24, r0
+    brcc _dmb_3
+    add r24, r0
+    clc
+    rjmp _dmb_1
+_dmb_3:
+    sec
+    rjmp _dmb_1
+
+; Divide a 16-bit unsigned value by another 16-bit unsigned value. Based on Atmel
+; App Note AVR200.
+;
+; Register Usage
+;   r0-r2       used, r1 set zero
+;   r22:r23     divisor/remainder (param)
+;   r24:r25     divident/quotient (param)
+divmodw:
+    mov r0, r22
+    mov r2, r23
+    ldi r23, 17
+    mov r1, r23
+    clr r22
+    sub r23, r23
+_dmw_1:
+    rol r24
+    rol r25
+    dec r1
+    brne _dmw_2
+    ret
+_dmw_2:
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r2
+    brcc _dmw_3
+    add r22, r0
+    adc r23, r2
+    clc
+    rjmp _dmw_1
+_dmw_3:
+    sec
+    rjmp _dmw_1
