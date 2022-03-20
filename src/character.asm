@@ -314,9 +314,10 @@ _bdc_calculate_distance:
 ; Calculate the striking distance of the given weapon.
 ;
 ; Register Usage
-;   r0      result
-;   r24     calculations
-;   r25     weapon id (param)
+;   r0              result
+;   r24             calculations
+;   r25             weapon id (param)
+;   Z (r30:r31)     flash pointer
 character_striking_distance:
     dec r25
     brmi _csd_end

@@ -12,7 +12,7 @@ init:
     sti player_velocity_y, 0
     sti player_class, CLASS_HALFLING
     sti player_character, 0
-    sti player_weapon, 1
+    sti player_weapon, 3
     sti player_armor, 0
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_DOWN

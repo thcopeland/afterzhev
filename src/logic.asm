@@ -16,10 +16,9 @@
 sector_0_update:
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
-_s0u_npc_iter:
+
     ldd r25, Y+NPC_IDX_OFFSET
     dec r25
-    brmi _s0u_npc_next
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     ldi ZL, low(2*npc_table)
@@ -29,27 +28,57 @@ _s0u_npc_iter:
     add ZL, r0
     adc ZH, r1
     clr r1
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _s0u_not_enemy
-    movw r16, ZL
-    call enemy_charge
+
+    lds r20, player_position_x
+    lds r21, player_position_y
+    sts npc_move_data, r20
+    sts npc_move_data+1, r21
+
+        ; mov r21, ZL
+        ; ldi XL, low(framebuffer+20)
+        ; ldi XH, high(framebuffer+20)
+        ; call putb
+
+    ldi r20,NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF|NPC_MOVE_POLTROON|NPC_MOVE_RETURN
+    sts npc_move_flags, r20
+    call npc_move
+    ; call enemy_charge
     call enemy_update
     call enemy_sector_bounds
-    movw ZL, r16
-    call resolve_enemy_attack
-    call resolve_player_attack
-    rjmp _s0u_npc_next
-_s0u_not_enemy:
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, CORPSE_NPC
-    brne _s0u_npc_next
-    call corpse_update
-_s0u_npc_next:
-    adiw YL, NPC_MEMSIZE
-    cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
-    brlo _s0u_npc_iter
-    call reorder_npcs
+; _s0u_npc_iter:
+;     ldd r25, Y+NPC_IDX_OFFSET
+;     dec r25
+;     brmi _s0u_npc_next
+;     ldi ZL, byte3(2*npc_table)
+;     out RAMPZ, ZL
+;     ldi ZL, low(2*npc_table)
+;     ldi ZH, high(2*npc_table)
+;     ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+;     mul r24, r25
+;     add ZL, r0
+;     adc ZH, r1
+;     clr r1
+;     elpm r25, Z
+;     cpi r25, NPC_ENEMY
+;     brne _s0u_not_enemy
+;     movw r16, ZL
+    ; call enemy_charge
+    ; call enemy_update
+    ; call enemy_sector_bounds
+;     movw ZL, r16
+;     call resolve_enemy_attack
+;     call resolve_player_attack
+;     rjmp _s0u_npc_next
+; _s0u_not_enemy:
+;     ldd r25, Y+NPC_IDX_OFFSET
+;     cpi r25, CORPSE_NPC
+;     brne _s0u_npc_next
+;     call corpse_update
+; _s0u_npc_next:
+;     adiw YL, NPC_MEMSIZE
+;     cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
+;     brlo _s0u_npc_iter
+;     call reorder_npcs
     ret
 
 sector_0_event:

@@ -64,6 +64,18 @@
 .equ NPC_NPC_REPULSION = 4
 .equ NPC_PLAYER_REPULSION = 4
 
+.equ NPC_MOVE_FRICTION = 0x01   ; affected by friction
+.equ NPC_MOVE_REBOUND  = 0x02   ; bounce off sector boundaries and obstacles
+.equ NPC_MOVE_LOOKAT   = 0x04   ; face some position
+.equ NPC_MOVE_GOTO     = 0x08   ; move within striking distance of some position
+.equ NPC_MOVE_FALLOFF  = 0x10   ; only move towards or face position if within some distance
+.equ NPC_MOVE_ATTACK   = 0x20   ; whether to attack
+.equ NPC_MOVE_RETURN   = 0x40   ; return to starting point if beyond some distance
+.equ NPC_MOVE_POLTROON = 0x80   ; move away from the player if health is low
+
+.equ NPC_INTEREST_DISTANCE = 20 ; NPC_MOVE_FALLOFF distance
+.equ NPC_FLEE_HEALTH = 10       ; NPC_MOVE_POLTROON health
+
 .equ RUN_FRAME_DURATION_MASK = 0x7
 .equ WALK_FRAME_DURATION_MASK = 0xf
 .equ IDLE_MAX_SPEED = 40
@@ -75,6 +87,7 @@
 .equ STRIKING_DISTANCE = 10 ; base striking distance, scaled by individual weapons
 .equ DIRECTION_BIAS = 5
 .equ ATTACK_DAMAGE_FRAME = 2
+.equ RANGED_LAUNCH_FRAME = 0
 
 .equ CHARACTER_COLLIDER_WIDTH = 8
 .equ CHARACTER_COLLIDER_HEIGHT = 12

@@ -1,3 +1,287 @@
+; Move the given enemy around and attack as necessary. The exact behavior is
+; specified by npc_move_flags and npc_move_data, see gamedefs.asm.
+;
+; Register Usage
+;   r18-r27         calculations
+;   Y (r28:r29)     enemy pointer (param)
+;   Z (r30:r31)     enemy data pointer (param)
+npc_move:
+    ser r26
+    lds r20, npc_move_flags
+    sbrs r20, log2(NPC_MOVE_FRICTION)
+    clr r26
+    ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+    push r20
+    push r21
+    push ZL
+    push ZH
+    adiw YL, NPC_POSITION_OFFSET
+    call move_character
+    sbiw YL, NPC_POSITION_OFFSET
+    pop ZH
+    pop ZL
+    pop r25
+    pop r24
+_nm_test_rebound:
+    lds r20, npc_move_flags
+    sbrs r20, log2(NPC_MOVE_REBOUND)
+    rjmp _nm_test_lookat
+    ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+_nm_rebound:
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    tst r20
+    breq _nm_rebound_reverse_x
+    cpi r22, 1
+    brlo _nm_rebound_reverse_x
+    cpi r22, TILE_WIDTH*SECTOR_WIDTH - CHARACTER_SPRITE_WIDTH
+    brlo _nm_rebound_test_reverse_y
+_nm_rebound_reverse_x:
+    mov r20, r24
+    neg r20
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r20
+_nm_rebound_test_reverse_y:
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    tst r21
+    breq _nm_rebound_reverse_y
+    cpi r23, 1
+    brlo _nm_rebound_reverse_y
+    cpi r23, TILE_HEIGHT*SECTOR_HEIGHT - CHARACTER_SPRITE_HEIGHT
+    brlo _nm_rebound_calculate_direction
+_nm_rebound_reverse_y:
+    mov r21, r25
+    neg r21
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r21
+_nm_rebound_calculate_direction:
+    movw r22, r20
+    sbrc r22, 7
+    neg r22
+    sbrc r23, 7
+    neg r23
+    cp r22, r23
+    brlo _nm_rebound_vertical
+_nm_rebound_horizontal:
+    ldi r24, DIRECTION_RIGHT
+    sbrc r20, 7
+    ldi r24, DIRECTION_LEFT
+    rjmp _nm_rebound_set_direction
+_nm_rebound_vertical:
+    ldi r24, DIRECTION_DOWN
+    sbrc r21, 7
+    ldi r24, DIRECTION_UP
+_nm_rebound_set_direction:
+    ldd r25, Y+NPC_ANIM_OFFSET
+    andi r25, 0xfc
+    or r25, r24
+    std Y+NPC_ANIM_OFFSET, r25
+_nm_test_lookat:
+    lds r20, npc_move_flags
+    sbrs r20, log2(NPC_MOVE_LOOKAT)
+    rjmp _nm_test_poltroon1
+_nm_lookat:
+    lds r20, npc_move_data
+    lds r21, npc_move_data+1
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    movw r24, r22
+    sub r24, r20
+    sub r25, r21
+    sbrc r24, 7
+    neg r24
+    sbrc r25, 7
+    neg r25
+    lds r18, npc_move_flags
+    sbrs r18, log2(NPC_MOVE_FALLOFF)
+    rjmp _nm_lookat_orientation
+    cpi r24, NPC_INTEREST_DISTANCE
+    brsh _nm_test_poltroon1
+    cpi r25, NPC_INTEREST_DISTANCE
+    brsh _nm_test_poltroon1
+_nm_lookat_orientation:
+    cp r24, r25
+    brlo _nm_lookat_orient_vertical
+_nm_lookat_orient_horizontal:
+    ldi r24, DIRECTION_LEFT
+    cp r22, r20
+    brsh _nm_lookat_save_direction
+    ldi r24, DIRECTION_RIGHT
+    rjmp _nm_lookat_save_direction
+_nm_lookat_orient_vertical:
+    ldi r24, DIRECTION_UP
+    cp r23, r21
+    brsh _nm_lookat_save_direction
+    ldi r24, DIRECTION_DOWN
+_nm_lookat_save_direction:
+    ldd r25, Y+NPC_ANIM_OFFSET
+    andi r25, 0xfc
+    or r25, r24
+    std Y+NPC_ANIM_OFFSET, r25
+_nm_test_poltroon1:
+    lds r20, npc_move_flags
+    sbrs r20, log2(NPC_MOVE_POLTROON)
+    rjmp _nm_test_attack
+    ldd r20, Y+NPC_HEALTH_OFFSET
+    cpi r20, NPC_FLEE_HEALTH
+    brlo _nm_move_calculations
+_nm_test_attack:
+    lds r20, npc_move_flags
+    sbrs r20, log2(NPC_MOVE_ATTACK)
+    rjmp _nm_test_move
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    lds r24, player_position_x
+    lds r25, player_position_y
+    ldd r26, Y+NPC_ANIM_OFFSET
+    andi r26, 0x03
+    call biased_character_distance
+    mov r20, r25
+    movw XL, ZL
+    adiw ZL, NPC_TABLE_WEAPON_OFFSET
+    elpm r25, Z
+    call character_striking_distance
+    movw ZL, XL
+    cp r20, r0
+    brsh _nm_test_move
+_nm_attack:
+    ldd r24, Y+NPC_ANIM_OFFSET
+    cpi r24, ACTION_ATTACK<<5
+    brsh _nm_attack_end
+    andi r24, 0x1f
+    ori r24, ACTION_ATTACK<<5
+    std Y+NPC_ANIM_OFFSET, r24
+_nm_attack_end:
+    rjmp _nm_end
+_nm_test_move:
+    lds r25, npc_move_flags
+    sbrs r25, log2(NPC_MOVE_GOTO)
+    rjmp _nm_end
+_nm_move_calculations:
+    lds r18, npc_move_data
+    lds r19, npc_move_data+1
+    ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    movw r22, r20
+    sub r22, r18
+    sub r23, r19
+    sbrc r22, 7
+    neg r22
+    sbrc r23, 7
+    neg r23
+    adiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET
+    elpm r26, Z
+    sbiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET
+_nm_test_poltroon2:
+    lds r25, npc_move_flags
+    sbrs r25, log2(NPC_MOVE_POLTROON)
+    rjmp _nm_test_return
+    ldd r24, Y+NPC_HEALTH_OFFSET
+    cpi r24, NPC_FLEE_HEALTH
+    brsh _nm_test_return
+    neg r26
+_nm_poltroon_orientation:
+    cp r22, r23
+    brlo _nm_poltroon_orient_vertical
+_nm_poltroon_orient_horizontal:
+    ldi r24, DIRECTION_RIGHT
+    cp r20, r18
+    brsh _nm_poltroon_save_direction
+    ldi r24, DIRECTION_LEFT
+    rjmp _nm_poltroon_save_direction
+_nm_poltroon_orient_vertical:
+    ldi r24, DIRECTION_DOWN
+    cp r21, r19
+    brsh _nm_poltroon_save_direction
+    ldi r24, DIRECTION_UP
+_nm_poltroon_save_direction:
+    ldd r25, Y+NPC_ANIM_OFFSET
+    andi r25, 0xfc
+    or r25, r24
+    std Y+NPC_ANIM_OFFSET, r25
+    rjmp _nm_move
+_nm_test_return:
+    lds r25, npc_move_flags
+    sbrs r25, log2(NPC_MOVE_RETURN)
+    rjmp _nm_test_move_falloff
+    cpi r22, NPC_INTEREST_DISTANCE
+    brsh _nm_return
+    cpi r23, NPC_INTEREST_DISTANCE
+    brsh _nm_return
+    rjmp _nm_test_move_falloff
+_nm_return:
+    adiw ZL, NPC_TABLE_XPOS_OFFSET
+    elpm r18, Z+
+    elpm r19, Z
+    sbiw ZL, NPC_TABLE_YPOS_OFFSET
+    movw r22, r20
+    sub r22, r18
+    sub r23, r19
+    sbrc r22, 7
+    neg r22
+    sbrc r23, 7
+    neg r23
+_nm_return_orientation:
+    cp r22, r23
+    brlo _nm_return_orient_vertical
+_nm_return_orient_horizontal:
+    ldi r24, DIRECTION_LEFT
+    cp r20, r18
+    brsh _nm_return_save_direction
+    ldi r24, DIRECTION_RIGHT
+    rjmp _nm_return_save_direction
+_nm_return_orient_vertical:
+    ldi r24, DIRECTION_UP
+    cp r21, r19
+    brsh _nm_return_save_direction
+    ldi r24, DIRECTION_DOWN
+_nm_return_save_direction:
+    ldd r25, Y+NPC_ANIM_OFFSET
+    andi r25, 0xfc
+    or r25, r24
+    std Y+NPC_ANIM_OFFSET, r25
+    rjmp _nm_move
+_nm_test_move_falloff:
+    lds r25, npc_move_flags
+    sbrs r25, log2(NPC_MOVE_FALLOFF)
+    rjmp _nm_move
+    cpi r22, NPC_INTEREST_DISTANCE
+    brsh _nm_end
+    cpi r23, NPC_INTEREST_DISTANCE
+    brsh _nm_end
+_nm_move:
+    mov r27, r26
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+_nm_goto_horizontal_movement:
+    cpi r22, STRIKING_DISTANCE
+    brsh _nm_goto_horizontal_direction
+    asr r26
+    cpi r22, STRIKING_DISTANCE/2
+    brlo _nm_goto_vertical_movement
+_nm_goto_horizontal_direction:
+    cp r18, r20
+    brsh _nm_goto_acc_x
+    neg r26
+_nm_goto_acc_x:
+    adnv r24, r26
+_nm_goto_vertical_movement:
+    cpi r23, STRIKING_DISTANCE
+    brsh _nm_goto_vertical_direction
+    asr r27
+    cpi r23, STRIKING_DISTANCE/2
+    brlo _nm_goto_save_velocity
+_nm_goto_vertical_direction:
+    cp r19, r21
+    brsh _nm_goto_acc_y
+    neg r27
+_nm_goto_acc_y:
+    adnv r25, r27
+_nm_goto_save_velocity:
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r25
+_nm_end:
+    ret
+
 ; Move around at a constant speed, negating x velocity when colliding with a
 ; horizontal barrier, and negating y velocity when colliding with a vertical
 ; barrier.
@@ -195,7 +479,7 @@ _ec_save_velocity:
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r25
     ret
 
-; Update the enemy's animations, resolve attacks, and check for collisions.
+; Update the enemy's animations and check for collisions.
 ;
 ; Register Usage
 ;   r21-r25         calculations

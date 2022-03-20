@@ -72,4 +72,7 @@ selected_choice:    .byte 1
 upgrade_points:     .byte 1
 upgrade_selection:  .byte 1
 
+npc_move_flags:     .byte 1
+npc_move_data:      .byte 2
+
 gameover_state:     .byte 1
