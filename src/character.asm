@@ -187,6 +187,8 @@ _uca_effect_damage:
     andi r20, EFFECT_DAMAGE_FRAME_DURATION_MASK
     brne _uca_action_idle
     ldi r20, EFFECT_DAMAGE_DURATION
+    sbrc r21, 2
+    ldi r20, 2*EFFECT_DAMAGE_DURATION
     rjmp _uca_update_effect
 _uca_effect_heal: ; TODO
 _uca_effect_upgrade:

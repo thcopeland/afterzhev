@@ -7,7 +7,7 @@
 ; Wieldable Extra: [unused:8]
 ;
 ; Ranged Flags: [effect speed/range:2][cooldown:3][high level:1][type:2]
-; Ranged Extra: [extra damage:5][effect:3]
+; Ranged Extra: [extra damage:4][magical:1][effect:3]
 ;
 ; Wearable Flags: [speed:2][health:4][type:2]
 ; Wearable Extra: [unused:8]
@@ -27,11 +27,12 @@
 
 .equ USABLE_ETERNAL = (1 << 2)
 .equ RANGED_HIGH_LEVEL = (1 << 2)
+.equ RANGED_MAGICAL = (1 << 3)
 
 item_table:
     DECL_ITEM wood_stick,       (1<<6)|(1<<3)|ITEM_WIELDABLE,       7,  10, 0,  -1, -4, PADDING
     DECL_ITEM blue_shirt,       (0<<6)|((1&0xf)<<2)|ITEM_WEARABLE,  30, 2,  4,  0,  0, PADDING
-    DECL_ITEM wood_staff,       (1<<6)|(3<<3)|ITEM_RANGED,          80, 0,  10, -3, 0, (16<<3)|(EFFECT_ATTACK_FIRE)
+    DECL_ITEM wood_staff,       (1<<6)|(3<<3)|ITEM_RANGED,          80, 0,  10, -3, 0, (15<<4)|RANGED_MAGICAL|(EFFECT_ATTACK_FIRE)
     DECL_ITEM health_potion,    (0x0<<2)|ITEM_USABLE,               100,2,  64, 2,  0, PADDING
     DECL_ITEM mint_soda,        (0x6<<2)|ITEM_USABLE,               20, 0,  0,  0,  1, PADDING
     DECL_ITEM mint_leaves,      (0x2<<2)|ITEM_USABLE,               10, 0,  0,  0,  1, PADDING

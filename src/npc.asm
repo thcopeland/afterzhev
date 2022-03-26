@@ -527,8 +527,12 @@ _rn_fast_next:
 
 ; Update a corpse. All dead, only one thing to do.
 ;
+; NOTE: The animations are somewhat complicated by the fact that EFFECT_DAMAGE
+; contains two separate four-frame animations, one for blood and one for magical
+; damage.
+;
 ; Register Usage
-;   r24-r25         calculations
+;   r23-r25         calculations
 ;   Y (r28:r29)     npc pointer (param)
 corpse_update:
     ldd r25, Y+NPC_EFFECT_OFFSET
@@ -542,11 +546,19 @@ corpse_update:
     andi r25, EFFECT_DAMAGE_FRAME_DURATION_MASK
     brne _cu_later
     ldd r25, Y+NPC_EFFECT_OFFSET
-    inc r25
-    cpi r25, (EFFECT_DAMAGE<<3)|EFFECT_DAMAGE_DURATION
+    mov r24, r25
+    andi r24, 0x7
+    ldi r23, EFFECT_DAMAGE_DURATION
+    sbrc r24, 2
+    ldi r23, 2*EFFECT_DAMAGE_DURATION
+    inc r24
+    cp r24, r23
     brlo _cu_save
-    clr r25
+    std Y+NPC_EFFECT_OFFSET, r1
+    rjmp _cu_later
 _cu_save:
+    andi r25, 0xf8
+    or r25, r24
     std Y+NPC_EFFECT_OFFSET, r25
 _cu_later:
     ret

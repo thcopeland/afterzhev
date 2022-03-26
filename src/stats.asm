@@ -337,3 +337,81 @@ calculate_dash_cooldown:
     ldi r25, 32
 _cdc_end:
     ret
+
+; Calculate the damage done by an active effect to an NPC.
+;            { max((strength + intellect - npc_dexterity)/4 + weapon, 1)   if non magical
+;   damage = { max(intellect/2 - npc_dexterity/4 + weapon, 1)              if magical
+;            { EFFECT_DEFAULT_DAMAGE                                       if EFFECT_ROLE_DAMAGE_ALL
+;
+; Register Usage
+;   r23             calculations
+;   r24             calculations, melee vs ranged indicator
+;   r25             calculations, damage
+;   X (r26:r27)     effect pointer (param)
+;   Y (r28:r29)     npc pointer (param)
+;   Z (r30:r31)     npc data pointer (param)
+calculate_effect_npc_damage:
+    adiw XL, ACTIVE_EFFECT_DATA2_OFFSET
+    ld r24, X
+    sbiw XL, ACTIVE_EFFECT_DATA2_OFFSET
+    sbrs r24, 0
+    rjmp _cend_no_damage
+    andi r24, 0x02
+    breq _cend_check_weapon
+    clr r24
+    ldi r25, EFFECT_DEFAULT_DAMAGE
+    ret
+_cend_no_damage:
+    clr r24
+    clr r25
+    ret
+_cend_check_weapon:
+    lds r25, player_weapon
+    dec r25
+    brmi _cend_no_damage
+    push ZL
+    push ZH
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_EXTRA_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_EXTRA_OFFSET)
+    ldi r24, ITEM_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    pop ZH
+    pop ZL
+    mov r24, r25
+    swap r25
+    andi r25, 0x0f
+    andi r24, RANGED_MAGICAL
+    brne _cend_magical
+    lds r23, player_augmented_stats+STATS_STRENGTH_OFFSET
+    lds r24, player_augmented_stats+STATS_INTELLECT_OFFSET
+    add r23, r24
+    lsr r23
+    ldi r24, 0
+    rjmp _cend_calc_damage
+_cend_magical:
+    lds r23, player_augmented_stats+STATS_INTELLECT_OFFSET
+    ldi r24, 4
+_cend_calc_damage:
+    lsr r23
+    add r25, r23
+    adiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
+    elpm r23, Z
+    sbiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
+    lsr r23
+    lsr r23
+    sub r25, r23
+    brsh _cend_end
+    ldi r25, 1
+_cend_end:
+    ret
+
+calculate_effect_player_damage:
+    ret
