@@ -43,7 +43,8 @@ _s0u_npc_iter:
     call enemy_update
     movw ZL, r16
     call resolve_enemy_attack
-    call resolve_player_attack
+    call npc_resolve_ranged_damage
+    call npc_resolve_melee_damage
     rjmp _s0u_npc_next
 _s0u_not_enemy:
     ldd r25, Y+NPC_IDX_OFFSET
