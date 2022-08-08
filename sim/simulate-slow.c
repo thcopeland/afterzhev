@@ -1,3 +1,6 @@
+// This simulates the game using the simavr simulator. This is nearly
+// 10 times slower than slimavr, but it's far more complete and accurate.
+
 #include <stdlib.h>
 #include <GL/glut.h>
 #include <stdio.h>

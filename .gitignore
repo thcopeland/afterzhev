@@ -1,0 +1,3 @@
+sim/slimavr-*/obj
+sim/slimavr-*/*.a
+sprites/
