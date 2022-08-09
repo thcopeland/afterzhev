@@ -171,7 +171,11 @@ _rg_active_effect_iter:
     brne _rg_active_effect_iter_next
     ldd r22, Y+ACTIVE_EFFECT_DATA_OFFSET
     ldd r24, Y+ACTIVE_EFFECT_X_OFFSET
+    cpi r24, TILE_WIDTH*SECTOR_WIDTH - EFFECT_SPRITE_WIDTH
+    brsh _rg_active_effect_iter_next
     ldd r25, Y+ACTIVE_EFFECT_Y_OFFSET
+    cpi r25, TILE_HEIGHT*SECTOR_HEIGHT - EFFECT_SPRITE_HEIGHT
+    brsh _rg_active_effect_iter_next
     call render_effect_animation
 _rg_active_effect_iter_next:
     adiw YL, ACTIVE_EFFECT_MEMSIZE
@@ -738,10 +742,6 @@ _uae_active_effect_next:
 ;   r24, r25        position (param)
 ;   Z (r30:r31)     memory pointer
 add_active_effect:
-    cpi r24, SECTOR_WIDTH*TILE_WIDTH-EFFECT_SPRITE_WIDTH
-    brsh _aae_end
-    cpi r25, SECTOR_HEIGHT*TILE_HEIGHT-EFFECT_SPRITE_HEIGHT
-    brsh _aae_end
     ldi ZL, low(active_effects)
     ldi ZH, high(active_effects)
     ldi r20, ACTIVE_EFFECT_COUNT
@@ -776,7 +776,6 @@ _aae_replace:
     std Z+ACTIVE_EFFECT_DATA2_OFFSET, r23
     std Z+ACTIVE_EFFECT_X_OFFSET, r24
     std Z+ACTIVE_EFFECT_Y_OFFSET, r25
-_aae_end:
     ret
 
 ; Update the player's animation and general state.
@@ -855,19 +854,19 @@ _up_check_ranged:
 _up_facing_up:
     cpi r22, DIRECTION_UP
     brne _up_facing_down
-    subi r25, EFFECT_SPRITE_HEIGHT
+    subi r25, 2*EFFECT_SPRITE_HEIGHT/3
 _up_facing_down:
     cpi r22, DIRECTION_DOWN
     brne _up_facing_left
-    subi r25, -EFFECT_SPRITE_HEIGHT
+    subi r25, -2*EFFECT_SPRITE_HEIGHT/3
 _up_facing_left:
     cpi r22, DIRECTION_LEFT
     brne _up_facing_right
-    subi r24, EFFECT_SPRITE_WIDTH
+    subi r24, 2*EFFECT_SPRITE_WIDTH/3
 _up_facing_right:
     cpi r22, DIRECTION_RIGHT
     brne _up_add_effect
-    subi r24, -EFFECT_SPRITE_WIDTH
+    subi r24, -2*EFFECT_SPRITE_WIDTH/3
 _up_add_effect:
     adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
     elpm r23, Z

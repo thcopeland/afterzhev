@@ -2,28 +2,105 @@
 ; acceleration is damage << 1.
 ;
 ; Register Usage
-;   r22-r25         calculations
+;   r20-r25         calculations
 ;   Y (r28:r29)     enemy pointer (param)
 ;   Z (r30:r31)     npc table pointer (param)
 resolve_enemy_attack:
+    push r26
     lds r25, clock
     andi r25, ATTACK_FRAME_DURATION_MASK
     brne  _rea_end_trampoline
 _rea_check_action:
     ldd r25, Y+NPC_ANIM_OFFSET
-    mov r26, r25
     lsr r25
-    mov r24, r25
+    swap r25
+    andi r25, 0x7
+    cpi r25, ACTION_ATTACK
+    brne _rea_end_trampoline
+_rea_check_weapon:
+    movw r24, ZL
+    adiw ZL, NPC_TABLE_WEAPON_OFFSET
+    elpm r22, Z
+    dec r22
+    brmi _rea_end_trampoline
+    ldi ZL, byte3(2*item_table+ITEM_FLAGS_OFFSET)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r23, ITEM_MEMSIZE
+    mul r22, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r20, Z
+    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
+    elpm r21, Z
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    movw ZL, r24
+    mov r24, r20
+    andi r24, 3
+    cpi r24, ITEM_RANGED
+    brne _rea_check_melee_frame
+_rea_check_ranged_frame:
+    ldd r24, Y+NPC_ANIM_OFFSET
+    andi r24, 0x1c
+    cpi r24, RANGED_LAUNCH_FRAME << 2
+    breq _rea_add_ranged_effect
+_rea_end_trampoline:
+    rjmp _rea_end
+_rea_add_ranged_effect:
+    ldd r22, Y+NPC_ANIM_OFFSET
+    swap r22
+    lsl r22
+    lsl r22
+    andi r22, 0xc0
+    mov r25, r21
+    lsl r25
+    lsl r25
+    lsl r25
+    andi r25, 0x38
+    or r22, r25
+    ldi r23, EFFECT_ROLE_DAMAGE_PLAYER
+    lsr r20
+    lsr r20
+    andi r20, 0x30
+    or r23, r20
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    ldd r20, Y+NPC_ANIM_OFFSET
+    andi r20, 0x03
+_rea_ranged_facing_up:
+    cpi r20, DIRECTION_UP
+    brne _rea_ranged_facing_down
+    subi r25, 2*EFFECT_SPRITE_HEIGHT/3
+_rea_ranged_facing_down:
+    cpi r20, DIRECTION_DOWN
+    brne _rea_ranged_facing_left
+    subi r25, -2*EFFECT_SPRITE_HEIGHT/3
+_rea_ranged_facing_left:
+    cpi r20, DIRECTION_LEFT
+    brne _rea_ranged_facing_right
+    subi r24, 2*EFFECT_SPRITE_WIDTH/3
+_rea_ranged_facing_right:
+    cpi r20, DIRECTION_RIGHT
+    brne _rea_add_effect
+    subi r24, -2*EFFECT_SPRITE_WIDTH/3
+_rea_add_effect:
+    push ZL
+    push ZH
+    call add_active_effect
+    pop ZH
+    pop ZL
+    rjmp _rea_end
+_rea_check_melee_frame:
+    ldd r24, Y+NPC_ANIM_OFFSET
+    mov r26, r24
+    lsr r24
     lsr r24
     andi r24, 0x7
     cpi r24, ATTACK_DAMAGE_FRAME
     brne _rea_end_trampoline
-    swap r25
-    andi r25, 0x7
-    cpi r25, ACTION_ATTACK
-    breq _rea_check_distance
-_rea_end_trampoline:
-    rjmp _rea_end
 _rea_check_distance:
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
@@ -82,6 +159,7 @@ _rea_push_y:
     adnv r25, r23
     sts player_velocity_y, r25
 _rea_end:
+    pop r26
     ret
 
 ; Apply damage to the given enemy and push it away from the player. The pushing

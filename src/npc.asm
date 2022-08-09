@@ -124,11 +124,95 @@ _nm_test_poltroon1:
     rjmp _nm_test_attack
     ldd r20, Y+NPC_HEALTH_OFFSET
     cpi r20, NPC_FLEE_HEALTH
-    brlo _nm_move_calculations
+    brsh _nm_test_attack
+    rjmp _nm_move_calculations
 _nm_test_attack:
     lds r20, npc_move_flags
     sbrs r20, log2(NPC_MOVE_ATTACK)
+_nm_test_move_trampoline:
     rjmp _nm_test_move
+    ldd r24, Y+NPC_ANIM_OFFSET
+    cpi r24, ACTION_ATTACK<<5
+    brlo _nm_test_weapon
+    rjmp _nm_attack_end
+_nm_test_weapon:
+    movw XL, ZL
+    adiw ZL, NPC_TABLE_WEAPON_OFFSET
+    elpm r20, Z
+    dec r20
+    brmi _nm_test_move_trampoline
+    ldi ZL, byte3(2*item_table+ITEM_FLAGS_OFFSET)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r21, ITEM_MEMSIZE
+    mul r20, r21
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r20, Z
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    movw ZL, XL
+    mov r21, r20
+    andi r21, 0x03
+    cpi r21, ITEM_RANGED
+    brne _nm_test_melee_attack
+_nm_test_ranged_attack:
+    ldd r21, Y+NPC_ANIM_OFFSET
+    andi r21, 0x03
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    lds r24, player_position_x
+    sub r22, r24
+    lds r25, player_position_y
+    sub r23, r25
+_nm_test_ranged_up:
+    cpi r21, DIRECTION_UP
+    brne _nm_test_ranged_down
+    sbrc r22, 7
+    neg r22
+    cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2
+    brsh _nm_attack_end
+    cpi r23, EFFECT_ESTIMATED_RANGE
+    brsh _nm_attack_end
+    rjmp _nm_ranged_attack
+_nm_test_ranged_down:
+    cpi r21, DIRECTION_DOWN
+    brne _nm_test_ranged_left
+    sbrc r22, 7
+    neg r22
+    cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2
+    brsh _nm_attack_end
+    cpi r23, low(-EFFECT_ESTIMATED_RANGE)
+    brlo _nm_attack_end
+    rjmp _nm_ranged_attack
+_nm_test_ranged_left:
+    cpi r21, DIRECTION_LEFT
+    brne _nm_test_ranged_right
+    sbrc r23, 7
+    neg r23
+    cpi r23, 3*EFFECT_DAMAGE_DISTANCE/2
+    brsh _nm_attack_end
+    cpi r22, EFFECT_ESTIMATED_RANGE
+    brsh _nm_attack_end
+    rjmp _nm_ranged_attack
+_nm_test_ranged_right:
+    cpi r21, DIRECTION_right
+    brne _nm_attack_end
+    sbrc r23, 7
+    neg r23
+    cpi r23, 3*EFFECT_DAMAGE_DISTANCE/2
+    brsh _nm_attack_end
+    cpi r22, low(-EFFECT_ESTIMATED_RANGE)
+    brlo _nm_attack_end
+_nm_ranged_attack:
+    ldd r24, Y+NPC_ANIM_OFFSET
+    andi r24, 0x1f
+    ori r24, ACTION_ATTACK<<5
+    std Y+NPC_ANIM_OFFSET, r24
+    rjmp _nm_attack_end
+_nm_test_melee_attack:
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     lds r24, player_position_x
@@ -144,10 +228,8 @@ _nm_test_attack:
     movw ZL, XL
     cp r20, r0
     brsh _nm_test_move
-_nm_attack:
+_nm_melee_attack:
     ldd r24, Y+NPC_ANIM_OFFSET
-    cpi r24, ACTION_ATTACK<<5
-    brsh _nm_attack_end
     andi r24, 0x1f
     ori r24, ACTION_ATTACK<<5
     std Y+NPC_ANIM_OFFSET, r24

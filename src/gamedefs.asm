@@ -87,7 +87,7 @@
 .equ STRIKING_DISTANCE = 10 ; base striking distance, scaled by individual weapons
 .equ DIRECTION_BIAS = 5
 .equ ATTACK_DAMAGE_FRAME = 2
-.equ RANGED_LAUNCH_FRAME = 0
+.equ RANGED_LAUNCH_FRAME = 1
 
 .equ CHARACTER_COLLIDER_WIDTH = 8
 .equ CHARACTER_COLLIDER_HEIGHT = 12
@@ -113,6 +113,7 @@
 
 .equ EFFECT_DAMAGE_DISTANCE = 8
 .equ EFFECT_DEFAULT_DAMAGE = 4
+.equ EFFECT_ESTIMATED_RANGE = 40 ; simplifies ranged enemies
 
 .equ SHOP_INVENTORY_SIZE = 12
 .equ PLAYER_INVENTORY_SIZE = 12
