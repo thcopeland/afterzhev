@@ -680,23 +680,31 @@ _uae_update_effect_position:
     breq _uae_update_effect_frame
     lds r24, clock
     andi r24, 0x01
-    sbrc r23, 1
-    inc r24
-    mov r23, r21
-    andi r23, 0xc0  ; direction
-    sbrc r23, 7
-    neg r24
-    mov r25, r24
-    sbrc r23, 6
-    clr r25
-    sbrs r23, 6
-    clr r24
-    ldd r23, Z+ACTIVE_EFFECT_X_OFFSET
-    add r23, r24
-    std Z+ACTIVE_EFFECT_X_OFFSET, r23
-    ldd r23, Z+ACTIVE_EFFECT_Y_OFFSET
-    add r23, r25
-    std Z+ACTIVE_EFFECT_Y_OFFSET, r23
+    brne _uae_active_effect_next
+    mov r24, r21
+    andi r24, 0xc0 ; direction
+    sbrc r24, 7
+    neg r23
+    sbrs r24, 6
+    rjmp _uae_move_vertically
+_uae_move_horizontally:
+    ldd r24, Z+ACTIVE_EFFECT_X_OFFSET
+    add r24, r23
+    cpi r24, SECTOR_WIDTH*TILE_WIDTH-EFFECT_SPRITE_WIDTH
+    brlo _uae_move_horizontally_save
+_uae_remove_effect:
+    std Z+ACTIVE_EFFECT_DATA_OFFSET, r1
+    rjmp _uae_active_effect_next
+_uae_move_horizontally_save:
+    std Z+ACTIVE_EFFECT_X_OFFSET, r24
+    rjmp _uae_update_effect_frame
+_uae_move_vertically:
+    ldd r24, Z+ACTIVE_EFFECT_Y_OFFSET
+    add r24, r23
+    cpi r24, SECTOR_HEIGHT*TILE_HEIGHT-EFFECT_SPRITE_HEIGHT
+    brsh _uae_remove_effect
+_uae_move_vertically_save:
+    std Z+ACTIVE_EFFECT_Y_OFFSET, r24
 _uae_update_effect_frame:
     mov r23, r21
     andi r21, 0x07  ; frame
@@ -730,6 +738,10 @@ _uae_active_effect_next:
 ;   r24, r25        position (param)
 ;   Z (r30:r31)     memory pointer
 add_active_effect:
+    cpi r24, SECTOR_WIDTH*TILE_WIDTH-EFFECT_SPRITE_WIDTH
+    brsh _aae_end
+    cpi r25, SECTOR_HEIGHT*TILE_HEIGHT-EFFECT_SPRITE_HEIGHT
+    brsh _aae_end
     ldi ZL, low(active_effects)
     ldi ZH, high(active_effects)
     ldi r20, ACTIVE_EFFECT_COUNT
@@ -764,6 +776,7 @@ _aae_replace:
     std Z+ACTIVE_EFFECT_DATA2_OFFSET, r23
     std Z+ACTIVE_EFFECT_X_OFFSET, r24
     std Z+ACTIVE_EFFECT_Y_OFFSET, r25
+_aae_end:
     ret
 
 ; Update the player's animation and general state.
