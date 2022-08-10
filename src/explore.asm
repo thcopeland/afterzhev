@@ -645,11 +645,11 @@ _pa_end:
     ret
 
 ; Update the active effects, such as spells or features of the sector. Active
-; effects should have the following layout
+; effects should have the following layout:
 ;
 ; Active Effect Layout:
 ;   data [direction:2][effect:3][frame:3]
-;   data2 [unused:4][speed:2][role:2]
+;   data2 [strength:4][speed:2][role:2]
 ;   x coordinate
 ;   y coordinate
 ;
@@ -771,6 +771,7 @@ _aae_replace:
 ;
 ; Register Usage
 ;   r20-r26         calculations
+;   Z (r30:r31)     flash pointer
 update_player:
     ser r26
     ldi YL, low(player_position_data)
@@ -812,16 +813,19 @@ _up_dash_move_again2:
 _up_ranged_attack:
     lds r20, player_action
     cpi r20, ACTION_ATTACK
-    brne _up_animation
+    brne _up_animation_trampoline
     lds r20, clock
     andi r20, ATTACK_FRAME_DURATION_MASK
-    brne _up_animation
+    brne _up_animation_trampoline
     lds r20, player_frame
     cpi r20, RANGED_LAUNCH_FRAME
-    brne _up_animation
+    brne _up_animation_trampoline
     lds r20, player_weapon
     dec r20
-    brmi _up_animation ; unlikely but technically possible
+    brpl _up_read_weapon
+_up_animation_trampoline:
+    rjmp _up_animation
+_up_read_weapon:
     ldi ZL, byte3(2*item_table)
     out RAMPZ, ZL
     ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
@@ -869,6 +873,19 @@ _up_add_effect:
     swap r20
     ldi r23, EFFECT_ROLE_DAMAGE_NPCS
     or r23, r20
+    movw r20, r22
+    mov r26, r24
+    push r25
+    lds r23, player_weapon
+    lds r24, player_augmented_stats+STATS_STRENGTH_OFFSET
+    lds r25, player_augmented_stats+STATS_INTELLECT_OFFSET
+    call calculate_effect_power
+    mov r24, r26
+    movw r22, r20
+    swap r25
+    andi r25, 0xf0
+    or r23, r25
+    pop r25
     rcall add_active_effect
 _up_animation:
     lds r21, player_effect

@@ -338,80 +338,64 @@ calculate_dash_cooldown:
 _cdc_end:
     ret
 
-; Calculate the damage done by an active effect to an NPC.
-;            { max((strength + intellect - npc_dexterity)/4 + weapon, 1)   if non magical
-;   damage = { max(intellect/2 - npc_dexterity/4 + weapon, 1)              if magical
-;            { EFFECT_DEFAULT_DAMAGE                                       if EFFECT_ROLE_DAMAGE_ALL
+; Calculate the strength of an effect's damage (the actual damage done will
+; depend on the stats of the NPC or player).
+;            { ((strength + intellect)/4 + weapon)  if non magical
+; strength = { (intellect/2 + weapon)               if magical
+;            { EFFECT_DEFAULT_DAMAGE                no weapon (unnecessary?)
 ;
 ; Register Usage
-;   r23             calculations
-;   r24             calculations, melee vs ranged indicator
-;   r25             calculations, damage
-;   X (r26:r27)     effect pointer (param)
-;   Y (r28:r29)     npc pointer (param)
-;   Z (r30:r31)     npc data pointer (param)
-calculate_effect_npc_damage:
-    adiw XL, ACTIVE_EFFECT_DATA2_OFFSET
-    ld r24, X
-    sbiw XL, ACTIVE_EFFECT_DATA2_OFFSET
-    sbrs r24, 0
-    rjmp _cend_no_damage
-    andi r24, 0x02
-    breq _cend_check_weapon
-    clr r24
+;   r22             calculations
+;   r23             weapon id (param)
+;   r24             strength (param)
+;   r25             intellect (param), calculated strength
+;   Z (r30:r31)     weapon data pointer (assumed to be ranged)
+calculate_effect_power:
+    dec r23
+    brpl _cep_check_weapon
     ldi r25, EFFECT_DEFAULT_DAMAGE
-    ret
-_cend_no_damage:
-    clr r24
-    clr r25
-    ret
-_cend_check_weapon:
-    lds r25, player_weapon
-    dec r25
-    brmi _cend_no_damage
-    push ZL
-    push ZH
-    ldi ZL, byte3(2*item_table)
+    rjmp _cep_end
+_cep_check_weapon:
+    ldi ZL, byte3(2*item_table+ITEM_EXTRA_OFFSET)
     out RAMPZ, ZL
     ldi ZL, low(2*item_table+ITEM_EXTRA_OFFSET)
     ldi ZH, high(2*item_table+ITEM_EXTRA_OFFSET)
-    ldi r24, ITEM_MEMSIZE
-    mul r24, r25
+    ldi r22, ITEM_MEMSIZE
+    mul r22, r23
     add ZL, r0
     adc ZH, r1
     clr r1
-    elpm r25, Z
-    ldi ZL, byte3(2*npc_table)
-    out RAMPZ, ZL
-    pop ZH
-    pop ZL
-    mov r24, r25
-    swap r25
-    andi r25, 0x0f
-    andi r24, RANGED_MAGICAL
-    brne _cend_magical
-    lds r23, player_augmented_stats+STATS_STRENGTH_OFFSET
-    lds r24, player_augmented_stats+STATS_INTELLECT_OFFSET
-    add r23, r24
-    lsr r23
-    ldi r24, 0
-    rjmp _cend_calc_damage
-_cend_magical:
-    lds r23, player_augmented_stats+STATS_INTELLECT_OFFSET
-    ldi r24, 4
-_cend_calc_damage:
-    lsr r23
-    add r25, r23
-    adiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
-    elpm r23, Z
-    sbiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
-    lsr r23
-    lsr r23
-    sub r25, r23
-    brsh _cend_end
-    ldi r25, 1
-_cend_end:
+    elpm r22, Z
+    sbrc r22, 3
+    rjmp _cep_magical
+_cep_non_magical:
+    add r25, r24
+    lsr r25
+    lsr r25
+    swap r22
+    andi r22, 0x0f
+    add r25, r22
+    rjmp _cep_end
+_cep_magical:
+    lsr r25
+    swap r22
+    andi r22, 0x0f
+    add r25, r22
+_cep_end:
     ret
 
-calculate_effect_player_damage:
+; Calculate the damage done by an active effect to a character.
+;   damage = max(4*strength - dexterity, 1)
+;
+; Register Usage
+;   r24             dexterity (param)
+;   r25             data2 (param), damage
+calculate_effect_damage:
+    swap r25
+    andi r25, 0x0f
+    lsl r25
+    lsl r25
+    sub r25, r24
+    sbrc r25, 7
+    ldi r25, 1
     ret

@@ -275,13 +275,9 @@ npc_resolve_ranged_damage:
     tst r25
     breq _nrrd_end
     ldd r25, Y+NPC_EFFECT_OFFSET
-    mov r24, r25
-    andi r24, 0x7
     andi r25, 0x38
     cpi r25, EFFECT_DAMAGE<<3
-    brne _nrrd_resolve_effects
-    cpi r24, 4
-    brsh _nrrd_end
+    breq _nrrd_end
 _nrrd_resolve_effects:
     ldi XL, low(active_effects)
     ldi XH, high(active_effects)
@@ -309,14 +305,18 @@ _nrrd_effect_iter:
     neg r24
     cpi r24, EFFECT_DAMAGE_DISTANCE
     brsh _nrrd_effect_next
-    sbiw XL, ACTIVE_EFFECT_Y_OFFSET
-    call calculate_effect_npc_damage
+    adiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
+    elpm r24, Z
+    sbiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
+    sbiw XL, ACTIVE_EFFECT_Y_OFFSET-ACTIVE_EFFECT_DATA2_OFFSET
+    ld r25, X
+    sbiw XL, ACTIVE_EFFECT_DATA2_OFFSET
+    call calculate_effect_damage
 _nrrd_damage_effect:
     ldd r23, Y+NPC_EFFECT_OFFSET
     andi r23, 0x38
     brne _nrrd_damage
     ldi r23, EFFECT_DAMAGE<<3
-    or r23, r24
     std Y+NPC_EFFECT_OFFSET, r23
 _nrrd_damage:
     ldd r24, Y+NPC_HEALTH_OFFSET
