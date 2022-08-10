@@ -818,7 +818,7 @@ _up_ranged_attack:
     andi r20, ATTACK_FRAME_DURATION_MASK
     brne _up_animation_trampoline
     lds r20, player_frame
-    cpi r20, RANGED_LAUNCH_FRAME
+    cpi r20, 0 ; NOTE: looks better than RANGED_LAUNCH_FRAME
     brne _up_animation_trampoline
     lds r20, player_weapon
     dec r20
