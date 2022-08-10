@@ -42,7 +42,6 @@ _s0u_npc_iter:
     call npc_move
     call enemy_update
     movw ZL, r16
-    call resolve_enemy_attack
     call npc_resolve_ranged_damage
     call npc_resolve_melee_damage
     rjmp _s0u_npc_next
@@ -56,6 +55,8 @@ _s0u_npc_next:
     cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
     brlo _s0u_npc_iter
     call reorder_npcs
+    call player_resolve_melee_damage
+    call player_resolve_effect_damage
     ret
 
 sector_0_event:

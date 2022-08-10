@@ -2,27 +2,47 @@
 ; acceleration is damage << 1.
 ;
 ; Register Usage
-;   r20-r25         calculations
-;   Y (r28:r29)     enemy pointer (param)
-;   Z (r30:r31)     npc table pointer (param)
-resolve_enemy_attack:
-    push r26
+;   r20-r27         calculations
+;   Y (r28:r29)     enemy pointer
+;   Z (r30:r31)     npc table pointer
+player_resolve_melee_damage:
     lds r25, clock
     andi r25, ATTACK_FRAME_DURATION_MASK
-    brne  _rea_end_trampoline
-_rea_check_action:
+    breq _prmd_iter_setup
+    rjmp _prmd_end
+_prmd_iter_setup:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r27, SECTOR_NPC_COUNT
+_prmd_npc_iter:
+    ldd r25, Y+NPC_IDX_OFFSET
+    dec r25
+    brmi _prmd_next_npc_trampoline
+_prmd_flash_ptr:
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _prmd_next_npc_trampoline
     ldd r25, Y+NPC_ANIM_OFFSET
     lsr r25
     swap r25
     andi r25, 0x7
     cpi r25, ACTION_ATTACK
-    brne _rea_end_trampoline
-_rea_check_weapon:
+    brne _prmd_next_npc_trampoline
+_prmd_check_weapon:
     movw r24, ZL
     adiw ZL, NPC_TABLE_WEAPON_OFFSET
     elpm r22, Z
     dec r22
-    brmi _rea_end_trampoline
+    brmi _prmd_next_npc_trampoline
     ldi ZL, byte3(2*item_table+ITEM_FLAGS_OFFSET)
     out RAMPZ, ZL
     ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
@@ -41,15 +61,15 @@ _rea_check_weapon:
     mov r24, r20
     andi r24, 3
     cpi r24, ITEM_RANGED
-    brne _rea_check_melee_frame
-_rea_check_ranged_frame:
+    brne _prmd_check_melee_frame
+_prmd_check_ranged_frame:
     ldd r24, Y+NPC_ANIM_OFFSET
     andi r24, 0x1c
     cpi r24, RANGED_LAUNCH_FRAME << 2
-    breq _rea_add_ranged_effect
-_rea_end_trampoline:
-    rjmp _rea_end
-_rea_add_ranged_effect:
+    breq _prmd_add_ranged_effect
+_prmd_next_npc_trampoline:
+    rjmp _prmd_next_npc
+_prmd_add_ranged_effect:
     ldd r22, Y+NPC_ANIM_OFFSET
     swap r22
     lsl r22
@@ -69,38 +89,38 @@ _rea_add_ranged_effect:
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     ldd r20, Y+NPC_ANIM_OFFSET
     andi r20, 0x03
-_rea_ranged_facing_up:
+_prmd_ranged_facing_up:
     cpi r20, DIRECTION_UP
-    brne _rea_ranged_facing_down
+    brne _prmd_ranged_facing_down
     subi r25, 2*EFFECT_SPRITE_HEIGHT/3
-_rea_ranged_facing_down:
+_prmd_ranged_facing_down:
     cpi r20, DIRECTION_DOWN
-    brne _rea_ranged_facing_left
+    brne _prmd_ranged_facing_left
     subi r25, -2*EFFECT_SPRITE_HEIGHT/3
-_rea_ranged_facing_left:
+_prmd_ranged_facing_left:
     cpi r20, DIRECTION_LEFT
-    brne _rea_ranged_facing_right
+    brne _prmd_ranged_facing_right
     subi r24, 2*EFFECT_SPRITE_WIDTH/3
-_rea_ranged_facing_right:
+_prmd_ranged_facing_right:
     cpi r20, DIRECTION_RIGHT
-    brne _rea_add_effect
+    brne _prmd_add_effect
     subi r24, -2*EFFECT_SPRITE_WIDTH/3
-_rea_add_effect:
+_prmd_add_effect:
     push ZL
     push ZH
     call add_active_effect
     pop ZH
     pop ZL
-    rjmp _rea_end
-_rea_check_melee_frame:
+    rjmp _prmd_end
+_prmd_check_melee_frame:
     ldd r24, Y+NPC_ANIM_OFFSET
     mov r26, r24
     lsr r24
     lsr r24
     andi r24, 0x7
     cpi r24, ATTACK_DAMAGE_FRAME
-    brne _rea_end_trampoline
-_rea_check_distance:
+    brne _prmd_next_npc_trampoline
+_prmd_check_distance:
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     lds r24, player_position_x
@@ -114,14 +134,14 @@ _rea_check_distance:
     call character_striking_distance
     movw ZL, r22
     cp r26, r0
-    brsh _rea_end
-_rea_damage_effect:
+    brsh _prmd_end
+_prmd_damage_effect:
     lds r22, player_effect
     andi r22, 0x38
-    brne _rea_damage
+    brne _prmd_damage
     ldi r22, EFFECT_DAMAGE<<3
     sts player_effect, r22
-_rea_damage:
+_prmd_damage:
     adiw ZL, NPC_TABLE_ENEMY_STRENGTH_OFFSET
     elpm r23, Z+
     elpm r24, Z+
@@ -131,34 +151,97 @@ _rea_damage:
     lds r24, player_health
     sub r24, r23
     sts player_health, r24
-    brsh _rea_push
+    brsh _prmd_push
     sts player_health, r1
     ldi r25, GAME_OVER_DEAD
     call load_gameover
-    rjmp _rea_end
-_rea_push:
+    rjmp _prmd_end
+_prmd_push:
     lsl r23
     mov r22, r23
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     lds r25, player_position_x
     cp r24, r25
-    brlo _rea_push_x
+    brlo _prmd_push_x
     neg r22
-_rea_push_x:
+_prmd_push_x:
     lds r25, player_velocity_x
     adnv r25, r22
     sts player_velocity_x, r25
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     lds r25, player_position_y
     cp r24, r25
-    brlo _rea_push_y
+    brlo _prmd_push_y
     neg r23
-_rea_push_y:
+_prmd_push_y:
     lds r25, player_velocity_y
     adnv r25, r23
     sts player_velocity_y, r25
-_rea_end:
-    pop r26
+_prmd_next_npc:
+    adiw YL, NPC_MEMSIZE
+    dec r27
+    breq _prmd_end
+    rjmp _prmd_npc_iter
+_prmd_end:
+    ret
+
+; Apply damage to the player from effects, including ranged attacks.
+;
+; Register Usage
+;   r22-r25         calculations
+;   Y (r28:r29)     effect pointer
+player_resolve_effect_damage:
+    lds r25, player_effect
+    andi r25, 0x38
+    cpi r25, EFFECT_DAMAGE << 3
+    breq _pred_end
+    ldi YL, low(active_effects)
+    ldi YH, high(active_effects)
+    ldi r22, ACTIVE_EFFECT_COUNT
+_pred_effect_iter:
+    ldd r24, Y+ACTIVE_EFFECT_DATA_OFFSET
+    andi r24, 0x38
+    breq _pred_effect_next
+    ldd r24, Y+ACTIVE_EFFECT_DATA2_OFFSET
+    andi r24, 0x02
+    breq _pred_effect_next
+    ldd r24, Y+ACTIVE_EFFECT_X_OFFSET
+    lds r25, player_position_x
+    sub r24, r25
+    sbrc r24, 7
+    neg r24
+    cpi r24, EFFECT_DAMAGE_DISTANCE
+    brsh _pred_effect_next
+    ldd r24, Y+ACTIVE_EFFECT_Y_OFFSET
+    lds r25, player_position_y
+    sub r24, r25
+    sbrc r24, 7
+    neg r24
+    cpi r24, EFFECT_DAMAGE_DISTANCE
+    brsh _pred_effect_next
+    lds r24, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    ldd r25, Y+ACTIVE_EFFECT_DATA2_OFFSET
+    call calculate_effect_damage
+_pred_damage_effect:
+    lds r24, player_effect
+    andi r24, 0x38
+    brne _pred_damage
+    ldi r24, EFFECT_DAMAGE<<3
+    sts player_effect, r24
+_pred_damage:
+    lds r24, player_health
+    sub r24, r25
+    sts player_health, r24
+    brsh _pred_effect_next
+    sts player_health, r1
+    ldi r25, GAME_OVER_DEAD
+    call load_gameover
+    rjmp _pred_end
+_pred_effect_next:
+    adiw YL, ACTIVE_EFFECT_MEMSIZE
+    dec r22
+    brne  _pred_effect_iter
+_pred_end:
     ret
 
 ; Apply damage to the given enemy and push it away from the player. The pushing
@@ -291,7 +374,6 @@ _nrrd_effect_iter:
     breq _nrrd_effect_next
     ld r24, X+ ; ACTIVE_EFFECT_X_OFFSET
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
-    subi r24, -(EFFECT_SPRITE_WIDTH-EFFECT_DAMAGE_DISTANCE)/2
     sub r24, r25
     sbrc r24, 7
     neg r24
@@ -299,7 +381,6 @@ _nrrd_effect_iter:
     brsh _nrrd_effect_next
     ld r24, X ; ACTIVE_EFFECT_Y_OFFSET
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    subi r24, -(EFFECT_SPRITE_HEIGHT-EFFECT_DAMAGE_DISTANCE)/2
     sub r24, r25
     sbrc r24, 7
     neg r24
