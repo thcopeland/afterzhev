@@ -1,13 +1,8 @@
 # Game Engine
-* Player stamina and health bars
-* Enemy health bars
-* Implement second attack
+* Sound
+* Savepoints
 * Optimize RAM usage
-* Sound generation
-* Sound effects
-* Music (optional, or probably 2560/2561 only)
 * Opening/loading screen
-* Credits screen
 * Prologue screens (maybe 2560/2561 only?)
 * Help screen
 * About screen
