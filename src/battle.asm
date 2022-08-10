@@ -62,9 +62,8 @@ _rea_add_ranged_effect:
     andi r25, 0x38
     or r22, r25
     ldi r23, EFFECT_ROLE_DAMAGE_PLAYER
-    lsr r20
-    lsr r20
-    andi r20, 0x30
+    swap r20
+    andi r20, 0x0c
     or r23, r20
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H

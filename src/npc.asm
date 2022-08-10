@@ -173,9 +173,9 @@ _nm_test_ranged_up:
     sbrc r22, 7
     neg r22
     cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2
-    brsh _nm_attack_end
+    brsh _nm_test_move
     cpi r23, EFFECT_ESTIMATED_RANGE
-    brsh _nm_attack_end
+    brsh _nm_test_move
     rjmp _nm_ranged_attack
 _nm_test_ranged_down:
     cpi r21, DIRECTION_DOWN
@@ -183,9 +183,9 @@ _nm_test_ranged_down:
     sbrc r22, 7
     neg r22
     cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2
-    brsh _nm_attack_end
+    brsh _nm_test_move
     cpi r23, low(-EFFECT_ESTIMATED_RANGE)
-    brlo _nm_attack_end
+    brlo _nm_test_move
     rjmp _nm_ranged_attack
 _nm_test_ranged_left:
     cpi r21, DIRECTION_LEFT
@@ -193,9 +193,9 @@ _nm_test_ranged_left:
     sbrc r23, 7
     neg r23
     cpi r23, 3*EFFECT_DAMAGE_DISTANCE/2
-    brsh _nm_attack_end
+    brsh _nm_test_move
     cpi r22, EFFECT_ESTIMATED_RANGE
-    brsh _nm_attack_end
+    brsh _nm_test_move
     rjmp _nm_ranged_attack
 _nm_test_ranged_right:
     cpi r21, DIRECTION_right
@@ -203,9 +203,9 @@ _nm_test_ranged_right:
     sbrc r23, 7
     neg r23
     cpi r23, 3*EFFECT_DAMAGE_DISTANCE/2
-    brsh _nm_attack_end
+    brsh _nm_test_move
     cpi r22, low(-EFFECT_ESTIMATED_RANGE)
-    brlo _nm_attack_end
+    brlo _nm_test_move
 _nm_ranged_attack:
     ldd r24, Y+NPC_ANIM_OFFSET
     andi r24, 0x1f

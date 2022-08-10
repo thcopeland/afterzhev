@@ -166,9 +166,9 @@ _rg_render_active_effects:
     ldi YH, high(active_effects)
     ldi r16, ACTIVE_EFFECT_COUNT
 _rg_active_effect_iter:
-    ldd r23, Y+ACTIVE_EFFECT_DATA2_OFFSET
-    andi r23, 0x0c
-    brne _rg_active_effect_iter_next
+    ldd r23, Y+ACTIVE_EFFECT_DATA_OFFSET
+    andi r23, 0x38
+    breq _rg_active_effect_iter_next
     ldd r22, Y+ACTIVE_EFFECT_DATA_OFFSET
     ldd r24, Y+ACTIVE_EFFECT_X_OFFSET
     cpi r24, TILE_WIDTH*SECTOR_WIDTH - EFFECT_SPRITE_WIDTH
@@ -649,7 +649,7 @@ _pa_end:
 ;
 ; Active Effect Layout:
 ;   data [direction:2][effect:3][frame:3]
-;   data2 [unused:2][speed:2][delay:2][role:2]
+;   data2 [unused:4][speed:2][role:2]
 ;   x coordinate
 ;   y coordinate
 ;
@@ -666,20 +666,9 @@ _uae_active_effect_iter:
     andi r22, 0x38  ; effect
     breq _uae_active_effect_next
     ldd r23, Z+ACTIVE_EFFECT_DATA2_OFFSET
-    mov r24, r23
-    andi r24, 0x0c ; delay
-    breq _uae_update_effect_position
-_uae_update_effect_delay:
-    lds r25, clock
-    andi r25, EFFECT_DELAY_FRAME_DURATION_MASK
-    brne _uae_active_effect_next
-    subi r24, 1<<2
-    andi r23, 0xf3
-    or r23, r24
-    std Z+ACTIVE_EFFECT_DATA2_OFFSET, r23
-    rjmp _uae_active_effect_next
 _uae_update_effect_position:
-    swap r23
+    lsr r23
+    lsr r23
     andi r23, 0x03  ; speed
     breq _uae_update_effect_frame
     lds r24, clock
@@ -877,8 +866,7 @@ _up_add_effect:
     lsl r22
     lsl r22
     andi r20, 0xc0
-    lsr r20
-    lsr r20
+    swap r20
     ldi r23, EFFECT_ROLE_DAMAGE_NPCS
     or r23, r20
     rcall add_active_effect
