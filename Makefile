@@ -25,12 +25,12 @@ sim-slow: $(BIN)/main.hex $(BIN)/simulate-slow
 	./$(BIN)/simulate-slow $(MCU_TARGET)
 
 $(BIN)/simulate-fast: $(SIM)/simulate-fast.c
-	make -C sim/slimavr-0.1.1
-	gcc $< $(SIM)/slimavr-0.1.1/libslimavr.a -O2 -o $@ -lglut -lGL -lpthread
+	make -C sim/slimavr-0.1.2
+	gcc $< $(SIM)/slimavr-0.1.2/libslimavr.a -O2 -o $@ -lglut -lGL -lpthread
 
 $(BIN)/simulate-slow: $(SIM)/simulate-slow.c
 	gcc $< -O2 -o $@ -lglut -lGL -lpthread -lsimavr
 
 clean:
-	make -C sim/slimavr-0.1.1 clean
+	make -C sim/slimavr-0.1.2 clean
 	rm -rf $(BIN)/* $(SIM)/simulate
