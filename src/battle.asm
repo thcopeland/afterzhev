@@ -350,48 +350,51 @@ _nrmd_end:
 ;
 ; Register Usage
 ;   r22-r25         calculations
-;   X (r26:r27)     memory pointer, calculations
+;   X (r26:r27)     temp registers, calculations
 ;   Y (r28:r29)     enemy pointer (param)
-;   Z (r30:r31)     npc table pointer (param)
+;   Z (r30:r31)     memory pointer, npc table pointer (param)
 npc_resolve_ranged_damage:
     ldd r25, Y+NPC_IDX_OFFSET
     tst r25
-    breq _nrrd_end
+    breq _nrrd_hard_end
     ldd r25, Y+NPC_EFFECT_OFFSET
     andi r25, 0x38
     cpi r25, EFFECT_DAMAGE<<3
-    breq _nrrd_end
+    breq _nrrd_hard_end
 _nrrd_resolve_effects:
-    ldi XL, low(active_effects)
-    ldi XH, high(active_effects)
+    movw XL, ZL
+    ldi ZL, low(active_effects)
+    ldi ZH, high(active_effects)
     ldi r22, ACTIVE_EFFECT_COUNT
 _nrrd_effect_iter:
-    ld r24, X+ ; ACTIVE_EFFECT_DATA_OFFSET
+    ldd r24, Z+ACTIVE_EFFECT_DATA_OFFSET
     andi r24, 0x38
     breq _nrrd_effect_next
-    ld r24, X+ ; ACTIVE_EFFECT_DATA2_OFFSET
+    ldd r24, Z+ACTIVE_EFFECT_DATA2_OFFSET
     andi r24, 0x01
     breq _nrrd_effect_next
-    ld r24, X+ ; ACTIVE_EFFECT_X_OFFSET
+    ldd r24, Z+ACTIVE_EFFECT_X_OFFSET
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     sub r24, r25
     sbrc r24, 7
     neg r24
     cpi r24, EFFECT_DAMAGE_DISTANCE
     brsh _nrrd_effect_next
-    ld r24, X ; ACTIVE_EFFECT_Y_OFFSET
+    ldd r24, Z+ACTIVE_EFFECT_Y_OFFSET
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     sub r24, r25
     sbrc r24, 7
     neg r24
     cpi r24, EFFECT_DAMAGE_DISTANCE
     brsh _nrrd_effect_next
+    mov r0, ZL
+    mov r23, ZH
+    movw ZL, XL
     adiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
     elpm r24, Z
-    sbiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
-    sbiw XL, ACTIVE_EFFECT_Y_OFFSET-ACTIVE_EFFECT_DATA2_OFFSET
-    ld r25, X
-    sbiw XL, ACTIVE_EFFECT_DATA2_OFFSET
+    mov ZL, r0
+    mov ZH, r23
+    ldd r25, Z+ACTIVE_EFFECT_DATA2_OFFSET
     call calculate_effect_damage
 _nrrd_damage_effect:
     ldd r23, Y+NPC_EFFECT_OFFSET
@@ -404,13 +407,16 @@ _nrrd_damage:
     sub r24, r25
     std Y+NPC_HEALTH_OFFSET, r24
     brsh _nrrd_effect_next
+    movw ZL, XL
     rcall resolve_enemy_death
     rjmp _nrrd_end
 _nrrd_effect_next:
-    adiw XL, ACTIVE_EFFECT_MEMSIZE
+    adiw ZL, ACTIVE_EFFECT_MEMSIZE
     dec r22
     brne _nrrd_effect_iter
 _nrrd_end:
+    movw ZL, XL
+_nrrd_hard_end:
     ret
 
 ; Record an enemy's death, add a corpse, and handle drops.
