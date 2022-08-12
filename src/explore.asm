@@ -3,6 +3,7 @@ explore_update_game:
     rcall handle_controls
     call update_player_stat_effects
     rcall update_active_effects
+    rcall update_savepoint
     rcall update_player
     rcall move_camera
 
@@ -50,6 +51,26 @@ render_game:
     lds r24, current_sector
     lds r25, current_sector+1
     call render_sector
+_rg_savepoint:
+    lds r20, savepoint_data
+    mov r21, r20
+    andi r21, 0x38
+    breq _rg_render_loose_items
+    andi r20, 0x07
+    ldi ZL, byte3(2*savepoint_sprites)
+    out RAMPZ, ZL
+    ldi ZL, low(2*savepoint_sprites)
+    ldi ZH, high(2*savepoint_sprites)
+    ldi r21, SAVEPOINT_SPRITE_MEMSIZE
+    mul r20, r21
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    ldi r22, SAVEPOINT_SPRITE_WIDTH
+    ldi r23, SAVEPOINT_SPRITE_HEIGHT
+    lds r24, savepoint_x
+    lds r25, savepoint_y
+    call render_sprite
 _rg_render_loose_items:
     ldi YL, low(sector_loose_items)
     ldi YH, high(sector_loose_items)
@@ -535,7 +556,7 @@ _hmb_npc_next:
     adiw YL, NPC_MEMSIZE
     dec r22
     brne _hmb_npc_iter
-    rjmp _hmb_end
+    rjmp _hmb_nearby_savepoint
 _hmb_nearby_shopkeeper:
     adiw ZL, NPC_TABLE_SHOP_IDX_OFFSET
     lpm r25, Z
@@ -576,6 +597,27 @@ _hmb_available_conversation:
 _hmb_conversation_next:
     dec r20
     brne _hmb_conversation_iter
+_hmb_nearby_savepoint:
+    lds r22, player_position_x
+    lds r23, player_position_y
+    lds r24, savepoint_x
+    lds r25, savepoint_y
+    sub r24, r22
+    sbrc r24, 7
+    neg r24
+    sub r25, r23
+    sbrc r25, 7
+    neg r25
+    cpi r24, SAVEPOINT_DISTANCE
+    brsh _hmb_end
+    cpi r25, SAVEPOINT_DISTANCE
+    brsh _hmb_end
+    lds r25, savepoint_data
+    mov r24, r25
+    andi r25, 0xc0
+    brne _hmb_end
+    ori r24, 0x40
+    sts savepoint_data, r24
 _hmb_end:
     ret
 
@@ -720,6 +762,104 @@ _uae_active_effect_next:
     adiw ZL, ACTIVE_EFFECT_MEMSIZE
     dec r20
     brne _uae_active_effect_iter
+    ret
+
+; Update the savepoint's animation and continue saving the game state, if necessary.
+;
+; Register Usage
+;   r22-r25         calculations
+;   Z (r30:r31)     memory pointer
+update_savepoint:
+    lds r25, savepoint_data
+    mov r24, r25
+    andi r24, 0x38
+    brne _us_check_savepoint_status
+    rjmp _us_end
+_us_check_savepoint_status:
+    mov r24, r25
+    cpi r24, 0xc0
+    brsh _us_used
+    cpi r24, 0x40
+    brsh _us_using
+    rjmp _us_unused
+_us_using:
+    ldi ZL, low(gamemem_start)
+    ldi ZH, high(gamemem_start)
+    ldi r24, low(SAVEPOINT_DATA_START)
+    ldi r25, high(SAVEPOINT_DATA_START)
+    lds r22, savepoint_progress
+    add ZL, r22
+    adc ZH, r1
+    add r24, r22
+    adc r25, r1
+_us_check_iter:
+    cpi r22, gamemem_end - gamemem_start
+    brsh _us_marked_as_used
+; _us_check_skip_npcs:
+;     cpi r22, sector_npcs - gamemem_start
+;     brne _us_iter
+;     sts framebuffer, r1
+;     subi r22, low(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
+;     subi r24, low(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
+;     sbci r25, high(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
+;     subi ZL, low(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
+;     sbci ZH, high(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
+_us_iter:
+    ; Read the value to save time and wear by not writing unnecessarily.
+    ; Since EEPROM is only accessed here (during the game), and we know
+    ; this happens at most once every 16ms, there's no need to check for
+    ; past EEPROM access completion.
+    out EEARH, r25
+    out EEARL, r24
+    sbi EECR, EEMPE
+    sbi EECR, EERE
+    adiw r24, 1
+    in r0, EEDR
+    ld r23, Z+
+    cp r0, r23
+    brne _us_check_iter
+_us_write:
+    out EEDR, r23
+    sbi EECR, EEPE
+    inc r22
+    sts savepoint_progress, r22
+    cpi r22, gamemem_end - gamemem_start
+    ; brlo _us_used
+    brlo _us_end
+_us_marked_as_used:
+    sts savepoint_progress, r1
+    lds r25, savepoint_data
+    mov r24, r25
+    ori r25, 0xc0
+    sts savepoint_data, r25
+    lsr r24
+    lsr r24
+    lsr r24
+    andi r24, 0x07
+    ldi r25, 1
+    mpow2 r25, r24
+    lds r24, savepoint_used
+    or r24, r25
+    sts savepoint_used, r24
+    rjmp _us_end
+_us_used:
+    lds r24, clock
+    andi r24, SAVEPOINT_FRAME_MASK
+    brne _us_end
+    lds r25, savepoint_data
+    mov r24, r25
+    andi r24, 0x07
+    inc r24
+    cpi r24, 7
+    brne _us_used_update_animation
+    ldi r24, SAVEPOINT_DONE_OFFSET
+_us_used_update_animation:
+    andi r25, 0xf8
+    or r25, r24
+    sts savepoint_data, r25
+_us_unused:
+    ; do nothing
+_us_end:
     ret
 
 ; Add an effect to the list. If there are no empty slots, replace a random one.
@@ -1054,7 +1194,7 @@ _ls_load_npcs_iter:
     mov r20, r19
     movw XL, ZL
     dec r20
-    brmi _ls_run_handler
+    brmi _ls_load_savepoint
     mov r21, r20
     mov r22, r20
     lsr r22
@@ -1095,6 +1235,31 @@ _ls_load_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r18
     brne _ls_load_npcs_iter
+_ls_load_savepoint:
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-(SECTOR_SAVEPOINT_OFFSET))
+    sbci ZH, high(-(SECTOR_SAVEPOINT_OFFSET))
+    elpm r20, Z+ ; index
+    elpm r21, Z+ ; x
+    elpm r22, Z  ; y
+    sts savepoint_progress, r1
+    sts savepoint_x, r21
+    sts savepoint_y, r22
+    mov r21, r20
+    lsl r21
+    lsl r21
+    lsl r21
+    andi r21, 0x38
+    lds r22, savepoint_used
+    nbit r22, r20
+    breq _ls_savepoint_unused
+_ls_savepoint_used:
+    ori r21, (0xc0 | SAVEPOINT_DONE_OFFSET)
+_ls_savepoint_unused:
+    sts savepoint_data, r21
 _ls_run_handler:
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
