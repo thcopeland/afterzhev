@@ -53,6 +53,7 @@ _init_clear_effects_iter:
     sti mode_clock, 0
     sti current_shop_index, 0xff
     stiw conversation_over, 0xffff
+    sti savepoint_used, 0x00
     stiw seed, 1
     sti gameover_state, 0xc0
 

@@ -56,9 +56,10 @@ global_data:        .byte 0
 preplaced_item_presence: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
 npc_presence:       .byte TOTAL_NPC_COUNT>>3
 conversation_over:  .byte TOTAL_CONVERSATION_COUNT>>3
-savepoint_used:     .byte SAVEPOINT_COUNT>>3
 
 savedmem_end:
+
+savepoint_used:     .byte SAVEPOINT_COUNT>>3
 
 sector_loose_items: .byte SECTOR_DYNAMIC_ITEM_MEMSIZE*SECTOR_DYNAMIC_ITEM_COUNT
 

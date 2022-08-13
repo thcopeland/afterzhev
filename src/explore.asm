@@ -1,11 +1,13 @@
 explore_update_game:
+    rcall update_savepoint
     rcall render_game
     rcall handle_controls
     call update_player_stat_effects
     rcall update_active_effects
-    rcall update_savepoint
+    rcall update_savepoint_animation
     rcall update_player
     rcall move_camera
+    rcall update_savepoint
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
@@ -764,7 +766,41 @@ _uae_active_effect_next:
     brne _uae_active_effect_iter
     ret
 
-; Update the savepoint's animation and continue saving the game state, if necessary.
+; Update the savepoint's animation, if any.
+;
+; Register Usage
+;   r24-r25         calculations
+update_savepoint_animation:
+    lds r25, clock
+    andi r25, SAVEPOINT_FRAME_MASK
+    brne _usa_end
+    lds r25, savepoint_data
+    mov r24, r25
+    andi r24, 0x38
+    breq _usa_end
+    cpi r25, 0x40
+    brlo _usa_end
+    mov r24, r25
+    andi r24, 0x07
+    inc r24
+    cpi r24, SAVEPOINT_COUNT-1
+    brlo _usa_save_frame
+    ldi r24, SAVEPOINT_DONE_OFFSET
+_usa_save_frame:
+    andi r25, 0xf8
+    or r25, r24
+    sts savepoint_data, r25
+_usa_end:
+    ret
+
+; Continue saving the game state, if necessary. This does not check EEPE, so
+; the caller must ensure that there's enough time between calls for past
+; accesses to complete.
+;
+; Saved game layout:
+;   magic byte SAVEPOINT_MAGIC (1 byte)
+;   used savepoints (1 byte)
+;   game data (savedmem_end - savedmem_start bytes)
 ;
 ; Register Usage
 ;   r22-r25         calculations
@@ -773,82 +809,85 @@ update_savepoint:
     lds r25, savepoint_data
     mov r24, r25
     andi r24, 0x38
-    brne _us_check_savepoint_status
-    rjmp _us_end
-_us_check_savepoint_status:
-    mov r24, r25
-    cpi r24, 0xc0
-    brsh _us_used
-    cpi r24, 0x40
-    brsh _us_using
-    rjmp _us_unused
-_us_using:
+    breq _us_end_trampoline
+    cpi r25, 0x80
+    brsh _us_end_trampoline
+    cpi r25, 0x40
+    brlo _us_end_trampoline
     ldi ZL, low(savedmem_start)
     ldi ZH, high(savedmem_start)
     ldi r24, low(SAVEPOINT_DATA_START)
     ldi r25, high(SAVEPOINT_DATA_START)
     lds r22, savepoint_progress
-    add ZL, r22
-    adc ZH, r1
-    add r24, r22
-    adc r25, r1
-_us_check_iter:
-    cpi r22, savedmem_end - savedmem_start
-    brsh _us_marked_as_used
-_us_iter:
-    ; Read the value to save time and wear by not writing unnecessarily.
-    ; Since EEPROM is only accessed here (during the game), and we know
-    ; this happens at most once every 16ms, there's no need to check for
-    ; past EEPROM access completion.
+    cpi r22, 2
+    brsh _us_write_data
+    cpi r22, 1
+    brsh _us_write_used
+_us_write_magic_byte:
+    inc r22
+    sts savepoint_progress, r22
     out EEARH, r25
     out EEARL, r24
+    ldi r23, SAVEPOINT_MAGIC
+    out EEDR, r23
     sbi EECR, EEMPE
+    sbi EECR, EEPE
+_us_end_trampoline:
+    rjmp _us_end
+_us_write_used:
+    adiw r24, 1
+    inc r22
+    sts savepoint_progress, r22
+    out EEARH, r25
+    out EEARL, r24
+    lds r23, savepoint_data
+    lsr r23
+    lsr r23
+    lsr r23
+    andi r23, 0x07
+    ldi r22, 1
+    mpow2 r22, r23
+    lds r23, savepoint_used
+    or r23, r22
+    sts savepoint_used, r23
+    out EEDR, r23
+    sbi EECR, EEMPE
+    sbi EECR, EEPE
+    rjmp _us_end
+_us_write_data:
+    add r24, r22
+    adc r25, r1
+    subi r22, 2
+    add ZL, r22
+    adc ZH, r1
+_us_check_iter:
+    cpi r22, savedmem_end - savedmem_start
+    brsh _us_save_complete
+_us_iter:
+    out EEARH, r25
+    out EEARL, r24
     sbi EECR, EERE
     adiw r24, 1
     ld r23, Z+
     inc r22
-    sts savepoint_progress, r22
     in r0, EEDR
     cp r0, r23
     breq _us_check_iter
 _us_write:
     out EEDR, r23
+    cbi EECR, EERE ; should be unnecessary, along with some other EEMPE's
+    sbi EECR, EEMPE
     sbi EECR, EEPE
+    mov r23, r22
+    subi r23, low(-2)
+    sts savepoint_progress, r23
     cpi r22, savedmem_end - savedmem_start
-    brlo _us_used
-_us_marked_as_used:
+    brlo _us_end
+_us_save_complete:
     sts savepoint_progress, r1
     lds r25, savepoint_data
-    mov r24, r25
     ori r25, 0xc0
     sts savepoint_data, r25
-    lsr r24
-    lsr r24
-    lsr r24
-    andi r24, 0x07
-    ldi r25, 1
-    mpow2 r25, r24
-    lds r24, savepoint_used
-    or r24, r25
-    sts savepoint_used, r24
-    rjmp _us_end
-_us_used:
-    lds r24, clock
-    andi r24, SAVEPOINT_FRAME_MASK
-    brne _us_end
-    lds r25, savepoint_data
-    mov r24, r25
-    andi r24, 0x07
-    inc r24
-    cpi r24, 7
-    brne _us_used_update_animation
-    ldi r24, SAVEPOINT_DONE_OFFSET
-_us_used_update_animation:
-    andi r25, 0xf8
-    or r25, r24
-    sts savepoint_data, r25
-_us_unused:
-    ; do nothing
 _us_end:
     ret
 
@@ -858,27 +897,43 @@ _us_end:
 ;   r22-r25         calculations
 ;   Z (r30:r31)     memory pointer
 restore_from_savepoint:
-    ldi ZL, low(savedmem_start)
-    ldi ZH, high(savedmem_start)
     ldi r24, low(SAVEPOINT_DATA_START)
     ldi r25, high(SAVEPOINT_DATA_START)
-    lds r22, savedmem_end - savedmem_start
-_rfs_iter:
-; simavr reads all 0xff for some reason
+_rfs_check_magic:
     sbi EECR, EEMPE
     out EEARH, r25
     out EEARL, r24
     sbi EECR, EERE
     in r23, EEDR
-    st Z+, r23
     adiw r24, 1
+    cpi r23, SAVEPOINT_MAGIC
+    brne _rfs_end
+_rfs_load_used:
+    out EEARH, r25
+    out EEARL, r24
+    sbi EECR, EEMPE
+    sbi EECR, EERE
+    in r23, EEDR
+    adiw r24, 1
+    ldi ZL, low(savedmem_start)
+    ldi ZH, high(savedmem_start)
+    ldi r22, savedmem_end - savedmem_start
+_rfs_iter:
+    out EEARH, r25
+    out EEARL, r24
+    sbi EECR, EEMPE
+    sbi EECR, EERE
+    in r23, EEDR
+    st Z+, r23
 _rfs_check:
+    adiw r24, 1
     dec r22
     brne _rfs_iter
 _rfs_load_sector: ; load any sector-specific stuff that was not saved
     lds ZL, current_sector
     lds ZH, current_sector+1
     rcall load_sector
+_rfs_end:
     ret
 
 ; Add an effect to the list. If there are no empty slots, replace a random one.
