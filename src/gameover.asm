@@ -126,6 +126,7 @@ _grd_play_again:
     ldi ZL, low(2*ui_str_press_any_button)
     ldi ZH, high(2*ui_str_press_any_button)
     rcall gameover_fade_text
+    call restore_from_savepoint
     ret
 
 gameover_render_win:

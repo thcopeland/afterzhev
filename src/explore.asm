@@ -783,8 +783,8 @@ _us_check_savepoint_status:
     brsh _us_using
     rjmp _us_unused
 _us_using:
-    ldi ZL, low(gamemem_start)
-    ldi ZH, high(gamemem_start)
+    ldi ZL, low(savedmem_start)
+    ldi ZH, high(savedmem_start)
     ldi r24, low(SAVEPOINT_DATA_START)
     ldi r25, high(SAVEPOINT_DATA_START)
     lds r22, savepoint_progress
@@ -793,17 +793,8 @@ _us_using:
     add r24, r22
     adc r25, r1
 _us_check_iter:
-    cpi r22, gamemem_end - gamemem_start
+    cpi r22, savedmem_end - savedmem_start
     brsh _us_marked_as_used
-; _us_check_skip_npcs:
-;     cpi r22, sector_npcs - gamemem_start
-;     brne _us_iter
-;     sts framebuffer, r1
-;     subi r22, low(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
-;     subi r24, low(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
-;     sbci r25, high(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
-;     subi ZL, low(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
-;     sbci ZH, high(-NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
 _us_iter:
     ; Read the value to save time and wear by not writing unnecessarily.
     ; Since EEPROM is only accessed here (during the game), and we know
@@ -814,18 +805,17 @@ _us_iter:
     sbi EECR, EEMPE
     sbi EECR, EERE
     adiw r24, 1
-    in r0, EEDR
     ld r23, Z+
+    inc r22
+    sts savepoint_progress, r22
+    in r0, EEDR
     cp r0, r23
-    brne _us_check_iter
+    breq _us_check_iter
 _us_write:
     out EEDR, r23
     sbi EECR, EEPE
-    inc r22
-    sts savepoint_progress, r22
-    cpi r22, gamemem_end - gamemem_start
-    ; brlo _us_used
-    brlo _us_end
+    cpi r22, savedmem_end - savedmem_start
+    brlo _us_used
 _us_marked_as_used:
     sts savepoint_progress, r1
     lds r25, savepoint_data
@@ -860,6 +850,35 @@ _us_used_update_animation:
 _us_unused:
     ; do nothing
 _us_end:
+    ret
+
+; Restore the game state from the savepoint. Assumes that a valid savepoint exists.
+;
+; Register Usage
+;   r22-r25         calculations
+;   Z (r30:r31)     memory pointer
+restore_from_savepoint:
+    ldi ZL, low(savedmem_start)
+    ldi ZH, high(savedmem_start)
+    ldi r24, low(SAVEPOINT_DATA_START)
+    ldi r25, high(SAVEPOINT_DATA_START)
+    lds r22, savedmem_end - savedmem_start
+_rfs_iter:
+; simavr reads all 0xff for some reason
+    sbi EECR, EEMPE
+    out EEARH, r25
+    out EEARL, r24
+    sbi EECR, EERE
+    in r23, EEDR
+    st Z+, r23
+    adiw r24, 1
+_rfs_check:
+    dec r22
+    brne _rfs_iter
+_rfs_load_sector: ; load any sector-specific stuff that was not saved
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    rcall load_sector
     ret
 
 ; Add an effect to the list. If there are no empty slots, replace a random one.

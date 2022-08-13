@@ -10,32 +10,17 @@ vid_fbuff_offset:   .byte 2
 vid_row_repeat:     .byte 1
 vid_work_complete:  .byte 1
 
-gamemem_start:
+prev_controller_values: .byte 1
+controller_values:  .byte 1
+
+savedmem_start:
 
 clock:              .byte 2
 mode_clock:         .byte 2
 seed:               .byte 2
 
-prev_controller_values: .byte 1
-controller_values:  .byte 1
-
 game_mode:          .byte 1
 current_sector:     .byte 2
-
-preplaced_item_presence: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
-sector_loose_items: .byte SECTOR_DYNAMIC_ITEM_MEMSIZE*SECTOR_DYNAMIC_ITEM_COUNT
-
-npc_presence:       .byte TOTAL_NPC_COUNT>>3
-sector_npcs:        .byte NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT
-character_render:   .byte CHARACTER_MEMSIZE
-
-savepoint_used:     .byte SAVEPOINT_COUNT>>3
-savepoint_data:     .byte 1 ; [status:2][index:3][frame:3]
-savepoint_progress: .byte 1
-savepoint_x:        .byte 1
-savepoint_y:        .byte 1
-
-conversation_over:  .byte TOTAL_CONVERSATION_COUNT>>3
 
 camera_position_x:  .byte 1
 camera_position_y:  .byte 1
@@ -65,9 +50,27 @@ player_gold:        .byte 2
 player_xp:          .byte 2
 player_effects:     .byte PLAYER_EFFECT_MEMSIZE*PLAYER_EFFECT_COUNT
 player_inventory:   .byte PLAYER_INVENTORY_SIZE
-active_effects:     .byte ACTIVE_EFFECT_MEMSIZE*ACTIVE_EFFECT_COUNT
 sector_data:        .byte 8
 global_data:        .byte 0
+
+preplaced_item_presence: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
+npc_presence:       .byte TOTAL_NPC_COUNT>>3
+conversation_over:  .byte TOTAL_CONVERSATION_COUNT>>3
+savepoint_used:     .byte SAVEPOINT_COUNT>>3
+
+savedmem_end:
+
+sector_loose_items: .byte SECTOR_DYNAMIC_ITEM_MEMSIZE*SECTOR_DYNAMIC_ITEM_COUNT
+
+sector_npcs:        .byte NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT
+character_render:   .byte CHARACTER_MEMSIZE
+
+savepoint_data:     .byte 1 ; [status:2][index:3][frame:3]
+savepoint_progress: .byte 1
+savepoint_x:        .byte 1
+savepoint_y:        .byte 1
+
+active_effects:     .byte ACTIVE_EFFECT_MEMSIZE*ACTIVE_EFFECT_COUNT
 
 inventory_selection: .byte 1
 
@@ -85,5 +88,3 @@ npc_move_flags:     .byte 1
 npc_move_data:      .byte 2
 
 gameover_state:     .byte 1
-
-gamemem_end:
