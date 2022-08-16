@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <pthread.h>
-#include "slimavr-0.1.2/slimavr.h"
+#include "slimavr-0.1.3/slimavr.h"
 
 #define GAME_DISPLAY_WIDTH 120
 #define GAME_DISPLAY_HEIGHT 69

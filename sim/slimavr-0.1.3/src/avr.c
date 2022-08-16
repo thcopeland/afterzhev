@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 #include "model.h"
 #include "dispatch.h"
 #include "interrupt.h"
 #include "opt.h"
 #include "avr.h"
+#include "utils.h"
 
 static void alloc_avr_memory(struct avr *avr) {
     // In order to simplify and speed up data accesses, all data segments (register
@@ -39,29 +39,28 @@ static void alloc_avr_memory(struct avr *avr) {
         avr->rom = avr->mem + rom_offset;
         avr->eep = avr->mem + eep_offset;
         memset(avr->reg, 0, avr->model.regsize);
+        memset(avr->eep, 0xff, avr->model.eepsize);
     }
 
-    avr->flash_pgbuff = NULL;
-    avr->timer_data = NULL;
+    avr_init_flash_state(&avr->flash_data, avr->model.flash_pgsize);
+    if (avr->flash_data.buffer == NULL) {
+        free(avr->mem);
+        avr->mem = NULL;
+        return;
+    }
 
-    avr->flash_pgbuff = malloc(avr->model.flash_pgsize);
-    if (avr->flash_pgbuff == NULL) goto nomem;
+    avr_init_eeprom_state(&avr->eeprom_data);
 
     avr->timer_data = malloc(sizeof(avr->timer_data[0])*avr->model.timer_count);
     if (avr->timer_data == NULL) {
-        goto nomem;
+        free(avr->mem);
+        free(avr->flash_data.buffer);
+        avr->mem = NULL;
     } else {
         for (int i = 0; i < avr->model.timer_count; i++) {
             timerstate_init(avr->timer_data+i);
         }
     }
-
-    return;
-
-nomem:
-    free(avr->mem);
-    free(avr->flash_pgbuff);
-    avr->mem = NULL;
 }
 
 struct avr *avr_init(struct avr_model model) {
@@ -93,8 +92,8 @@ struct avr *avr_init(struct avr_model model) {
 
 void avr_free(struct avr *avr) {
     if (avr) {
+        avr_free_flash_state(&avr->flash_data);
         free(avr->mem);
-        free(avr->flash_pgbuff);
         free(avr->timer_data);
         free(avr);
     }
@@ -105,6 +104,7 @@ static inline void avr_update(struct avr *avr) {
 
     avr_update_timers(avr);
     avr_update_eeprom(avr);
+    avr_update_flash(avr);
 
     avr_check_interrupts(avr);
 }
@@ -169,98 +169,11 @@ void avr_step(struct avr *avr) {
     avr_update(avr);
 }
 
-// map between register type and timer index
-#define reg_type_timer(type) (((int)type-5)/2)
 
-// ensure that the mapping remains correct
-static_assert (reg_type_timer(REG_TIMER0_HIGH) == 0);
-static_assert (reg_type_timer(REG_TIMER0_LOW) == 0);
-static_assert (reg_type_timer(REG_TIMER1_HIGH) == 1);
-static_assert (reg_type_timer(REG_TIMER1_LOW) == 1);
-static_assert (reg_type_timer(REG_TIMER2_HIGH) == 2);
-static_assert (reg_type_timer(REG_TIMER2_LOW) == 2);
-static_assert (reg_type_timer(REG_TIMER3_HIGH) == 3);
-static_assert (reg_type_timer(REG_TIMER3_LOW) == 3);
-static_assert (reg_type_timer(REG_TIMER4_HIGH) == 4);
-static_assert (reg_type_timer(REG_TIMER4_LOW) == 4);
-static_assert (reg_type_timer(REG_TIMER5_HIGH) == 5);
-static_assert (reg_type_timer(REG_TIMER5_LOW) == 5);
-
-uint8_t avr_get_reg(struct avr *avr, uint16_t reg) {
-    enum avr_register_type type = avr->model.regmap[reg].type;
-
-    switch (type) {
-        case REG_RESERVED:
-            return 0xff;
-
-        case REG_VALUE:
-        case REG_UNSUPPORTED:
-        case REG_CLEAR_ON_SET:
-        case REG_EEP_CONTROL:
-            return avr->reg[reg];
-
-        case REG_TIMER0_LOW:
-        case REG_TIMER1_LOW:
-        case REG_TIMER2_LOW:
-        case REG_TIMER3_LOW:
-        case REG_TIMER4_LOW:
-        case REG_TIMER5_LOW:
-            avr->timer_data[reg_type_timer(type)].tmp = avr->reg[reg+1];
-            return avr->reg[reg];
-
-        case REG_TIMER0_HIGH:
-        case REG_TIMER1_HIGH:
-        case REG_TIMER2_HIGH:
-        case REG_TIMER3_HIGH:
-        case REG_TIMER4_HIGH:
-        case REG_TIMER5_HIGH:
-            return avr->timer_data[reg_type_timer(type)].tmp;
-
-        default:
-            assert(0); // should be comprehensive
-    }
+uint8_t avr_io_read(struct avr *avr, uint16_t reg) {
+    return avr_get_reg(avr, reg);
 }
 
-void avr_set_reg(struct avr *avr, uint16_t reg, uint8_t val) {
-    enum avr_register_type type = avr->model.regmap[reg].type;
-
-    switch (type) {
-        case REG_RESERVED:
-            break;
-
-        case REG_VALUE:
-        case REG_UNSUPPORTED:
-            avr->reg[reg] = val;
-            break;
-
-        case REG_CLEAR_ON_SET:
-            avr->reg[reg] &= ~val;
-            break;
-
-        case REG_EEP_CONTROL:
-            avr_set_eeprom_reg(avr, reg, val);
-            break;
-
-        case REG_TIMER0_LOW:
-        case REG_TIMER1_LOW:
-        case REG_TIMER2_LOW:
-        case REG_TIMER3_LOW:
-        case REG_TIMER4_LOW:
-        case REG_TIMER5_LOW:
-            avr->reg[reg+1] = avr->timer_data[reg_type_timer(type)].tmp;
-            avr->reg[reg] = val;
-            break;
-
-        case REG_TIMER0_HIGH:
-        case REG_TIMER1_HIGH:
-        case REG_TIMER2_HIGH:
-        case REG_TIMER3_HIGH:
-        case REG_TIMER4_HIGH:
-        case REG_TIMER5_HIGH:
-            avr->timer_data[reg_type_timer(type)].tmp = val;
-            break;
-
-        default:
-            assert(0); // should be comprehensive
-    }
+void avr_io_write(struct avr *avr, uint16_t reg, uint8_t val) {
+    avr_set_reg(avr, reg, val);
 }

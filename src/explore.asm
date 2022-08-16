@@ -875,7 +875,6 @@ _us_iter:
     breq _us_check_iter
 _us_write:
     out EEDR, r23
-    cbi EECR, EERE ; should be unnecessary, along with some other EEMPE's
     sbi EECR, EEMPE
     sbi EECR, EEPE
     mov r23, r22
@@ -911,7 +910,6 @@ _rfs_check_magic:
 _rfs_load_used:
     out EEARH, r25
     out EEARL, r24
-    sbi EECR, EEMPE
     sbi EECR, EERE
     in r23, EEDR
     adiw r24, 1
@@ -921,7 +919,6 @@ _rfs_load_used:
 _rfs_iter:
     out EEARH, r25
     out EEARL, r24
-    sbi EECR, EEMPE
     sbi EECR, EERE
     in r23, EEDR
     st Z+, r23
