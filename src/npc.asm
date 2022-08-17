@@ -286,6 +286,9 @@ _nm_test_return:
     lds r25, npc_move_flags
     sbrs r25, log2(NPC_MOVE_RETURN)
     rjmp _nm_test_move_falloff
+    ldd r24, Y+NPC_EFFECT_OFFSET
+    andi r24, 0x38
+    brne _nm_test_move_falloff
     cpi r22, NPC_INTEREST_DISTANCE
     brsh _nm_return
     cpi r23, NPC_INTEREST_DISTANCE
@@ -338,6 +341,9 @@ _nm_test_move_falloff:
     lds r25, npc_move_flags
     sbrs r25, log2(NPC_MOVE_FALLOFF)
     rjmp _nm_move
+    ldd r24, Y+NPC_EFFECT_OFFSET
+    andi r24, 0x38
+    brne _nm_move
     cpi r22, NPC_INTEREST_DISTANCE
     brsh _nm_end
     cpi r23, NPC_INTEREST_DISTANCE
