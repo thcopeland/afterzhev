@@ -195,11 +195,12 @@ gameover_fade_screen:
     out RAMPZ, ZL
     lds ZL, current_sector
     lds ZH, current_sector+1
-    subi ZL, low(-SECTOR_HANDLERS_OFFSET)
-    sbci ZH, high(-SECTOR_HANDLERS_OFFSET)
+    subi ZL, low(-SECTOR_UPDATE_OFFSET)
+    sbci ZH, high(-SECTOR_UPDATE_OFFSET)
     elpm r24, Z+
     elpm r25, Z+
-    tst r25
+    cp r24, r1
+    cpc r25, r1
     breq _gfs_end
     movw ZL, r24
     icall

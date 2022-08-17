@@ -12,6 +12,10 @@
 ; each sector to determine its own logic. This is not the best way to achieve this,
 ; but it is probably one of the most flexible and should be all right for a small
 ; game.
+;
+; Register Usage
+;   update subroutine: all registers are available
+;   event subroutines: r0, r24, r25, ZL, and ZL available
 
 sector_0_update:
     ldi YL, low(sector_npcs)
@@ -59,5 +63,17 @@ _s0u_npc_next:
     call player_resolve_effect_damage
     ret
 
-sector_0_event:
+sector_0_on_entry:
+    ret
+
+sector_0_on_pickup:
+    sts framebuffer, r1
+    ret
+
+sector_0_on_conversation:
+    sts framebuffer, r1
+    ret
+
+sector_0_on_choice:
+    sts framebuffer, r1
     ret

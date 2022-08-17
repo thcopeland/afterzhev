@@ -10,10 +10,14 @@
 ;       loose item index (used to track whether an item was picked up), x, y. (16 bytes)
 ;   savepoint data: savepoint index, x, y, padding (4 bytes)
 ;   update subroutine (2 bytes)
-;   event handling subroutine (2 bytes)
+;   on enter subroutine (2 bytes)
+;   on pickup subroutine (2 bytes)
+;   on conversation subroutine (2 bytes)
+;   on choice subroutine (2 bytes)
 
 .equ NO_NPC = 0
 .equ NO_ITEM = 0
+.equ NO_HANDLER = 0
 
 sector_table:
     ; sector 0
@@ -36,7 +40,7 @@ sector_table:
     .db 2, 3, 4, 6, 7, 8, NO_NPC, NO_NPC
     .db 1, 1, 24, 24, 4, 4, 96, 60, 128|123, 6, 60, 60, 3, 2, 30, 30
     .db 1, 10, 10, 0
-    .dw sector_0_update, sector_0_event
+    .dw sector_0_update, sector_0_on_entry, sector_0_on_pickup, sector_0_on_conversation, sector_0_on_choice
     ; sector 1
     .db 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, \
         10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, \
@@ -57,4 +61,5 @@ sector_table:
     .db 5, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
     .db 5, 5, 24, 156, 7, 7, 60, 150, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
     .db 0, 0, 0, 0
-    .dw 0x0000, 0x0000
+    ; .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+    .dw sector_0_update, sector_0_on_entry, sector_0_on_pickup, sector_0_on_conversation, sector_0_on_choice

@@ -13,8 +13,8 @@ explore_update_game:
     out RAMPZ, ZL
     lds ZL, current_sector
     lds ZH, current_sector+1
-    subi ZL, low(-SECTOR_HANDLERS_OFFSET)
-    sbci ZH, high(-SECTOR_HANDLERS_OFFSET)
+    subi ZL, low(-SECTOR_UPDATE_OFFSET)
+    sbci ZH, high(-SECTOR_UPDATE_OFFSET)
     elpm r24, Z+
     elpm r25, Z+
     tst r25
@@ -440,7 +440,7 @@ _hc_end:
 ; items, one of them is added to the player's inventory.
 ;
 ; Register Usage
-;   r18-r23         calculations
+;   r18-r25         calculations
 ;   X (r26:r27)     memory pointer 2
 ;   Z (r30:r31)     memory pointer
 handle_main_button:
@@ -478,6 +478,23 @@ _hmb_loose_item_next:
 _hmb_nearby_item_found:
     ldi XL, low(player_inventory)
     ldi XH, high(player_inventory)
+    movw r20, ZL
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_ON_PICKUP_OFFSET)
+    sbci ZH, high(-SECTOR_ON_PICKUP_OFFSET)
+    elpm r24, Z+
+    elpm r25, Z+
+    cp r24, r1
+    cpc r25, r1
+    breq _hmp_do_pickup
+    movw ZL, r24
+    mov r25, r23
+    icall
+_hmp_do_pickup:
+    movw ZL, r20
     cpi r23, 128
     brlo _hmb_pickup_item
 _hmb_pickup_gold:
@@ -594,6 +611,20 @@ _hmb_conversation_iter:
 _hmb_available_conversation:
     subi r24, low(-2*conversation_table)
     sbci r25, high(-2*conversation_table)
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_ON_CONVERSATION_OFFSET)
+    sbci ZH, high(-SECTOR_ON_CONVERSATION_OFFSET)
+    elpm r20, Z+
+    elpm r21, Z+
+    cp r20, r1
+    cpc r21, r1
+    breq _hmb_do_conversation
+    movw ZL, r20
+    icall
+_hmb_do_conversation:
     call load_conversation
     rjmp _hmb_end
 _hmb_conversation_next:
@@ -1336,16 +1367,14 @@ _ls_run_handler:
     out RAMPZ, ZL
     lds ZL, current_sector
     lds ZH, current_sector+1
-    subi ZL, low(-(SECTOR_HANDLERS_OFFSET+2))
-    sbci ZH, high(-(SECTOR_HANDLERS_OFFSET+2))
+    subi ZL, low(-SECTOR_ON_ENTER_OFFSET)
+    sbci ZH, high(-SECTOR_ON_ENTER_OFFSET)
     elpm r24, Z+
-    tst r24
-    breq _ls_end
     elpm r25, Z+
-    tst r25
+    cp r24, r1
+    cpc r25, r1
     breq _ls_end
     movw ZL, r24
-    ldi r25, EVENT_ENTER
     icall
 _ls_end:
     pop YH

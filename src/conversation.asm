@@ -25,7 +25,8 @@ _chc_no_recent_keydowns:
     inc r20
     sts mode_clock, r20
     andi r20, 15
-    brne _chc_end
+    breq _chc_check_frame_type
+    rjmp _chc_end
 _chc_check_frame_type:
     ldi ZL, byte3(2*conversation_table)
     out RAMPZ, ZL
@@ -58,6 +59,22 @@ _chc_branch_button1:
     elpm r25, Z+
     subi r24, low(-2*conversation_table)
     sbci r25, high(-2*conversation_table)
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_ON_CHOICE_OFFSET)
+    sbci ZH, high(-SECTOR_ON_CHOICE_OFFSET)
+    elpm r20, Z+
+    elpm r21, Z+
+    cp r20, r1
+    cpc r21, r1
+    breq _chc_do_conversation
+    movw ZL, r20
+    movw r20, r24
+    icall
+    movw r24, r20
+_chc_do_conversation:
     call load_conversation
     rjmp _chc_end
 _chc_branch_down:
