@@ -13,10 +13,10 @@ shop_update_game:
 ;   Z (r30:r31)     flash pointer
 load_shop:
     lds r20, current_shop_index
+    sts shop_selection, r1
     cp r20, r25
     breq _ls_change_mode
     sts current_shop_index, r25
-    sts shop_selection, r1
     ldi XL, low(shop_inventory)
     ldi XH, high(shop_inventory)
     ldi r20, SHOP_INVENTORY_SIZE

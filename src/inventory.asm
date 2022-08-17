@@ -12,6 +12,7 @@ load_inventory:
     sts game_mode, r25
     sts player_velocity_x, r1
     sts player_velocity_y, r1
+    sts inventory_selection, r1
     ret
 
 ; Handle all player input. The directional keys control selection (which is

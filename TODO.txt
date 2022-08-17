@@ -1,7 +1,5 @@
 # Game Engine
 * Sound
-* Savepoints
-* Optimize RAM usage
 * Opening/loading screen
 * Prologue screens (maybe 2560/2561 only?)
 * Help screen

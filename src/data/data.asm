@@ -64,7 +64,6 @@ savepoint_used:     .byte SAVEPOINT_COUNT>>3
 sector_loose_items: .byte SECTOR_DYNAMIC_ITEM_MEMSIZE*SECTOR_DYNAMIC_ITEM_COUNT
 
 sector_npcs:        .byte NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT
-character_render:   .byte CHARACTER_MEMSIZE
 
 savepoint_data:     .byte 1 ; [status:2][index:3][frame:3]
 savepoint_progress: .byte 1
@@ -73,19 +72,19 @@ savepoint_y:        .byte 1
 
 active_effects:     .byte ACTIVE_EFFECT_MEMSIZE*ACTIVE_EFFECT_COUNT
 
-inventory_selection: .byte 1
+inventory_selection:
+shop_selection:
+selected_choice:
+upgrade_selection:
+gameover_state:     .byte 1
 
 current_shop_index: .byte 1
 shop_inventory:     .byte SHOP_INVENTORY_SIZE
-shop_selection:     .byte 1
 
 conversation_frame: .byte 2
-selected_choice:    .byte 1
 
 upgrade_points:     .byte 1
-upgrade_selection:  .byte 1
 
+character_render:   .byte CHARACTER_MEMSIZE-3
 npc_move_flags:     .byte 1
 npc_move_data:      .byte 2
-
-gameover_state:     .byte 1
