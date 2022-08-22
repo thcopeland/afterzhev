@@ -2,13 +2,15 @@
 ; and containing various challenges and whatnot. Each entry in the sector table
 ; has the following layout:
 ;
-; Sector Table Entry (336 bytes)
+; Sector Table Entry (356 bytes)
 ;   tile data, an array of each tile in the sector stored in row major order (300 bytes)
 ;   four adjacent sector indexs, stored in down, right, up, left order (4 bytes)
 ;   a list of NPCs (8 bytes)
 ;   a list of preplaced loose items, each item occupies four bytes: item index,
 ;       loose item index (used to track whether an item was picked up), x, y. (16 bytes)
 ;   savepoint data: savepoint index, x, y, padding (4 bytes)
+;   list of portals, each occupies five bytes
+;       x, y, dest sector, dest x, dest y. (20 bytes)
 ;   update subroutine (2 bytes)
 ;   on enter subroutine (2 bytes)
 ;   on pickup subroutine (2 bytes)
@@ -40,6 +42,10 @@ sector_table:
     .db 2, 3, 4, 6, 7, 8, NO_NPC, NO_NPC
     .db 1, 1, 24, 24, 4, 4, 96, 60, 128|123, 6, 60, 60, 3, 2, 30, 30
     .db 1, 10, 10, 0
+    .db 0,  0,  0,  0,  0,  \
+        24, 24, 1,  10, 10, \
+        0,  0,  0,  0,  0,  \
+        0,  0,  0,  0,  0
     .dw sector_0_update, sector_0_on_entry, sector_0_on_pickup, sector_0_on_conversation, sector_0_on_choice
     ; sector 1
     .db 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, \
@@ -61,5 +67,5 @@ sector_table:
     .db 5, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
     .db 5, 5, 24, 156, 7, 7, 60, 150, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
     .db 0, 0, 0, 0
-    ; .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
-    .dw sector_0_update, sector_0_on_entry, sector_0_on_pickup, sector_0_on_conversation, sector_0_on_choice
+    .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER

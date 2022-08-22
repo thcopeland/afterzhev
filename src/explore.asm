@@ -575,7 +575,7 @@ _hmb_npc_next:
     adiw YL, NPC_MEMSIZE
     dec r22
     brne _hmb_npc_iter
-    rjmp _hmb_nearby_savepoint
+    rjmp _hmb_check_savepoint
 _hmb_nearby_shopkeeper:
     adiw ZL, NPC_TABLE_SHOP_IDX_OFFSET
     lpm r25, Z
@@ -630,7 +630,7 @@ _hmb_do_conversation:
 _hmb_conversation_next:
     dec r20
     brne _hmb_conversation_iter
-_hmb_nearby_savepoint:
+_hmb_check_savepoint:
     lds r22, player_position_x
     lds r23, player_position_y
     lds r24, savepoint_x
@@ -642,15 +642,65 @@ _hmb_nearby_savepoint:
     sbrc r25, 7
     neg r25
     cpi r24, SAVEPOINT_DISTANCE
-    brsh _hmb_end
+    brsh _hmb_check_portals
     cpi r25, SAVEPOINT_DISTANCE
-    brsh _hmb_end
+    brsh _hmb_check_portals
     lds r25, savepoint_data
     mov r24, r25
     andi r25, 0xc0
-    brne _hmb_end
+    brne _hmb_check_portals
     ori r24, 0x40
     sts savepoint_data, r24
+    rjmp _hmb_end
+_hmb_check_portals:
+    lds r20, player_position_x
+    lds r21, player_position_y
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_PORTALS_OFFSET)
+    sbci ZH, high(-SECTOR_PORTALS_OFFSET)
+    ldi r22, SECTOR_PORTAL_COUNT
+_hmb_portal_iter:
+    elpm r24, Z+
+    elpm r25, Z+
+    cp r24, r1
+    cpc r25, r1
+    breq _hmb_portal_next
+    sub r24, r20
+    sbrc r24, 7
+    neg r24
+    cpi r24, PORTAL_DISTANCE
+    brsh _hmb_portal_next
+    sub r25, r21
+    sbrc r25, 7
+    neg r25
+    cpi r25, PORTAL_DISTANCE
+    brsh _hmb_portal_next
+_hmb_nearby_portal:
+    elpm r20, Z+
+    elpm r22, Z+
+    elpm r23, Z+
+    sts player_position_x, r22
+    sts player_position_y, r23
+    sts camera_position_x, r22
+    sts camera_position_y, r23
+    ldi ZL, low(2*sector_table)
+    ldi ZH, high(2*sector_table)
+    ldi r21, SECTOR_MEMSIZE/2
+    mul r20, r21
+    lsl r0
+    rol r1
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    call load_sector
+    rjmp _hmb_end
+_hmb_portal_next:
+    adiw ZL, SECTOR_PORTAL_MEMSIZE-2
+    dec r22
+    brne _hmb_portal_iter
 _hmb_end:
     ret
 
