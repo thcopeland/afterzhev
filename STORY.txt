@@ -1,0 +1,32 @@
+# Places
+* Forest
+  * Wolves (?)
+  * Robbers
+  * Old cathedral/temple
+* City (?)
+  * Thieves
+  * Palace
+  * Quests
+* Village
+  * Shop
+  * Quests
+* River
+  * Bridge
+  * Lake
+* Caves/Mine (?)
+  * Water
+* Atmosphere
+  * Old statues
+  * Random gates
+  * Weird scenery
+  * Strange ruins
+  * Ghosts
+  * Invisible enemies
+  * Abandoned stuff
+
+# Characters
+* Fisherman
+* Blacksmith
+* Highwayman
+
+# Idea

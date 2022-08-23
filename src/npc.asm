@@ -172,7 +172,7 @@ _nm_test_ranged_up:
     brne _nm_test_ranged_down
     sbrc r22, 7
     neg r22
-    cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2
+    cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2-1
     brsh _nm_test_move
     cpi r23, EFFECT_ESTIMATED_RANGE
     brsh _nm_test_move
@@ -182,7 +182,7 @@ _nm_test_ranged_down:
     brne _nm_test_ranged_left
     sbrc r22, 7
     neg r22
-    cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2
+    cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2-1
     brsh _nm_test_move
     cpi r23, low(-EFFECT_ESTIMATED_RANGE)
     brlo _nm_test_move
