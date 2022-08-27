@@ -59,6 +59,14 @@ _rg_savepoint:
     andi r21, 0x38
     breq _rg_render_loose_items
     andi r20, 0x07
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-(SECTOR_SAVEPOINT_OFFSET+1))
+    sbci ZH, high(-(SECTOR_SAVEPOINT_OFFSET+1))
+    elpm r24, Z+ ; x
+    elpm r25, Z+ ; y
     ldi ZL, byte3(2*savepoint_sprites)
     out RAMPZ, ZL
     ldi ZL, low(2*savepoint_sprites)
@@ -70,8 +78,6 @@ _rg_savepoint:
     clr r1
     ldi r22, SAVEPOINT_SPRITE_WIDTH
     ldi r23, SAVEPOINT_SPRITE_HEIGHT
-    lds r24, savepoint_x
-    lds r25, savepoint_y
     call render_sprite
 _rg_render_loose_items:
     ldi YL, low(sector_loose_items)
@@ -633,8 +639,14 @@ _hmb_conversation_next:
 _hmb_check_savepoint:
     lds r22, player_position_x
     lds r23, player_position_y
-    lds r24, savepoint_x
-    lds r25, savepoint_y
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-(SECTOR_SAVEPOINT_OFFSET+1))
+    sbci ZH, high(-(SECTOR_SAVEPOINT_OFFSET+1))
+    elpm r24, Z+ ; x
+    elpm r25, Z+ ; y
     sub r24, r22
     sbrc r24, 7
     neg r24
@@ -1395,11 +1407,7 @@ _ls_load_savepoint:
     subi ZL, low(-(SECTOR_SAVEPOINT_OFFSET))
     sbci ZH, high(-(SECTOR_SAVEPOINT_OFFSET))
     elpm r20, Z+ ; index
-    elpm r21, Z+ ; x
-    elpm r22, Z  ; y
     sts savepoint_progress, r1
-    sts savepoint_x, r21
-    sts savepoint_y, r22
     mov r21, r20
     lsl r21
     lsl r21

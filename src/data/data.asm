@@ -50,8 +50,8 @@ player_gold:        .byte 2
 player_xp:          .byte 2
 player_effects:     .byte PLAYER_EFFECT_MEMSIZE*PLAYER_EFFECT_COUNT
 player_inventory:   .byte PLAYER_INVENTORY_SIZE
-sector_data:        .byte 8
-global_data:        .byte 0
+sector_data:        .byte 4
+global_data:        .byte 8
 
 preplaced_item_presence: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
 npc_presence:       .byte TOTAL_NPC_COUNT>>3
@@ -67,8 +67,6 @@ sector_npcs:        .byte NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT
 
 savepoint_data:     .byte 1 ; [status:2][index:3][frame:3]
 savepoint_progress: .byte 1
-savepoint_x:        .byte 1
-savepoint_y:        .byte 1
 
 active_effects:     .byte ACTIVE_EFFECT_MEMSIZE*ACTIVE_EFFECT_COUNT
 
