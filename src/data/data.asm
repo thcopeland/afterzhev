@@ -6,9 +6,6 @@
     .org SRAM_START
 
 framebuffer:        .byte DISPLAY_WIDTH*DISPLAY_HEIGHT
-vid_fbuff_offset:   .byte 2
-vid_row_repeat:     .byte 1
-vid_work_complete:  .byte 1
 
 prev_controller_values: .byte 1
 controller_values:  .byte 1

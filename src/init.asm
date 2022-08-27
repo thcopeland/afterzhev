@@ -1,8 +1,10 @@
 init:
     clr r1
-    stiw vid_fbuff_offset, framebuffer
-    sti vid_row_repeat, 0
-    sti vid_work_complete, 0
+    ldi r16, low(framebuffer)
+    ldi r17, high(framebuffer)
+    out GPIOR0, r16 ; stores the video framebuffer offset (low)
+    out GPIOR1, r17 ; stores the video framebuffer offset (high)
+    out GPIOR2, r1  ; video frame status
     stiw current_sector, 2*sector_table
     sti camera_position_x, 00
     sti camera_position_y, 12

@@ -19,7 +19,7 @@ main:
     out DDRB, r18   ; PB6 is VGA HSYNC
     out DDRE, r18   ; PE4 is VGA VSYNC
     out DDRC, r19   ; controls
-    out PORTC, r18  ; pull-up (?)
+    out PORTC, r18  ; pull-up
 
     ; init timers
     ; halt all timers
@@ -70,9 +70,10 @@ _loop_active_test2:
     rjmp _loop_work
 _loop_active_screen:
     ; output a single row from the framebuffer as quickly as reasonably possible.
-    lds XL, vid_fbuff_offset
-    lds XH, vid_fbuff_offset+1
-    lds r16, vid_row_repeat
+    in XL, GPIOR0
+    in XH, GPIOR1
+    in r16, GPIOR2
+    andi r16, 0x7f
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
@@ -83,35 +84,29 @@ _loop_active_screen:
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
-    sts vid_work_complete, r1 ; reset working state (somewhat out of place here, but simple)
-    out PORTA, r1
+    nop
     dec r16
+    out PORTA, r1
     brpl _loop_quick_work
-    sts vid_fbuff_offset, XL
-    sts vid_fbuff_offset+1, XH
+    out GPIOR0, XL
+    out GPIOR1, XH
     ldi r16, DISPLAY_VERTICAL_STRETCH-1
 _loop_quick_work:
-    sts vid_row_repeat, r16
+    out GPIOR2, r16
     ; After writing a row to the screen, there's a brief period (~75 cycles) where
     ; we can do other work (this corresponds to the VGA front porch and sync pulse).
-    ; In particular, we write the footer to the top of the video buffer. No
-    ; registers need to be preserved.
     rjmp _loop_end
 _loop_work:
-    lds r18, vid_work_complete
-    inc r18
-    cpi r18, 1
-    brne _loop_reset_render_state
-    sts vid_work_complete, r18
-    ; At this point, we've rendered a complete image (main image + footer) to the
-    ; screen, and there's a fairly long gap (~99,300 cycles) where we fill the
-    ; render buffer and update the game. This corresponds to the VGA vertical front
-    ; porch and sync pulse, in addition to the time we save with any blank rows
-    ; (the latter is the most significant). NOTE: The interrupt period is a mere
-    ; 512 cycles, which means several thousand interrupts would ordinarily occur
-    ; during this time, but since the necessary VGA signal has already been sent
-    ; and interrupts are disabled, we can ignore this as long as we clear any
-    ; pending interrupts before reti'ing. No registers need to be preserved.
+    in r16, GPIOR2
+    sbrc r16, 7
+    rjmp _loop_reset_render_state
+    ori r16, 0x80
+    out GPIOR2, r16
+    ; At this point, we've rendered a complete image to the screen, and there's a
+    ; fairly long gap (~99,300 cycles) where we fill the framebuffer and update
+    ; the game. This corresponds to the VGA vertical front porch and sync pulse,
+    ; in addition to the time we save with any blank rows (the latter is the most
+    ; significant).
     .ifdef DEV
     ; heartbeat
     in r0, PORTB
@@ -157,8 +152,14 @@ _loop_gameover:
 _loop_reenter:
 
 _loop_reset_render_state:
-    sti vid_row_repeat, DISPLAY_VERTICAL_STRETCH
-    stiw vid_fbuff_offset, framebuffer
+    in r16, GPIOR2
+    andi r16, 0x80
+    ori r16, DISPLAY_VERTICAL_STRETCH
+    out GPIOR2, r16
+    ldi r16, low(framebuffer)
+    ldi r17, high(framebuffer)
+    out GPIOR0, r16
+    out GPIOR1, r17
     sbi TIFR1, OCF1A ; clear any pending interrupts
 _loop_end:
     reti
