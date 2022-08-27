@@ -1,5 +1,19 @@
 init:
     clr r1
+
+    ; clear all RAM beyond the framebuffer
+_init_zero:
+    ldi XL, low(framebuffer + DISPLAY_WIDTH*DISPLAY_HEIGHT)
+    ldi XH, high(framebuffer + DISPLAY_WIDTH*DISPLAY_HEIGHT)
+    ldi r24, low(RAMEND)
+    ldi r25, high(RAMEND)
+    sub r24, XL
+    sbc r25, XH
+_init_zero_iter:
+    st X+, r1
+    sbiw r24, 1
+    brne _init_zero_iter
+
     ldi r16, low(framebuffer)
     ldi r17, high(framebuffer)
     out GPIOR0, r16 ; stores the video framebuffer offset (low)
@@ -20,21 +34,6 @@ init:
     sti player_direction, DIRECTION_DOWN
     sti player_frame, 0
     sti player_effect, 0
-    ldi XL, low(player_inventory)
-    ldi XH, high(player_inventory)
-    ldi r18, PLAYER_INVENTORY_SIZE
-_init_clear_inventory_iter:
-    st X+, r1
-    dec r18
-    brne _init_clear_inventory_iter
-    ldi XL, low(player_effects)
-    ldi XH, high(player_effects)
-    ldi r18, PLAYER_EFFECT_COUNT
-_init_clear_effects_iter:
-    st X+, r1
-    st X+, r1
-    dec r18
-    brne _init_clear_effects_iter
     sti player_inventory, 2
     sti player_inventory+2, 4
     sti player_inventory+10, 5

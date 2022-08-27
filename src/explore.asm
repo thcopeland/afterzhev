@@ -1420,6 +1420,15 @@ _ls_savepoint_used:
     ori r21, (0xc0 | SAVEPOINT_DONE_OFFSET)
 _ls_savepoint_unused:
     sts savepoint_data, r21
+_ls_clear_effects:
+    ldi ZL, low(active_effects)
+    ldi ZH, high(active_effects)
+    ldi r20, ACTIVE_EFFECT_COUNT
+_ls_clear_effects_iter:
+    std Z+ACTIVE_EFFECT_DATA_OFFSET, r1
+    adiw ZL, ACTIVE_EFFECT_MEMSIZE
+    dec r20
+    brne _ls_clear_effects_iter
 _ls_run_handler:
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
