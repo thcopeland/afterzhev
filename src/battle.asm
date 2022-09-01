@@ -244,8 +244,9 @@ _pred_effect_next:
 _pred_end:
     ret
 
-; Apply damage to the given enemy and push it away from the player. The pushing
-; acceleration is damage << 1.
+; If an enemy, apply damage to the given enemy and push it away from the player. The pushing
+; acceleration is damage << 1. If a shopkeeper or talker, try to replace it with another
+; NPC (probably an enemy).
 ;
 ; Register Usage
 ;   r22-r25         calculations
@@ -301,19 +302,27 @@ _nrmd_check_distance:
     call character_striking_distance
     movw ZL, r22 ; restore regs
     cp r26, r0
-    brsh _nrmd_end
+    brsh _nrmd_end_trampoline
 _nrmd_damage_effect:
     ldd r22, Y+NPC_EFFECT_OFFSET
     andi r22, 0x38
-    brne _nrmd_damage
+    brne _nrmd_calc_damage
     ldi r22, EFFECT_DAMAGE<<3
     std Y+NPC_EFFECT_OFFSET, r22
-_nrmd_damage:
+_nrmd_calc_damage:
     lds r23, player_augmented_stats+STATS_STRENGTH_OFFSET
     lds r24, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _nrmd_use_default_dexterity
+_nrmd_read_enemy_dexterity:
     adiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
     elpm r25, Z
     sbiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
+    rjmp _nrmd_apply_damage
+_nrmd_use_default_dexterity:
+    ldi r25, NPC_DEFAULT_DEXTERITY
+_nrmd_apply_damage:
     call calculate_damage
     ldd r24, Y+NPC_HEALTH_OFFSET
     sub r24, r23
@@ -419,28 +428,47 @@ _nrrd_end:
 _nrrd_hard_end:
     ret
 
-; Record an enemy's death, add a corpse, and handle drops.
+; Record an NPC's death and replace it with a corpse. If an enemy, also
+; rewards the player with some XP. If an enemy or a shopkeeper, handles
+; drops.
 ;
 ; Register Usage
-;   r22-r25         calculations
+;   r20-r25         calculations
 ;   Y (r28:r29)     enemy pointer, preserved (param)
 ;   Z (r30:r31)     enemy data pointer, preserved (param)
 resolve_enemy_death:
     movw r22, ZL
+    elpm r25, Z
+    cpi r25, NPC_SHOPKEEPER
+    breq _red_resolve_shop_drops
+    cpi r25, NPC_ENEMY
+    breq _red_resolve_enemy_drops
+    rjmp _red_record_death
+_red_resolve_enemy_drops:
     adiw ZL, NPC_TABLE_ENEMY_DROPS_OFFSET
     call rand
     mov r25, r1
     clr r1
     andi r25, 0x3
     cpi r25, NPC_TABLE_ENEMY_DROPS_COUNT
-    brlo _red_determine_drop
+    brlo _red_determine_enemy_drop
     clr r25
-_red_determine_drop:
+_red_determine_enemy_drop:
     add ZL, r25
     adc ZH, r1
     elpm r25, Z
     tst r25
-    breq _red_record_death
+    brne _red_init_loose_items_iter
+    rjmp _red_player_xp
+_red_resolve_shop_drops:
+    adiw ZL, NPC_TABLE_SHOP_IDX_OFFSET
+    elpm r25, Z
+    push r22
+    push r23
+    call shop_most_valuable
+    pop r23
+    pop r22
+_red_init_loose_items_iter:
     ldi ZL, low(sector_loose_items)
     ldi ZH, high(sector_loose_items)
     ldi r24, SECTOR_DYNAMIC_ITEM_COUNT
@@ -456,11 +484,36 @@ _red_loose_items_iter:
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     subi r25, -(CHARACTER_SPRITE_HEIGHT-STATIC_ITEM_HEIGHT+4)/2
     std Z+SECTOR_ITEM_Y_OFFSET, r25
-    rjmp _red_record_death
+    rjmp _red_player_xp
 _red_loose_items_next:
     adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
     dec r24
     brne _red_loose_items_iter
+_red_player_xp:
+    movw ZL, r22
+    clr r23
+    adiw ZL, NPC_TABLE_HEALTH_OFFSET
+    elpm r25, Z ; health
+    adiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET-NPC_TABLE_HEALTH_OFFSET
+    elpm r22, Z+ ; acceleration
+    lsr r22
+    add r22, r25
+    adc r23, r1
+    elpm r25, Z+ ; strength
+    lsl r25
+    add r22, r25
+    adc r23, r1
+    elpm r25, Z+ ; dexterity
+    add r22, r25
+    adc r23, r1
+    sbiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET+3
+    lds r24, player_xp
+    lds r25, player_xp+1
+    add r24, r22
+    adc r25, r23
+    sts player_xp, r24
+    sts player_xp+1, r25
+    movw r22, ZL
 _red_record_death:
     ldd r25, Y+NPC_IDX_OFFSET
     dec r25
@@ -477,29 +530,19 @@ _red_record_death:
     mpow2 r25, r24
     eor r0, r25
     st Z, r0
+_red_resolve_avenger:
+    movw ZL, r22
+    elpm r25, Z
+    cpi r25, NPC_SHOPKEEPER
+    breq _red_add_avenger
+    cpi r25, NPC_TALKER
+    breq _red_add_avenger
+    rjmp _red_add_corpse
+_red_add_avenger:
+    ; adiw ZL, NPC_TABLE_AVENGER_OFFSET
+    ; TODO - add npc ouside camera view if possible
+_red_add_corpse:
     movw ZL, r22
     ldi r25, CORPSE_NPC
     std Y+NPC_IDX_OFFSET, r25
-_red_player_xp:
-    adiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET
-    elpm r22, Z+ ; acceleration
-    lsl r22
-    elpm r25, Z+ ; health
-    add r22, r25
-    clr r23
-    adc r23, r1
-    elpm r25, Z+ ; strength
-    lsl r25
-    add r22, r25
-    adc r23, r1
-    elpm r25, Z+ ; dexterity
-    add r22, r25
-    adc r23, r1
-    sbiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET+4
-    lds r24, player_xp
-    lds r25, player_xp+1
-    add r24, r22
-    adc r25, r23
-    sts player_xp, r24
-    sts player_xp+1, r25
     ret

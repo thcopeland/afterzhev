@@ -61,6 +61,8 @@
 .equ NPC_TALKER = 2
 .equ NPC_SPECIAL = 3
 
+.equ NPC_DEFAULT_DEXTERITY = 20 ; used for shops and talkers
+
 .equ NPC_NPC_REPULSION = 4
 .equ NPC_PLAYER_REPULSION = 4
 

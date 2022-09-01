@@ -596,3 +596,92 @@ calculate_sell_price:
     elpm r24, Z+
     elpm r25, Z+
     ret
+
+; Determine the most valuable item a shop has. This is dropped when a
+; shopkeeper is killed, so that there's some incentive to be evil.
+;
+; Register Usage
+;   r20-r24         calculations
+;   r25             shop index (param), most valuable item (param)
+;   X (r26:r27)     calculations
+;   Z (r30:r31)     flash pointer
+shop_most_valuable:
+    lds r24, current_shop_index
+    cp r24, r25
+    brne _smv_from_flash
+_smv_from_memory:
+    clr r23
+    clr r24
+    clr r25
+    ldi XL, low(shop_inventory)
+    ldi XH, high(shop_inventory)
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi r20, SHOP_INVENTORY_SIZE
+_smv_mem_iter:
+    ld r22, X+
+    mov r0, r22
+    dec r0
+    brmi _smv_mem_next
+    ldi ZL, low(2*item_table+ITEM_COST_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_COST_OFFSET)
+    ldi r21, ITEM_MEMSIZE
+    mul r21, r0
+    add ZL, r0
+    adc ZH, r1
+    elpm r0, Z+
+    elpm r1, Z+
+    cp r23, r0
+    cpc r24, r1
+    brsh _smv_mem_next
+    mov r23, r0
+    mov r24, r1
+    mov r25, r22
+_smv_mem_next:
+    clr r1
+    dec r20
+    brne _smv_mem_iter
+    rjmp _smv_end
+_smv_from_flash:
+    ldi ZL, low(2*shop_table+SHOP_ITEMS_OFFSET)
+    ldi ZH, high(2*shop_table+SHOP_ITEMS_OFFSET)
+    ldi r24, SHOP_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    clr r23
+    clr r24
+    clr r25
+    ldi r20, SHOP_INITIAL_INVENTORY_SIZE
+_smv_flash_iter:
+    ldi r22, byte3(2*shop_table)
+    out RAMPZ, r22
+    elpm r22, Z+
+    movw XL, ZL
+    mov r0, r22
+    dec r0
+    brmi _smv_flash_next
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_COST_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_COST_OFFSET)
+    ldi r21, ITEM_MEMSIZE
+    mul r21, r0
+    add ZL, r0
+    adc ZH, r1
+    elpm r0, Z+
+    elpm r1, Z+
+    cp r23, r0
+    cpc r24, r1
+    brsh _smv_flash_next
+    mov r23, r0
+    mov r24, r1
+    mov r25, r22
+_smv_flash_next:
+    clr r1
+    movw ZL, XL
+    dec r20
+    brne _smv_flash_iter
+_smv_end:
+    ret

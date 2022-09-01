@@ -1,5 +1,4 @@
-; A shop contains the shop's inventory and its name. Pricing information is
-; stored with the associated NPC.
+; A shop contains the shop's inventory, name, and pricing information.
 ;
 ; Shop Layout (12 bytes)
 ;   name ptr - (2 bytes)

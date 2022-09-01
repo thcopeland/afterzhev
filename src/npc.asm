@@ -382,13 +382,13 @@ _nm_goto_save_velocity:
 _nm_end:
     ret
 
-; Update the enemy's animations and check for collisions.
+; Update an NPCs's animations, and if an enemy, move and check for collisions.
 ;
 ; Register Usage
 ;   r21-r25         calculations
-;   Y (r28:r29)     enemy pointer (param)
+;   Y (r28:r29)     npc pointer (param)
 ;   Z (r30:r31)     aux enemy pointer, flash pointer
-enemy_update:
+npc_update:
     ldd r21, Y+NPC_EFFECT_OFFSET
     ldd r23, Y+NPC_ANIM_OFFSET
     lsr r23
@@ -410,6 +410,21 @@ enemy_update:
     lsl r23
     or r24, r23
     std Y+NPC_ANIM_OFFSET, r24
+_eu_check_type:
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldd r22, Y+NPC_IDX_OFFSET
+    dec r22
+    ldi r23, NPC_TABLE_ENTRY_MEMSIZE
+    mul r22, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _eu_end
 _eu_collisions:
     rcall enemy_fighting_space
 _eu_npc_on_npc_collision:

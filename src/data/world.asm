@@ -40,6 +40,7 @@ sector_table:
         10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
     .db 0, 0, 1, 0
     .db 2, 3, 4, 6, 7, 8, NO_NPC, NO_NPC
+    ; .db 4, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
     .db 1, 1, 24, 24, 4, 4, 96, 60, 128|123, 6, 60, 60, 3, 2, 30, 30
     .db 1, 10, 10, 0
     .db 0,  0,  0,  0,  0,  \
@@ -68,4 +69,4 @@ sector_table:
     .db 5, 5, 24, 156, 7, 7, 60, 150, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
     .db 0, 0, 0, 0
     .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+    .dw sector_0_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER

@@ -1282,7 +1282,7 @@ _csb_end:
 ; loaded as necessary.
 ;
 ; Register Usage
-;   r18-r24         calculations
+;   r18-r25         calculations
 ;   X (r26:r27)     data pointer
 ;   Y (r28:r29)     second data pointer
 ;   Z (r30:r31)     pointer to the new sector (param)
@@ -1354,8 +1354,8 @@ _ls_load_npcs:
     ldi r18, SECTOR_NPC_COUNT
 _ls_load_npcs_iter:
     movw ZL, XL
-    elpm r19, Z+
-    mov r20, r19
+    elpm r25, Z+
+    mov r20, r25
     movw XL, ZL
     dec r20
     brmi _ls_load_savepoint
@@ -1371,30 +1371,7 @@ _ls_load_npcs_iter:
     ld r23, Z
     nbit r23, r21
     breq _ls_load_npcs_next
-    std Y+NPC_IDX_OFFSET, r19
-    ldi ZL, low(2*npc_table+NPC_TABLE_DIRECTION_OFFSET)
-    ldi ZH, high(2*npc_table+NPC_TABLE_DIRECTION_OFFSET)
-    ldi r21, NPC_TABLE_ENTRY_MEMSIZE
-    mul r20, r21
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    lpm r19, Z+    ; direction
-    std Y+NPC_ANIM_OFFSET, r19
-    lpm r19, Z+    ; x pos
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L, r1
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r19
-    lpm r19, Z+    ; y pos
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L, r1
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r19
-    lpm r19, Z+    ; initial x velocity
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r19
-    lpm r19, Z+    ; initial y velocity
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r19
-    adiw ZL, 1
-    lpm r19, Z      ; initial health
-    std Y+NPC_HEALTH_OFFSET, r19
-    std Y+NPC_EFFECT_OFFSET, r1
+    rcall load_npc
 _ls_load_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r18
@@ -1446,6 +1423,55 @@ _ls_run_handler:
 _ls_end:
     pop YH
     pop YL
+    ret
+
+; Load the NPC into the current sector.
+;
+; Register Usage
+;   r24             calculations
+;   r25             NPC index (param)
+;   Y (r28-r29)     NPC memory pointer (param, preserved)
+;   Z (r30-r31)     NPC flash pointer (set to new NPC flash location)
+load_npc:
+    std Y+NPC_IDX_OFFSET, r25
+    tst r25
+    breq _lnpc_end
+    dec r25
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    mul r25, r24
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    std Y+NPC_EFFECT_OFFSET, r1
+    elpm r24, Z     ; type
+    adiw ZL, NPC_TABLE_DIRECTION_OFFSET
+    elpm r25, Z+    ; direction
+    std Y+NPC_ANIM_OFFSET, r25
+    elpm r25, Z+    ; initial health
+    std Y+NPC_HEALTH_OFFSET, r25
+    elpm r25, Z+    ; x pos
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r25
+    elpm r25, Z+    ; y pos
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    cpi r24, NPC_ENEMY
+    breq _npc_load_enemy
+    sbiw ZL, NPC_TABLE_YPOS_OFFSET+1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
+    ret
+_npc_load_enemy:
+    elpm r25, Z+    ; initial x velocity
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r25
+    elpm r25, Z+    ; initial y velocity
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r25
+    sbiw ZL, NPC_TABLE_ENEMY_VELOCITY_OFFSET+2
+_lnpc_end:
     ret
 
 ; Move the "camera" so that the player is within the camera view plus some margin.

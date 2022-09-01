@@ -44,7 +44,7 @@ _s0u_npc_iter:
     ldi r20, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF|NPC_MOVE_POLTROON|NPC_MOVE_RETURN
     sts npc_move_flags, r20
     call npc_move
-    call enemy_update
+    call npc_update
     movw ZL, r16
     call npc_resolve_ranged_damage
     call npc_resolve_melee_damage
@@ -52,12 +52,26 @@ _s0u_npc_iter:
 _s0u_not_enemy:
     ldd r25, Y+NPC_IDX_OFFSET
     cpi r25, CORPSE_NPC
-    brne _s0u_npc_next
+    brne _s0u_other
+_s0u_corpse:
     call corpse_update
+    rjmp _s0u_npc_next
+_s0u_other:
+    movw r16, ZL
+    call npc_update
+    ldi r20, NPC_MOVE_FRICTION
+    sts npc_move_flags, r20
+    call npc_move
+    movw ZL, r16
+    call npc_resolve_ranged_damage
+    call npc_resolve_melee_damage
 _s0u_npc_next:
     adiw YL, NPC_MEMSIZE
     cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
-    brlo _s0u_npc_iter
+    ; brlo _s0u_npc_iter
+    brsh _s0u_work_done
+    rjmp _s0u_npc_iter
+_s0u_work_done:
     call reorder_npcs
     call player_resolve_melee_damage
     call player_resolve_effect_damage

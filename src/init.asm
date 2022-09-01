@@ -28,7 +28,7 @@ _init_zero_iter:
     sti player_velocity_y, 0
     sti player_class, CLASS_HALFLING
     sti player_character, 0
-    sti player_weapon, 3
+    sti player_weapon, 1
     sti player_armor, 0
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_DOWN
@@ -52,7 +52,7 @@ _init_zero_iter:
     stiw npc_presence, 0xffff
     sti clock, 0
     sti mode_clock, 0
-    sti current_shop_index, 0xff
+    sti current_shop_index, 0xff ; should be something guaranteed not to be the first shop (TODO: use 0 for NO_SHOP instead)
     stiw conversation_over, 0xffff
     sti savepoint_used, 0x00
     stiw seed, 1
