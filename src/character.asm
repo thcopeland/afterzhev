@@ -64,8 +64,6 @@ _mc_end:
 ; collision and rely on other code to check and handle this situation (for the
 ; player, switch sectors, for enemies, restrict to the sector.)
 ;
-; TODO - could this be inlined into move_character?
-;
 ; Register Usage
 ;   r18-r23         calculations
 ;   r24             new x position (param)
@@ -81,7 +79,7 @@ _rcm_check_upper_left:
     movw r18, r24
     subi r18, low(-(TILE_WIDTH-CHARACTER_COLLIDER_WIDTH)/2)
     brlt _rcm_no_collision_trampoline
-    subi r19, low(-(TILE_HEIGHT-CHARACTER_COLLIDER_HEIGHT)/2)
+    subi r19, low(-(TILE_HEIGHT-CHARACTER_COLLIDER_HEIGHT-1))
     brlt _rcm_no_collision_trampoline
     div12u r18, r20
     div12u r19, r21
@@ -122,7 +120,7 @@ _rcm_check_lower_left:
     lds ZH, current_sector+1
     movw r18, r24
     subi r18, low(-(TILE_WIDTH-CHARACTER_COLLIDER_WIDTH)/2)
-    subi r19, low(-(TILE_HEIGHT+CHARACTER_COLLIDER_HEIGHT-1)/2)
+    subi r19, low(-(TILE_HEIGHT-1))
     cpi r19, SECTOR_HEIGHT*TILE_HEIGHT
     brsh _rcm_no_collision
     div12u r18, r20
