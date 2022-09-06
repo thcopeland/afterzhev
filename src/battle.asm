@@ -539,10 +539,166 @@ _red_resolve_avenger:
     breq _red_add_avenger
     rjmp _red_add_corpse
 _red_add_avenger:
-    ; adiw ZL, NPC_TABLE_AVENGER_OFFSET
-    ; TODO - add npc ouside camera view if possible
+    adiw ZL, NPC_TABLE_AVENGER_OFFSET
+    elpm r25, Z
+    sbiw ZL, NPC_TABLE_AVENGER_OFFSET
+    tst r25
+    breq _red_add_corpse
+    rcall add_npc
 _red_add_corpse:
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
     movw ZL, r22
     ldi r25, CORPSE_NPC
     std Y+NPC_IDX_OFFSET, r25
+    ret
+
+; Try to add an NPC as far as possible from the player. This is done by
+; casting four axis-aligned rays from the player's position, ensuring that
+; the position is reachable and valid. Ideally the NPC would be outside
+; the camera view, but that's difficult to guarantee.
+;
+; Temporary
+;   0-1             player tile-aligned location
+;   2-3             store Z pointer for internal reuse
+;
+; Register Usage
+;   r20-21, r24     calculations
+;   r25             NPC id (param)
+;   X (r26:r27)     memory pointer
+;   Z (r30:r31)     flash pointer
+add_npc:
+    movw XL, YL
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r20, SECTOR_DYNAMIC_NPC_COUNT
+_an_npc_iter:
+    ld r21, Y
+    tst r21
+    breq _an_slot_found
+    adiw YL, NPC_MEMSIZE
+    dec r20
+    brne _an_npc_iter
+    rjmp _an_end
+_an_slot_found:
+    call load_npc
+_an_reposition:
+    lds r24, player_position_x
+    lds r25, player_position_y
+    subi r24, low(-CHARACTER_SPRITE_WIDTH/2)
+    subi r25, low(-CHARACTER_SPRITE_HEIGHT/2)
+    div12u r24, r20
+    div12u r25, r21
+    ldi r24, 12
+    ldi r25, SECTOR_WIDTH
+    mul r20, r24
+    sts subroutine_tmp, r0
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r0
+    mul r21, r24
+    sts subroutine_tmp+1, r0
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r0
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    mul r21, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    add ZL, r20
+    adc ZH, r1
+    sts subroutine_tmp+2, ZL
+    sts subroutine_tmp+3, ZH
+_an_raycast_up:
+    clr r25
+    lds r20, subroutine_tmp+1
+    rjmp _an_up_check
+_an_up_iter:
+    sbiw ZL, SECTOR_WIDTH
+    elpm r24, Z
+    cpi r24, MIN_BLOCKING_TILE_IDX
+    brsh _an_up_save
+    inc r25
+    subi r20, TILE_HEIGHT
+    cpi r25, ADD_NPC_MAX_Y_DISTANCE
+    brsh _an_up_save
+_an_up_check:
+    cpi r20, TILE_HEIGHT
+    brsh _an_up_iter
+_an_up_save:
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
+_an_raycast_down:
+    lds ZL, subroutine_tmp+2
+    lds ZH, subroutine_tmp+3
+    clr r21
+    lds r20, subroutine_tmp+1
+    rjmp _an_down_check
+_an_down_iter:
+    adiw ZL, SECTOR_WIDTH
+    elpm r24, Z
+    cpi r24, MIN_BLOCKING_TILE_IDX
+    brsh _an_down_save
+    inc r21
+    subi r20, low(-TILE_HEIGHT)
+    cpi r21, ADD_NPC_MAX_Y_DISTANCE
+    brsh _an_down_save
+_an_down_check:
+    cpi r20, (SECTOR_HEIGHT-1)*TILE_HEIGHT
+    brlo _an_down_iter
+_an_down_save:
+    cp r25, r21
+    brsh _an_raycast_left
+    mov r25, r21
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
+_an_raycast_left:
+    lds ZL, subroutine_tmp+2
+    lds ZH, subroutine_tmp+3
+    clr r21
+    lds r20, subroutine_tmp
+    rjmp _an_left_check
+_an_left_iter:
+    sbiw ZL, 1
+    elpm r24, Z
+    cpi r24, MIN_BLOCKING_TILE_IDX
+    brsh _an_left_save
+    inc r21
+    subi r20, TILE_WIDTH
+    cpi r21, ADD_NPC_MAX_X_DISTANCE
+    brsh _an_left_save
+_an_left_check:
+    cpi r20, TILE_WIDTH
+    brsh _an_left_iter
+_an_left_save:
+    cp r25, r21
+    brsh _an_raycast_right
+    mov r25, r21
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r20
+    lds r20, subroutine_tmp+1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
+_an_raycast_right:
+    lds ZL, subroutine_tmp+2
+    lds ZH, subroutine_tmp+3
+    clr r21
+    lds r20, subroutine_tmp
+    rjmp _an_right_check
+_an_right_iter:
+    adiw ZL, 1
+    elpm r24, Z
+    cpi r24, MIN_BLOCKING_TILE_IDX
+    brsh _an_right_save
+    inc r21
+    subi r20, low(-TILE_WIDTH)
+    cpi r21, ADD_NPC_MAX_X_DISTANCE
+    brsh _an_right_save
+_an_right_check:
+    cpi r20, (SECTOR_WIDTH-1)*TILE_WIDTH
+    brlo _an_right_iter
+_an_right_save:
+    cp r25, r21
+    brsh _an_end
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r20
+    lds r20, subroutine_tmp+1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
+_an_end:
+    movw YL, XL
     ret

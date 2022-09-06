@@ -80,6 +80,7 @@ conversation_frame: .byte 2
 
 upgrade_points:     .byte 1
 
-character_render:   .byte CHARACTER_MEMSIZE-3
+character_render:   .byte CHARACTER_MEMSIZE-7
 npc_move_flags:     .byte 1
 npc_move_data:      .byte 2
+subroutine_tmp:     .byte 4
