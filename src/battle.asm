@@ -544,13 +544,38 @@ _red_add_avenger:
     sbiw ZL, NPC_TABLE_AVENGER_OFFSET
     tst r25
     breq _red_add_corpse
-    rcall add_npc
+    rcall add_distant_npc
 _red_add_corpse:
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     movw ZL, r22
     ldi r25, CORPSE_NPC
     std Y+NPC_IDX_OFFSET, r25
+    ret
+
+; Add an NPC to the sector, if there's an available slot.
+;
+; Register Usage
+;   r20-r21         calculations
+;   r25             NPC id (param)
+;   X (r26:r27)     temp
+add_npc:
+    movw XL, YL
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r20, SECTOR_DYNAMIC_NPC_COUNT
+_an_npc_iter:
+    ld r21, Y
+    tst r21
+    breq _an_slot_found
+    adiw YL, NPC_MEMSIZE
+    dec r20
+    brne _an_npc_iter
+    rjmp _an_end
+_an_slot_found:
+    call load_npc
+_an_end:
+    movw YL, XL
     ret
 
 ; Try to add an NPC as far as possible from the player. This is done by
@@ -567,22 +592,22 @@ _red_add_corpse:
 ;   r25             NPC id (param)
 ;   X (r26:r27)     memory pointer
 ;   Z (r30:r31)     flash pointer
-add_npc:
+add_distant_npc:
     movw XL, YL
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
     ldi r20, SECTOR_DYNAMIC_NPC_COUNT
-_an_npc_iter:
+_adn_npc_iter:
     ld r21, Y
     tst r21
-    breq _an_slot_found
+    breq _adn_slot_found
     adiw YL, NPC_MEMSIZE
     dec r20
-    brne _an_npc_iter
-    rjmp _an_end
-_an_slot_found:
+    brne _adn_npc_iter
+    rjmp _adn_end
+_adn_slot_found:
     call load_npc
-_an_reposition:
+_adn_reposition:
     lds r24, player_position_x
     lds r25, player_position_y
     subi r24, low(-CHARACTER_SPRITE_WIDTH/2)
@@ -609,96 +634,96 @@ _an_reposition:
     adc ZH, r1
     sts subroutine_tmp+2, ZL
     sts subroutine_tmp+3, ZH
-_an_raycast_up:
+_adn_raycast_up:
     clr r25
     lds r20, subroutine_tmp+1
-    rjmp _an_up_check
-_an_up_iter:
+    rjmp _adn_up_check
+_adn_up_iter:
     sbiw ZL, SECTOR_WIDTH
     elpm r24, Z
     cpi r24, MIN_BLOCKING_TILE_IDX
-    brsh _an_up_save
+    brsh _adn_up_save
     inc r25
     subi r20, TILE_HEIGHT
     cpi r25, ADD_NPC_MAX_Y_DISTANCE
-    brsh _an_up_save
-_an_up_check:
+    brsh _adn_up_save
+_adn_up_check:
     cpi r20, TILE_HEIGHT
-    brsh _an_up_iter
-_an_up_save:
+    brsh _adn_up_iter
+_adn_up_save:
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
-_an_raycast_down:
+_adn_raycast_down:
     lds ZL, subroutine_tmp+2
     lds ZH, subroutine_tmp+3
     clr r21
     lds r20, subroutine_tmp+1
-    rjmp _an_down_check
-_an_down_iter:
+    rjmp _adn_down_check
+_adn_down_iter:
     adiw ZL, SECTOR_WIDTH
     elpm r24, Z
     cpi r24, MIN_BLOCKING_TILE_IDX
-    brsh _an_down_save
+    brsh _adn_down_save
     inc r21
     subi r20, low(-TILE_HEIGHT)
     cpi r21, ADD_NPC_MAX_Y_DISTANCE
-    brsh _an_down_save
-_an_down_check:
+    brsh _adn_down_save
+_adn_down_check:
     cpi r20, (SECTOR_HEIGHT-1)*TILE_HEIGHT
-    brlo _an_down_iter
-_an_down_save:
+    brlo _adn_down_iter
+_adn_down_save:
     cp r25, r21
-    brsh _an_raycast_left
+    brsh _adn_raycast_left
     mov r25, r21
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
-_an_raycast_left:
+_adn_raycast_left:
     lds ZL, subroutine_tmp+2
     lds ZH, subroutine_tmp+3
     clr r21
     lds r20, subroutine_tmp
-    rjmp _an_left_check
-_an_left_iter:
+    rjmp _adn_left_check
+_adn_left_iter:
     sbiw ZL, 1
     elpm r24, Z
     cpi r24, MIN_BLOCKING_TILE_IDX
-    brsh _an_left_save
+    brsh _adn_left_save
     inc r21
     subi r20, TILE_WIDTH
     cpi r21, ADD_NPC_MAX_X_DISTANCE
-    brsh _an_left_save
-_an_left_check:
+    brsh _adn_left_save
+_adn_left_check:
     cpi r20, TILE_WIDTH
-    brsh _an_left_iter
-_an_left_save:
+    brsh _adn_left_iter
+_adn_left_save:
     cp r25, r21
-    brsh _an_raycast_right
+    brsh _adn_raycast_right
     mov r25, r21
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r20
     lds r20, subroutine_tmp+1
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
-_an_raycast_right:
+_adn_raycast_right:
     lds ZL, subroutine_tmp+2
     lds ZH, subroutine_tmp+3
     clr r21
     lds r20, subroutine_tmp
-    rjmp _an_right_check
-_an_right_iter:
+    rjmp _adn_right_check
+_adn_right_iter:
     adiw ZL, 1
     elpm r24, Z
     cpi r24, MIN_BLOCKING_TILE_IDX
-    brsh _an_right_save
+    brsh _adn_right_save
     inc r21
     subi r20, low(-TILE_WIDTH)
     cpi r21, ADD_NPC_MAX_X_DISTANCE
-    brsh _an_right_save
-_an_right_check:
+    brsh _adn_right_save
+_adn_right_check:
     cpi r20, (SECTOR_WIDTH-1)*TILE_WIDTH
-    brlo _an_right_iter
-_an_right_save:
+    brlo _adn_right_iter
+_adn_right_save:
     cp r25, r21
-    brsh _an_end
+    brsh _adn_end
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r20
     lds r20, subroutine_tmp+1
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
-_an_end:
+_adn_end:
     movw YL, XL
     ret
