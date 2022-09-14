@@ -528,7 +528,7 @@ _hmb_remove_item:
     std Z+SECTOR_ITEM_IDX_OFFSET, r1
     ldd r20, Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET
     tst r20
-    breq _hmb_npc_interactions
+    breq _hmb_end_trampoline
     mov r21, r20    ; if a preplaced item, mark as unavailable
     lsr r20
     lsr r20
@@ -543,6 +543,7 @@ _hmb_remove_item:
     com r22
     and r20, r22
     st X, r20
+_hmb_end_trampoline:
     rjmp _hmb_end
 _hmb_npc_interactions:
     ldi YL, low(sector_npcs)
