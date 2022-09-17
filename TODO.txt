@@ -6,7 +6,25 @@
 * About screen
 
 # Story
-* What is the plot? How does it differ for halfling, paladin, mage?
 * What about bosses?
 * Create dozens of sprites and tiles...
 * Ask someone talented to make prologue screens
+
+# Art
+- Design map
+* Grass
+* Trees
+* Dirt/Sand
+* Water
+* Mine
+* Walls
+* Fields
+* Cliff (vertical only)
+* Houses
+* Interiors
+* Random scenery
+* Halfling, Paladin, Mage
+* Wolves
+* Ghouls
+* Items
+* Tile map
