@@ -61,11 +61,35 @@ _adnv_done_%:
 ; subtract without signed overflow
 .macro sbnv ; r1, r2
     sub @0, @1
-    brvc _adnv_done_%
+    brvc _sbnv_done_%
     ldi @0, 127
     sbrs @1, 7
     ldi @0, -128
-_adnv_done_%:
+_sbnv_done_%:
+.endm
+
+; add without signed overflow
+.macro adnvi ; r1, imm
+    subi @0, low(-(@1))
+    brvc _adnvi_done_%
+    .if (@1 & 0x80)
+    ldi @0, -128
+    .else
+    ldi @0, 127
+    .endif
+_adnvi_done_%:
+.endm
+
+; subtract without signed overflow
+.macro sbnvi ; r1, imm
+    subi @0, @1
+    brvc _sbnvi_done_%
+    .if (@1 & 0x80)
+    ldi @0, 127
+    .else
+    ldi @0, -128
+    .endif
+_sbnvi_done_%:
 .endm
 
 ; read the nth bit of a register (the result is placed in the register). Only the

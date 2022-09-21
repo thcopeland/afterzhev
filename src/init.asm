@@ -40,7 +40,7 @@ _init_zero_iter:
     sti player_inventory+1, 6
     sti player_stats, 10
     sti player_stats+1, 10
-    sti player_stats+2, 20
+    sti player_stats+2, 10
     sti player_stats+3, 10
     call calculate_player_stats
     stiw player_gold, 1600

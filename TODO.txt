@@ -12,14 +12,13 @@
 
 # Art
 - Design map
-* Grass
-* Trees
-* Dirt/Sand
-* Water
-* Mine
+- Grass
+- Trees
+- Dirt/Sand
+- Water
+- Mine
 * Walls
-* Fields
-* Cliff (vertical only)
+- Fields
 * Houses
 * Interiors
 * Random scenery
