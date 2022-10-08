@@ -17,6 +17,7 @@ load_shop:
     cp r20, r25
     breq _ls_change_mode
     sts current_shop_index, r25
+    dec r25
     ldi XL, low(shop_inventory)
     ldi XH, high(shop_inventory)
     ldi r20, SHOP_INVENTORY_SIZE
@@ -237,6 +238,7 @@ _srg_render_header_text:
     ldi ZH, high(2*shop_table+SHOP_NAME_PTR_OFFSET)
     ldi r20, SHOP_MEMSIZE
     lds r21, current_shop_index
+    dec r21
     mul r20, r21
     add ZL, r0
     adc ZH, r1
@@ -546,6 +548,7 @@ calculate_buy_price:
     ldi ZH, high(2*shop_table+SHOP_PRICE_CONST_OFFSET)
     ldi r22, SHOP_MEMSIZE
     lds r23, current_shop_index
+    dec r23
     mul r22, r23
     add ZL, r0
     adc ZH, r1
@@ -646,6 +649,7 @@ _smv_from_flash:
     ldi ZL, low(2*shop_table+SHOP_ITEMS_OFFSET)
     ldi ZH, high(2*shop_table+SHOP_ITEMS_OFFSET)
     ldi r24, SHOP_MEMSIZE
+    dec r25
     mul r24, r25
     add ZL, r0
     adc ZH, r1

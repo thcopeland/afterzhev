@@ -14,6 +14,11 @@
 .equ MIN_BLOCKING_TILE_IDX = 18 ; eventually to be 64 or so
 .equ CORPSE_NPC = 1
 
+.equ NO_NPC = 0
+.equ NO_SHOP = 0
+.equ NO_ITEM = 0
+.equ NO_HANDLER = 0
+
 .equ MODE_STARTUP = 0
 .equ MODE_ABOUT = 1
 .equ MODE_HELP = 2

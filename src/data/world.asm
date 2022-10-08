@@ -17,10 +17,6 @@
 ;   on conversation subroutine (2 bytes)
 ;   on choice subroutine (2 bytes)
 
-.equ NO_NPC = 0
-.equ NO_ITEM = 0
-.equ NO_HANDLER = 0
-
 sector_table:
     ; sector 0
     .db 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, \

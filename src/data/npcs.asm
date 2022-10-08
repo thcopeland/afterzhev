@@ -87,7 +87,7 @@ npc_table:
     DECL_ENEMY_DATA 0, 0, 8, 10, 10, 1, 2, 3
 
     DECL_NPC        NPC_SHOPKEEPER, 128 | 1, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 10, 36, 36
-    DECL_SHOP_DATA  3, 0
+    DECL_SHOP_DATA  3, 1
 
     DECL_NPC        NPC_TALKER, CHARACTER_PALADIN, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 20, 30, 150
     DECL_TALK_DATA  0, 1, fisherman_greeting, 0, fisherman_laugh
