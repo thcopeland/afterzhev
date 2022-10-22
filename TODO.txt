@@ -17,11 +17,10 @@
 - Dirt/Sand
 - Water
 - Mine
-* Walls
 - Fields
-* Houses
-* Interiors
-* Random scenery
+- Houses
+- Interiors
+- Random scenery
 * Halfling, Paladin, Mage
 * Wolves
 * Ghouls
