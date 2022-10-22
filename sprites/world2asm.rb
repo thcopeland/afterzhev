@@ -125,10 +125,22 @@ class WorldCompiler
 
     world_grid = rows.times.map { Array.new(cols) }
 
-    maps.each_with_index do |map, i|
+    maps.each do |map|
       row = (map["y"] - min_y)/sector_height
       col = (map["x"] - min_x)/sector_width
-      world_grid[row][col] = load_tmx(map, i)
+      world_grid[row][col] = load_tmx(map, 0)
+    end
+
+    # relabel
+    label = 0
+    rows.times do |row|
+      cols.times do |col|
+        sector = world_grid[row][col]
+        if sector
+          sector[:label] = label
+          label += 1
+        end
+      end
     end
 
     File.open("world2asm-world.asm", "w") do |f|
