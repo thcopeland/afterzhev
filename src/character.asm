@@ -69,8 +69,8 @@ _mc_check_collisions:
     subi r21, low(-CHARACTER_COLLIDER_OFFSET_Y)
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    ldi ZL, low(2*sector_table)
-    ldi ZH, high(2*sector_table)
+    lds ZL, current_sector
+    lds ZH, current_sector+1
     divmod12u r21, r24, r25
     ldi r21, SECTOR_WIDTH
     mul r21, r24
@@ -84,15 +84,15 @@ _mc_check_collisions:
     ldi r20, low(-1)
     ldi r21, 1
 _mc_check_no_collision:
-    cpi r26, MIN_FULL_BLOCKING_IDX
+    cpi r26, END_FULL_BLOCKING_IDX
     brlo _mc_check_upper_left_blocked
     ret
 _mc_check_upper_left_blocked:
-    cpi r26, MIN_UPPER_LEFT_BLOCKING_IDX
+    cpi r26, END_UPPER_LEFT_BLOCKING_IDX
     brsh _mc_check_lower_right_blocked
     rjmp _mc_resolve_angle_collision
 _mc_check_lower_right_blocked:
-    cpi r26, MIN_LOWER_RIGHT_BLOCKING_IDX
+    cpi r26, END_LOWER_RIGHT_BLOCKING_IDX
     brsh _mc_check_lower_left_blocked
     subi r24, 12
     neg r24
@@ -101,13 +101,13 @@ _mc_check_lower_right_blocked:
     rjmp _mc_resolve_angle_collision
 _mc_check_lower_left_blocked:
     neg r20
-    cpi r26, MIN_LOWER_LEFT_BLOCKING_IDX
+    cpi r26, END_LOWER_LEFT_BLOCKING_IDX
     brsh _mc_check_upper_right_blocked
     subi r25, 12
     neg r25
     rjmp _mc_resolve_angle_collision
 _mc_check_upper_right_blocked:
-    cpi r26, MIN_UPPER_RIGHT_BLOCKING_IDX
+    cpi r26, END_UPPER_RIGHT_BLOCKING_IDX
     brsh _mc_resolve_full_collison
     subi r24, 12
     neg r24

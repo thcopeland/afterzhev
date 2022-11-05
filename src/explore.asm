@@ -1252,6 +1252,8 @@ _up_end:
 check_sector_bounds:
     lds r24, player_position_x
     lds r25, player_position_y
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
     lds ZL, current_sector
     lds ZH, current_sector+1
     subi ZL, low(-SECTOR_AJD_OFFSET)
@@ -1288,7 +1290,7 @@ _csb_check_sector_bottom:
     sts camera_position_y, r1
 _csb_switch_sector:
     call load_upgrade_if_necessary
-    lpm r24, Z
+    elpm r24, Z
     ldi r25, SECTOR_MEMSIZE/2
     mul r24, r25
     lsl r0

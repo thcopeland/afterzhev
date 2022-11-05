@@ -19,7 +19,6 @@ _init_zero_iter:
     out GPIOR0, r16 ; stores the video framebuffer offset (low)
     out GPIOR1, r17 ; stores the video framebuffer offset (high)
     out GPIOR2, r1  ; video frame status
-    stiw current_sector, 2*sector_table
     sti camera_position_x, 00
     sti camera_position_y, 12
     sti player_position_x, 70
@@ -60,8 +59,8 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    ldi ZL, low(2*sector_table)
-    ldi ZH, high(2*sector_table)
+    ldi ZL, low(2*sector_table+SECTOR_MEMSIZE)
+    ldi ZH, high(2*sector_table+SECTOR_MEMSIZE)
     call load_sector
 
     rjmp main

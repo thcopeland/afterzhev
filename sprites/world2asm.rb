@@ -6,7 +6,12 @@ require "json"
 require "thread"
 require "tmpdir"
 
-WALKABLE_TILES = [0, 1, 2, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 29, 30, 31, 32, 33, 34, 35, 38, 39, 40, 48, 49, 50, 51, 52, 69, 70, 71, 80, 88, 89, 102, 103, 104, 107, 112, 130, 131, 132, 142, 149, 150, 151, 168, 169, 170, 187, 188, 189, 206, 207, 208, 225, 226, 227, 228, 229, 230, 234, 235, 247, 252, 266, 271 ]
+UPPER_LEFT_BLOCKED = [37, 47, 83, 85, 92]
+LOWER_RIGHT_BLOCKED = [6, 17, 63, 65, 72, 114]
+LOWER_LEFT_BLOCKED = [9, 18, 64, 66, 68, 73, 117]
+UPPER_RIGHT_BLOCKED = [36, 44, 82, 84, 91]
+FULL_BLOCKED = [3, 4, 5, 7, 8, 22, 23, 24, 25, 26, 27, 28, 41, 42, 43, 45, 46, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 67, 74, 75, 76, 77, 78, 79, 80, 86, 87, 93, 94, 95, 96, 97, 98, 99, 100, 105, 106, 109, 113, 115, 116, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 129, 129, 133, 134, 135, 136, 137, 138, 139, 140, 141, 143, 144, 145, 146, 147, 148, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 171, 172, 173, 174, 175, 176, 177, 178, 190, 191, 192, 193, 194, 195, 196, 197, 209, 210, 211, 212, 213, 214, 215, 231, 232, 233, 248, 249, 250, 253, 267, 268, 269, 272, 285, 286, 287, 288, 289, 290]
+ALL_BLOCKED = UPPER_LEFT_BLOCKED + LOWER_RIGHT_BLOCKED + LOWER_LEFT_BLOCKED + UPPER_RIGHT_BLOCKED + FULL_BLOCKED
 
 class TSXCompiler
   attr_reader :width, :height, :tile_width, :tile_height, :mapping
@@ -39,14 +44,14 @@ class TSXCompiler
           idx = row*width/tile_width + col
           Thread.new do
             data = convert_tile(idx, working_dir)
-            semaphore.synchronize { tiles[idx] = data}
+            semaphore.synchronize { tiles[idx] = data }
           end
         end.each(&:join)
       end
 
       File.open("./world2asm-tiles.asm", "w") do |f|
         label = 0
-        WALKABLE_TILES.each do |idx|
+        ALL_BLOCKED.each do |idx|
           if tiles[idx]
             write_tile(tiles[idx], f)
             mapping[idx] = label
