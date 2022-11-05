@@ -12,6 +12,16 @@
 
 .equ TRANSPARENT = 0xc7 ; magenta
 .equ MIN_BLOCKING_TILE_IDX = 67
+
+; must be non-decreasing order
+.equ MIN_UPPER_LEFT_BLOCKING_IDX = 1
+.equ MIN_LOWER_RIGHT_BLOCKING_IDX = 2
+.equ MIN_LOWER_LEFT_BLOCKING_IDX = 3
+.equ MIN_UPPER_RIGHT_BLOCKING_IDX = 4
+.equ MIN_FULL_BLOCKING_IDX = 5
+
+.equ FULL_BLOCKING_MARGIN = 3
+
 .equ CORPSE_NPC = 1
 
 .equ NO_NPC = 0
@@ -96,8 +106,13 @@
 .equ ATTACK_DAMAGE_FRAME = 2
 .equ RANGED_LAUNCH_FRAME = 1
 
+; used for character-character collisions only
 .equ CHARACTER_COLLIDER_WIDTH = 8
 .equ CHARACTER_COLLIDER_HEIGHT = 2
+
+; used for character-world collisions only
+.equ CHARACTER_COLLIDER_OFFSET_X = CHARACTER_SPRITE_WIDTH/2
+.equ CHARACTER_COLLIDER_OFFSET_Y = CHARACTER_SPRITE_HEIGHT-2
 
 .equ ACTION_IDLE = 0
 .equ ACTION_WALK = 1

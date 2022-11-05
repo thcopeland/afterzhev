@@ -10,158 +10,177 @@
 ;   y velocity (1 byte)
 ;
 ; Register Usage
-;   r20-r24         calculations
+;   r18-r25         calculations
 ;   r26             whether to apply friction (param)
 ;   Y (r28:r29)     character data pointer (param)
+;   Z (r30:r31)     flash pointer
 move_character:
-_mc_horizontal_component:
     ldd r20, Y+CHARACTER_POSITION_X_H
-    ldd r21, Y+CHARACTER_POSITION_X_L
+    ldd r21, Y+CHARACTER_POSITION_Y_H
+    sts subroutine_tmp, r20
+    sts subroutine_tmp+1, r21
     ldd r22, Y+CHARACTER_POSITION_DX
-    tst r22
-    breq _mc_vertical_component
-    ext r22, r23
-    add r21, r22
-    adc r20, r23
-    add r21, r22
-    adc r20, r23
-    std Y+CHARACTER_POSITION_X_L, r21
+    ldd r23, Y+CHARACTER_POSITION_DY
+    ext r22, r24
+    ldd r25, Y+CHARACTER_POSITION_X_L
+    add r25, r22
+    adc r20, r24
+    add r25, r22
+    adc r20, r24
+    std Y+CHARACTER_POSITION_X_L, r25
+    ext r23, r24
+    ldd r25, Y+CHARACTER_POSITION_Y_L
+    add r25, r23
+    adc r21, r24
+    add r25, r23
+    adc r21, r24
+    std Y+CHARACTER_POSITION_Y_L, r25
     tst r26
-    breq _mc_post_horizontal_friction
-    decay_90p r22, r23, r24     ; friction
-_mc_post_horizontal_friction:
+    breq _mc_save_speed
+    decay_90p r22, r24, r25
+    decay_90p r23, r24, r25
+_mc_save_speed:
     std Y+CHARACTER_POSITION_DX, r22
-    mov r24, r20
-    ldd r25, Y+CHARACTER_POSITION_Y_H
-    rcall resolve_character_movement
-_mc_vertical_component:
-    ldd r20, Y+CHARACTER_POSITION_Y_H
-    ldd r21, Y+CHARACTER_POSITION_Y_L
-    ldd r22, Y+CHARACTER_POSITION_DY
-    tst r22
-    breq _mc_end
-    ext r22, r23
-    add r21, r22
-    adc r20, r23
-    add r21, r22
-    adc r20, r23
-    std Y+CHARACTER_POSITION_Y_L, r21
-    tst r26
-    breq _mc_post_vertical_friction
-    decay_90p r22, r23, r24     ; friction
-_mc_post_vertical_friction:
-    std Y+CHARACTER_POSITION_DY, r22
-    ldd r24, Y+CHARACTER_POSITION_X_H
-    mov r25, r20
-    rcall resolve_character_movement
-_mc_end:
+    std Y+CHARACTER_POSITION_DY, r23
+_mc_check_out_up:
+    cpi r21, TILE_HEIGHT*SECTOR_HEIGHT
+    brlo _mc_check_out_down
+    std Y+CHARACTER_POSITION_Y_H, r21
     ret
-
-; Check for collisions. If none occur, the new position is saved.
-;
-; NOTE - when the character is near the edge of the map, the collision box
-; corners may fall outside the sector. We treat these cases as if there were no
-; collision and rely on other code to check and handle this situation (for the
-; player, switch sectors, for enemies, restrict to the sector.)
-;
-; Register Usage
-;   r18-r23         calculations
-;   r24             new x position (param)
-;   r25             new y position (param)
-;   Y (r28:r29)     character position pointer (param)
-;   Z (r30:r31)     sector pointer
-resolve_character_movement:
+_mc_check_out_down:
+    cpi r21, TILE_HEIGHT*SECTOR_HEIGHT-CHARACTER_SPRITE_HEIGHT
+    brlo _mc_check_out_left
+    std Y+CHARACTER_POSITION_Y_H, r21
+    ret
+_mc_check_out_left:
+    cpi r20, TILE_WIDTH*SECTOR_WIDTH
+    brlo _mc_check_out_right
+    std Y+CHARACTER_POSITION_X_H, r20
+    ret
+_mc_check_out_right:
+    cpi r20, TILE_WIDTH*SECTOR_WIDTH-CHARACTER_SPRITE_WIDTH
+    brlo _mc_check_collisions
+    std Y+CHARACTER_POSITION_X_H, r20
+    ret
+_mc_check_collisions:
+    std Y+CHARACTER_POSITION_X_H, r20
+    std Y+CHARACTER_POSITION_Y_H, r21
+    subi r20, low(-CHARACTER_COLLIDER_OFFSET_X)
+    subi r21, low(-CHARACTER_COLLIDER_OFFSET_Y)
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-_rcm_check_upper_left:
-    lds ZL, current_sector
-    lds ZH, current_sector+1
-    movw r18, r24
-    subi r18, low(-(TILE_WIDTH-CHARACTER_COLLIDER_WIDTH)/2)
-    brlt _rcm_no_collision_trampoline
-    subi r19, low(-(TILE_HEIGHT-CHARACTER_COLLIDER_HEIGHT-1))
-    brlt _rcm_no_collision_trampoline
-    div12u r18, r20
-    div12u r19, r21
-    ldi r22, SECTOR_WIDTH
-    mul r21, r22
+    ldi ZL, low(2*sector_table)
+    ldi ZH, high(2*sector_table)
+    divmod12u r21, r24, r25
+    ldi r21, SECTOR_WIDTH
+    mul r21, r24
     add ZL, r0
     adc ZH, r1
     clr r1
-    add ZL, r20
+    divmod12u r20, r21, r24
+    add ZL, r21
     adc ZH, r1
-    elpm r22, Z
-    cpi r22, MIN_BLOCKING_TILE_IDX
-    brlo _rcm_check_upper_right
-    rjmp _rcm_collision
-_rcm_check_upper_right:
-    lds ZL, current_sector
-    lds ZH, current_sector+1
-    mov r18, r24
-    subi r18, low(-(TILE_WIDTH+CHARACTER_COLLIDER_WIDTH-1)/2)
-    cpi r18, SECTOR_WIDTH*TILE_WIDTH
-    brsh _rcm_no_collision_trampoline
-    div12u r18, r20
-    ldi r22, SECTOR_WIDTH
-    mul r21, r22
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    add ZL, r20
-    adc ZH, r1
-    elpm r22, Z
-    cpi r22, MIN_BLOCKING_TILE_IDX
-    brlo _rcm_check_lower_left
-    rjmp _rcm_collision
-_rcm_no_collision_trampoline:
-    rjmp _rcm_no_collision
-_rcm_check_lower_left:
-    lds ZL, current_sector
-    lds ZH, current_sector+1
-    movw r18, r24
-    subi r18, low(-(TILE_WIDTH-CHARACTER_COLLIDER_WIDTH)/2)
-    subi r19, low(-(TILE_HEIGHT-1))
-    cpi r19, SECTOR_HEIGHT*TILE_HEIGHT
-    brsh _rcm_no_collision
-    div12u r18, r20
-    div12u r19, r21
-    ldi r22, SECTOR_WIDTH
-    mul r21, r22
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    add ZL, r20
-    adc ZH, r1
-    elpm r22, Z
-    cpi r22, MIN_BLOCKING_TILE_IDX
-    brsh _rcm_collision
-_rcm_check_lower_right:
-    lds ZL, current_sector
-    lds ZH, current_sector+1
-    mov r18, r24
-    subi r18, low(-(TILE_WIDTH+CHARACTER_COLLIDER_WIDTH-1)/2)
-    div12u r18, r20
-    ldi r22, SECTOR_WIDTH
-    mul r21, r22
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    add ZL, r20
-    adc ZH, r1
-    elpm r22, Z
-    cpi r22, MIN_BLOCKING_TILE_IDX
-    brsh _rcm_collision
-_rcm_no_collision:
-    std Y+CHARACTER_POSITION_X_H, r24
-    std Y+CHARACTER_POSITION_Y_H, r25
+    elpm r26, Z
+    ldi r20, low(-1)
+    ldi r21, 1
+_mc_check_no_collision:
+    cpi r26, MIN_FULL_BLOCKING_IDX
+    brlo _mc_check_upper_left_blocked
     ret
-_rcm_collision:
-    ldd r18, Y+CHARACTER_POSITION_X_H
-    cpse r18, r24
-    std Y+CHARACTER_POSITION_DX, r1
-    ldd r18, Y+CHARACTER_POSITION_Y_H
-    cpse r18, r25
-    std Y+CHARACTER_POSITION_DY, r1
+_mc_check_upper_left_blocked:
+    cpi r26, MIN_UPPER_LEFT_BLOCKING_IDX
+    brsh _mc_check_lower_right_blocked
+    rjmp _mc_resolve_angle_collision
+_mc_check_lower_right_blocked:
+    cpi r26, MIN_LOWER_RIGHT_BLOCKING_IDX
+    brsh _mc_check_lower_left_blocked
+    subi r24, 12
+    neg r24
+    subi r25, 12
+    neg r25
+    rjmp _mc_resolve_angle_collision
+_mc_check_lower_left_blocked:
+    neg r20
+    cpi r26, MIN_LOWER_LEFT_BLOCKING_IDX
+    brsh _mc_check_upper_right_blocked
+    subi r25, 12
+    neg r25
+    rjmp _mc_resolve_angle_collision
+_mc_check_upper_right_blocked:
+    cpi r26, MIN_UPPER_RIGHT_BLOCKING_IDX
+    brsh _mc_resolve_full_collison
+    subi r24, 12
+    neg r24
+    rjmp _mc_resolve_angle_collision
+_mc_resolve_full_collison:
+    cpi r24, FULL_BLOCKING_MARGIN
+    brsh _mc_rfc_right
+    sbrs r22, 7
+    neg r22
+    asr r22
+    asr r22
+    rjmp _mc_rfc_top
+_mc_rfc_right:
+    cpi r24, TILE_WIDTH-FULL_BLOCKING_MARGIN
+    brlo _mc_rfc_top
+    sbrc r22, 7
+    neg r22
+    asr r22
+    asr r22
+_mc_rfc_top:
+    cpi r25, FULL_BLOCKING_MARGIN
+    brsh _mc_rfc_bottom
+    sbrs r23, 7
+    neg r23
+    asr r23
+    asr r23
+    rjmp _mc_writeback_collision
+_mc_rfc_bottom:
+    cpi r25, TILE_HEIGHT-FULL_BLOCKING_MARGIN
+    brlo _mc_writeback_collision
+    sbrc r23, 7
+    neg r23
+    asr r23
+    asr r23
+    rjmp _mc_writeback_collision
+_mc_resolve_angle_collision:
+    add r24, r25
+    cpi r24, TILE_WIDTH+1
+    brsh _mc_end
+    ; optimized sliding calculation for 45 degree walls
+    ; v, v', s                ; initial velocity, final velocity, wall parallel
+    ; s_x = +-1, s_y = +-1
+    ; S = s (dot) v           ; resulting speed along wall
+    ;   = s_xv_x + s_yv_y
+    ; v' = Ss/sqrt(2)
+    ; => v_x' = (v_x + s_xs_yv_y)/sqrt(2)
+    ;         = v_x/sqrt(2) + s_xs_y(v_y/sqrt(2))
+    ; => v_y' = (v_xs_yv_x + v_y)/sqrt(2)
+    ;         = s_xs_y(v_x/sqrt(2)) + v_y/sqrt(2)
+    movw r24, r22
+    asr r24
+    asr r24
+    asr r25
+    asr r25
+    sub r22, r24 ; using 0.75 as a 1/sqrt(2) approximation
+    sub r23, r25
+    sbrc r21, 7
+    neg r20
+    movw r24, r22
+    sbrc r20, 7
+    neg r24
+    sbrc r20, 7
+    neg r25
+    adnv r22, r25
+    adnv r23, r24
+_mc_writeback_collision:
+    std Y+CHARACTER_POSITION_DX, r22
+    std Y+CHARACTER_POSITION_DY, r23
+    lds r0, subroutine_tmp
+    std Y+CHARACTER_POSITION_X_H, r0
+    lds r0, subroutine_tmp+1
+    std Y+CHARACTER_POSITION_Y_H, r0
+_mc_end:
     ret
 
 ; Update the character's animation and some general state.

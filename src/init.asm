@@ -22,7 +22,7 @@ _init_zero_iter:
     stiw current_sector, 2*sector_table
     sti camera_position_x, 00
     sti camera_position_y, 12
-    sti player_position_x, 60
+    sti player_position_x, 70
     sti player_position_y, 50
     sti player_velocity_x, 0
     sti player_velocity_y, 0
