@@ -94,58 +94,49 @@ _mc_check_upper_left_blocked:
 _mc_check_lower_right_blocked:
     cpi r26, END_LOWER_RIGHT_BLOCKING_IDX
     brsh _mc_check_lower_left_blocked
-    subi r24, 12
+    subi r24, TILE_WIDTH-1
     neg r24
-    subi r25, 12
+    subi r25, TILE_HEIGHT-1
     neg r25
     rjmp _mc_resolve_angle_collision
 _mc_check_lower_left_blocked:
     neg r20
     cpi r26, END_LOWER_LEFT_BLOCKING_IDX
     brsh _mc_check_upper_right_blocked
-    subi r25, 12
+    subi r25, TILE_HEIGHT-1
     neg r25
     rjmp _mc_resolve_angle_collision
 _mc_check_upper_right_blocked:
     cpi r26, END_UPPER_RIGHT_BLOCKING_IDX
     brsh _mc_resolve_full_collison
-    subi r24, 12
+    subi r24, TILE_WIDTH-1
     neg r24
     rjmp _mc_resolve_angle_collision
 _mc_resolve_full_collison:
-    cpi r24, FULL_BLOCKING_MARGIN
-    brsh _mc_rfc_right
-    sbrs r22, 7
+    cpi r24, TILE_WIDTH/2
+    brlo _mc_rfc_vertical_diff
+    subi r24, TILE_WIDTH-1
+    neg r24
+_mc_rfc_vertical_diff:
+    cpi r25, TILE_HEIGHT/2
+    brlo _mc_rfc_cmp_diff
+    subi r25, TILE_HEIGHT-1
+    neg r25
+_mc_rfc_cmp_diff:
+    cp r24, r25
+    brsh _mc_rfc_vert
     neg r22
     asr r22
     asr r22
-    rjmp _mc_rfc_top
-_mc_rfc_right:
-    cpi r24, TILE_WIDTH-FULL_BLOCKING_MARGIN
-    brlo _mc_rfc_top
-    sbrc r22, 7
-    neg r22
-    asr r22
-    asr r22
-_mc_rfc_top:
-    cpi r25, FULL_BLOCKING_MARGIN
-    brsh _mc_rfc_bottom
-    sbrs r23, 7
-    neg r23
-    asr r23
-    asr r23
     rjmp _mc_writeback_collision
-_mc_rfc_bottom:
-    cpi r25, TILE_HEIGHT-FULL_BLOCKING_MARGIN
-    brlo _mc_writeback_collision
-    sbrc r23, 7
+_mc_rfc_vert:
     neg r23
     asr r23
     asr r23
     rjmp _mc_writeback_collision
 _mc_resolve_angle_collision:
     add r24, r25
-    cpi r24, TILE_WIDTH+1
+    cpi r24, TILE_WIDTH
     brsh _mc_end
     ; optimized sliding calculation for 45 degree walls
     ; v, v', s                ; initial velocity, final velocity, wall parallel
