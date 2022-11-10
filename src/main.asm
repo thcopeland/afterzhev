@@ -107,13 +107,13 @@ _loop_work:
     ; the game. This corresponds to the VGA vertical front porch and sync pulse,
     ; in addition to the time we save with any blank rows (the latter is the most
     ; significant).
-    .ifdef DEV
-    ; heartbeat
+    ; .ifdef DEV
+    ; heartbeat, used for syncing with the emulator
     in r0, PORTB
     ldi r16, 0x80
     eor r0, r16
     out PORTB, r0
-    .endif
+    ; .endif
 
     lds r24, clock
     lds r25, clock+1

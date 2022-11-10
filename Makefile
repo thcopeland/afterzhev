@@ -6,6 +6,8 @@ MCU_TARGET     = atmega2560
 DEFS           = -D DEV -D __$(MCU_TARGET)
 AS             = avra
 OBJDUMP        = avr-objdump
+SLIMAVR        = $(SIM)/slimavr-0.1.3
+EMCC_FLAGS     = -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 --preload-file $(BIN)/main.hex
 
 all: $(BIN)/main.hex $(BIN)/main.lst
 
@@ -18,19 +20,18 @@ $(BIN)/%.lst: $(BIN)/%.hex
 upload: all
 	avrdude -p $(MCU_TARGET) -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:$(BIN)/main.hex:i
 
-sim-fast: $(BIN)/main.hex $(BIN)/simulate-fast
-	./$(BIN)/simulate-fast $(MCU_TARGET)
+sim: $(BIN)/main.hex $(BIN)/simulate
+	./$(BIN)/simulate $(MCU_TARGET)
 
-sim-slow: $(BIN)/main.hex $(BIN)/simulate-slow
-	./$(BIN)/simulate-slow $(MCU_TARGET)
+$(BIN)/simulate: $(SIM)/simulate.c
+	make -C $(SLIMAVR)
+	$(CC) $< $(SLIMAVR)/libslimavr.a -O2 -o $@ -lGLEW -lglfw -lGL -lpthread
 
-$(BIN)/simulate-fast: $(SIM)/simulate-fast.c
-	make -C sim/slimavr-0.1.3
-	$(CC) $< $(SIM)/slimavr-0.1.3/libslimavr.a -O2 -o $@ -lglut -lGL -lpthread
-
-$(BIN)/simulate-slow: $(SIM)/simulate-slow.c
-	$(CC) $< -O2 -o $@ -lglut -lGL -lpthread -lsimavr
+wasm: clean all
+	CC=emcc make -C $(SLIMAVR)
+	emcc $(EMCC_FLAGS) -O2 $(SLIMAVR)/libslimavr.a $(SIM)/simulate.c -o $(BIN)/simulate-fast.html -lGLEW -lglfw -lGL
+	make -C $(SLIMAVR) clean
 
 clean:
-	make -C sim/slimavr-0.1.3 clean
+	make -C $(SLIMAVR) clean
 	rm -rf $(BIN)/* $(SIM)/simulate
