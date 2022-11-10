@@ -322,20 +322,20 @@ _cpr_end:
     ret
 
 ; Calculate the dash cooldown time.
-;   cooldown = max(255 - 8*dexterity, 32)
+;   cooldown = 6*max(32-dex, 3)
 ;
 ; Register Usage
 ;   r25     cooldown time
 calculate_dash_cooldown:
     lds r25, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    subi r25, 32
+    neg r25
+    sbrc r25, 7
+    ldi r25, 3
     lsl r25
+    mov r0, r25
     lsl r25
-    lsl r25
-    com r25
-    cpi r25, 32
-    brsh _cdc_end
-    ldi r25, 32
-_cdc_end:
+    add r25, r0
     ret
 
 ; Calculate the strength of an effect's damage (the actual damage done will

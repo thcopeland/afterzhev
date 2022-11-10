@@ -728,7 +728,7 @@ player_dash:
     ldi r20, ACTION_DASH
     sts player_action, r20
     sts player_frame, r1
-    call calculate_dash_cooldown ; TODO: inline?
+    call calculate_dash_cooldown
     sts player_dash_cooldown, r25
     lds r20, player_direction
     sts player_dash_direction, r20
@@ -1130,16 +1130,14 @@ _up_dash_left:
     sts player_velocity_x, r20
 _up_dash_right:
     cpi r20, DIRECTION_RIGHT
-    brne _up_dash_move_again1
+    brne _up_dash_move_again
     ldi r20, 127
     sts player_velocity_x, r20
-_up_dash_move_again1:
-    lds r20, player_frame
-    cpi r20, DASH_DURATION/4
-    brsh _up_dash_move_again2
+_up_dash_move_again:
+    clr r26
     call move_character
-_up_dash_move_again2:
     call move_character
+    rcall check_sector_bounds
 _up_ranged_attack:
     lds r20, player_action
     cpi r20, ACTION_ATTACK
