@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "slimavr-0.1.3/slimavr.h"
+#include "minimal_model.h"
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
@@ -185,12 +186,8 @@ void loop() {
 }
 
 int main(int argc, char **argv) {
-    struct avr_model model = AVR_MODEL_ATMEGA2560;
-    if (argc > 1 && strcmp(argv[1], "atmega1280") == 0) {
-      model = AVR_MODEL_ATMEGA1280;
-    }
-
-    avr = avr_init(model);
+    // using a stripped-down ATmega 2560 for emulation for performance
+    avr = avr_init(AFTERZHEV_MINIMAL_MODEL);
     avr->mem[0x26] = 0xff;
 
     if (avr_load_ihex(avr, "bin/main.hex") != 0) {
