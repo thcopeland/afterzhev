@@ -27,6 +27,8 @@ _mc_x_movement:
     adc r20, r24
     add r25, r22
     adc r20, r24
+    add r25, r22
+    adc r20, r24
     std Y+CHARACTER_POSITION_X_L, r25
     std Y+CHARACTER_POSITION_X_H, r20
     tst r26
@@ -120,6 +122,8 @@ _mc_y_movement:
     ldd r22, Y+CHARACTER_POSITION_DY
     ext r22, r24
     ldd r25, Y+CHARACTER_POSITION_Y_L
+    add r25, r22
+    adc r20, r24
     add r25, r22
     adc r20, r24
     add r25, r22

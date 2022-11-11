@@ -1137,7 +1137,6 @@ _up_dash_move_again:
     clr r26
     call move_character
     call move_character
-    rcall check_sector_bounds
 _up_ranged_attack:
     lds r20, player_action
     cpi r20, ACTION_ATTACK
@@ -1257,7 +1256,7 @@ check_sector_bounds:
     subi ZL, low(-SECTOR_AJD_OFFSET)
     sbci ZH, high(-SECTOR_AJD_OFFSET)
 _csb_check_sector_left:
-    cpi r24, 255
+    cpi r24, SECTOR_WIDTH*TILE_WIDTH
     brlo _csb_check_sector_right
     adiw ZL, 3
     ldi r24, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH
@@ -1273,7 +1272,7 @@ _csb_check_sector_right:
     sts camera_position_x, r1
     rjmp _csb_switch_sector
 _csb_check_sector_top:
-    cpi r25, 255
+    cpi r25, SECTOR_HEIGHT*TILE_HEIGHT
     brlo _csb_check_sector_bottom
     adiw ZL, 2
     ldi r24, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT

@@ -19,10 +19,10 @@ _init_zero_iter:
     out GPIOR0, r16 ; stores the video framebuffer offset (low)
     out GPIOR1, r17 ; stores the video framebuffer offset (high)
     out GPIOR2, r1  ; video frame status
-    sti camera_position_x, 00
-    sti camera_position_y, 12
-    sti player_position_x, 70
-    sti player_position_y, 50
+    sti camera_position_x, 84
+    sti camera_position_y, 0
+    sti player_position_x, 160
+    sti player_position_y, 36
     sti player_velocity_x, 0
     sti player_velocity_y, 0
     sti player_class, CLASS_HALFLING
@@ -39,12 +39,12 @@ _init_zero_iter:
     sti player_inventory+1, 6
     sti player_stats, 10
     sti player_stats+1, 10
-    sti player_stats+2, 10
+    sti player_stats+2, 20
     sti player_stats+3, 10
     call calculate_player_stats
     stiw player_gold, 1600
     sti player_health, 40
-    stiw player_xp, 300
+    stiw player_xp, 000
     sti game_mode, MODE_EXPLORE
     sti inventory_selection, 0
     stiw preplaced_item_presence, 0xffff
@@ -59,8 +59,9 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    ldi ZL, low(2*sector_table+SECTOR_MEMSIZE)
-    ldi ZH, high(2*sector_table+SECTOR_MEMSIZE)
+    .equ INITIAL_SECTOR = 9
+    ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
+    ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector
 
     rjmp main

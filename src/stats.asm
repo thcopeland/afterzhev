@@ -256,7 +256,7 @@ calculate_damage:
     ret
 
 ; Calculate the player's acceleration.
-;   acceleration = 2 + dexterity/2 + armor boost
+;   acceleration = 5 + dexterity/3 + armor boost
 ;
 ; Register Usage
 ;   r20             acceleration
@@ -287,8 +287,10 @@ _ca_stat:
     asr r21
     sbrc r21, 7
     clr r21
-    subi r21, -2
-    add r20, r21
+    adnv r20, r21
+    lsr r21
+    sub r20, r21
+    adnvi r20, 5
     ret
 
 ; Calculate the acceration applied to an enemy when colliding with the player.
