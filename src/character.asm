@@ -259,7 +259,7 @@ _mcf_calculate_distance:
     sbrc r0, 7
     neg r0
     adnv r21, r0
-    cpi r21, 2*FEATURE_COLLIDE_RANGE
+    cpi r21, FEATURE_COLLIDE_RANGE
     brsh _mc_features_next
     ; NOTE: Not particularly pround of the "check_horizontal/vertical_corners" special
     ; casing. Without it, though, there's a tendency to get stuck on the corners.
