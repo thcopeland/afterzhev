@@ -1,5 +1,18 @@
 ; Simple character physics. Horizontal and vertical movements are calculated
-; separately in order to allow sliding on collisions.
+; separately in order to allow nice sliding on collisions (I think this wouldn't
+; be necessary if collisions considered more than a single tile, but I don't
+; really want to go there.)
+;
+; Five different types of collision tiles are supported.
+;   - FULLY_BLOCKED is resolved as a square
+;   - UPPER_LEFT_BLOCKED is resolved as a triangle filling the upper-left half of
+;     the tile.
+;   - UPPER_RIGHT_BLOCKED, LOWER_LEFT_BLOCKED, and LOWER_RIGHT_BLOCKED follow the
+;     same pattern as you'd expect.
+;
+; Collisions against features are also resolved here, since those are considered
+; part of the world map (as opposed to NPCs, which are handled elsewhere). These
+; are resolved as a 45-degree angle square, an easy approximation to the ideal circle.
 ;
 ; The character pointer should be a pointer to memory with the following layout:
 ;   x position (1 byte)
@@ -20,6 +33,7 @@ move_character:
 _mc_x_movement:
     ldd r20, Y+CHARACTER_POSITION_X_H
     mov r21, r20
+    sts subroutine_tmp, r20
     ldd r22, Y+CHARACTER_POSITION_DX
     ext r22, r24
     ldd r25, Y+CHARACTER_POSITION_X_L
@@ -119,6 +133,7 @@ _mcx_resolve_angle_collision:
 _mc_y_movement:
     ldd r20, Y+CHARACTER_POSITION_Y_H
     mov r21, r20
+    sts subroutine_tmp+1, r20
     ldd r22, Y+CHARACTER_POSITION_DY
     ext r22, r24
     ldd r25, Y+CHARACTER_POSITION_Y_L
@@ -161,7 +176,7 @@ _mcy_check_collision:
 _mcy_check_no_collision:
     cpi r20, END_FULL_BLOCKING_IDX
     brlo _mcy_check_upper_left_blocked
-    ret
+    rjmp _mc_check_features
 _mcy_check_upper_left_blocked:
     cpi r20, END_UPPER_LEFT_BLOCKING_IDX
     brsh _mcy_check_lower_right_blocked
@@ -196,11 +211,11 @@ _mcy_resolve_full_collison:
     neg r22
     std Y+CHARACTER_POSITION_DY, r22
     std Y+CHARACTER_POSITION_Y_H, r21
-    ret
+    rjmp _mc_check_features
 _mcy_resolve_angle_collision:
     add r24, r25
     cpi r24, TILE_WIDTH
-    brsh _mc_end
+    brsh _mc_check_features
     ldd r23, Y+CHARACTER_POSITION_DX
     movw r24, r22
     asr r24
@@ -215,6 +230,78 @@ _mcy_resolve_angle_collision:
     adnv r23, r22
     std Y+CHARACTER_POSITION_DX, r23
     std Y+CHARACTER_POSITION_Y_H, r21
+_mc_check_features:
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_FEATURES_OFFSET)
+    sbci ZH, high(-SECTOR_FEATURES_OFFSET)
+    ldd r24, Y+CHARACTER_POSITION_X_H
+    ldd r25, Y+CHARACTER_POSITION_Y_H
+    subi r24, low(-CHARACTER_COLLIDER_OFFSET_X+FEATURE_SPRITE_WIDTH/2)
+    subi r25, low(-CHARACTER_COLLIDER_OFFSET_Y+FEATURE_SPRITE_HEIGHT/2)
+    ldi r26, SECTOR_FEATURE_COUNT
+_mc_features_iter:
+    elpm r20, Z+
+    elpm r22, Z+
+    elpm r23, Z+
+    dec r20
+    brpl _mcf_calculate_distance
+    cpi r20, MAX_FEATURE_COLLIDE_IDX
+    brlo _mcf_calculate_distance
+    rjmp _mc_features_next
+_mcf_calculate_distance:
+    sbnv r22, r24
+    sbnv r23, r25
+    mov r21, r22
+    sbrc r21, 7
+    neg r21
+    mov r0, r23
+    sbrc r0, 7
+    neg r0
+    adnv r21, r0
+    cpi r21, 2*FEATURE_COLLIDE_RANGE
+    brsh _mc_features_next
+    ; NOTE: Not particularly pround of the "check_horizontal/vertical_corners" special
+    ; casing. Without it, though, there's a tendency to get stuck on the corners.
+    ; I tried a lot of stuff to fix it, this is the only one that worked really
+    ; reliable.
+_mcf_check_horizonal_corners:
+    tst r23
+    brne _mcf_check_vertical_corners
+    lds r24, subroutine_tmp
+    std Y+CHARACTER_POSITION_X_H, r24
+    ret
+_mcf_check_vertical_corners:
+    tst r22
+    brne _mcf_tilted_square_check
+    lds r25, subroutine_tmp+1
+    std Y+CHARACTER_POSITION_Y_H, r25
+    ret
+_mcf_tilted_square_check:
+    mov r21, r22
+    eor r21, r23 ; cunning quadrant check
+    ldd r22, Y+CHARACTER_POSITION_DX
+    ldd r23, Y+CHARACTER_POSITION_DY
+    asr r22
+    asr r23
+    movw r24, r22
+    sbrs r21, 7
+    neg r25
+    adnv r22, r25
+    sbrs r21, 7
+    neg r24
+    adnv r23, r24
+    std Y+CHARACTER_POSITION_DX, r22
+    std Y+CHARACTER_POSITION_DY, r23
+    lds r24, subroutine_tmp
+    lds r25, subroutine_tmp+1
+    std Y+CHARACTER_POSITION_X_H, r24
+    std Y+CHARACTER_POSITION_Y_H, r25
+    ret
+_mc_features_next:
+    dec r26
+    breq _mc_end
+    rjmp _mc_features_iter
 _mc_end:
     ret
 

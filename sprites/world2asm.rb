@@ -6,12 +6,24 @@ require "json"
 require "thread"
 require "tmpdir"
 
-UPPER_LEFT_BLOCKED = [37, 47, 83, 85, 92]
-LOWER_RIGHT_BLOCKED = [6, 17, 63, 65, 72, 114]
+UPPER_LEFT_BLOCKED = [37, 47, 83, 85, 92, 106]
+LOWER_RIGHT_BLOCKED = [6, 17, 63, 65, 67, 72, 114]
 LOWER_LEFT_BLOCKED = [9, 18, 64, 66, 68, 73, 117]
-UPPER_RIGHT_BLOCKED = [36, 44, 82, 84, 91]
-FULL_BLOCKED = [3, 4, 5, 7, 8, 22, 23, 24, 25, 26, 27, 28, 41, 42, 43, 45, 46, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 67, 74, 75, 76, 77, 78, 79, 80, 86, 87, 93, 94, 95, 96, 97, 98, 99, 100, 105, 106, 109, 113, 115, 116, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 129, 133, 134, 135, 136, 137, 138, 139, 140, 141, 143, 144, 145, 146, 147, 148, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 171, 172, 173, 174, 175, 176, 177, 178, 190, 191, 192, 193, 194, 195, 196, 197, 209, 210, 211, 212, 213, 214, 215, 231, 232, 233, 248, 249, 250, 253, 267, 268, 269, 272, 285, 286, 287, 288, 289, 290]
+UPPER_RIGHT_BLOCKED = [36, 44, 82, 84, 91, 105]
+FULL_BLOCKED = [3, 4, 5, 7, 8, 22, 23, 24, 25, 26, 27, 28, 41, 42, 43, 45, 46, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 74, 75, 76, 77, 78, 79, 80, 86, 87, 93, 94, 95, 96, 97, 98, 99, 100, 103, 104, 109, 115, 116, 118, 119, 121, 122, 123, 124, 125, 126, 127, 128, 129, 133, 134, 135, 136, 137, 138, 139, 140, 141, 143, 144, 145, 146, 147, 148, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 209, 210, 211, 212, 213, 214, 215, 231, 232, 233, 248, 249, 250, 252, 267, 268, 269, 271, 285, 286, 287, 288, 289, 290]
 ALL_BLOCKED = UPPER_LEFT_BLOCKED + LOWER_RIGHT_BLOCKED + LOWER_LEFT_BLOCKED + UPPER_RIGHT_BLOCKED + FULL_BLOCKED
+
+# puts UPPER_LEFT_BLOCKED.length
+# puts UPPER_LEFT_BLOCKED.length + LOWER_RIGHT_BLOCKED.length
+# puts UPPER_LEFT_BLOCKED.length + LOWER_RIGHT_BLOCKED.length + LOWER_LEFT_BLOCKED.length
+# puts UPPER_LEFT_BLOCKED.length + LOWER_RIGHT_BLOCKED.length + LOWER_LEFT_BLOCKED.length + UPPER_RIGHT_BLOCKED.length
+# puts UPPER_LEFT_BLOCKED.length + LOWER_RIGHT_BLOCKED.length + LOWER_LEFT_BLOCKED.length + UPPER_RIGHT_BLOCKED.length + FULL_BLOCKED.length
+
+reused = ALL_BLOCKED.select {|x| ALL_BLOCKED.count(x) > 1 }
+
+unless reused.empty?
+    raise "collision tiles #{reused.join(", ")} assigned more than once"
+end
 
 class TSXCompiler
   attr_reader :width, :height, :tile_width, :tile_height, :mapping
@@ -90,6 +102,10 @@ private
   def convert_tile(idx, working_dir)
     pixels = `convert #{working_dir}/tile-#{idx}.png -channel B -depth 2 -channel RG -depth 3 -channel RGB -depth 8 rgba:-`.unpack("C*").each_slice(4).to_a
     any_blank = pixels.any? { |p| p[3] != 255 }
+
+    if any_blank && ALL_BLOCKED.include?(idx)
+        puts "#{idx} cannot be a collision tile since it has blank pixels"
+    end
 
     if !any_blank
       pixels.map { |r, g, b| (b & 0xC0) | ((g >> 2) & 0x38) | ((r >> 5) & 0x07) }
@@ -205,6 +221,7 @@ private
          << ".db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0\n"  \
          << ".db 0, 0, 0, 0\n"                                                              \
          << ".db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\n"              \
+         << ".db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\n"  \
          << ".dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER\n"              \
          << "\n"
   end

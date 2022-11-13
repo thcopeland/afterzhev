@@ -53,14 +53,42 @@ render_game:
     lds r24, current_sector
     lds r25, current_sector+1
     call render_sector
+_rg_features:
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    ldi r16, 2 ;SECTOR_FEATURE_COUNT
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_FEATURES_OFFSET)
+    sbci ZH, high(-SECTOR_FEATURES_OFFSET)
+_rg_features_iter:
+    elpm r20, Z+
+    elpm r24, Z+
+    elpm r25, Z+
+    dec r20
+    brmi _rg_features_next
+    movw YL, ZL
+    ; assume the same 64kb partition as sector data
+    ldi ZL, low(2*feature_sprites)
+    ldi ZH, high(2*feature_sprites)
+    ldi r21, FEATURE_SPRITE_MEMSIZE
+    mul r20, r21
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    ldi r22, FEATURE_SPRITE_WIDTH
+    ldi r23, FEATURE_SPRITE_HEIGHT
+    call render_sprite
+    movw ZL, YL
+_rg_features_next:
+    dec r16
+    brne _rg_features_iter
 _rg_savepoint:
     lds r20, savepoint_data
     mov r21, r20
     andi r21, 0x38
     breq _rg_render_loose_items
     andi r20, 0x07
-    ldi ZL, byte3(2*sector_table)
-    out RAMPZ, ZL
     lds ZL, current_sector
     lds ZH, current_sector+1
     subi ZL, low(-(SECTOR_SAVEPOINT_OFFSET+1))
