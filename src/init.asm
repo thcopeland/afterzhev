@@ -21,7 +21,7 @@ _init_zero_iter:
     out GPIOR2, r1  ; video frame status
     sti camera_position_x, 84
     sti camera_position_y, 0
-    sti player_position_x, 160
+    sti player_position_x, 130
     sti player_position_y, 36
     sti player_velocity_x, 0
     sti player_velocity_y, 0
@@ -59,7 +59,7 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    .equ INITIAL_SECTOR = 9
+    .equ INITIAL_SECTOR = 70
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

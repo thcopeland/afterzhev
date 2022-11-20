@@ -22,6 +22,7 @@
   * Strange ruins
   * Ghosts
   * Invisible enemies
+  * Invincible enemies
   * Abandoned stuff
 
 # Characters
