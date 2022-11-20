@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-#include "slimavr-0.1.3/slimavr.h"
+#include "slimavr-0.1.4/slimavr.h"
 #include "minimal_model.h"
 
 #ifdef EMSCRIPTEN
@@ -118,7 +118,7 @@ void *run_game(void *unused) {
 
     while (1) {
         if (sync_hold) {
-            usleep(200);
+            usleep(1000);
         } else {
             run_to_sync();
         }

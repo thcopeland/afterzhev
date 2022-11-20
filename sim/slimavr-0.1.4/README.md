@@ -1,16 +1,16 @@
 ## Slimavr
 
-Slimavr is a slim, fast simulator for a subset of AVR microcontrollers. The name follows in the grand tradition established by [simulavr](https://www.nongnu.org/simulavr/) and [simavr](https://github.com/buserror/simavr).
+Slimavr is a slim, fast simulator for a subset of 8-bit AVR microcontrollers. The name follows in the grand tradition established by [simulavr](https://www.nongnu.org/simulavr/) and [simavr](https://github.com/buserror/simavr).
 
-Unlike these older projects, slimavr runs much faster than the AVR standard 16 MHz. On my two-core 2.6 GHz Intel i5-4300 laptop, it runs [AfterZhev](https://github.com/thcopeland/afterzhev) at around 27.5 MHz. In comparison, simavr runs at just over 3.0 MHz.
+Unlike these older projects, slimavr is designed to run at or faster than the standard AVR 16 MHz. On my 2.6 GHz laptop it can achieve around 39 MHz on [this benchmark](tests/asm/benchmark.S). Performance strongly depends on the program, however. Programs using several timers tend to be slower. Programs that use prescaled timers (or none at all) can be much faster.
 
-However, unless you need this sort of performance, you should use simavr. It is far more complete and stable. In fact, even if you do need slimavr's speed, I'd strongly recommend testing frequently with simavr (and a physical MCU) to ensure that things work properly.
+However, unless you need this sort of performance, you should use simavr. It is far more complete and stable. In fact, even if you do need slimavr's speed, I'd strongly recommend testing frequently with simavr (or better still, a physical MCU) to ensure that things work properly.
 
 ## Supported devices
 
 Currently, the following devices are supported:
 
-- ATMega 1280/2560
+- ATmega 1280/2560
 
 Which is not very many. Neither is this support complete by any means. If your project needs some other MCU, please create an Issue or PR.
 
@@ -19,7 +19,6 @@ Which is not very many. Neither is this support complete by any means. If your p
 Slimavr is far from complete. At this point, it lacks
 
  - Debugger support
- - VCD tracing
  - Fuse emulation
  - External interrupts
  - External timers
@@ -36,7 +35,7 @@ The features that are implemented, however, should be fairly accurate and comple
 
 ## Installation
 
-Download the latest version from the [Releases page](https://github.com/slimavr/armb/releases). Alternatively, clone the repository and run `./releases.sh` to create your own release.
+Download the latest version from the [releases page](https://github.com/thcopeland/slimavr/releases). Alternatively, clone the repository and run `./releases.sh` to create your own release.
 
 ## Usage
 
@@ -92,8 +91,8 @@ struct avr {
 If you want to modify IO registers, two helper functions are provided to ensure that the proper side effects are triggered. You should not use these for accessing buffered 16-bit registers, as this may overwrite the internal byte buffer, creating subtle bugs.
 
 ```c
-uint8_t avr_io_write(struct avr *avr, uint16_t reg);
-void avr_io_read(struct avr *avr, uint16_t reg, uint8_t val);
+uint8_t avr_io_read(struct avr *avr, uint16_t reg);
+void avr_io_write(struct avr *avr, uint16_t reg, uint8_t val);
 ```
 
 When you've finished with the device, use

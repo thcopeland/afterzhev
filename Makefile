@@ -6,7 +6,7 @@ MCU_TARGET     = atmega2560
 DEFS           = -D DEV -D __$(MCU_TARGET)
 AS             = avra
 OBJDUMP        = avr-objdump
-SLIMAVR        = $(SIM)/slimavr-0.1.3
+SLIMAVR        = $(SIM)/slimavr-0.1.4
 EMCC_FLAGS     = -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 --preload-file $(BIN)/main.hex
 
 all: $(BIN)/main.hex $(BIN)/main.lst
@@ -28,7 +28,7 @@ $(BIN)/simulate: $(SIM)/simulate.c
 	$(CC) $< $(SLIMAVR)/libslimavr.a -O2 -o $@ -lGLEW -lglfw -lGL -lpthread
 
 wasm: clean all
-	CC=emcc make -C $(SLIMAVR)
+	CC=emcc AR=emar make -C $(SLIMAVR)
 	emcc $(EMCC_FLAGS) -O2 $(SLIMAVR)/libslimavr.a $(SIM)/simulate.c -o $(BIN)/simulate-fast.html -lGLEW -lglfw -lGL
 	make -C $(SLIMAVR) clean
 
