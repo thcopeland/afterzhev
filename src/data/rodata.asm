@@ -9,13 +9,13 @@
     .include "conversations.asm"
     .include "npcs.asm"
     .include "classes.asm"
-    .include "ui.asm"
 
 ; Partition 2 (words 0x08000-0x0ffff): tiles and maps
     .org 0x08000
     .include "world.asm"
     .include "tiles.asm"
     .include "features.asm"
+    .include "ui.asm"
 
 ; Partion 3 (words 0x10000-0x17fff): character and item sprites
     .org 0x10000
