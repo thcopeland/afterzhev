@@ -59,7 +59,7 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    .equ INITIAL_SECTOR = 70
+    .equ INITIAL_SECTOR = 0
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

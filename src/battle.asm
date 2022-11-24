@@ -641,7 +641,7 @@ _adn_raycast_up:
 _adn_up_iter:
     sbiw ZL, SECTOR_WIDTH
     elpm r24, Z
-    cpi r24, MIN_BLOCKING_TILE_IDX
+    cpi r24, END_FULL_BLOCKING_IDX
     brsh _adn_up_save
     inc r25
     subi r20, TILE_HEIGHT
@@ -661,8 +661,8 @@ _adn_raycast_down:
 _adn_down_iter:
     adiw ZL, SECTOR_WIDTH
     elpm r24, Z
-    cpi r24, MIN_BLOCKING_TILE_IDX
-    brsh _adn_down_save
+    cpi r24, END_FULL_BLOCKING_IDX
+    brlo _adn_down_save
     inc r21
     subi r20, low(-TILE_HEIGHT)
     cpi r21, ADD_NPC_MAX_Y_DISTANCE
@@ -684,8 +684,8 @@ _adn_raycast_left:
 _adn_left_iter:
     sbiw ZL, 1
     elpm r24, Z
-    cpi r24, MIN_BLOCKING_TILE_IDX
-    brsh _adn_left_save
+    cpi r24, END_FULL_BLOCKING_IDX
+    brlo _adn_left_save
     inc r21
     subi r20, TILE_WIDTH
     cpi r21, ADD_NPC_MAX_X_DISTANCE
@@ -695,7 +695,7 @@ _adn_left_check:
     brsh _adn_left_iter
 _adn_left_save:
     cp r25, r21
-    brsh _adn_raycast_right
+    brlo _adn_raycast_right
     mov r25, r21
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r20
     lds r20, subroutine_tmp+1
@@ -709,8 +709,8 @@ _adn_raycast_right:
 _adn_right_iter:
     adiw ZL, 1
     elpm r24, Z
-    cpi r24, MIN_BLOCKING_TILE_IDX
-    brsh _adn_right_save
+    cpi r24, END_FULL_BLOCKING_IDX
+    brlo _adn_right_save
     inc r21
     subi r20, low(-TILE_WIDTH)
     cpi r21, ADD_NPC_MAX_X_DISTANCE
