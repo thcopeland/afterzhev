@@ -15,13 +15,9 @@ def merge_worlds(fname_base, fname_branch)
          f << base_lines[i]
          i += 1
 
-         name = nil
          while i < base_lines.length && j < branch_lines.length
-             if name.nil? && base_lines[i] == branch_lines[j]
-                 name = base_lines[i]
-                 f << base_lines[i]
-            elsif base_lines[i] =~ /(\d{3},?\s+){20}/ && branch_lines[j] =~ /(\d{3},?\s+){20}/
-                f << branch_lines[i]
+             if base_lines[i] =~ /(\d{3},?\s+){20}/ && branch_lines[j] =~ /(\d{3},?\s+){20}/
+                f << branch_lines[j]
             elsif base_lines[i] =~ /\.d[bw][^\\]+$/ && branch_lines[j] =~ /\.d[bw][^\\]+$/
                 f << base_lines[i]
             elsif base_lines[i] == branch_lines[j]

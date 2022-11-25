@@ -245,9 +245,10 @@ _mc_features_iter:
     elpm r22, Z+
     elpm r23, Z+
     dec r20
-    brpl _mcf_calculate_distance
+    brmi _mcf_next_trampoline
     cpi r20, MAX_FEATURE_COLLIDE_IDX
     brlo _mcf_calculate_distance
+_mcf_next_trampoline:
     rjmp _mc_features_next
 _mcf_calculate_distance:
     sbnv r22, r24

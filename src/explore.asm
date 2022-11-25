@@ -9,6 +9,38 @@ explore_update_game:
     rcall move_camera
     rcall update_savepoint
 
+    lds r21, player_position_x
+    ldi r23, 0x07
+    ldi XL, low(framebuffer + 10 + 2*DISPLAY_WIDTH)
+    ldi XH, high(framebuffer + 10 + 2*DISPLAY_WIDTH)
+    call putb
+
+    lds r21, player_position_y
+    ldi XL, low(framebuffer + 30 + 2*DISPLAY_WIDTH)
+    ldi XH, high(framebuffer + 30 + 2*DISPLAY_WIDTH)
+    call putb
+
+    lds r20, player_position_x
+    div12u r20, r21
+    ldi r20, 12
+    mul r21, r20
+    mov r21, r0
+    clr r1
+    ldi r23, 0x04
+    ldi XL, low(framebuffer + 10 + 8*DISPLAY_WIDTH)
+    ldi XH, high(framebuffer + 10 + 8*DISPLAY_WIDTH)
+    call putb
+
+    lds r20, player_position_y
+    div12u r20, r21
+    ldi r20, 12
+    mul r21, r20
+    mov r21, r0
+    clr r1
+    ldi XL, low(framebuffer + 30 + 8*DISPLAY_WIDTH)
+    ldi XH, high(framebuffer + 30 + 8*DISPLAY_WIDTH)
+    call putb
+
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     lds ZL, current_sector
@@ -56,7 +88,7 @@ render_game:
 _rg_features:
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    ldi r16, 2 ;SECTOR_FEATURE_COUNT
+    ldi r16, SECTOR_FEATURE_COUNT
     lds ZL, current_sector
     lds ZH, current_sector+1
     subi ZL, low(-SECTOR_FEATURES_OFFSET)
@@ -725,8 +757,14 @@ _hmb_nearby_portal:
     elpm r23, Z+
     sts player_position_x, r22
     sts player_position_y, r23
-    sts camera_position_x, r22
-    sts camera_position_y, r23
+    andi r23, 1
+    breq _hmb_move_camera
+    lds r22, player_direction
+    subi r22, 2
+    andi r22, 3
+    sts player_direction, r22
+_hmb_move_camera:
+    rcall reset_camera
     ldi ZL, low(2*sector_table)
     ldi ZH, high(2*sector_table)
     ldi r21, SECTOR_MEMSIZE/2
@@ -743,6 +781,44 @@ _hmb_portal_next:
     dec r22
     brne _hmb_portal_iter
 _hmb_end:
+    ret
+
+; Move the camera so the player is as centered as possible within the camera view.
+;
+; Register Usage
+;   r25       calculations
+reset_camera:
+    lds r25, player_position_x
+_rc_check_left:
+    cpi r25, DISPLAY_WIDTH
+    brsh _rc_check_right
+    sts camera_position_x, r1
+    rjmp _rc_center_y
+_rc_check_right:
+    cpi r25, SECTOR_WIDTH*TILE_WIDTH-DISPLAY_WIDTH/2
+    brlo _rc_x_ok
+    ldi r25, SECTOR_WIDTH*TILE_WIDTH-DISPLAY_WIDTH
+    sts camera_position_x, r25
+    rjmp _rc_center_y
+_rc_x_ok:
+    subi r25, DISPLAY_WIDTH/2
+    sts camera_position_x, r25
+_rc_center_y:
+    lds r25, player_position_y
+_rc_check_up:
+    cpi r25, DISPLAY_HEIGHT-CHARACTER_SPRITE_HEIGHT/2
+    brsh _rc_check_bottom
+    sts camera_position_y, r1
+    ret
+_rc_check_bottom:
+    cpi r25, SECTOR_HEIGHT*TILE_HEIGHT-DISPLAY_HEIGHT
+    brlo _rc_y_ok
+    ldi r25, SECTOR_WIDTH*TILE_WIDTH-DISPLAY_HEIGHT
+    sts camera_position_y, r25
+    ret
+_rc_y_ok:
+    subi r25, DISPLAY_HEIGHT/2-CHARACTER_SPRITE_HEIGHT/2
+    sts camera_position_y, r25
     ret
 
 ; Begin to dash in the facing direction.
