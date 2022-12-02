@@ -35,6 +35,7 @@ ui_small_coin_icon:
     .db 0x1f, 0xc7, 0x1f, 0xc7	; ..,,--
                                 ;   --
 
+ui_string_table:
 ui_str_inventory_instructions:  .db "No item selected", 0, 0
 ui_str_level_up:    .db "Level Up!", 0
 ui_str_points_remaining:    .db "   ability points remaining", 0
@@ -43,7 +44,7 @@ ui_str_vitality:    .db "Vitality", 0, 0
 ui_str_dexterity:   .db "Dexterity", 0
 ui_str_intellect:   .db "Intellect", 0
 ui_str_strength_abbr:   .db "Str", 0
-ui_str_vitality_abbr:   .db "Vit ", 0, 0 ; the trailing space is a hack to ensure all abbreviations have the same width
+ui_str_vitality_abbr:   .db "Vit ", 0, 0 ; the trailing space ensures all abbreviations have the same width
 ui_str_dexterity_abbr:  .db "Dex", 0
 ui_str_intellect_abbr:  .db "Int", 0
 ui_str_buy_label:   .db "Buy", 10, "for", 0

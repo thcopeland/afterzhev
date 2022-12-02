@@ -502,11 +502,11 @@ _irg_render_item_stats:
     elpm r15, Z+
     elpm r16, Z+
     elpm r17, Z+
+    ldi ZL, byte3(2*ui_string_table)
+    out RAMPZ, ZL
 _irg_render_item_strength:
     tst r14
     breq _irg_render_item_vitality
-    ldi ZL, byte3(2*ui_str_strength_abbr)
-    out RAMPZ, ZL
     ldi ZL, low(2*ui_str_strength_abbr)
     ldi ZH, high(2*ui_str_strength_abbr)
     mov r25, r14

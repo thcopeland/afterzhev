@@ -1376,6 +1376,7 @@ _re_inner:
     ret
 
 ; Render a rectangle of a single color. Mainly useful to fill the screen quickly.
+; The width is rounded down a multiple of four.
 ;
 ; Register Usage
 ;   r21             delta
@@ -1385,13 +1386,17 @@ _re_inner:
 ;   r25             element height (param)
 ;   X (r26:r27)     framebuffer pointer (param)
 render_rect:
+    andi r24, 0xfc
     ldi r21, DISPLAY_WIDTH
     sub r21, r24
 _rr_outer:
     mov r23, r24
 _rr_inner:
     st X+, r22
-    dec r23
+    st X+, r22
+    st X+, r22
+    st X+, r22
+    subi r23, 4
     brne _rr_inner
     add XL, r21
     adc XH, r1
