@@ -1,0 +1,573 @@
+{
+    "maps": [
+        {
+            "fileName": "start_section_hidden_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 0,
+            "y": -180
+        },
+        {
+            "fileName": "start_section_hidden_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 240,
+            "y": -180
+        },
+        {
+            "fileName": "start_section_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 240,
+            "y": -360
+        },
+        {
+            "fileName": "start_section_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 240,
+            "y": -540
+        },
+        {
+            "fileName": "start_section_fight.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 480,
+            "y": -540
+        },
+        {
+            "fileName": "start_section_post_fight.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 720,
+            "y": -540
+        },
+        {
+            "fileName": "start_section_pretown_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": -540
+        },
+        {
+            "fileName": "start_section_pretown_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": -360
+        },
+        {
+            "fileName": "town_section_entrance_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": -720
+        },
+        {
+            "fileName": "town_section_entrance_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": -900
+        },
+        {
+            "fileName": "town_section_wolves.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 720,
+            "y": -720
+        },
+        {
+            "fileName": "town_section_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 720,
+            "y": -900
+        },
+        {
+            "fileName": "town_section_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1200,
+            "y": -900
+        },
+        {
+            "fileName": "town_section_fields.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1440,
+            "y": -900
+        },
+        {
+            "fileName": "town_section_forest_path_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1440,
+            "y": -1080
+        },
+        {
+            "fileName": "town_section_forest_path_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1680,
+            "y": -1080
+        },
+        {
+            "fileName": "town_section_forest_path_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1680,
+            "y": -900
+        },
+        {
+            "fileName": "town_section_forest_path_4.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1680,
+            "y": -720
+        },
+        {
+            "fileName": "town_section_forest_path_5.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1920,
+            "y": -720
+        },
+        {
+            "fileName": "road_section_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": -180
+        },
+        {
+            "fileName": "road_section_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": 0
+        },
+        {
+            "fileName": "road_section_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": 180
+        },
+        {
+            "fileName": "road_section_4.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1200,
+            "y": 180
+        },
+        {
+            "fileName": "mine_section_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": 540
+        },
+        {
+            "fileName": "mine_section_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 720,
+            "y": 540
+        },
+        {
+            "fileName": "mine_section_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": 360
+        },
+        {
+            "fileName": "bridge_section_hidden.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1440,
+            "y": 0
+        },
+        {
+            "fileName": "bridge_section.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1440,
+            "y": 180
+        },
+        {
+            "fileName": "road_section_5.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1680,
+            "y": 180
+        },
+        {
+            "fileName": "road_section_6.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1680,
+            "y": 360
+        },
+        {
+            "fileName": "bridge_section_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1440,
+            "y": 360
+        },
+        {
+            "fileName": "road_section_7.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1920,
+            "y": 360
+        },
+        {
+            "fileName": "road_section_8.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2160,
+            "y": 360
+        },
+        {
+            "fileName": "road_section_9.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2160,
+            "y": 540
+        },
+        {
+            "fileName": "city_section_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2400,
+            "y": 540
+        },
+        {
+            "fileName": "city_section_4.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2640,
+            "y": 720
+        },
+        {
+            "fileName": "city_section_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2400,
+            "y": 720
+        },
+        {
+            "fileName": "city_section_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2640,
+            "y": 540
+        },
+        {
+            "fileName": "city_fields_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2640,
+            "y": 360
+        },
+        {
+            "fileName": "city_fields_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2640,
+            "y": 180
+        },
+        {
+            "fileName": "deep_forest_section_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1200,
+            "y": 0
+        },
+        {
+            "fileName": "deep_forest_section_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1440,
+            "y": -180
+        },
+        {
+            "fileName": "deep_forest_section_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1200,
+            "y": -180
+        },
+        {
+            "fileName": "deep_forest_section_4.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1200,
+            "y": -360
+        },
+        {
+            "fileName": "deep_forest_section_5.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1440,
+            "y": -360
+        },
+        {
+            "fileName": "final_section_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2880,
+            "y": 540
+        },
+        {
+            "fileName": "final_section_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2880,
+            "y": 360
+        },
+        {
+            "fileName": "final_section_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 3120,
+            "y": 540
+        },
+        {
+            "fileName": "final_section_4.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 3360,
+            "y": 540
+        },
+        {
+            "fileName": "final_section_7.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 3600,
+            "y": 540
+        },
+        {
+            "fileName": "final_section_6.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 3600,
+            "y": 360
+        },
+        {
+            "fileName": "underground_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 720,
+            "y": 744
+        },
+        {
+            "fileName": "underground_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": 744
+        },
+        {
+            "fileName": "underground_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": 924
+        },
+        {
+            "fileName": "underground_4.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1200,
+            "y": 744
+        },
+        {
+            "fileName": "mine_entrance_house.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 456,
+            "y": 540
+        },
+        {
+            "fileName": "city_bank_4.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2640,
+            "y": 1080
+        },
+        {
+            "fileName": "city_bank_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2880,
+            "y": 1080
+        },
+        {
+            "fileName": "city_bank_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2880,
+            "y": 900
+        },
+        {
+            "fileName": "city_robbers_den_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2880,
+            "y": 0
+        },
+        {
+            "fileName": "city_robbers_den.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2880,
+            "y": 180
+        },
+        {
+            "fileName": "city_shop_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2400,
+            "y": 360
+        },
+        {
+            "fileName": "final_castle.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 3840,
+            "y": 360
+        },
+        {
+            "fileName": "town_section_tavern_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": -1260
+        },
+        {
+            "fileName": "town_section_tavern_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 960,
+            "y": -1080
+        },
+        {
+            "fileName": "town_section_den.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1920,
+            "y": -900
+        },
+        {
+            "fileName": "town_section_den_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1920,
+            "y": -1080
+        },
+        {
+            "fileName": "skull_cult_section_4.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1920,
+            "y": 540
+        },
+        {
+            "fileName": "skull_cult_section_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1680,
+            "y": 720
+        },
+        {
+            "fileName": "skull_cult_section_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1680,
+            "y": 540
+        },
+        {
+            "fileName": "skull_cult_section_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1440,
+            "y": 540
+        },
+        {
+            "fileName": "river_section_hidden_house.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 1680,
+            "y": 0
+        },
+        {
+            "fileName": "mine_exit_house.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2160,
+            "y": 180
+        },
+        {
+            "fileName": "city_bank_1.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2640,
+            "y": 900
+        },
+        {
+            "fileName": "city_robbers_den_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2880,
+            "y": -180
+        },
+        {
+            "fileName": "city_house_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2160,
+            "y": 900
+        },
+        {
+            "fileName": "city_house_3.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2160,
+            "y": 720
+        },
+        {
+            "fileName": "final_section_8.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 3600,
+            "y": 180
+        },
+        {
+            "fileName": "final_castle_2.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 3840,
+            "y": 180
+        },
+        {
+            "fileName": "final_battle.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 4080,
+            "y": 180
+        },
+        {
+            "fileName": "city_section_island.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 2400,
+            "y": 900
+        }
+    ],
+    "onlyShowAdjacentMaps": false,
+    "type": "world"
+}
