@@ -24,7 +24,7 @@ def check_image(file)
 end
 
 def convert_file(input, output)
-  data = `convert #{input} -background magenta -alpha background -alpha remove -channel B -depth 2 -channel RGB -depth 3 -depth 8 rgb:-`
+  data = `convert #{input} -colorspace sRGB -background magenta -alpha background -alpha remove -channel B -depth 2 -channel RGB -depth 3 -depth 8 rgb:-`
   pixels = data.unpack("C*").each_slice(3).to_a
   pixels_8bit = pixels.map { |r, g, b| (b & 0xC0) | ((g >> 2) & 0x38) | ((r >> 5) & 0x07) }
   ascii = '#WXx~-,. '.chars
