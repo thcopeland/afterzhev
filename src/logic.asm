@@ -40,8 +40,8 @@ _ss2u_test_ruffian:
     cpi r25, 60
     brsh _ss2u_move_enemies
 _ss2u_halfing:
-    lds r25, player_class
-    cpi r25, CLASS_HALFLING
+    lds r25, player_character
+    cpi r25, CHARACTER_HALFLING
     brne _ss2u_main
     try_start_conversation_intern battle_tutorial_halfling, battle_tutorial
     rjmp _ss2u_move_enemies

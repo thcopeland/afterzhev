@@ -43,8 +43,9 @@
 .equ RANGED_MAGICAL = (1 << 3)
 
 item_table:
-    DECL_ITEM wood_stick,           (1<<6)|(1<<3)|ITEM_WIELDABLE,       2,      2,  0,  0,  0,      PADDING
+    DECL_ITEM wood_stick,           (1<<6)|(2<<3)|ITEM_WIELDABLE,       2,      2,  0,  0,  0,      PADDING
     DECL_ITEM feathered_hat,        ITEM_WEARABLE,                      20,     0,  0,  2,  4,      PADDING
+    DECL_ITEM bloody_sword,         (1<<6)|(1<<3)|ITEM_WIELDABLE,       50,     8,  0,  0,  0,      PADDING
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
 
 DECL_LOOSE_ITEM intro_wood_stick
@@ -54,5 +55,7 @@ _item_str_wood_stick_name:          .db "Tree branch", 0
 _item_str_wood_stick_desc:          .db "Better than nothing.", 0, 0
 _item_str_feathered_hat_name:       .db "Dashing hat", 0
 _item_str_feathered_hat_desc:       .db "Sporting an elegant red", 10, "feather.", 0, 0
+_item_str_bloody_sword_name:        .db "Bloody sword", 0, 0
+_item_str_bloody_sword_desc:        .db "The blade reeks of blood,marks of a cruel past.", 0
 _item_str_inventory_book_name:      .db "Book of Inventory", 0
 _item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <B> to use a potion.", 10, "Press <select> to drop.", 0

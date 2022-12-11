@@ -25,7 +25,7 @@ _init_zero_iter:
     sti player_velocity_x, 0
     sti player_velocity_y, 0
     sti player_class, CLASS_HALFLING
-    sti player_character, 1
+    sti player_character, CHARACTER_HALFLING
     sti player_weapon, 1
     sti player_armor, ITEM_feathered_hat
     sti player_action, ACTION_WALK
