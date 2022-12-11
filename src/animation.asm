@@ -51,41 +51,34 @@ determine_weapon_sprite:
 _dws_test_walk_animation:
     cpi r24, ACTION_WALK
     brne _dws_test_attack_animation
-    subi r25, -ITEM_ANIM_WALK_OFFSET_FRAMES
-    ldi r21, ITEM_ANIM_WALK_FRAMES
+    subi r25, -WEAPON_WALK_OFFSET_FRAMES
+    ldi r21, WEAPON_WALK_FRAMES
     rjmp _dws_determine_offsets
 _dws_test_attack_animation:
     cpi r24, ACTION_ATTACK
     brne _dws_test_idle_animation
-    subi r25, -ITEM_ANIM_ATTACK_OFFSET_FRAMES
-    ldi r21, ITEM_ANIM_ATTACK_FRAMES
+    subi r25, -WEAPON_ATTACK_OFFSET_FRAMES
+    ldi r21, WEAPON_ATTACK_FRAMES
     rjmp _dws_determine_offsets
 _dws_test_idle_animation:
-    cpi r25, ITEM_ANIM_IDLE_FRAMES-1
-    brlo _dws_apply_idle_animation
-    clr r25
-_dws_apply_idle_animation:
-    subi r25, -ITEM_ANIM_IDLE_OFFSET_FRAMES
-    ldi r21, ITEM_ANIM_IDLE_FRAMES
+    ldi r25, WEAPON_IDLE_OFFSET_FRAMES
+    ldi r21, WEAPON_IDLE_FRAMES
 _dws_determine_offsets:
     sbrc r23, 0
     add r25, r21
-    ldi r21, ITEM_LUT_ENTRY_FRAME_MEMSIZE
-    mul r21, r25
-    movw ZL, r0
-    ldi r21, ITEM_LUT_ENTRY_MEMSIZE
+    ldi r21, ANIMATED_ITEM_ENTRY_MEMSIZE
     mul r21, r22
-    add ZL, r0
-    adc ZH, r1
+    movw ZL, r0
     clr r1
+    lsl r25
+    add ZL, r25
+    adc ZH, r1
     ldi r21, byte3(2*animated_item_sprite_lut)
     out RAMPZ, r21
     subi ZL, low(-2*animated_item_sprite_lut)
     sbci ZH, high(-2*animated_item_sprite_lut)
     elpm r24, Z+
     elpm r25, Z
-    subi r24, low(-2*animated_item_sprite_table)
-    sbci r25, high(-2*animated_item_sprite_table)
     movw ZL, r24
 _dws_end:
     ret
@@ -109,30 +102,27 @@ _das_test_action:
     cpi r24, ACTION_WALK
     breq _das_walk_animation
 _das_idle_animation:
-    ldi r25, ITEM_ANIM_IDLE_OFFSET_FRAMES
-    ldi r21, ITEM_ANIM_IDLE_FRAMES
+    ldi r25, WEARABLE_IDLE_OFFSET_FRAMES
+    ldi r21, WEARABLE_IDLE_FRAMES
     rjmp _das_determine_offsets
 _das_walk_animation:
-    subi r25, -ITEM_ANIM_WALK_OFFSET_FRAMES
-    ldi r21, ITEM_ANIM_WALK_FRAMES
+    subi r25, -WEARABLE_WALK_OFFSET_FRAMES
+    ldi r21, WEARABLE_WALK_FRAMES
 _das_determine_offsets:
     mul r23, r21
     add r25, r0
-    ldi r21, ITEM_LUT_ENTRY_FRAME_MEMSIZE
-    mul r21, r25
-    movw ZL, r0
-    ldi r21, ITEM_LUT_ENTRY_MEMSIZE
+    lsl r25
+    ldi r21, ANIMATED_ITEM_ENTRY_MEMSIZE
     mul r21, r22
-    add ZL, r0
-    adc ZH, r1
+    movw ZL, r0
     clr r1
+    add ZL, r25
+    adc ZH, r1
     ldi r21, byte3(2*animated_item_sprite_lut)
     out RAMPZ, r21
     subi ZL, low(-2*animated_item_sprite_lut)
     sbci ZH, high(-2*animated_item_sprite_lut)
     elpm r24, Z+
     elpm r25, Z
-    subi r24, low(-2*animated_item_sprite_table)
-    sbci r25, high(-2*animated_item_sprite_table)
     movw ZL, r24
     ret

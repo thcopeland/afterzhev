@@ -2,6 +2,11 @@
 ; text spoken by a character leading to another line or a branch, and a branch
 ; presents the player with 1-4 choices, which lead to different lines.
 ;
+; Conversations can be assigned an ID, which allows us to track whether it has
+; occurred or not. However conversation IDs are not stored in the conversation
+; table. Most are stored in the world data, and some are handled ad hoc in the
+; game sector logic.
+;
 ; Line Layout (8 bytes)
 ;   line type - always CONVERSATION_LINE (1 byte)
 ;   NPC id - used for rendering, 0 indicates the player (1 byte)
@@ -23,10 +28,16 @@
 .equ CONVERSATION_LINE = 0
 .equ CONVERSATION_BRANCH = 1
 
-.macro DECL_LINE ; npc, speaker, line, next
-    .db CONVERSATION_LINE, @0
-    .dw 2*(_conv_speaker_@1_str-conversation_string_table)
-    .dw 2*(_conv_line_@2_str-conversation_string_table)
+.set __CONVERSATION_IDX = 1
+.macro DECL_CONVERSATION ; name
+    .equ CONVERSATION_@0_ID = __CONVERSATION_IDX
+    .set __CONVERSATION_IDX = __CONVERSATION_IDX+1
+.endm
+
+.macro DECL_LINE ; line, npc, speaker, next
+    .db CONVERSATION_LINE, @1
+    .dw 2*(_conv_speaker_@2_str-conversation_string_table)
+    .dw 2*(_conv_@0_str-conversation_string_table)
     .dw 2*(_conv_@3-conversation_table)
 .endm
 
@@ -41,20 +52,40 @@
 
 conversation_table:
 _conv_END_CONVERSATION:         .dw 0 ; placeholder
-_conv_fisherman_greeting:       DECL_LINE 5, fisherman, fisherman_greeting, respond_to_greeting
-_conv_fisherman_laugh:          DECL_LINE 5, fisherman, fisherman_laugh, END_CONVERSATION
-_conv_respond_to_greeting:      DECL_BRANCH 3
-                                DECL_CHOICE choose_polite_agreement, END_CONVERSATION
-                                DECL_CHOICE choose_no_time, END_CONVERSATION
-                                DECL_CHOICE choose_share, none_to_spare
-_conv_none_to_spare:            DECL_LINE 5, fisherman, none_to_spare, END_CONVERSATION
+DECL_CONVERSATION what_happened
+_conv_what_happened:            DECL_LINE what_happened, 0, PLAYER, what_happened2
+_conv_what_happened2:           DECL_LINE what_happened2, 0, PLAYER, what_happened3
+_conv_what_happened3:           DECL_LINE what_happened3, 0, PLAYER, END_CONVERSATION
+DECL_CONVERSATION pickup_tutorial
+_conv_pickup_tutorial:          DECL_LINE pickup_tutorial, 0, PLAYER, pickup_tutorial2
+_conv_pickup_tutorial2:         DECL_LINE pickup_tutorial2, 0, PLAYER, END_CONVERSATION
+DECL_CONVERSATION battle_tutorial
+_conv_battle_tutorial_halfling: DECL_LINE battle_tutorial_halfling, NPC_BATTLE_TUTORIAL, ruffian, battle_tutorial2
+_conv_battle_tutorial_generic:  DECL_LINE battle_tutorial, NPC_BATTLE_TUTORIAL, ruffian, battle_tutorial2
+_conv_battle_tutorial2:         DECL_BRANCH 3
+                                DECL_CHOICE battle_tutorial_c1, battle_tutorial3
+                                DECL_CHOICE battle_tutorial_c2, battle_tutorial4
+                                DECL_CHOICE battle_tutorial_c3, battle_tutorial3
+_conv_battle_tutorial3:         DECL_LINE battle_tutorial3, NPC_BATTLE_TUTORIAL, ruffian, battle_tutorial4
+_conv_battle_tutorial4:         DECL_LINE battle_tutorial4, 0, PLAYER, END_CONVERSATION
+DECL_CONVERSATION loot_tutorial
+_conv_loot_tutorial:           DECL_LINE loot_tutorial, 0, PLAYER, loot_tutorial2
+_conv_loot_tutorial2:           DECL_LINE loot_tutorial2, 0, PLAYER, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
-_conv_speaker_fisherman_str:        .db "Provincial Fisherman", 0, 0
-_conv_line_fisherman_greeting_str:  .db "Nice day for fishing, ain", 39, "t it?", 0
-_conv_line_fisherman_laugh_str:     .db "Huah hah!", 0
-_conv_choose_polite_agreement_str:  .db "Indeed it is.", 0
-_conv_choose_no_time_str:           .db "I", 39, "ve no time for fish... or stupid fishermen.", 0
-_conv_choose_share_str:             .db "Yup... say, you wouldn", 39, "t happen to have any extra?", 0, 0
-_conv_line_none_to_spare_str:       .db "No.", 0
+_conv_speaker_ruffian_str:      .db "Ruffian", 0
+_conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
+_conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
+_conv_what_happened3_str:       .db "It must have been stolen. I haveto get it back at any cost.", 0
+_conv_pickup_tutorial_str:      .db "Press <select> to pick up items.", 0, 0
+_conv_pickup_tutorial2_str:     .db "Press <start> to view inventory.", 0, 0
+_conv_battle_tutorial_halfling_str:.db "Hey you! Yeah you, shorty! No", 10, "passing without paying!", 0
+_conv_battle_tutorial_str:      .db "Hey you! Yeah you, ugly! No", 10, "passing without paying!", 0
+_conv_battle_tutorial_c1_str:   .db "I swear, I don", 39, "t have anything.", 0
+_conv_battle_tutorial_c2_str:   .db "I", 39, "m ready for you, villain!", 0
+_conv_battle_tutorial_c3_str:   .db "Begone, scoundrel. I am an", 10, "envoy of the queen, dare not", 10, "hinder me.", 0, 0
+_conv_battle_tutorial3_str:     .db "Heh, heh. I", 39, "m gonna enjoy this.", 0
+_conv_battle_tutorial4_str:     .db 10, 10, 10, 10, 10, "  Press <A> to defend yourself", 10, "      and <B> to dash.", 0, 0
+_conv_loot_tutorial_str:        .db "I think he got the point.", 0
+_conv_loot_tutorial2_str:       .db 10, 10, 10, 10, 10, 10, "Press <select> to loot corpses.", 0

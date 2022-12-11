@@ -47,8 +47,8 @@ player_gold:        .byte 2
 player_xp:          .byte 2
 player_effects:     .byte PLAYER_EFFECT_MEMSIZE*PLAYER_EFFECT_COUNT
 player_inventory:   .byte PLAYER_INVENTORY_SIZE
-sector_data:        .byte 4
-global_data:        .byte 8
+sector_data:        .byte SECTOR_DATA_MEMSIZE
+global_data:        .byte GLOBAL_DATA_MEMSIZE
 
 preplaced_item_presence: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
 npc_presence:       .byte TOTAL_NPC_COUNT>>3
@@ -72,6 +72,7 @@ shop_selection:
 selected_choice:
 upgrade_selection:
 gameover_state:     .byte 1
+last_choice:        .byte 1
 
 current_shop_index: .byte 1
 shop_inventory:     .byte SHOP_INVENTORY_SIZE

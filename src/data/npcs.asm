@@ -54,8 +54,12 @@
 ;   x, y position - (2 bytes)
 ;   custom data (8 bytes)
 
-.macro DECL_NPC ; type, base, weapon, armor, direction, health, x, y
-    .db @0, @1, @2, @3, @4, @5, @6, @7
+.set __NPC_IDX = 1
+
+.macro DECL_NPC ; name, type, base, weapon, armor, direction, health, x, y
+    .equ @0 = __NPC_IDX
+    .set __NPC_IDX = __NPC_IDX + 1
+    .db @1, @2, @3, @4, @5, @6, @7, @8
 .endm
 
 .macro DECL_ENEMY_DATA ; xvel, yvel, acceleration, strength, dexterity, drop1, drop2, drop3
@@ -77,26 +81,32 @@
 .endm
 
 npc_table:
-    DECL_NPC        NPC_SPECIAL, 128, NO_ITEM, NO_ITEM, NO_ITEM, 0, 0, 0
-    DECL_SPECIAL_DATA  0, 0, 0, 0, 0, 0, 0, 0
+    DECL_NPC        NPC_CORPSE, NPC_SPECIAL, 128|NPC_CORPSE_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 0, 0, 0
+    DECL_SPECIAL_DATA 0, 0, 0, 0, 0, 0, 0, 0
 
-    DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 3, 2, DIRECTION_RIGHT, 20, 24, 12
-    DECL_ENEMY_DATA 40, 127, 8, 10, 10, 1, 2, 3
+    DECL_NPC        NPC_BATTLE_TUTORIAL, NPC_ENEMY, CHARACTER_BANDIT, 1, NO_ITEM, DIRECTION_DOWN, 5, 180, 26
+    DECL_ENEMY_DATA 0, 0, 8, 4, 10, 1, 1, 1
 
-    DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 30, 48, 12
-    DECL_ENEMY_DATA 0, 0, 8, 10, 10, 1, 2, 3
+    ; DECL_NPC        NPC_TALKER, 128|NPC_SIGN_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 0, 138, 14
+    ; DECL_TALK_DATA  0, 1, fisherman_greeting, 0, fisherman_laugh
 
-    DECL_NPC        NPC_SHOPKEEPER, 128 | 1, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 10, 36, 36
-    DECL_SHOP_DATA  3, 1
-
-    DECL_NPC        NPC_TALKER, CHARACTER_PALADIN, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 20, 30, 150
-    DECL_TALK_DATA  0, 1, fisherman_greeting, 0, fisherman_laugh
-
-    DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 20, 48, 80
-    DECL_ENEMY_DATA 0, 0, 8, 10, 10, 1, 2, 3
-
-    DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 20, 100, 80
-    DECL_ENEMY_DATA 0, 0, 8, 10, 10, 1, 2, 3
-
-    DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 20, 130, 100
-    DECL_ENEMY_DATA 0, 0, 8, 10, 10, 1, 2, 3
+    ; DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 3, 2, DIRECTION_RIGHT, 20, 24, 12
+    ; DECL_ENEMY_DATA 40, 127, 8, 10, 10, 1, 2, 3
+    ;
+    ; DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 30, 48, 12
+    ; DECL_ENEMY_DATA 0, 0, 8, 10, 10, 1, 2, 3
+    ;
+    ; DECL_NPC        NPC_SHOPKEEPER, 128 | 1, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 10, 36, 36
+    ; DECL_SHOP_DATA  3, 1
+    ;
+    ; DECL_NPC        NPC_TALKER, CHARACTER_PALADIN, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 20, 30, 150
+    ; DECL_TALK_DATA  0, 1, fisherman_greeting, 0, fisherman_laugh
+    ;
+    ; DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 20, 48, 80
+    ; DECL_ENEMY_DATA 0, 0, 8, 10, 10, 1, 2, 3
+    ;
+    ; DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 20, 100, 80
+    ; DECL_ENEMY_DATA 0, 0, 8, 10, 10, 1, 2, 3
+    ;
+    ; DECL_NPC        NPC_ENEMY, CHARACTER_PALADIN, 1, NO_ITEM, DIRECTION_DOWN, 20, 130, 100
+    ; DECL_ENEMY_DATA 0, 0, 8, 10, 10, 1, 2, 3

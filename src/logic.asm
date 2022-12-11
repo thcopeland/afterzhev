@@ -15,79 +15,55 @@
 ;
 ; Register Usage
 ;   update subroutine: all registers are available
-;   event subroutines: r0, r24, r25, ZL, and ZL available
+;   event subroutines: r0, r24, r25, ZL, and ZH available
 
-sector_0_update:
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-_s0u_npc_iter:
-    ldd r25, Y+NPC_IDX_OFFSET
-    dec r25
-    brmi _s0u_npc_next
-    ldi ZL, byte3(2*npc_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*npc_table)
-    ldi ZH, high(2*npc_table)
-    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
-    mul r24, r25
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _s0u_not_enemy
-    movw r16, ZL
-    lds r20, player_position_x
-    lds r21, player_position_y
-    sts npc_move_data, r20
-    sts npc_move_data+1, r21
-    ldi r20, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF|NPC_MOVE_POLTROON|NPC_MOVE_RETURN
-    sts npc_move_flags, r20
-    call npc_move
-    call npc_update
-    movw ZL, r16
-    call npc_resolve_ranged_damage
-    call npc_resolve_melee_damage
-    rjmp _s0u_npc_next
-_s0u_not_enemy:
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, CORPSE_NPC
-    brne _s0u_other
-_s0u_corpse:
-    call corpse_update
-    rjmp _s0u_npc_next
-_s0u_other:
-    movw r16, ZL
-    call npc_update
-    ldi r20, NPC_MOVE_FRICTION
-    sts npc_move_flags, r20
-    call npc_move
-    movw ZL, r16
-    call npc_resolve_ranged_damage
-    call npc_resolve_melee_damage
-_s0u_npc_next:
-    adiw YL, NPC_MEMSIZE
-    cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
-    ; brlo _s0u_npc_iter
-    brsh _s0u_work_done
-    rjmp _s0u_npc_iter
-_s0u_work_done:
-    call reorder_npcs
-    call player_resolve_melee_damage
-    call player_resolve_effect_damage
+.include "logic_shared.asm"
+
+sector_start_1_update:
+    player_distance_imm 164, 40
+    cpi r25, 12
+    brlo _ss1u_end
+    try_start_conversation what_happened
+_ss1u_end:
     ret
 
-sector_0_on_entry:
-    ret
-
-sector_0_on_pickup:
-    sts framebuffer, r1
-    ret
-
-sector_0_on_conversation:
-    sts framebuffer, r1
-    ret
-
-sector_0_on_choice:
-    sts framebuffer, r1
+sector_start_2_update:
+    player_distance_imm 134, 128
+    cpi r25, 18
+    brsh _ss2u_test_ruffian
+    try_start_conversation pickup_tutorial
+_ss2u_test_ruffian:
+    lds r25, player_position_x
+    cpi r25, 160
+    brlo _ss2u_move_enemies
+    lds r25, player_position_y
+    cpi r25, 60
+    brsh _ss2u_move_enemies
+_ss2u_halfing:
+    lds r25, player_class
+    cpi r25, CLASS_HALFLING
+    brne _ss2u_main
+    try_start_conversation_intern battle_tutorial_halfling, battle_tutorial
+    rjmp _ss2u_move_enemies
+_ss2u_main:
+    try_start_conversation_intern battle_tutorial_generic, battle_tutorial
+_ss2u_move_enemies:
+    check_conversation battle_tutorial
+    brne _ss2u_end
+    ldi r20, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
+    call update_sector_npcs
+_ss2u_loot:
+    lds r25, sector_npcs+NPC_IDX_OFFSET
+    cpi r25, NPC_CORPSE
+    brne _ss2u_end
+    lds r25, sector_loose_items
+    cpi r25, 0
+    breq _ss2u_end
+    lds r22, sector_npcs+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    lds r23, sector_npcs+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    player_distance r22, r23
+    cpi r25, 16
+    brlo _ss2u_end
+    try_start_conversation loot_tutorial
+_ss2u_end:
     ret

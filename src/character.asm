@@ -391,7 +391,7 @@ _uca_action_attack:
     andi r19, ATTACK_FRAME_DURATION_MASK
     brne _uca_end
     inc r23
-    cpi r23, ITEM_ANIM_ATTACK_FRAMES
+    cpi r23, WEAPON_ATTACK_FRAMES
     brlo _uca_end
     tst r24
     brne _uca_attack_to_walk

@@ -344,7 +344,7 @@ _rg_calc_attack_cooldown:
     elpm r22, Z
     lsl r22
     andi r22, 0x70
-    subi r22, -((ATTACK_FRAME_DURATION_MASK+1)*ITEM_ANIM_ATTACK_FRAMES)
+    subi r22, -((ATTACK_FRAME_DURATION_MASK+1)*WEAPON_ATTACK_FRAMES)
     clr r23
     lds r24, player_attack_cooldown
     ldi r25, EXPLORE_UI_COOLDOWN_BAR_LENGTH
@@ -840,7 +840,7 @@ _pd_end:
     ret
 
 ; Begin an attack.
-;   cooldown = 2*weapon_cooldown + (ATTACK_FRAME_DURATION_MASK+1)*ITEM_ANIM_ATTACK_FRAMES
+;   cooldown = 2*weapon_cooldown + (ATTACK_FRAME_DURATION_MASK+1)*WEAPON_ATTACK_FRAMES
 ;
 ; Register Usage
 ;   r20-r25         calculations
@@ -876,7 +876,7 @@ _pa_attack:
     mov r21, r20
     lsl r21
     andi r21, 0x70
-    subi r21, -((ATTACK_FRAME_DURATION_MASK+1)*ITEM_ANIM_ATTACK_FRAMES)
+    subi r21, -((ATTACK_FRAME_DURATION_MASK+1)*WEAPON_ATTACK_FRAMES)
     sts player_attack_cooldown, r21
     ldi r21, ACTION_ATTACK
     sts player_action, r21
@@ -1420,6 +1420,7 @@ load_sector:
     push YH
     sts current_sector, ZL
     sts current_sector+1, ZH
+    sts last_choice, r1
 _ls_clear_loose_items:
     ldi YL, low(sector_loose_items)
     ldi YH, high(sector_loose_items)

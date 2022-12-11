@@ -549,7 +549,7 @@ _red_add_corpse:
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     movw ZL, r22
-    ldi r25, CORPSE_NPC
+    ldi r25, NPC_CORPSE
     std Y+NPC_IDX_OFFSET, r25
     ret
 

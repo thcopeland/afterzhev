@@ -397,12 +397,12 @@ sector_table:
     039, 039, 039, 039, 039, 039, 039, 056, 001, 189, 180, 172, 171, 179, 180, 179, 024, 057, 039, 039, \
     039, 039, 039, 039, 039, 039, 039, 041, 180, 189, 180, 172, 171, 189, 189, 180, 007, 066, 056, 057
 .db 19, 16, 15, 15
-.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-.db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+.db NPC_BATTLE_TUTORIAL, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db ITEM_wood_stick, LOOSE_ITEM_intro_wood_stick, 134, 128, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_start_2_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 16 "start_section_fight"
 .db 039, 039, 039, 039, 039, 076, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, \
@@ -498,7 +498,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_start_1_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 20 "start_section_pretown_2"
 .db 039, 039, 041, 180, 179, 038, 039, 039, 039, 039, 039, 039, 041, 172, 168, 171, 038, 039, 039, 039, \

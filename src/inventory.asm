@@ -67,16 +67,17 @@ _ihc_left:
     brmi _ihc_end
     sts inventory_selection, r22
 _ihc_button1:
-    sbrc r18, CONTROLS_SPECIAL1
+    mov r22, r18
+    sbrc r22, CONTROLS_SPECIAL1
     rcall inventory_equip_item
 _ihc_button2:
-    sbrc r18, CONTROLS_SPECIAL2
+    sbrc r22, CONTROLS_SPECIAL2
     rcall inventory_use_item
 _ihc_button3:
-    sbrc r18, CONTROLS_SPECIAL3
+    sbrc r22, CONTROLS_SPECIAL3
     rcall inventory_drop_item
 _ihc_button4:
-    sbrs r18, CONTROLS_SPECIAL4
+    sbrs r22, CONTROLS_SPECIAL4
     rjmp _ihc_end
     ldi r22, MODE_EXPLORE
     sts game_mode, r22
@@ -170,6 +171,10 @@ inventory_use_item:
     andi r19, 3
     cpi r19, ITEM_USABLE
     brne _iui_end
+    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
+    elpm r19, Z
+    andi r19, 1
+    brne _iui_end
     ldi ZL, low(player_effects)
     ldi ZH, high(player_effects)
     ldi r20, PLAYER_EFFECT_COUNT
@@ -217,7 +222,7 @@ _idi_loose_items_iter:
     std Z+SECTOR_ITEM_IDX_OFFSET, r18
     std Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET, r1
     lds r18, player_position_x
-    subi r18, -CHARACTER_SPRITE_WIDTH/2
+    subi r18, -CHARACTER_SPRITE_WIDTH/6
     lds r19, player_position_y
     subi r19, -CHARACTER_SPRITE_HEIGHT/2
     std Z+SECTOR_ITEM_X_OFFSET, r18
@@ -482,11 +487,23 @@ _irg_render_selected_item_description:
     clr r1
     elpm r24, Z+
     elpm r25, Z+
+    adiw ZL, ITEM_STATS_OFFSET-ITEM_DESC_PTR_OFFSET-2
+    ; allow more horizontal space for descriptions when no stats changed
+    elpm r20, Z+
+    elpm r21, Z+
+    elpm r22, Z+
+    elpm r23, Z+
+    or r20, r21
+    ldi r21, 22
+    or r22, r23
+    or r20, r22
+    brne _irg_render_description
+    ldi r21, 28
+_irg_render_description:
     movw ZL, r24
     subi ZL, low(-2*item_string_table)
     sbci ZH, high(-2*item_string_table)
     ldi r23, 0
-    ldi r21, 22
     call puts
 _irg_render_item_stats:
     ldi YL, low(framebuffer+INVENTORY_UI_ITEM_STATS_MARGIN)

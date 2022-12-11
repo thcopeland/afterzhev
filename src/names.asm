@@ -81,6 +81,6 @@
 .equ SECTOR_UNDERGROUND_3 = 74
 .equ SECTOR_UNDERGROUND_4 = 69
 
-; NPC names
-
-; Item names
+; Static character sprite names
+.equ NPC_CORPSE_SPRITE = 0
+.equ NPC_SIGN_SPRITE = 1

@@ -19,26 +19,23 @@ _init_zero_iter:
     out GPIOR0, r16 ; stores the video framebuffer offset (low)
     out GPIOR1, r17 ; stores the video framebuffer offset (high)
     out GPIOR2, r1  ; video frame status
-    sti player_position_x, 168
-    sti player_position_y, 98
+    sti player_position_x, 156
+    sti player_position_y, 35
     call reset_camera
     sti player_velocity_x, 0
     sti player_velocity_y, 0
     sti player_class, CLASS_HALFLING
-    sti player_character, 0
+    sti player_character, 1
     sti player_weapon, 1
-    sti player_armor, 0
+    sti player_armor, ITEM_feathered_hat
     sti player_action, ACTION_WALK
-    sti player_direction, DIRECTION_DOWN
+    sti player_direction, DIRECTION_LEFT
     sti player_frame, 0
     sti player_effect, 0
-    sti player_inventory, 2
-    sti player_inventory+2, 4
-    sti player_inventory+10, 5
-    sti player_inventory+1, 6
+    sti player_inventory, ITEM_inventory_book
     sti player_stats, 10
     sti player_stats+1, 10
-    sti player_stats+2, 40
+    sti player_stats+2, 10
     sti player_stats+3, 10
     call calculate_player_stats
     stiw player_gold, 1600
@@ -58,7 +55,7 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    .equ INITIAL_SECTOR = 20
+    .equ INITIAL_SECTOR = SECTOR_START_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

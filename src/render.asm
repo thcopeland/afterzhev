@@ -126,8 +126,8 @@ _wpt_loop_chk:
     ; jump. Unlike ijmp, however, we aren't restricted to using Z.
     push r24
     push r25
-.if defined(__atmega2560) || defined(__atmega2561)
-    push r1 ; atmega256* use 3 byte flash addresses
+.if PC_SIZE == 3
+    push r1
 .endif
 _wpt_end:
     ret
@@ -215,7 +215,7 @@ _ws_loop_check:
     breq _ws_end
     push r24
     push r25
-.if defined(__atmega2560) || defined(__atmega2561)
+.if PC_SIZE == 3
     push r1
 .endif
     ret
@@ -307,7 +307,7 @@ _wsvf_loop_check:
     breq _wsvf_end
     push r24
     push r25
-.if defined(__atmega2560) || defined(__atmega2561)
+.if PC_SIZE == 3
     push r1
 .endif
     ret
@@ -402,9 +402,9 @@ _wshf_loop_check:
     breq _wshf_end
     push r24
     push r25
-    .if defined(__atmega2560) || defined(__atmega2561)
+.if PC_SIZE == 3
     push r1
-    .endif
+.endif
     ret
 _wshf_end:
     pop YH
@@ -865,10 +865,10 @@ _rc_render_weapon_below:
     call determine_weapon_sprite
     movw r24, r16
     elpm r21, Z+
-    splts r21, r20
+    splt r21, r20
     neg r20
-    subi r20, -CHARACTER_SPRITE_WIDTH/2
-    subi r21, -CHARACTER_SPRITE_HEIGHT/2
+    subi r20, -14
+    subi r21, 2
     add r24, r20
     add r25, r21
     elpm r23, Z+
@@ -897,9 +897,9 @@ _rc_write_armor_sprite:
     call determine_armor_sprite
     movw r24, r16
     elpm r21, Z+
-    splts r21, r20
-    subi r20, -CHARACTER_SPRITE_WIDTH/2
-    subi r21, -CHARACTER_SPRITE_HEIGHT/2
+    splt r21, r20
+    subi r20, 2
+    subi r21, 2
     add r24, r20
     add r25, r21
     elpm r23, Z+
@@ -921,9 +921,9 @@ _rc_render_weapon_above:
     call determine_weapon_sprite
     movw r24, r16
     elpm r21, Z+
-    splts r21, r20
-    subi r20, -CHARACTER_SPRITE_WIDTH/2
-    subi r21, -CHARACTER_SPRITE_HEIGHT/2
+    splt r21, r20
+    subi r20, 2
+    subi r21, 2
     add r24, r20
     add r25, r21
     elpm r23, Z+
@@ -963,9 +963,9 @@ render_character_icon:
     call determine_armor_sprite
     movw r18, XL
     elpm r21, Z+
-    splts r21, r20
-    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
-    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
+    splt r21, r20
+    subi r20, 2
+    subi r21, 2
     add XL, r20
     adc XH, r1
     ldi r20, DISPLAY_WIDTH
@@ -989,9 +989,9 @@ _rci_write_weapon_sprite:
     clr r25
     call determine_weapon_sprite
     elpm r21, Z+
-    splts r21, r20
-    subi r20, -(CHARACTER_SPRITE_WIDTH/2)
-    subi r21, -(CHARACTER_SPRITE_HEIGHT/2)
+    splt r21, r20
+    subi r20, 2
+    subi r21, 2
     add XL, r20
     adc XH, r1
     ldi r20, DISPLAY_WIDTH

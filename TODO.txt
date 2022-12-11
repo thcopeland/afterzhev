@@ -5,8 +5,6 @@
 * About screen
 
 # Story
-* What about bosses?
-* Create dozens of sprites and tiles...
 * Ask someone talented to make prologue screens
 
 # Art
@@ -20,8 +18,8 @@
 - Houses
 - Interiors
 - Random scenery
-* Halfling, Paladin, Mage
-* Wolves
-* Ghouls
+- Halfling, Paladin, Mage
+- Wolves
+- Ghouls
 * Items
 - Tile map

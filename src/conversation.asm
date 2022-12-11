@@ -50,6 +50,9 @@ _chc_branch_button1:
     rjmp _chc_branch_down
     adiw ZL, CONVERSATION_BRANCH_CHOICE1_OFFSET+2
     lds r20, selected_choice
+    inc r20
+    sts last_choice, r20
+    dec r20
     ldi r21, CONVERSATION_BRANCH_CHOICE_MEMSIZE
     mul r20, r21
     add ZL, r0
@@ -250,7 +253,7 @@ _crg_render_message:
     ldi YH, high(framebuffer+CONVERSATION_UI_MESSAGE_MARGIN)
     subi ZL, low(-2*conversation_string_table)
     sbci ZH, high(-2*conversation_string_table)
-    ldi r21, 29
+    ldi r21, 28
     clr r23
     call puts
     ret

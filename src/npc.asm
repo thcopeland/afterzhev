@@ -20,6 +20,8 @@ npc_move:
     call move_character
     sbiw YL, NPC_POSITION_OFFSET
     rcall enemy_sector_bounds
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
     pop ZH
     pop ZL
     pop r25
@@ -587,7 +589,7 @@ reorder_npcs:
     ldi r25, SECTOR_DYNAMIC_NPC_COUNT
 _rn_skip_corpses_iter:
     ld r24, X
-    cpi r24, CORPSE_NPC
+    cpi r24, NPC_CORPSE
     brne _rn_reorder
     adiw XL, NPC_MEMSIZE
     dec r25
@@ -597,11 +599,11 @@ _rn_reorder:
     movw ZL, XL
 _rn_fast_iter:
     ld r24, Z
-    cpi r24, CORPSE_NPC
+    cpi r24, NPC_CORPSE
     brne _rn_fast_next
 _rn_slow_iter:
     ld r23, X
-    cpi r23, CORPSE_NPC
+    cpi r23, NPC_CORPSE
     breq _rn_slow_next
 _rn_swap:
     ldi r22, NPC_MEMSIZE

@@ -19,8 +19,6 @@
 .equ END_UPPER_RIGHT_BLOCKING_IDX = 30
 .equ END_FULL_BLOCKING_IDX = 164
 
-.equ CORPSE_NPC = 1
-
 .equ NO_NPC = 0
 .equ NO_SHOP = 0
 .equ NO_ITEM = 0
@@ -59,14 +57,13 @@
 .equ UPGRADE_2_POINTS = 8
 .equ UPGRADE_3_POINTS = 6
 
-.equ CHARACTER_PALADIN = 0  ; player class 1
-.equ CHARACTER_HALFLING = 1 ; player class 2
-.equ CHARACTER_MAGE = 2     ; player class 3
-.equ CHARACTER_ZHEV = 3     ; boss
-.equ CHARACTER_BANDIT = 4   ; enemy 1
-.equ CHARACTER_WARRIOR = 5  ; enemy 2
-.equ CHARACTER_SNEAK = 6    ; enemy 3
-.equ CHARACTER_GHOUL = 7    ; enemy 4
+.equ CHARACTER_PALADIN = 0
+.equ CHARACTER_HALFLING = 1
+.equ CHARACTER_MAGE = 2
+.equ CHARACTER_BANDIT = 3
+.equ CHARACTER_GHOUL = 4
+.equ CHARACTER_ZHEV = 5
+.equ CHARACTER_FOX = 6
 
 .equ NPC_ENEMY = 0
 .equ NPC_SHOPKEEPER = 1
