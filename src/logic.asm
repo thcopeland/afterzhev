@@ -78,7 +78,9 @@ sector_start_fight_update:
 _ssfu_plead:
     try_start_conversation bandit_plead
     tst r25
-    brne _ssfu_end
+    ; brne _ssfu_end
+    breq _ssfu_fight
+    ret
 _ssfu_fight:
     lds r20, player_position_x
     lds r21, player_position_y
@@ -121,6 +123,10 @@ _ssfu_reform_bandit:
     lds r25, npc_presence+((NPC_BANDIT_3-1)>>3)
     andi r25, ~(1<<((NPC_BANDIT_3-1)&7))
     sts npc_presence+((NPC_BANDIT_3-1)>>3), r25
+    sts player_effect, r1
+    std Y+NPC_EFFECT_OFFSET, r1
+    ldi r25, ACTION_IDLE
+    sts player_action, r25
 _ssfu_last_bandit_update:
     call update_single_npc
     call player_resolve_melee_damage

@@ -770,6 +770,8 @@ _rs_check_vertical_offset:
     cpi r25, DISPLAY_HEIGHT-FOOTER_HEIGHT
     brge _rs_end
 _rs_calc_horizonal_offset:
+    cpi r24, (SECTOR_WIDTH*TILE_WIDTH+255)/2
+    brsh _rs_check_horizontal_offset
     lds r20, camera_position_x
     sub r24, r20
     brlo _rs_check_horizontal_offset

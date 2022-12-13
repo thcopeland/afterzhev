@@ -171,7 +171,7 @@ _umn_next:
     brne _umn_loop
     ret
 
-; Standard NPC and player update routine.The caller must set npc_move_flags.
+; Standard NPC and player update routine. The caller must set npc_move_flags.
 ;
 ; Register Usage
 ;   r0, r20-r31 calculations

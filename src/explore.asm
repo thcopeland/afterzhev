@@ -848,10 +848,10 @@ _pd_end:
 player_attack:
     lds r20, player_attack_cooldown
     tst r20
-    brne _pa_end_trampoline
+    brne _pa_end
     lds r20, player_weapon
     dec r20
-    brmi _pa_end_trampoline
+    brmi _pa_end
     ldi ZL, byte3(2*item_table)
     out RAMPZ, ZL
     ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
@@ -881,33 +881,6 @@ _pa_attack:
     ldi r21, ACTION_ATTACK
     sts player_action, r21
     sts player_frame, r1
-    lds r21, player_direction
-_pa_facing_up:
-    cpi r21, DIRECTION_UP
-    brne _pa_facing_down
-    lds r20, player_velocity_y
-    sbnvi r20, PLAYER_ATTACK_BOOST
-    sts player_velocity_y, r20
-_pa_end_trampoline:
-    rjmp _pa_end
-_pa_facing_down:
-    cpi r21, DIRECTION_DOWN
-    brne _pa_facing_left
-    lds r20, player_velocity_y
-    adnvi r20, PLAYER_ATTACK_BOOST
-    sts player_velocity_y, r20
-    rjmp _pa_end
-_pa_facing_left:
-    cpi r21, DIRECTION_LEFT
-    brne _pa_facing_right
-    lds r20, player_velocity_x
-    sbnvi r20, PLAYER_ATTACK_BOOST
-    sts player_velocity_x, r20
-    rjmp _pa_end
-_pa_facing_right:
-    lds r20, player_velocity_x
-    adnvi r20, PLAYER_ATTACK_BOOST
-    sts player_velocity_x, r20
 _pa_end:
     ret
 

@@ -96,8 +96,8 @@
 .equ DASH_DURATION = 4
 
 .equ STRIKING_DISTANCE = 10 ; base striking distance, scaled by individual weapons
-.equ DIRECTION_BIAS = 5
-.equ ATTACK_DAMAGE_FRAME = 2
+.equ DIRECTION_BIAS = 3
+.equ ATTACK_DAMAGE_FRAME = 1
 .equ RANGED_LAUNCH_FRAME = 1
 
 ; used for character-character collisions only
@@ -132,7 +132,6 @@
 .equ SHOP_INVENTORY_SIZE = 12
 .equ PLAYER_INVENTORY_SIZE = 12
 .equ PLAYER_EFFECT_COUNT = 2
-.equ PLAYER_ATTACK_BOOST = 50
 
 .equ ITEM_WIELDABLE = 0
 .equ ITEM_RANGED = 1

@@ -40,9 +40,9 @@ _init_zero_iter:
     sti player_stats+2, 10
     sti player_stats+3, 10
     call calculate_player_stats
-    stiw player_gold, 1600
+    stiw player_gold, 0
     sti player_health, 40
-    stiw player_xp, 000
+    stiw player_xp, 0
     sti game_mode, MODE_EXPLORE
     sti inventory_selection, 0
     stiw preplaced_item_presence, 0xffff
