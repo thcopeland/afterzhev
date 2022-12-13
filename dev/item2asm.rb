@@ -1,5 +1,3 @@
-require "tmpdir"
-
 def extract_item_sprites(fname, type, name)
     data = `convert #{fname} -alpha extract -define connected-components:verbose=true -connected-components 8 null:`
     component_lines = data.lines.select { |line| line =~ /srgb\(255,255,255\)/ }
@@ -10,7 +8,7 @@ def extract_item_sprites(fname, type, name)
             puts data.inspect
             exit 1
         end
-        match[2..5].map(&:to_i) # w, h, x, y
+        match[2..5].map(&:to_i)
     end
 
     components.sort_by! do |w, h, x, y|
@@ -39,20 +37,39 @@ def extract_item_sprites(fname, type, name)
         exit 1
     end
 
-    Dir.mktmpdir do |tmpdir|
-        components.each_with_index do |val, i|
-            w, h, x, y = val
-            offset_x = (x % 16)
-            offset_y = (y % 16)
-            puts "_#{names[type][i]}:"
-            puts "    item_sprite_header #{offset_x}, #{offset_y}, #{w}, #{h}"
-            if offset_x >= 16 || offset_y >= 16
-                puts "item2asm.rb: offset exceeds 16, will overflow at runtime!"
-                exit 1
-            end
-            `convert #{fname} -crop #{w}x#{h}+#{x}+#{y} +repage #{tmpdir}/tmp.png && ruby #{File.dirname(__FILE__)}/png2asm.rb #{tmpdir}/tmp.png`
-            puts File.read("#{tmpdir}/tmp.asm").lines.map { |line| "    "+line }.join.rstrip
+    headers = []
+    images = []
+
+    components.each do |w, h, x, y|
+        offset_x = (x % 16)
+        offset_y = (y % 16)
+        data = `convert #{fname} -crop #{w}x#{h}+#{x}+#{y} +repage -background magenta -alpha background -alpha remove -depth 8 rgb:-`
+        pixels = data.unpack("C*").each_slice(3).map { |r, g, b| (b & 0xC0) | ((g >> 2) & 0x38) | ((r >> 5) & 0x07) }
+        match = images.find { |w, h, img_pixels| img_pixels == pixels }
+
+        if match.nil?
+            images << [w, h, pixels]
+            match = images.last
         end
+
+        headers << [ offset_x, offset_y, w, h, images.index(match) ]
+    end
+
+    headers.each do |x, y, w, h, img_idx|
+        puts "    item_animation_entry #{x}, #{y}, #{name}_sprite_#{img_idx}"
+    end
+    (20 - headers.length).times { puts "    empty_animation_entry" }
+
+    puts
+
+    images.each_with_index do |data, i|
+        w, h, pixels = data
+        puts "_#{name}_sprite_#{i}:"
+        rows = pixels.each_slice(w).map { |slice| slice.map { |p| "0x"+p.to_s(16).rjust(2, "0") } }
+        puts "    .db #{w}, #{h}"
+        puts "    .db #{rows[0].join(", ")}, \\"
+        puts rows[1..(h-2)].map { |row| "        #{row.join(", ")}, \\" }
+        puts "        #{rows[h-1].join(", ")}#{(w*h).even? ? "" : ", PADDING" }"
     end
 end
 

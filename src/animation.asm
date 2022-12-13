@@ -34,9 +34,9 @@ _dcs_determine_offsets:
 _dcs_foyle:
     ret
 
-; Calculate a pointer to a weapon sprite. Weapons reuse the DOWN and RIGHT sprites
-; as UP and LEFT, but have sprites for attacks. Sets RAMPZ. The behavior is
-; undefined if the given action is not a valid action.
+; Calculate a pointer to a weapon sprite animation entry. Weapons reuse the DOWN
+; and RIGHT sprites as UP and LEFT, but have sprites for attacks. Sets RAMPZ.
+; The behavior is undefined if the given action is not a valid action.
 ;
 ; Register Usage
 ;   r21         calculations
@@ -71,21 +71,19 @@ _dws_determine_offsets:
     movw ZL, r0
     clr r1
     lsl r25
+    lsl r25
     add ZL, r25
     adc ZH, r1
-    ldi r21, byte3(2*animated_item_sprite_lut)
+    ldi r21, byte3(2*animated_item_table)
     out RAMPZ, r21
-    subi ZL, low(-2*animated_item_sprite_lut)
-    sbci ZH, high(-2*animated_item_sprite_lut)
-    elpm r24, Z+
-    elpm r25, Z
-    movw ZL, r24
+    subi ZL, low(-2*animated_item_table)
+    sbci ZH, high(-2*animated_item_table)
 _dws_end:
     ret
 
-; Calculate a pointer to an armor sprite. Armor sprites have distinct sprites
-; for all directions while walking and idle, but reuse idle sprites when attacking
-; and hurt. Sets RAMPZ.
+; Calculate a pointer to an armor sprite animation entry. Armor sprites have
+; distinct sprites for all directions while walking and idle, but reuse idle
+; sprites when attacking and hurt. Sets RAMPZ.
 ;
 ; Register Usage
 ;   r21         calculations
@@ -112,17 +110,15 @@ _das_determine_offsets:
     mul r23, r21
     add r25, r0
     lsl r25
+    lsl r25
     ldi r21, ANIMATED_ITEM_ENTRY_MEMSIZE
     mul r21, r22
     movw ZL, r0
     clr r1
     add ZL, r25
     adc ZH, r1
-    ldi r21, byte3(2*animated_item_sprite_lut)
+    ldi r21, byte3(2*animated_item_table)
     out RAMPZ, r21
-    subi ZL, low(-2*animated_item_sprite_lut)
-    sbci ZH, high(-2*animated_item_sprite_lut)
-    elpm r24, Z+
-    elpm r25, Z
-    movw ZL, r24
+    subi ZL, low(-2*animated_item_table)
+    sbci ZH, high(-2*animated_item_table)
     ret

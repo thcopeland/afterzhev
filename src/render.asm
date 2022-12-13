@@ -864,17 +864,18 @@ _rc_render_weapon_below:
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_weapon_sprite
     movw r24, r16
+    elpm r20, Z+
     elpm r21, Z+
-    splt r21, r20
-    neg r20
-    subi r20, -14
+    subi r20, 14
     subi r21, 2
-    add r24, r20
-    add r25, r21
-    elpm r23, Z+
-    splt r23, r22
-    mov r20, r22
     sub r24, r20
+    add r25, r21
+    elpm r22, Z+
+    elpm r23, Z+
+    movw ZL, r22
+    elpm r22, Z+
+    elpm r23, Z+
+    sub r24, r22
     neg r22 ; flip horizontally
     rcall render_sprite
 _rc_render_character:
@@ -896,14 +897,17 @@ _rc_write_armor_sprite:
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_armor_sprite
     movw r24, r16
+    elpm r20, Z+
     elpm r21, Z+
-    splt r21, r20
     subi r20, 2
     subi r21, 2
     add r24, r20
     add r25, r21
+    elpm r22, Z+
     elpm r23, Z+
-    splt r23, r22
+    movw ZL, r22
+    elpm r22, Z+
+    elpm r23, Z+
     rcall render_sprite
 _rc_write_effect:
     ldd r22, Y+CHARACTER_EFFECT_OFFSET
@@ -920,14 +924,17 @@ _rc_render_weapon_above:
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_weapon_sprite
     movw r24, r16
+    elpm r20, Z+
     elpm r21, Z+
-    splt r21, r20
     subi r20, 2
     subi r21, 2
     add r24, r20
     add r25, r21
+    elpm r22, Z+
     elpm r23, Z+
-    splt r23, r22
+    movw ZL, r22
+    elpm r22, Z+
+    elpm r23, Z+
     rcall render_sprite
 _rc_end:
     pop r17
@@ -962,8 +969,8 @@ render_character_icon:
     clr r25
     call determine_armor_sprite
     movw r18, XL
+    elpm r20, Z+
     elpm r21, Z+
-    splt r21, r20
     subi r20, 2
     subi r21, 2
     add XL, r20
@@ -973,8 +980,11 @@ render_character_icon:
     add XL, r0
     adc XH, r1
     clr r1
+    elpm r22, Z+
     elpm r23, Z+
-    splt r23, r21
+    movw ZL, r22
+    elpm r21, Z+
+    elpm r23, Z+
     clr r22
     clr r24
     mov r25, r21
@@ -988,8 +998,8 @@ _rci_write_weapon_sprite:
     ldi r24, ACTION_IDLE
     clr r25
     call determine_weapon_sprite
+    elpm r20, Z+
     elpm r21, Z+
-    splt r21, r20
     subi r20, 2
     subi r21, 2
     add XL, r20
@@ -999,8 +1009,11 @@ _rci_write_weapon_sprite:
     add XL, r0
     adc XH, r1
     clr r1
+    elpm r22, Z+
     elpm r23, Z+
-    splt r23, r21
+    movw ZL, r22
+    elpm r21, Z+
+    elpm r23, Z+
     clr r22
     clr r24
     mov r25, r21
