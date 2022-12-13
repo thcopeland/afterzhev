@@ -50,8 +50,9 @@ _ss2u_main:
 _ss2u_move_enemies:
     check_conversation battle_tutorial
     brne _ss2u_end
-    ldi r20, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
-    call update_sector_npcs
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
+    sts npc_move_flags, r25
+    call update_standard
 _ss2u_loot:
     lds r25, sector_npcs+NPC_IDX_OFFSET
     cpi r25, NPC_CORPSE
@@ -66,4 +67,63 @@ _ss2u_loot:
     brlo _ss2u_end
     try_start_conversation loot_tutorial
 _ss2u_end:
+    ret
+
+sector_start_fight_update:
+    ; in general, NPCs may be reordered, so this is a bit of a hack
+    ; it works because (1) no reordering here and (2) it's the last NPC
+    lds r25, sector_npcs+(NPC_MEMSIZE*2)+NPC_HEALTH_OFFSET ; health of BANDIT_3
+    cpi r25, 10
+    brsh _ssfu_fight
+_ssfu_plead:
+    try_start_conversation bandit_plead
+    tst r25
+    brne _ssfu_end
+_ssfu_fight:
+    lds r20, player_position_x
+    lds r21, player_position_y
+    sts npc_move_data, r20
+    sts npc_move_data+1, r21
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
+    sts npc_move_flags, r25
+    ldi r25, 2
+    call update_multiple_npcs
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
+    sts npc_move_flags, r25
+    ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_BANDIT_3
+    brne _ssfu_last_bandit_update
+_ssfu_last_bandit_stand:
+    lds r25, last_choice
+    cpi r25, 0
+    brne _ssfu_last_bandit_attack
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
+    sts npc_move_flags, r25
+    rjmp _ssfu_last_bandit_update
+_ssfu_last_bandit_attack:
+    cpi r25, 1
+    brne _ssfu_reform_bandit
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_ATTACK|NPC_MOVE_GOTO|NPC_MOVE_LOOKAT
+    sts npc_move_flags, r25
+    rjmp _ssfu_last_bandit_update
+_ssfu_reform_bandit:
+    ldi r25, NPC_BANDIT_3_REFORMED
+    std Y+NPC_IDX_OFFSET, r25
+    ldi r25, ITEM_bloody_sword
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
+    ldi r25, 118
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
+    ldi r25, 150
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
+    lds r25, npc_presence+((NPC_BANDIT_3-1)>>3)
+    andi r25, ~(1<<((NPC_BANDIT_3-1)&7))
+    sts npc_presence+((NPC_BANDIT_3-1)>>3), r25
+_ssfu_last_bandit_update:
+    call update_single_npc
+    call player_resolve_melee_damage
+    call player_resolve_effect_damage
+_ssfu_end:
     ret

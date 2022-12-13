@@ -1479,10 +1479,10 @@ _ls_load_npcs:
     lds XH, current_sector+1
     subi XL, low(-SECTOR_NPC_OFFSET)
     sbci XH, high(-SECTOR_NPC_OFFSET)
-    ldi ZL, byte3(2*sector_table)
-    out RAMPZ, ZL
     ldi r18, SECTOR_NPC_COUNT
 _ls_load_npcs_iter:
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
     movw ZL, XL
     elpm r25, Z+
     mov r20, r25

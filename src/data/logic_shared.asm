@@ -86,38 +86,22 @@ _tsc_end_%:
     try_start_conversation_intern @0, @0
 .endm
 
-; Standard NPC update routine.
+; Update a single enemy or corpse NPC. The caller must set npc_move_flags and
+; npc_move_data.
 ;
 ; Register Usage
-;   r0, r16-r27 calculations
-;   r20-r27     NPC move flags for each enemy (param)
-update_sector_npcs:
-.if PC_SIZE == 3
-    pop r0  ; save one byte of stack
-.endif
-    ; this uses a lot of SRAM, but the call tree at this point should be only
-    ; one or two frames deep (assuming it's called from game logic), compared
-    ; to five or six elsewhere, so it's fine.
-    push r27
-    push r26
-    push r25
-    push r24
-    push r23
-    push r22
-    push r21
-    push r20
-    lds r20, player_position_x
-    lds r21, player_position_y
-    sts npc_move_data, r20
-    sts npc_move_data+1, r21
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-_usn_loop:
-    pop r24
-    sts npc_move_flags, r24
+;   r24-r25         calculations
+;   Y (r28:r29)     npc memory pointer (param)
+;   Z (r30:r31)     npc flash pointer
+update_single_npc:
     ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_CORPSE
+    brne _usn_not_corpse
+    call corpse_update
+    ret
+_usn_not_corpse:
     subi r25, 1
-    brlo _usn_next
+    brlo _usn_end
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     ldi ZL, low(2*npc_table)
@@ -129,30 +113,110 @@ _usn_loop:
     clr r1
     elpm r25, Z
     cpi r25, NPC_ENEMY
-    brne _usn_check_corpse
-    movw r16, ZL
+    brne _usn_end
+    push ZL
+    push ZH
     call npc_move
     call npc_update
-    movw ZL, r16
+    pop ZH
+    pop ZL
     call npc_resolve_ranged_damage
     call npc_resolve_melee_damage
-    rjmp _usn_next
-_usn_check_corpse:
+_usn_end:
+    ret
+
+; Update multiple enemy or corpse NPCs. The caller must set npc_move_flags and
+; npc_move_data.
+;
+; Register Usage
+;   r24             calculations
+;   r25             the number of NPCs to update (param)
+;   Y (r28:r29)     npc memory pointer (param)
+;   Z (r30:r31)     npc flash pointer
+update_multiple_npcs:
+_umn_loop:
+    push r25
     ldd r25, Y+NPC_IDX_OFFSET
     cpi r25, NPC_CORPSE
-    brne _usn_next
+    brne _umn_not_corpse
     call corpse_update
-    rjmp _usn_next
-_usn_next:
+    rjmp _umn_next
+_umn_not_corpse:
+    subi r25, 1
+    brlo _umn_next
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _umn_next
+    push ZL
+    push ZH
+    call npc_move
+    call npc_update
+    pop ZH
+    pop ZL
+    call npc_resolve_ranged_damage
+    call npc_resolve_melee_damage
+_umn_next:
+    adiw YL, NPC_MEMSIZE
+    pop r25
+    dec r25
+    brne _umn_loop
+    ret
+
+; Standard NPC and player update routine.The caller must set npc_move_flags.
+;
+; Register Usage
+;   r0, r20-r31 calculations
+update_standard:
+    lds r20, player_position_x
+    lds r21, player_position_y
+    sts npc_move_data, r20
+    sts npc_move_data+1, r21
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+_us_loop:
+    ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_CORPSE
+    brne _us_not_corpse
+    call corpse_update
+    rjmp _us_next
+_us_not_corpse:
+    subi r25, 1
+    brlo _us_next
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _us_next
+    push ZL
+    push ZH
+    call npc_move
+    call npc_update
+    pop ZH
+    pop ZL
+    call npc_resolve_ranged_damage
+    call npc_resolve_melee_damage
+_us_next:
     adiw YL, NPC_MEMSIZE
     cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
-    brlo _usn_loop
-_usn_cleanup:
+    brlo _us_loop
+_us_finish:
     call reorder_npcs
-    ; TODO these should arguably be done elsewhere, might change if helpful
     call player_resolve_melee_damage
     call player_resolve_effect_damage
-.if PC_SIZE == 3
-    push r1
-.endif
     ret

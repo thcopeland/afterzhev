@@ -87,6 +87,18 @@ npc_table:
     DECL_NPC        NPC_BATTLE_TUTORIAL, NPC_ENEMY, CHARACTER_BANDIT, ITEM_bloody_sword, NO_ITEM, DIRECTION_DOWN, 5, 180, 26
     DECL_ENEMY_DATA 0, 0, 8, 4, 10, ITEM_bloody_sword, ITEM_bloody_sword, ITEM_bloody_sword
 
+    DECL_NPC        NPC_BANDIT_1, NPC_ENEMY, CHARACTER_BANDIT, ITEM_bloody_sword, ITEM_green_hood, DIRECTION_LEFT, 10, 111, 73
+    DECL_ENEMY_DATA 0, 0, 8, 4, 10, 128|20, ITEM_bloody_sword, ITEM_green_hood
+
+    DECL_NPC        NPC_BANDIT_2, NPC_ENEMY, CHARACTER_PALADIN, ITEM_bloody_sword, ITEM_leather_armor, DIRECTION_UP, 14, 96, 84
+    DECL_ENEMY_DATA 0, 0, 8, 4, 10, ITEM_leather_armor, ITEM_bloody_sword, 128|30
+
+    DECL_NPC        NPC_BANDIT_3, NPC_ENEMY, CHARACTER_PALADIN, ITEM_bloody_sword, ITEM_green_hood, DIRECTION_UP, 20, 120, 146
+    DECL_ENEMY_DATA 0, 0, 8, 4, 10, 128|20, ITEM_bloody_sword, ITEM_green_hood
+
+    DECL_NPC        NPC_BANDIT_3_REFORMED, NPC_ENEMY, CHARACTER_PALADIN, NO_ITEM, ITEM_green_hood, DIRECTION_UP, 20, 120, 146
+    DECL_ENEMY_DATA 0, 0, 8, 4, 10, 128|20, ITEM_green_hood, ITEM_green_hood
+
     ; DECL_NPC        NPC_TALKER, 128|NPC_SIGN_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 0, 138, 14
     ; DECL_TALK_DATA  0, 1, fisherman_greeting, 0, fisherman_laugh
 

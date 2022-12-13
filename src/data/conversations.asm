@@ -69,12 +69,23 @@ _conv_battle_tutorial2:         DECL_BRANCH 3
 _conv_battle_tutorial3:         DECL_LINE battle_tutorial3, NPC_BATTLE_TUTORIAL, ruffian, battle_tutorial4
 _conv_battle_tutorial4:         DECL_LINE battle_tutorial4, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION loot_tutorial
-_conv_loot_tutorial:           DECL_LINE loot_tutorial, 0, PLAYER, loot_tutorial2
+_conv_loot_tutorial:            DECL_LINE loot_tutorial, 0, PLAYER, loot_tutorial2
 _conv_loot_tutorial2:           DECL_LINE loot_tutorial2, 0, PLAYER, END_CONVERSATION
+DECL_CONVERSATION bandit_plead
+_conv_bandit_plead:             DECL_LINE bandit_plead, NPC_BANDIT_3, bandit, bandit_plead2
+_conv_bandit_plead2:            DECL_LINE bandit_plead2, 0, PLAYER, bandit_plead3
+_conv_bandit_plead3:            DECL_LINE bandit_plead3, NPC_BANDIT_3, bandit, bandit_plead4
+_conv_bandit_plead4:            DECL_LINE bandit_plead4, 0, PLAYER, bandit_plead5
+_conv_bandit_plead5:            DECL_LINE bandit_plead5, NPC_BANDIT_3, bandit, bandit_plead_spare
+_conv_bandit_plead_spare:       DECL_BRANCH 2
+                                DECL_CHOICE bandit_plead_c1, END_CONVERSATION
+                                DECL_CHOICE bandit_plead_c2, bandit_plead6
+_conv_bandit_plead6:            DECL_LINE bandit_plead6, NPC_BANDIT_3, bandit, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
 _conv_speaker_ruffian_str:      .db "Ruffian", 0
+_conv_speaker_bandit_str:       .db "Bandit", 0, 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
 _conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
 _conv_what_happened3_str:       .db "It must have been stolen. I haveto get it back at any cost.", 0
@@ -89,3 +100,11 @@ _conv_battle_tutorial3_str:     .db "Heh, heh. I", 39, "m gonna enjoy this.", 0
 _conv_battle_tutorial4_str:     .db 10, 10, 10, 10, 10, "  Press <A> to defend yourself", 10, "      and <B> to dash.", 0, 0
 _conv_loot_tutorial_str:        .db "I think he got the point.", 0
 _conv_loot_tutorial2_str:       .db 10, 10, 10, 10, 10, 10, "Press <select> to loot corpses.", 0
+_conv_bandit_plead_str:         .db "I yield! Spare me, adventurer!", 0, 0
+_conv_bandit_plead2_str:        .db "Then tell me quickly: did you", 10, "steal my letter?", 0, 0
+_conv_bandit_plead3_str:        .db "Uh... it weren", 39, "t I, adventurer!", 10, "The others took it, but the big", 10, "boss", 39, "s men have it now.", 0
+_conv_bandit_plead4_str:        .db "Big boss?", 0
+_conv_bandit_plead5_str:        .db "His gang have a house in the woodwest of the town. Please,", 10, "adventure, we didn", 39, "t harm you!", 0
+_conv_bandit_plead_c1_str:      .db "Ha! That letter means my life,", 10, "you will pay dearly!", 0
+_conv_bandit_plead_c2_str:      .db "I spare you. But you must stop", 10, "robbing travelers.", 0
+_conv_bandit_plead6_str:        .db "I swear it! I give you my sword asproof.", 0, 0

@@ -26,13 +26,15 @@ _init_zero_iter:
     sti player_velocity_y, 0
     sti player_class, CLASS_HALFLING
     sti player_character, CHARACTER_HALFLING
-    sti player_weapon, 1
+    sti player_weapon, ITEM_bloody_sword
     sti player_armor, ITEM_feathered_hat
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_LEFT
     sti player_frame, 0
     sti player_effect, 0
     sti player_inventory, ITEM_inventory_book
+    sti player_inventory+1, ITEM_green_hood
+    sti player_inventory+1, ITEM_leather_armor
     sti player_stats, 10
     sti player_stats+1, 10
     sti player_stats+2, 10
@@ -55,7 +57,11 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    .equ INITIAL_SECTOR = SECTOR_START_1
+    sti player_position_x, 20
+    sti player_position_y, 35
+    call reset_camera
+    .equ INITIAL_SECTOR = SECTOR_START_FIGHT
+    ; .equ INITIAL_SECTOR = SECTOR_START_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

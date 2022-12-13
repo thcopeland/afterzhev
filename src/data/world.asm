@@ -421,12 +421,12 @@ sector_table:
     039, 039, 039, 039, 039, 039, 056, 001, 189, 189, 179, 007, 066, 039, 039, 039, 039, 039, 039, 039, \
     039, 039, 039, 039, 039, 039, 065, 033, 034, 034, 034, 066, 039, 039, 039, 039, 039, 039, 039, 039
 .db 16, 17, 16, 15
-.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-.db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+.db NPC_BANDIT_1, NPC_BANDIT_2, NPC_BANDIT_3, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db 128|100, LOOSE_ITEM_intro_bandit_gold, 94, 160, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.db FEATURE_CAMPFIRE, 94, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw sector_start_fight_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 17 "start_section_post_fight"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 041, 179, 038, 039, 039, 039, 039, \
