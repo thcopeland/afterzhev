@@ -24,7 +24,7 @@ _init_zero_iter:
     call reset_camera
     sti player_velocity_x, 0
     sti player_velocity_y, 0
-    sti player_class, CLASS_HALFLING
+    sti player_class, CLASS_ROGUE
     sti player_character, CHARACTER_HALFLING
     sti player_weapon, ITEM_bloody_sword
     sti player_armor, ITEM_feathered_hat
