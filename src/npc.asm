@@ -236,7 +236,6 @@ _nm_melee_attack:
     ori r24, ACTION_ATTACK<<5
     std Y+NPC_ANIM_OFFSET, r24
 _nm_attack_end:
-    rjmp _nm_end
 _nm_test_move:
     lds r25, npc_move_flags
     sbrs r25, log2(NPC_MOVE_GOTO)
@@ -353,12 +352,16 @@ _nm_test_move_falloff:
 _nm_move:
     mov r27, r26
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
-    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
 _nm_goto_horizontal_movement:
-    cpi r22, STRIKING_DISTANCE
+    lds r25, player_velocity_x
+    sbrc r25, 7
+    neg r25
+    cpi r25, 40
+    brsh _nm_goto_horizontal_direction
+    cpi r22, 2*STRIKING_DISTANCE
     brsh _nm_goto_horizontal_direction
     asr r26
-    cpi r22, STRIKING_DISTANCE/2
+    cpi r22, 2*STRIKING_DISTANCE/3
     brlo _nm_goto_vertical_movement
 _nm_goto_horizontal_direction:
     cp r18, r20
@@ -367,10 +370,16 @@ _nm_goto_horizontal_direction:
 _nm_goto_acc_x:
     adnv r24, r26
 _nm_goto_vertical_movement:
-    cpi r23, STRIKING_DISTANCE
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+    lds r22, player_velocity_y
+    sbrc r22, 7
+    neg r22
+    cpi r22, 40
+    brsh _nm_goto_vertical_direction
+    cpi r23, 2*STRIKING_DISTANCE
     brsh _nm_goto_vertical_direction
     asr r27
-    cpi r23, STRIKING_DISTANCE/2
+    cpi r23, 2*STRIKING_DISTANCE/3
     brlo _nm_goto_save_velocity
 _nm_goto_vertical_direction:
     cp r19, r21

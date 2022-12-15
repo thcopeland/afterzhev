@@ -29,7 +29,10 @@ _pdi_1_%:
     brsh _pdi_2_%
     neg r25
 _pdi_2_%:
-    adnv r25, r24
+    add r25, r24
+    brcc _pdi_3_%
+    ser r25
+_pdi_3_%:
 .endm
 
 ; Calculate the distance from the player to the given coordinates.
@@ -47,7 +50,10 @@ _pd_1_%:
     brsh _pd_2_%
     neg r25
 _pd_2_%:
-    adnv r25, r24
+    add r25, r24
+    brcc _pd_3_%
+    ser r25
+_pd_3_%:
 .endm
 
 ; Check whether a conversation has occurred or not. Z flag is cleared if it has.
@@ -58,7 +64,7 @@ _pd_2_%:
 .macro check_conversation ; conversation id
     lds r24, conversation_over + ((CONVERSATION_@0_ID-1)>>3)
     mov r25, r24
-    andi r24, ~(1<<((CONVERSATION_@0_ID-1)&7))
+    andi r24, low(~(1<<((CONVERSATION_@0_ID-1)&7)))
     cp r25, r24
 .endm
 

@@ -71,7 +71,7 @@ fi
 mkdir $tmpdir
 convert "$input" -crop "$dims" +repage "$tmpdir/section-%03d.png"
 for f in "$tmpdir"/section-*.png; do
-    if [ $(convert "$f" -channel A -scale 1x1! -format "%[fx:mean]" info:) != "0" ]; then
+    if [ $(convert "$f" -alpha on -channel A -scale 1x1! -format "%[fx:mean]" info:) != "0" ]; then
         ruby "$dir/png2asm.rb" "$f"
     else
         echo "skipping $(basename $f)"

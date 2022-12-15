@@ -182,3 +182,4 @@
 .equ ADD_NPC_MAX_Y_DISTANCE = DISPLAY_HEIGHT/TILE_HEIGHT
 
 .include "names.asm"
+.include "quests.asm"

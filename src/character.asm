@@ -251,15 +251,20 @@ _mc_features_iter:
 _mcf_next_trampoline:
     rjmp _mc_features_next
 _mcf_calculate_distance:
-    sbnv r22, r24
-    sbnv r23, r25
+    sub r22, r24
     mov r21, r22
-    sbrc r21, 7
+    brcc _mfc_cd_1
     neg r21
+_mfc_cd_1:
+    sub r23, r25
     mov r0, r23
-    sbrc r0, 7
+    brcc _mfc_cd_2
     neg r0
-    adnv r21, r0
+_mfc_cd_2:
+    add r21, r0
+    brcc _mfc_cd_3
+    ser r21
+_mfc_cd_3:
     cpi r21, FEATURE_COLLIDE_RANGE
     brsh _mc_features_next
     ; NOTE: Not particularly pround of the "check_horizontal/vertical_corners" special

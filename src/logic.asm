@@ -15,7 +15,9 @@
 ;
 ; Register Usage
 ;   update subroutine: all registers are available
-;   event subroutines: r0, r24, r25, ZL, and ZH available
+;   conversation subroutine: r0, r20-r25, ZL, and ZH available
+;   choice subroutine: r0, r22-r25, ZL, and ZH available
+;   other event subroutines: r0, r24, r25, ZL, and ZH available
 
 .include "logic_shared.asm"
 
@@ -132,4 +134,156 @@ _ssfu_last_bandit_update:
     call player_resolve_melee_damage
     call player_resolve_effect_damage
 _ssfu_end:
+    ret
+
+sector_start_pretown_1_update:
+    player_distance_imm 170, 32
+    cpi r25, 12
+    brsh _ssp1u_end
+    try_start_conversation interact_tutorial
+_ssp1u_end:
+    ret
+
+sector_town_entrance_1_update:
+    player_distance_imm 184, 130
+    cpi r25, 16
+    brsh _ste1u_interact
+    try_start_conversation save_tutorial
+    rjmp  _ste1u_end
+_ste1u_interact:
+    player_distance_imm 86, 134
+    cpi r25, 16
+    brsh _ste1u_end
+    try_start_conversation interact_tutorial
+_ste1u_end:
+    ret
+
+sector_town_entrance_1_conversation:
+    ldi r23, high(2*_conv_kidnapped_daughter)
+    cpi r24, low(2*_conv_kidnapped_daughter)
+    cpc r25, r23
+    brne _ste1c_end
+    lds r23, global_data+QUEST_KIDNAPPED_DAUGHTER
+_st1ec_not_begun:
+    andi r23, 0x07
+    breq _ste1c_end
+_st1ec_refused:
+    cpi r23, 1
+    brne _st1ec_accepted
+    ldi r24, low(2*_conv_kidnapped_daughter5)
+    ldi r25, high(2*_conv_kidnapped_daughter5)
+    rjmp _ste1c_end
+_st1ec_accepted:
+    cpi r23, 2
+    brne _st1ec_fighting
+    ldi r24, low(2*_conv_kidnapped_daughter6)
+    ldi r25, high(2*_conv_kidnapped_daughter6)
+    rjmp _ste1c_end
+_st1ec_fighting:
+    cpi r23, 5
+    brsh _st1ec_rescued
+    ldi r24, low(2*_conv_kidnapped_daughter9)
+    ldi r25, high(2*_conv_kidnapped_daughter9)
+    rjmp _ste1c_end
+_st1ec_rescued:
+    cpi r23, 5
+    brne _st1ec_completed
+    ; todo: drop potion
+    ldi r23, 6
+    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r23
+    ldi r24, low(2*_conv_kidnapped_daughter7)
+    ldi r25, high(2*_conv_kidnapped_daughter7)
+    rjmp _ste1c_end
+_st1ec_completed:
+    ldi r24, low(2*_conv_kidnapped_daughter8)
+    ldi r25, high(2*_conv_kidnapped_daughter8)
+_ste1c_end:
+    ret
+
+sector_town_entrance_1_choice:
+    lds r25, selected_choice
+    tst r25
+    breq _ste1ch_end
+_ste1ch_refuse:
+    cpi r25, 1
+    brne _ste1ch_accept
+    ldi r25, 2
+    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
+    rjmp _ste1ch_end
+_ste1ch_accept:
+    ldi r25, 1
+    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
+_ste1ch_end:
+    ret
+
+sector_town_wolves_update:
+    lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
+    cpi r25, 3
+    brsh _stwu_attack
+_stwu_lurk:
+    lds r25, player_position_y
+    cpi r25, 96
+    brlo _stwu_end
+    ldi r25, 3
+    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
+    rjmp _stwu_end
+_stwu_attack:
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
+    sts npc_move_flags, r25
+    call update_standard
+_stwu_end:
+    ret
+
+sector_start_post_fight_update:
+    lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
+    cpi r25, 4
+    brsh _sspfu_follow
+    player_distance_imm 134, 31
+    cpi r25, 16
+    brsh _sspfu_end
+    ldi r24, low(2*_conv_kidnapped_daughter10)
+    ldi r25, high(2*_conv_kidnapped_daughter10)
+    call load_conversation
+    ldi r25, 4
+    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
+    rjmp _sspfu_end
+_sspfu_follow:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    lds r25, sector_npcs+NPC_IDX_OFFSET
+    tst r25
+    breq _sspfu_check_add_follower
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_LOOKAT
+    sts npc_move_flags, r25
+    lds r24, player_position_x
+    lds r25, player_position_y
+    sts npc_move_data, r24
+    sts npc_move_data+1, r25
+    call update_single_npc
+    rjmp _sspfu_end
+_sspfu_check_add_follower:
+    lds r25, sector_data
+    cpi r25, 20
+    brsh _sspfu_add_follow
+    inc r25
+    sts sector_data, r25
+    rjmp _sspfu_end
+_sspfu_add_follow:
+    ldi r25, NPC_KIDNAPPED_DAUGHTER
+    call load_npc
+    ldi r25, 168
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r25
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r1
+    ldi r25, DIRECTION_DOWN
+    std Y+NPC_ANIM_OFFSET, r25
+_sspfu_end:
+    ret
+
+sector_start_post_fight_init:
+    lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
+    cpi r25, 4
+    brlo _sspfi_end
+    sts sector_data, r1
+    sts sector_npcs+NPC_IDX_OFFSET, r1
+_sspfi_end:
     ret

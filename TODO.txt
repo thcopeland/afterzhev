@@ -3,6 +3,7 @@
 * Prologue screens (maybe 2560/2561 only?)
 * Help screen
 * About screen
+* Render corpses on bottom w/o reordering (2 passes, can skip stuff w corpses)
 
 # Story
 * Ask someone talented to make prologue screens

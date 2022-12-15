@@ -301,12 +301,12 @@ sector_table:
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 065, 033, 033, 015, 179, 007, 033, 034, 066, 039, \
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 076, 039, 039, 041, 180, 038, 039, 039, 039, 039
 .db 17, 12, 5, 11
-.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_FOX_1, NPC_FOX_2, NPC_FOX_3, NPC_FOX_4, NPC_FOX_5, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BONE, 200, 142, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_town_wolves_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 12 "town_section_entrance_1"
 .db 039, 039, 039, 039, 039, 039, 039, 041, 180, 179, 189, 172, 167, 171, 189, 189, 180, 180, 038, 039, \
@@ -325,12 +325,12 @@ sector_table:
     065, 015, 180, 179, 191, 180, 007, 034, 034, 034, 015, 180, 172, 173, 171, 180, 007, 066, 040, 039, \
     039, 065, 033, 034, 033, 033, 066, 039, 040, 039, 041, 180, 172, 173, 171, 180, 038, 039, 039, 039
 .db 18, 12, 6, 11
-.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_GRIEVING_FATHER, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 1, 184, 125, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.db FEATURE_INVISIBLE, 184, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.db FEATURE_INVISIBLE, 184, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw sector_town_entrance_1_update, NO_HANDLER, NO_HANDLER, sector_town_entrance_1_conversation, sector_town_entrance_1_choice
 
 ; Sector 13 "town_section_forest_path_4"
 .db 039, 041, 189, 179, 180, 179, 179, 038, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, \
@@ -445,12 +445,12 @@ sector_table:
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, \
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039
 .db 17, 18, 11, 16
-.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_KIDNAPPED_DAUGHTER, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_start_post_fight_update, sector_start_post_fight_init, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 18 "start_section_pretown_1"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 041, 189, 172, 173, 171, 179, 038, 039, 039, 039, \
@@ -469,12 +469,12 @@ sector_table:
     039, 039, 041, 180, 189, 038, 039, 039, 039, 039, 039, 065, 015, 172, 173, 171, 038, 039, 040, 039, \
     039, 039, 041, 189, 189, 038, 039, 039, 039, 039, 040, 039, 041, 172, 173, 171, 038, 039, 039, 039
 .db 20, 18, 12, 17
-.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_DRUNK, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_start_pretown_1_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 19 "start_section_1"
 .db 039, 039, 039, 039, 039, 039, 039, 041, 179, 179, 179, 172, 171, 179, 180, 189, 038, 039, 065, 066, \

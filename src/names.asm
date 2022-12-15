@@ -83,4 +83,6 @@
 
 ; Static character sprite names
 .equ NPC_CORPSE_SPRITE = 0
-.equ NPC_SIGN_SPRITE = 1
+.equ NPC_DRUNK_SPRITE = 1
+.equ NPC_GRIEVING_FATHER_SPRITE = 2
+.equ NPC_SIGN_SPRITE = 3

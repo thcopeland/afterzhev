@@ -173,7 +173,7 @@ inventory_use_item:
     brne _iui_end
     adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
     elpm r19, Z
-    andi r19, 1
+    andi r19, 0x01
     brne _iui_end
     ldi ZL, low(player_effects)
     ldi ZH, high(player_effects)
