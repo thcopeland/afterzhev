@@ -92,8 +92,7 @@ _tsc_end_%:
     try_start_conversation_intern @0, @0
 .endm
 
-; Update a single enemy or corpse NPC. The caller must set npc_move_flags and
-; npc_move_data.
+; Update a single enemy or corpse NPC. The caller must set npc_move_flags.
 ;
 ; Register Usage
 ;   r24-r25         calculations
@@ -131,8 +130,7 @@ _usn_not_corpse:
 _usn_end:
     ret
 
-; Update multiple enemy or corpse NPCs. The caller must set npc_move_flags and
-; npc_move_data.
+; Update multiple enemy or corpse NPCs. The caller must set npc_move_flags.
 ;
 ; Register Usage
 ;   r24             calculations
@@ -182,10 +180,6 @@ _umn_next:
 ; Register Usage
 ;   r0, r20-r31 calculations
 update_standard:
-    lds r20, player_position_x
-    lds r21, player_position_y
-    sts npc_move_data, r20
-    sts npc_move_data+1, r21
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
 _us_loop:

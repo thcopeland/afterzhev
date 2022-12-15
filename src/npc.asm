@@ -1,5 +1,5 @@
 ; Move the given enemy around and attack as necessary. The exact behavior is
-; specified by npc_move_flags and npc_move_data, see gamedefs.asm.
+; specified by npc_move_flags, see gamedefs.asm.
 ;
 ; Register Usage
 ;   r18-r27         calculations
@@ -10,10 +10,6 @@ npc_move:
     lds r20, npc_move_flags
     sbrs r20, log2(NPC_MOVE_FRICTION)
     clr r26
-    ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
-    ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
-    push r20
-    push r21
     push ZL
     push ZH
     adiw YL, NPC_POSITION_OFFSET
@@ -24,8 +20,8 @@ npc_move:
     out RAMPZ, ZL
     pop ZH
     pop ZL
-    pop r25
-    pop r24
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
 _nm_test_rebound:
     lds r20, npc_move_flags
     sbrs r20, log2(NPC_MOVE_REBOUND)
@@ -83,8 +79,8 @@ _nm_test_lookat:
     sbrs r20, log2(NPC_MOVE_LOOKAT)
     rjmp _nm_test_poltroon1
 _nm_lookat:
-    lds r20, npc_move_data
-    lds r21, npc_move_data+1
+    lds r20, player_position_x
+    lds r21, player_position_y
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     movw r24, r22
@@ -241,8 +237,8 @@ _nm_test_move:
     sbrs r25, log2(NPC_MOVE_GOTO)
     rjmp _nm_end
 _nm_move_calculations:
-    lds r18, npc_move_data
-    lds r19, npc_move_data+1
+    lds r18, player_position_x
+    lds r19, player_position_y
     ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     movw r22, r20

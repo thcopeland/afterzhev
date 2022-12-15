@@ -57,6 +57,13 @@ _main_stall:
     rjmp _main_stall
 
 isr_loop:
+    ; drop stack frame to save a few bytes
+    pop r18
+    pop r18
+    .if PC_SIZE == 3
+    pop r18
+    .endif
+
     ; normally, ISRs should be as short as possible and preserve CPU state. Since
     ; everything is done within this ISR, however, that's unnecessary.
     lds r18, TCNT3L
@@ -107,13 +114,11 @@ _loop_work:
     ; the game. This corresponds to the VGA vertical front porch and sync pulse,
     ; in addition to the time we save with any blank rows (the latter is the most
     ; significant).
-    ; .ifdef DEV
     ; heartbeat, used for syncing with the emulator
     in r0, PORTB
     ldi r16, 0x80
     eor r0, r16
     out PORTB, r0
-    ; .endif
 
     lds r24, clock
     lds r25, clock+1
@@ -162,7 +167,9 @@ _loop_reset_render_state:
     out GPIOR1, r17
     sbi TIFR1, OCF1A ; clear any pending interrupts
 _loop_end:
-    reti
+    ; exit from interrupt
+    sei
+    rjmp _main_stall
 
 .include "math.asm"
 .include "controls.asm"

@@ -84,10 +84,6 @@ _ssfu_plead:
     breq _ssfu_fight
     ret
 _ssfu_fight:
-    lds r20, player_position_x
-    lds r21, player_position_y
-    sts npc_move_data, r20
-    sts npc_move_data+1, r21
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
     ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
@@ -255,10 +251,6 @@ _sspfu_follow:
     breq _sspfu_check_add_follower
     ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_LOOKAT
     sts npc_move_flags, r25
-    lds r24, player_position_x
-    lds r25, player_position_y
-    sts npc_move_data, r24
-    sts npc_move_data+1, r25
     call update_single_npc
     rjmp _sspfu_end
 _sspfu_check_add_follower:

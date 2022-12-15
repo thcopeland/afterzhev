@@ -106,11 +106,7 @@ _prmd_ranged_facing_right:
     brne _prmd_add_effect
     subi r24, -2*EFFECT_SPRITE_WIDTH/3
 _prmd_add_effect:
-    push ZL
-    push ZH
     call add_active_effect
-    pop ZH
-    pop ZL
     rjmp _prmd_end
 _prmd_check_melee_frame:
     ldd r24, Y+NPC_ANIM_OFFSET
