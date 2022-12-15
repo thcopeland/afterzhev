@@ -13,8 +13,9 @@
 ; but it is probably one of the most flexible and should be all right for a small
 ; game.
 ;
-; Register Usage
+; Register Usage (approximate, just what I've checked)
 ;   update subroutine: all registers are available
+;   exit subroutine: r0, r24-r25, YL, YH, ZL, and ZH available
 ;   conversation subroutine: r0, r20-r25, ZL, and ZH available
 ;   choice subroutine: r0, r22-r25, ZL, and ZH available
 ;   other event subroutines: r0, r24, r25, ZL, and ZH available
@@ -141,6 +142,9 @@ _ssp1u_end:
     ret
 
 sector_town_entrance_1_update:
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
+    sts npc_move_flags, r25
+    call update_standard
     player_distance_imm 184, 130
     cpi r25, 16
     brsh _ste1u_interact

@@ -84,7 +84,7 @@
 .equ NPC_MOVE_RETURN   = 0x40   ; return to starting point if beyond some distance
 .equ NPC_MOVE_POLTROON = 0x80   ; move away from the player if health is low
 
-.equ NPC_INTEREST_DISTANCE = 36 ; NPC_MOVE_FALLOFF distance
+.equ NPC_INTEREST_DISTANCE = 48 ; NPC_MOVE_FALLOFF distance
 .equ NPC_FLEE_HEALTH = 10       ; NPC_MOVE_POLTROON health
 
 .equ RUN_FRAME_DURATION_MASK = 0x3
@@ -180,6 +180,10 @@
 
 .equ ADD_NPC_MAX_X_DISTANCE = DISPLAY_WIDTH/TILE_WIDTH
 .equ ADD_NPC_MAX_Y_DISTANCE = DISPLAY_HEIGHT/TILE_HEIGHT
+
+.equ FOLLOWER_DELAY = 20
+.equ FOLLOWER_DISTANCE = NPC_INTEREST_DISTANCE-1 ; should be less than interest distance
+.equ FOLLOWER_SPEED = 30 ; should be nonzero, or non-enemy NPCs will follow
 
 .include "names.asm"
 .include "quests.asm"

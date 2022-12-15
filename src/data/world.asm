@@ -15,7 +15,7 @@
 ;       idx, x, y (24 bytes)
 ;   update subroutine (2 bytes)
 ;   on enter subroutine (2 bytes)
-;   on pickup subroutine (2 bytes)
+;   on exit subroutine (2 bytes)
 ;   on conversation subroutine (2 bytes)
 ;   on choice subroutine (2 bytes)
 
@@ -306,7 +306,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BONE, 200, 142, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw sector_town_wolves_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_town_wolves_update, NO_HANDLER, add_nearby_followers, NO_HANDLER, NO_HANDLER
 
 ; Sector 12 "town_section_entrance_1"
 .db 039, 039, 039, 039, 039, 039, 039, 041, 180, 179, 189, 172, 167, 171, 189, 189, 180, 180, 038, 039, \

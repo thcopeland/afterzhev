@@ -8,6 +8,7 @@ explore_update_game:
     rcall update_player
     rcall move_camera
     rcall update_savepoint
+    rcall update_followers
 
     lds r21, player_position_x
     ldi r23, 0x07
@@ -544,23 +545,6 @@ _hmb_loose_item_next:
 _hmb_nearby_item_found:
     ldi XL, low(player_inventory)
     ldi XH, high(player_inventory)
-    movw r20, ZL
-    ldi ZL, byte3(2*sector_table)
-    out RAMPZ, ZL
-    lds ZL, current_sector
-    lds ZH, current_sector+1
-    subi ZL, low(-SECTOR_ON_PICKUP_OFFSET)
-    sbci ZH, high(-SECTOR_ON_PICKUP_OFFSET)
-    elpm r24, Z+
-    elpm r25, Z+
-    cp r24, r1
-    cpc r25, r1
-    breq _hmp_do_pickup
-    movw ZL, r24
-    mov r25, r23
-    icall
-_hmp_do_pickup:
-    movw ZL, r20
     cpi r23, 128
     brlo _hmb_pickup_item
 _hmb_pickup_gold:
@@ -755,6 +739,19 @@ _hmb_nearby_portal:
     elpm r20, Z+
     elpm r22, Z+
     elpm r23, Z+
+_hmb_exit_event:
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_ON_EXIT_OFFSET)
+    sbci ZH, high(-SECTOR_ON_EXIT_OFFSET)
+    elpm r24, Z+
+    elpm r25, Z+
+    cp r24, r1
+    cpc r25, r1
+    breq _hmb_update_position
+    movw ZL, r24
+    icall
+_hmb_update_position:
     sts player_position_x, r22
     sts player_position_y, r23
     andi r23, 1
@@ -765,6 +762,7 @@ _hmb_nearby_portal:
     sts player_direction, r22
 _hmb_move_camera:
     rcall reset_camera
+_hmb_switch_sectors:
     ldi ZL, low(2*sector_table)
     ldi ZH, high(2*sector_table)
     ldi r21, SECTOR_MEMSIZE/2
@@ -1326,13 +1324,33 @@ _up_end:
 check_sector_bounds:
     lds r24, player_position_x
     lds r25, player_position_y
+    cpi r24, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH+1
+    brsh _csb_exit_event
+    cpi r25, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT+1
+    brsh _csb_exit_event
+    ret
+_csb_exit_event:
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_ON_EXIT_OFFSET)
+    sbci ZH, high(-SECTOR_ON_EXIT_OFFSET)
+    elpm r24, Z+
+    elpm r25, Z+
+    cp r24, r1
+    cpc r25, r1
+    breq _csb_check_sides
+    movw ZL, r24
+    icall
+_csb_check_sides:
     lds ZL, current_sector
     lds ZH, current_sector+1
     subi ZL, low(-SECTOR_AJD_OFFSET)
     sbci ZH, high(-SECTOR_AJD_OFFSET)
 _csb_check_sector_left:
+    lds r24, player_position_x
+    lds r25, player_position_y
     cpi r24, SECTOR_WIDTH*TILE_WIDTH
     brlo _csb_check_sector_right
     adiw ZL, 3
@@ -1394,6 +1412,11 @@ load_sector:
     sts current_sector, ZL
     sts current_sector+1, ZH
     sts last_choice, r1
+    sts following_timer, r1
+    lds r18, player_position_x
+    lds r19, player_position_y
+    sts following_spawn_x, r18
+    sts following_spawn_y, r19
 _ls_clear_loose_items:
     ldi YL, low(sector_loose_items)
     ldi YH, high(sector_loose_items)
@@ -1474,6 +1497,16 @@ _ls_load_npcs_iter:
     ld r23, Z
     nbit r23, r21
     breq _ls_load_npcs_next
+_ls_following_check: ; don't add if in following list
+    ldi ZL, low(following_npcs)
+    ldi ZH, high(following_npcs)
+    ldi r24, FOLLOWING_NPC_COUNT
+_ls_following_iter:
+    ld r23, Z+
+    cp r23, r25
+    breq _ls_load_npcs_next
+    dec r24
+    brne _ls_following_iter
     rcall load_npc
 _ls_load_npcs_next:
     adiw YL, NPC_MEMSIZE
@@ -1630,4 +1663,107 @@ _mc_pad_bottom:
     ldi r23, TILE_HEIGHT*SECTOR_HEIGHT-(DISPLAY_HEIGHT-FOOTER_HEIGHT)
 _mc_save_vertical:
     sts camera_position_y, r23
+    ret
+
+; Bring a follower from the previous sector into the current sector.
+;
+; Register Usage
+;   r24-r25         calculations
+;   Y (r28:r29)     follower pointer, NPC pointer
+update_followers:
+    lds r25, following_timer
+    inc r25
+    cpi r25, FOLLOWER_DELAY
+    brsh _uf_check_followers
+    sts following_timer, r25
+    ret
+_uf_check_followers:
+    ldi YL, low(following_npcs)
+    ldi YH, high(following_npcs)
+    ldi r24, FOLLOWING_NPC_COUNT
+_uf_followers_iter:
+    ld r25, Y
+    st Y+, r1
+    tst r25
+    breq _uf_next_follower
+    sts following_timer, r1
+_uf_scan_npc_slots:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r24, SECTOR_DYNAMIC_NPC_COUNT
+_uf_npc_iter:
+    ld r0, Y
+    tst r0
+    breq _uf_slot_found
+    adiw YL, NPC_MEMSIZE
+    dec r24
+    brne _uf_npc_iter
+    ret
+_uf_slot_found:
+    call load_npc
+    lds r24, following_spawn_x
+    lds r25, following_spawn_y
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    ret
+_uf_next_follower:
+    dec r24
+    brne _uf_followers_iter
+_uf_end:
+    ret
+
+
+; Add nearby moving NPCs as followers. Intended to be called from the exit hook.
+;
+; Register Usage
+;   r24-r25         calculations
+;   Y (r28:r29)     following pointer
+;   Z (r30:r31)     NPC pointer
+add_nearby_followers:
+    ldi ZL, low(sector_npcs)
+    ldi ZH, high(sector_npcs)
+    ldi YL, low(following_npcs)
+    ldi YH, high(following_npcs)
+_anf_npc_iter:
+    ldd r25, Z+NPC_IDX_OFFSET
+    tst r25
+    breq _anf_npc_next
+    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    lds r24, player_position_x
+    sub r24, r0
+    brsh _anf_y_dist
+    neg r24
+_anf_y_dist:
+    lds r25, player_position_y
+    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    sub r25, r0
+    brsh _anf_dist
+    neg r25
+_anf_dist:
+    add r25, r24
+    brcc _anf_check_dist
+    ser r25
+_anf_check_dist:
+    cpi r25, FOLLOWER_DISTANCE
+    brsh _anf_npc_next
+    ldd r24, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    sbrc r24, 7
+    neg r24
+    ldd r25, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+    sbrc r25, 7
+    neg r24
+    add r24, r25
+    brcs _anf_add_follower
+    cpi r24, FOLLOWER_SPEED
+    brlo _anf_npc_next
+_anf_add_follower:
+    ldd r25, Z+NPC_IDX_OFFSET
+    st Y+, r25
+    cpi YL, low(following_npcs+FOLLOWING_NPC_COUNT) ; hacky but safe
+    brsh _anf_end
+_anf_npc_next:
+    adiw ZL, NPC_MEMSIZE
+    cpiw ZL, ZH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
+    brlo _anf_npc_iter
+_anf_end:
     ret
