@@ -174,12 +174,42 @@ _rg_render_loose_items_next:
     adiw YL, SECTOR_DYNAMIC_ITEM_MEMSIZE
     dec r16
     brne _rg_render_loose_items_iter
+    ; render NPCs in two passes -- the first, for corpses, and the second, for
+    ; everything else. This ensures that corpses are on the bottom.
+_rg_render_corpse_npcs:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r16, SECTOR_DYNAMIC_NPC_COUNT
+_rg_render_corpse_npcs_iter:
+    ldd r17, Y+NPC_IDX_OFFSET
+    cpi r17, NPC_CORPSE
+    brne _rg_render_corpse_npcs_next
+    ; special case the character lookup -- a little hacky
+    ldi ZL, byte3(2*static_character_sprite_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*(static_character_sprite_table+NPC_CORPSE_SPRITE*CHARACTER_SPRITE_MEMSIZE))
+    ldi ZH, high(2*(static_character_sprite_table+NPC_CORPSE_SPRITE*CHARACTER_SPRITE_MEMSIZE))
+    ldi r22, CHARACTER_SPRITE_WIDTH
+    ldi r23, CHARACTER_SPRITE_HEIGHT
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    call render_sprite
+    ldd r22, Y+NPC_EFFECT_OFFSET
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    call render_effect_animation
+_rg_render_corpse_npcs_next:
+    adiw YL, NPC_MEMSIZE
+    dec r16
+    brne _rg_render_corpse_npcs_iter
 _rg_render_npcs:
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
     ldi r16, SECTOR_DYNAMIC_NPC_COUNT
 _rg_render_npcs_iter:
     ldd r17, Y+NPC_IDX_OFFSET
+    cpi r17, NPC_CORPSE
+    breq _rg_render_npcs_next
     dec r17
     brmi _rg_render_npcs_next
     ldi ZL, low(2*npc_table+NPC_TABLE_CHARACTER_OFFSET)

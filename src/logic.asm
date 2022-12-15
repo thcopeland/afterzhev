@@ -73,15 +73,12 @@ _ss2u_end:
     ret
 
 sector_start_fight_update:
-    ; in general, NPCs may be reordered, so this is a bit of a hack
-    ; it works because (1) no reordering here and (2) it's the last NPC
     lds r25, sector_npcs+(NPC_MEMSIZE*2)+NPC_HEALTH_OFFSET ; health of BANDIT_3
     cpi r25, 10
     brsh _ssfu_fight
 _ssfu_plead:
     try_start_conversation bandit_plead
     tst r25
-    ; brne _ssfu_end
     breq _ssfu_fight
     ret
 _ssfu_fight:

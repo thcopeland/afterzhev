@@ -578,63 +578,6 @@ _efs_check_dist:
 _efs_end:
     ret
 
-; Reorder NPCs so that corpses are rendered first.
-;
-; NOTE: This routine only swaps at most one corpse and one non-corpse. Since this
-; should be called every frame, this isn't a problem.
-;
-; Register Usage
-;   r22, r23, r24   calculations
-;   r25             counter
-;   X (r26:r27)     slow pointer
-;   Z (r30:r31)     fast pointer
-reorder_npcs:
-    ldi XL, low(sector_npcs)
-    ldi XH, high(sector_npcs)
-    ldi r25, SECTOR_DYNAMIC_NPC_COUNT
-_rn_skip_corpses_iter:
-    ld r24, X
-    cpi r24, NPC_CORPSE
-    brne _rn_reorder
-    adiw XL, NPC_MEMSIZE
-    dec r25
-    brne _rn_skip_corpses_iter
-    ret ; all corpses
-_rn_reorder:
-    movw ZL, XL
-_rn_fast_iter:
-    ld r24, Z
-    cpi r24, NPC_CORPSE
-    brne _rn_fast_next
-_rn_slow_iter:
-    ld r23, X
-    cpi r23, NPC_CORPSE
-    breq _rn_slow_next
-_rn_swap:
-    ldi r22, NPC_MEMSIZE
-_rn_swap_iter:
-    st X+, r24
-    st Z+, r23
-    ld r23, X
-    ld r24, Z
-_rn_swap_next:
-    dec r22
-    brne _rn_swap_iter
-    ; NOTE: uncomment to move ALL corpses, not just the first
-    ; dec r25
-    ; brne _rn_fast_iter
-    ret
-_rn_slow_next:
-    adiw XL, NPC_MEMSIZE
-    cp XL, ZL
-    cpc XH, ZH
-    brne _rn_slow_iter
-_rn_fast_next:
-    adiw ZL, NPC_MEMSIZE
-    dec r25
-    brne _rn_fast_iter
-    ret
-
 ; Update a corpse. All dead, only one thing to do.
 ;
 ; Register Usage

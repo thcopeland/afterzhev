@@ -216,7 +216,6 @@ _us_next:
     cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
     brlo _us_loop
 _us_finish:
-    call reorder_npcs
     call player_resolve_melee_damage
     call player_resolve_effect_damage
     ret
