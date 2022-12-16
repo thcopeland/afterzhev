@@ -139,19 +139,45 @@ _ssp1u_end:
     ret
 
 sector_town_entrance_1_update:
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
-    sts npc_move_flags, r25
-    call update_standard
+    call kidnapped_daughter_quest_update
     player_distance_imm 184, 130
     cpi r25, 16
     brsh _ste1u_interact
     try_start_conversation save_tutorial
-    rjmp  _ste1u_end
+    rjmp  _ste1u_check_quest
 _ste1u_interact:
     player_distance_imm 86, 134
     cpi r25, 16
-    brsh _ste1u_end
+    brsh _ste1u_check_quest
     try_start_conversation interact_tutorial
+_ste1u_check_quest:
+    lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
+    cpi r25, 4
+    brne _ste1u_end
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r24, SECTOR_DYNAMIC_NPC_COUNT
+_ste1u_npc_iter:
+    ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_KIDNAPPED_DAUGHTER
+    breq _ste1u_check_position
+    adiw YL, NPC_MEMSIZE
+    dec r24
+    brne _ste1u_npc_iter
+    rjmp _ste1u_end
+_ste1u_check_position:
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    ldi r24, 86
+    ldi r25, 134
+    distance_between r24, r25, r22, r23
+    cpi r25, 20
+    brsh _ste1u_end
+    ldi r25, 5
+    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
+    lds r25, npc_presence + ((NPC_KIDNAPPED_DAUGHTER-1)>>3)
+    andi r25, ~(1<<((NPC_KIDNAPPED_DAUGHTER-1)&7))
+    sts npc_presence + ((NPC_KIDNAPPED_DAUGHTER-1)>>3), r25
 _ste1u_end:
     ret
 
@@ -185,7 +211,19 @@ _st1ec_fighting:
 _st1ec_rescued:
     cpi r23, 5
     brne _st1ec_completed
-    ; todo: drop potion
+    lds r24, player_xp
+    lds r25, player_xp+1
+    subi r24, low(-QUEST_KIDNAPPED_DAUGHTER_XP)
+    sbci r25, high(-QUEST_KIDNAPPED_DAUGHTER_XP)
+    sts player_xp, r24
+    sts player_xp+1, r25
+    ldi r25, ITEM_health_potion
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
+    ldi r25, 91
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
+    ldi r25, 138
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
     ldi r23, 6
     sts global_data + QUEST_KIDNAPPED_DAUGHTER, r23
     ldi r24, low(2*_conv_kidnapped_daughter7)
@@ -223,60 +261,82 @@ _stwu_lurk:
     brlo _stwu_end
     ldi r25, 3
     sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
-    rjmp _stwu_end
 _stwu_attack:
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
-    sts npc_move_flags, r25
-    call update_standard
+    call kidnapped_daughter_quest_update
 _stwu_end:
     ret
 
 sector_start_post_fight_update:
     lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
     cpi r25, 4
-    brsh _sspfu_follow
+    brsh _sspfu_update_npcs
     player_distance_imm 134, 31
     cpi r25, 16
-    brsh _sspfu_end
+    brsh _sspfu_update_npcs
     ldi r24, low(2*_conv_kidnapped_daughter10)
     ldi r25, high(2*_conv_kidnapped_daughter10)
     call load_conversation
     ldi r25, 4
     sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
     rjmp _sspfu_end
-_sspfu_follow:
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-    lds r25, sector_npcs+NPC_IDX_OFFSET
-    tst r25
-    breq _sspfu_check_add_follower
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_LOOKAT
-    sts npc_move_flags, r25
-    call update_single_npc
-    rjmp _sspfu_end
-_sspfu_check_add_follower:
-    lds r25, sector_data
-    cpi r25, 20
-    brsh _sspfu_add_follow
-    inc r25
-    sts sector_data, r25
-    rjmp _sspfu_end
-_sspfu_add_follow:
-    ldi r25, NPC_KIDNAPPED_DAUGHTER
-    call load_npc
-    ldi r25, 168
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r25
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r1
-    ldi r25, DIRECTION_DOWN
-    std Y+NPC_ANIM_OFFSET, r25
+_sspfu_update_npcs:
+    call kidnapped_daughter_quest_update
 _sspfu_end:
     ret
 
-sector_start_post_fight_init:
+kidnapped_daughter_quest_update:
+    call player_resolve_melee_damage
+    call player_resolve_effect_damage
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r16, SECTOR_DYNAMIC_NPC_COUNT
+_kdqu_npc_iter:
+    ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_CORPSE
+    brne _kdqu_not_corpse
+    call corpse_update
+    rjmp _kdqu_next_npc
+_kdqu_not_corpse:
+    subi r25, 1
+    brlo _kdqu_next_npc
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _kdqu_next_npc
+    push ZL
+    push ZH
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
+    sts npc_move_flags, r25
+    ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_KIDNAPPED_DAUGHTER
+    brne _kdqu_move
     lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
     cpi r25, 4
-    brlo _sspfi_end
-    sts sector_data, r1
-    sts sector_npcs+NPC_IDX_OFFSET, r1
-_sspfi_end:
+    breq _kdqu_move
+_kdqu_no_move:
+    ldi r25, NPC_MOVE_FRICTION
+    sts npc_move_flags, r25
+_kdqu_move:
+    call npc_move
+    call npc_update
+    pop ZH
+    pop ZL
+    ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_KIDNAPPED_DAUGHTER
+    breq _kdqu_next_npc
+    call npc_resolve_ranged_damage
+    call npc_resolve_melee_damage
+_kdqu_next_npc:
+    adiw YL, NPC_MEMSIZE
+    dec r16
+    brne _kdqu_npc_iter
+_kdqu_end:
     ret

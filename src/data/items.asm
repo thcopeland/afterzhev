@@ -51,8 +51,9 @@ item_table:
     DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              10000,  0,  0,  0,  0,      0
     DECL_ITEM kidnapped_hair,       ITEM_WEARABLE,                      0,      5,  5,  5,  5,      0
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
-    DECL_ITEM raw_meat,             (0<<3)|ITEM_USABLE,                 20,     0, 10,  0,  0,      0
-    DECL_ITEM rotten_meat,          (0<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0
+    DECL_ITEM raw_meat,             (1<<3)|ITEM_USABLE,                 20,     0, 10,  0,  0,      0
+    DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0
+    DECL_ITEM health_potion,        (0<<3)|ITEM_USABLE,                 100,    0, 64,  0,  0,      0
 
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
@@ -78,3 +79,5 @@ _item_str_raw_meat_name:            .db "Raw meat", 0, 0
 _item_str_raw_meat_desc:            .db "Probably safe to eat.", 0
 _item_str_rotten_meat_name:         .db "Rotten meat", 0
 _item_str_rotten_meat_desc:         .db "Tinged a poisonous green.", 0
+_item_str_health_potion_name:       .db "Health potion", 0
+_item_str_health_potion_desc:       .db "Quickly recover from even mortal wounds.", 0, 0

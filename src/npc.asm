@@ -137,6 +137,7 @@ _nm_test_weapon:
     movw XL, ZL
     adiw ZL, NPC_TABLE_WEAPON_OFFSET
     elpm r20, Z
+    sbiw ZL, NPC_TABLE_WEAPON_OFFSET
     dec r20
     brmi _nm_test_move_trampoline
     ldi ZL, byte3(2*item_table+ITEM_FLAGS_OFFSET)

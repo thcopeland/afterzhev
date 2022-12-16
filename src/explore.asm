@@ -1758,24 +1758,32 @@ _anf_npc_iter:
     ldd r25, Z+NPC_IDX_OFFSET
     tst r25
     breq _anf_npc_next
-    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     lds r24, player_position_x
+    cpi r24, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH/2
+    brlo _anf_x_dist
+    clr r24
+_anf_x_dist:
+    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     sub r24, r0
-    brsh _anf_y_dist
+    brsh _anf_y_check
     neg r24
-_anf_y_dist:
+_anf_y_check:
     lds r25, player_position_y
+    cpi r25, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_WIDTH/2
+    brlo _anf_y_dist
+    clr r25
+_anf_y_dist:
     ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     sub r25, r0
     brsh _anf_dist
     neg r25
 _anf_dist:
     add r25, r24
-    brcc _anf_check_dist
-    ser r25
+    brcs _anf_npc_next
 _anf_check_dist:
     cpi r25, FOLLOWER_DISTANCE
     brsh _anf_npc_next
+_anf_check_speed:
     ldd r24, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
     sbrc r24, 7
     neg r24
@@ -1789,7 +1797,7 @@ _anf_check_dist:
 _anf_add_follower:
     ldd r25, Z+NPC_IDX_OFFSET
     st Y+, r25
-    cpi YL, low(following_npcs+FOLLOWING_NPC_COUNT) ; hacky but safe
+    cpiw YL, YH, following_npcs+FOLLOWING_NPC_COUNT, r25
     brsh _anf_end
 _anf_npc_next:
     adiw ZL, NPC_MEMSIZE

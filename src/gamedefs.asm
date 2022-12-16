@@ -183,7 +183,7 @@
 
 .equ FOLLOWER_DELAY = 20
 .equ FOLLOWER_DISTANCE = NPC_INTEREST_DISTANCE-1 ; should be less than interest distance
-.equ FOLLOWER_SPEED = 30 ; should be nonzero, or non-enemy NPCs will follow
+.equ FOLLOWER_SPEED = 10 ; should be nonzero, or non-enemy NPCs will follow
 
 .include "names.asm"
 .include "quests.asm"

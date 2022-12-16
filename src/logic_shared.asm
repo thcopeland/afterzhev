@@ -42,18 +42,25 @@ _pdi_3_%:
 .macro player_distance ; x, y
     lds r24, player_position_x
     lds r25, player_position_y
-    sub r24, @0
-    brsh _pd_1_%
-    neg r24
-_pd_1_%:
-    sub r25, @1
-    brsh _pd_2_%
-    neg r25
-_pd_2_%:
-    add r25, r24
-    brcc _pd_3_%
-    ser r25
-_pd_3_%:
+    distance_between r24, r25, @0, @1
+.endm
+
+; Calculate the manhattan distance from the player to the given coordinates.
+; Only the first two given registers are changed, the distance is placed in the
+; second.
+.macro distance_between ; x1, y2, x2, y2
+    sub @0, @2
+    brsh _db_1_%
+    neg @0
+_db_1_%:
+    sub @1, @3
+    brsh _db_2_%
+    neg @1
+_db_2_%:
+    add @1, @0
+    brcc _db_3_%
+    ser @1
+_db_3_%:
 .endm
 
 ; Check whether a conversation has occurred or not. Z flag is cleared if it has.

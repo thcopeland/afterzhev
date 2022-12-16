@@ -9,3 +9,4 @@
 ;   4 - daughter found
 ;   5 - daughter rescued
 ;   6 - quest over
+.equ QUEST_KIDNAPPED_DAUGHTER_XP = 200

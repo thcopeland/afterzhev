@@ -450,7 +450,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw sector_start_post_fight_update, sector_start_post_fight_init, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_start_post_fight_update, NO_HANDLER, add_nearby_followers, NO_HANDLER, NO_HANDLER
 
 ; Sector 18 "start_section_pretown_1"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 041, 189, 172, 173, 171, 179, 038, 039, 039, 039, \

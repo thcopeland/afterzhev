@@ -36,7 +36,7 @@ _init_zero_iter:
     sti player_inventory+1, ITEM_green_hood
     sti player_inventory+1, ITEM_leather_armor
     sti player_stats, 10
-    sti player_stats+1, 10
+    sti player_stats+1, 30
     sti player_stats+2, 10
     sti player_stats+3, 10
     call calculate_player_stats

@@ -142,7 +142,7 @@ _conv_kidnapped_daughter3_str:  .db "Please, adventurer, we don", 39, "t", 10, "
 _conv_kidnapped_daughter4_str:  .db "Oh, thank you, adventurer! The", 10, "foxes lurk in the woods. If you", 10, "follow the path behind the houseyou", 39, "ll surely find them.", 0
 _conv_kidnapped_daughter5_str:  .db "Leave me, cruel adventurer!", 0
 _conv_kidnapped_daughter6_str:  .db "Hurry, adventurer!", 0, 0
-_conv_kidnapped_daughter7_str:  .db "Thank you, adventurer! Please accept this potion in token of my deepest gratitude!", 0, 0
+_conv_kidnapped_daughter7_str:  .db "Thank you, adventurer! Please", 10, "accept this potion in token of mydeepest gratitude!", 0
 _conv_my_thanks_str:            .db "My thanks, adventurer!", 0, 0
 _conv_kidnapped_daughter9_str:  .db "Foxes too much for you,", 10, "adventurer? My poor daughter!", 0
 _conv_kidnapped_daughter10_str: .db "Come with me if you want to live!", 0
