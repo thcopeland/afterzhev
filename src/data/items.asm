@@ -49,7 +49,6 @@ item_table:
     DECL_ITEM green_hood,           ITEM_WEARABLE,                      10,     0,  0,  3,  2,      0
     DECL_ITEM leather_armor,        (4<<2)|ITEM_WEARABLE,               50,     0,  2, -3,  0,      0
     DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              10000,  0,  0,  0,  0,      0
-    DECL_ITEM kidnapped_hair,       ITEM_WEARABLE,                      0,      5,  5,  5,  5,      0
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (1<<3)|ITEM_USABLE,                 20,     0, 10,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0
@@ -57,6 +56,7 @@ item_table:
 
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
+DECL_LOOSE_ITEM foxes_feathered_hat
 
 item_string_table:
 _item_str_wood_stick_name:          .db "Tree branch", 0
@@ -70,9 +70,7 @@ _item_str_green_hood_desc:          .db "Bestows upon the wearer", 10, "an indef
 _item_str_leather_armor_name:       .db "Leather armor", 0
 _item_str_leather_armor_desc:       .db "Scarred and worn, it has clearly seen much use.", 0
 _item_str_invisible_weapon_name:
-_item_str_invisible_weapon_desc:
-_item_str_kidnapped_hair_name:
-_item_str_kidnapped_hair_desc:      .db 0, 0
+_item_str_invisible_weapon_desc:    .db 0, 0
 _item_str_inventory_book_name:      .db "Book of Inventory", 0
 _item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <B> to use a potion.", 10, "Press <select> to drop.", 0
 _item_str_raw_meat_name:            .db "Raw meat", 0, 0

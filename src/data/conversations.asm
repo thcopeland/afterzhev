@@ -88,19 +88,19 @@ _conv_drunks_warning:           DECL_LINE drunks_warning, NPC_DRUNK, drunk, drun
 _conv_drunks_warning2:          DECL_LINE drunks_warning2, NPC_DRUNK, drunk, END_CONVERSATION
 DECL_CONVERSATION save_tutorial
 _conv_save_tutorial:            DECL_LINE save_tutorial, 0, PLAYER, END_CONVERSATION
-_conv_kidnapped_daughter:       DECL_LINE kidnapped_daughter, NPC_GRIEVING_FATHER, grieving_father, kidnapped_daughter2
-_conv_kidnapped_daughter2:      DECL_BRANCH 3
-                                DECL_CHOICE kidnapped_daughter_c1, kidnapped_daughter3
-                                DECL_CHOICE kidnapped_daughter_c2, kidnapped_daughter4
-                                DECL_CHOICE kidnapped_daughter_c3, END_CONVERSATION
-_conv_kidnapped_daughter3:      DECL_LINE kidnapped_daughter3, NPC_GRIEVING_FATHER, grieving_father, kidnapped_daughter2
-_conv_kidnapped_daughter4:      DECL_LINE kidnapped_daughter4, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
-_conv_kidnapped_daughter5:      DECL_LINE kidnapped_daughter5, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
-_conv_kidnapped_daughter6:      DECL_LINE kidnapped_daughter6, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
-_conv_kidnapped_daughter7:      DECL_LINE kidnapped_daughter7, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
-_conv_kidnapped_daughter8:      DECL_LINE my_thanks, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
-_conv_kidnapped_daughter9:      DECL_LINE kidnapped_daughter9, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
-_conv_kidnapped_daughter10:     DECL_LINE kidnapped_daughter10, 0, PLAYER, END_CONVERSATION
+_conv_kidnapped:                DECL_LINE kidnapped, NPC_GRIEVING_FATHER, grieving_father, kidnapped2
+_conv_kidnapped2:               DECL_BRANCH 3
+                                DECL_CHOICE kidnapped_c1, kidnapped3
+                                DECL_CHOICE kidnapped_c2, kidnapped4
+                                DECL_CHOICE kidnapped_c3, END_CONVERSATION
+_conv_kidnapped3:               DECL_LINE kidnapped3, NPC_GRIEVING_FATHER, grieving_father, kidnapped2
+_conv_kidnapped4:               DECL_LINE kidnapped4, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
+_conv_kidnapped5:               DECL_LINE kidnapped5, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
+_conv_kidnapped6:               DECL_LINE kidnapped6, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
+_conv_kidnapped7:               DECL_LINE kidnapped7, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
+_conv_kidnapped8:               DECL_LINE my_thanks, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
+_conv_kidnapped9:               DECL_LINE kidnapped9, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
+_conv_kidnapped10:              DECL_LINE kidnapped10, 0, PLAYER, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -134,15 +134,15 @@ _conv_interact_tutorial_str:    .db 10, 10, 10, 10, 10, 10, "    Press <select> 
 _conv_drunks_warning_str:       .db "Say, ya just come outta them", 10, "woods?", 0
 _conv_drunks_warning2_str:      .db "Be careful! There", 39, "s bandits", 10, "about, doncha know!", 0
 _conv_save_tutorial_str:        .db 10, 10, 10, 10, 10, 10, "Press <select> to save progress", 0
-_conv_kidnapped_daughter_str:   .db "Please help, adventurer! My", 10, "daughter has been kidnapped by", 10, "the foxes!", 0
-_conv_kidnapped_daughter_c1_str:.db "Foxes?", 0, 0
-_conv_kidnapped_daughter_c2_str:.db "Tell me where they are, and", 10, "I", 39, "ll bring her home!", 0, 0
-_conv_kidnapped_daughter_c3_str:.db "I", 39, "m sorry stranger, but I have", 10, "an important mission.", 0, 0
-_conv_kidnapped_daughter3_str:  .db "Please, adventurer, we don", 39, "t", 10, "have much time!", 0, 0
-_conv_kidnapped_daughter4_str:  .db "Oh, thank you, adventurer! The", 10, "foxes lurk in the woods. If you", 10, "follow the path behind the houseyou", 39, "ll surely find them.", 0
-_conv_kidnapped_daughter5_str:  .db "Leave me, cruel adventurer!", 0
-_conv_kidnapped_daughter6_str:  .db "Hurry, adventurer!", 0, 0
-_conv_kidnapped_daughter7_str:  .db "Thank you, adventurer! Please", 10, "accept this potion in token of mydeepest gratitude!", 0
+_conv_kidnapped_str:            .db "Please help, adventurer! My", 10, "poor boy has been kidnapped by", 10, "the foxes!", 0
+_conv_kidnapped_c1_str:         .db "Foxes?", 0, 0
+_conv_kidnapped_c2_str:         .db "Tell me where they are, and", 10, "I", 39, "ll bring him home!", 0, 0
+_conv_kidnapped_c3_str:         .db "I", 39, "m sorry stranger, but I have", 10, "an important mission.", 0, 0
+_conv_kidnapped3_str:           .db "Please, adventurer, we don", 39, "t", 10, "have much time!", 0, 0
+_conv_kidnapped4_str:           .db "Oh, thank you, adventurer! The", 10, "foxes lurk in the woods. If you", 10, "follow the path behind the houseyou", 39, "ll surely find them.", 0
+_conv_kidnapped5_str:           .db "Leave me, cruel adventurer!", 0
+_conv_kidnapped6_str:           .db "Hurry, adventurer!", 0, 0
+_conv_kidnapped7_str:           .db "Thank you, adventurer! Please", 10, "accept this potion in token of mydeepest gratitude!", 0
 _conv_my_thanks_str:            .db "My thanks, adventurer!", 0, 0
-_conv_kidnapped_daughter9_str:  .db "Foxes too much for you,", 10, "adventurer? My poor daughter!", 0
-_conv_kidnapped_daughter10_str: .db "Come with me if you want to live!", 0
+_conv_kidnapped9_str:           .db "Foxes too much for you,", 10, "adventurer? My poor boy!", 0, 0
+_conv_kidnapped10_str:          .db "Come with me if you want to live!", 0

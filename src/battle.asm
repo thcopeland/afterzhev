@@ -547,6 +547,8 @@ _red_add_corpse:
     movw ZL, r22
     ldi r25, NPC_CORPSE
     std Y+NPC_IDX_OFFSET, r25
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
     ret
 
 ; Add an NPC to the sector, if there's an available slot.

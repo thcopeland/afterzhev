@@ -103,25 +103,25 @@ npc_table:
     DECL_TALK_DATA  NO_NPC, CONVERSATION_drunks_warning_ID, drunks_warning, 0, drunks_warning2
 
     DECL_NPC        NPC_GRIEVING_FATHER, NPC_TALKER, 128|NPC_GRIEVING_FATHER_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 10, 82, 132
-    DECL_TALK_DATA  NO_NPC, 0, kidnapped_daughter, 0, END_CONVERSATION
+    DECL_TALK_DATA  NO_NPC, 0, kidnapped, 0, END_CONVERSATION
 
-    DECL_NPC        NPC_FOX_1, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_LEFT, 10, 132, 108
-    DECL_ENEMY_DATA 0, 0, 6, 3, 10, ITEM_raw_meat, ITEM_rotten_meat, 128|5
+    DECL_NPC        NPC_FOX_1, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_RIGHT, 10, 24, 24
+    DECL_ENEMY_DATA 0, 0, 7, 2, 5, ITEM_raw_meat, ITEM_rotten_meat, 128|5
 
     DECL_NPC        NPC_FOX_2, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_DOWN, 10, 168, 147
-    DECL_ENEMY_DATA 0, 0, 6, 3, 10, ITEM_raw_meat, ITEM_rotten_meat, 128|5
+    DECL_ENEMY_DATA 0, 0, 7, 2, 5, ITEM_raw_meat, ITEM_rotten_meat, 128|5
 
     DECL_NPC        NPC_FOX_3, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_RIGHT, 10, 144, 128
-    DECL_ENEMY_DATA 0, 0, 7, 3, 10, ITEM_raw_meat, ITEM_rotten_meat, 128|5
+    DECL_ENEMY_DATA 0, 0, 8, 2, 5, ITEM_raw_meat, ITEM_rotten_meat, 128|5
 
     DECL_NPC        NPC_FOX_4, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_LEFT, 10, 190, 120
-    DECL_ENEMY_DATA 0, 0, 6, 3, 10, ITEM_raw_meat, ITEM_rotten_meat, 128|5
+    DECL_ENEMY_DATA 0, 0, 7, 2, 5, ITEM_raw_meat, ITEM_rotten_meat, 128|5
 
     DECL_NPC        NPC_FOX_5, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_UP, 10, 130, 143
-    DECL_ENEMY_DATA 0, 0, 7, 3, 10, ITEM_raw_meat, ITEM_rotten_meat, 128|5
+    DECL_ENEMY_DATA 0, 0, 8, 2, 5, ITEM_raw_meat, ITEM_rotten_meat, 128|5
 
-    DECL_NPC        NPC_KIDNAPPED_DAUGHTER, NPC_ENEMY, CHARACTER_ELF, NO_ITEM, ITEM_kidnapped_hair, DIRECTION_RIGHT, 10, 128, 25
-    DECL_ENEMY_DATA 0, 0, 6, 3, 10, NO_ITEM, NO_ITEM, NO_ITEM
+    DECL_NPC        NPC_KIDNAPPED, NPC_ENEMY, CHARACTER_CHILD, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 10, 128, 25
+    DECL_ENEMY_DATA 0, 0, 6, 2, 5, NO_ITEM, NO_ITEM, NO_ITEM
 
     ; DECL_NPC        NPC_TALKER, 128|NPC_SIGN_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 0, 138, 14
     ; DECL_TALK_DATA  0, 1, fisherman_greeting, 0, fisherman_laugh

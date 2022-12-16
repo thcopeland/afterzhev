@@ -302,7 +302,7 @@ sector_table:
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 076, 039, 039, 041, 180, 038, 039, 039, 039, 039
 .db 17, 12, 5, 11
 .db NPC_FOX_1, NPC_FOX_2, NPC_FOX_3, NPC_FOX_4, NPC_FOX_5, NO_NPC, NO_NPC, NO_NPC
-.db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+.db ITEM_feathered_hat, LOOSE_ITEM_foxes_feathered_hat, 12, 26, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BONE, 200, 142, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -329,7 +329,7 @@ sector_table:
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 1, 184, 125, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.db FEATURE_INVISIBLE, 184, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.db FEATURE_INVISIBLE, 184, 127, FEATURE_INVISIBLE, 82, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw sector_town_entrance_1_update, NO_HANDLER, NO_HANDLER, sector_town_entrance_1_conversation, sector_town_entrance_1_choice
 
 ; Sector 13 "town_section_forest_path_4"
@@ -445,7 +445,7 @@ sector_table:
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, \
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039
 .db 17, 18, 11, 16
-.db NPC_KIDNAPPED_DAUGHTER, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_KIDNAPPED, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

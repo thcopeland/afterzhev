@@ -442,6 +442,8 @@ _eu_npc_iter:
     ldd r22, Z+NPC_IDX_OFFSET
     tst r22
     breq _eu_npc_next
+    cpi r22, NPC_CORPSE
+    breq _eu_npc_next
     cp YL, ZL
     cpc YH, ZH
     breq _eu_end

@@ -139,7 +139,7 @@ _ssp1u_end:
     ret
 
 sector_town_entrance_1_update:
-    call kidnapped_daughter_quest_update
+    call kidnapped_quest_update
     player_distance_imm 184, 130
     cpi r25, 16
     brsh _ste1u_interact
@@ -151,7 +151,7 @@ _ste1u_interact:
     brsh _ste1u_check_quest
     try_start_conversation interact_tutorial
 _ste1u_check_quest:
-    lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
+    lds r25, global_data + QUEST_KIDNAPPED
     cpi r25, 4
     brne _ste1u_end
     ldi YL, low(sector_npcs)
@@ -159,7 +159,7 @@ _ste1u_check_quest:
     ldi r24, SECTOR_DYNAMIC_NPC_COUNT
 _ste1u_npc_iter:
     ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_KIDNAPPED_DAUGHTER
+    cpi r25, NPC_KIDNAPPED
     breq _ste1u_check_position
     adiw YL, NPC_MEMSIZE
     dec r24
@@ -174,64 +174,64 @@ _ste1u_check_position:
     cpi r25, 20
     brsh _ste1u_end
     ldi r25, 5
-    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
-    lds r25, npc_presence + ((NPC_KIDNAPPED_DAUGHTER-1)>>3)
-    andi r25, ~(1<<((NPC_KIDNAPPED_DAUGHTER-1)&7))
-    sts npc_presence + ((NPC_KIDNAPPED_DAUGHTER-1)>>3), r25
+    sts global_data + QUEST_KIDNAPPED, r25
+    lds r25, npc_presence + ((NPC_KIDNAPPED-1)>>3)
+    andi r25, ~(1<<((NPC_KIDNAPPED-1)&7))
+    sts npc_presence + ((NPC_KIDNAPPED-1)>>3), r25
 _ste1u_end:
     ret
 
 sector_town_entrance_1_conversation:
-    ldi r23, high(2*_conv_kidnapped_daughter)
-    cpi r24, low(2*_conv_kidnapped_daughter)
+    ldi r23, high(2*_conv_kidnapped)
+    cpi r24, low(2*_conv_kidnapped)
     cpc r25, r23
     brne _ste1c_end
-    lds r23, global_data+QUEST_KIDNAPPED_DAUGHTER
+    lds r23, global_data+QUEST_KIDNAPPED
 _st1ec_not_begun:
     andi r23, 0x07
     breq _ste1c_end
 _st1ec_refused:
     cpi r23, 1
     brne _st1ec_accepted
-    ldi r24, low(2*_conv_kidnapped_daughter5)
-    ldi r25, high(2*_conv_kidnapped_daughter5)
+    ldi r24, low(2*_conv_kidnapped5)
+    ldi r25, high(2*_conv_kidnapped5)
     rjmp _ste1c_end
 _st1ec_accepted:
     cpi r23, 2
     brne _st1ec_fighting
-    ldi r24, low(2*_conv_kidnapped_daughter6)
-    ldi r25, high(2*_conv_kidnapped_daughter6)
+    ldi r24, low(2*_conv_kidnapped6)
+    ldi r25, high(2*_conv_kidnapped6)
     rjmp _ste1c_end
 _st1ec_fighting:
     cpi r23, 5
     brsh _st1ec_rescued
-    ldi r24, low(2*_conv_kidnapped_daughter9)
-    ldi r25, high(2*_conv_kidnapped_daughter9)
+    ldi r24, low(2*_conv_kidnapped9)
+    ldi r25, high(2*_conv_kidnapped9)
     rjmp _ste1c_end
 _st1ec_rescued:
     cpi r23, 5
     brne _st1ec_completed
     lds r24, player_xp
     lds r25, player_xp+1
-    subi r24, low(-QUEST_KIDNAPPED_DAUGHTER_XP)
-    sbci r25, high(-QUEST_KIDNAPPED_DAUGHTER_XP)
+    subi r24, low(-QUEST_KIDNAPPED_XP)
+    sbci r25, high(-QUEST_KIDNAPPED_XP)
     sts player_xp, r24
     sts player_xp+1, r25
     ldi r25, ITEM_health_potion
     sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
     sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
-    ldi r25, 91
+    ldi r25, 92
     sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
-    ldi r25, 138
+    ldi r25, 140
     sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
     ldi r23, 6
-    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r23
-    ldi r24, low(2*_conv_kidnapped_daughter7)
-    ldi r25, high(2*_conv_kidnapped_daughter7)
+    sts global_data + QUEST_KIDNAPPED, r23
+    ldi r24, low(2*_conv_kidnapped7)
+    ldi r25, high(2*_conv_kidnapped7)
     rjmp _ste1c_end
 _st1ec_completed:
-    ldi r24, low(2*_conv_kidnapped_daughter8)
-    ldi r25, high(2*_conv_kidnapped_daughter8)
+    ldi r24, low(2*_conv_kidnapped8)
+    ldi r25, high(2*_conv_kidnapped8)
 _ste1c_end:
     ret
 
@@ -243,48 +243,48 @@ _ste1ch_refuse:
     cpi r25, 1
     brne _ste1ch_accept
     ldi r25, 2
-    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
+    sts global_data + QUEST_KIDNAPPED, r25
     rjmp _ste1ch_end
 _ste1ch_accept:
     ldi r25, 1
-    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
+    sts global_data + QUEST_KIDNAPPED, r25
 _ste1ch_end:
     ret
 
 sector_town_wolves_update:
-    lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
+    lds r25, global_data + QUEST_KIDNAPPED
     cpi r25, 3
     brsh _stwu_attack
 _stwu_lurk:
-    lds r25, player_position_y
-    cpi r25, 96
-    brlo _stwu_end
+    lds r25, player_position_x
+    cpi r25, 80
+    brsh _stwu_end
     ldi r25, 3
-    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
+    sts global_data + QUEST_KIDNAPPED, r25
 _stwu_attack:
-    call kidnapped_daughter_quest_update
+    call kidnapped_quest_update
 _stwu_end:
     ret
 
 sector_start_post_fight_update:
-    lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
+    lds r25, global_data + QUEST_KIDNAPPED
     cpi r25, 4
     brsh _sspfu_update_npcs
     player_distance_imm 134, 31
     cpi r25, 16
     brsh _sspfu_update_npcs
-    ldi r24, low(2*_conv_kidnapped_daughter10)
-    ldi r25, high(2*_conv_kidnapped_daughter10)
+    ldi r24, low(2*_conv_kidnapped10)
+    ldi r25, high(2*_conv_kidnapped10)
     call load_conversation
     ldi r25, 4
-    sts global_data + QUEST_KIDNAPPED_DAUGHTER, r25
+    sts global_data + QUEST_KIDNAPPED, r25
     rjmp _sspfu_end
 _sspfu_update_npcs:
-    call kidnapped_daughter_quest_update
+    call kidnapped_quest_update
 _sspfu_end:
     ret
 
-kidnapped_daughter_quest_update:
+kidnapped_quest_update:
     call player_resolve_melee_damage
     call player_resolve_effect_damage
     ldi YL, low(sector_npcs)
@@ -316,9 +316,9 @@ _kdqu_not_corpse:
     ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
     sts npc_move_flags, r25
     ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_KIDNAPPED_DAUGHTER
+    cpi r25, NPC_KIDNAPPED
     brne _kdqu_move
-    lds r25, global_data + QUEST_KIDNAPPED_DAUGHTER
+    lds r25, global_data + QUEST_KIDNAPPED
     cpi r25, 4
     breq _kdqu_move
 _kdqu_no_move:
@@ -330,7 +330,7 @@ _kdqu_move:
     pop ZH
     pop ZL
     ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_KIDNAPPED_DAUGHTER
+    cpi r25, NPC_KIDNAPPED
     breq _kdqu_next_npc
     call npc_resolve_ranged_damage
     call npc_resolve_melee_damage
