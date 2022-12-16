@@ -1,6 +1,13 @@
 conversation_update_game:
     rcall conversation_render_game
     rcall conversation_handle_controls
+
+    lds r25, conversation_chars
+    cpi r25, 0xff
+    brsh _cug_end
+    inc r25
+    sts conversation_chars, r25
+_cug_end:
     jmp _loop_reenter
 
 ; Handle controls in the conversation mode. If the current conversation frame is
@@ -117,6 +124,7 @@ _lc_load_conversation:
     sts conversation_frame, r24
     sts conversation_frame+1, r25
     sts selected_choice, r1
+    sts conversation_chars, r1
     ldi r20, MODE_CONVERSATION
     sts game_mode, r20
     sts player_velocity_x, r1
@@ -255,7 +263,8 @@ _crg_render_message:
     sbci ZH, high(-2*conversation_string_table)
     ldi r21, 28
     clr r23
-    call puts
+    lds r24, conversation_chars
+    call puts_n
     ret
 _crg_render_branch:
     ldi XL, low(framebuffer+CONVERSATION_UI_SPEAKER_MARGIN)

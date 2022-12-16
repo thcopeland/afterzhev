@@ -84,6 +84,7 @@ shop_inventory:     .byte SHOP_INVENTORY_SIZE
 
 conversation_frame: .byte 2
 
+conversation_chars:
 upgrade_points:     .byte 1
 
 character_render:   .byte CHARACTER_MEMSIZE-7

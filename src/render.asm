@@ -1360,6 +1360,78 @@ _puts_halfwidth:
 _puts_end:
     ret
 
+; Write up to N characters of a string to the framebuffer.
+;
+; Register Usage
+;   r18-r19         storage across calls
+;   r20             counter
+;   r21             number of horizontal characters to print (param)
+;   r22             character
+;   r23             foreground color (param)
+;   r24             number of characters to print (param)
+;   X (r26:r27)     working framebuffer pointer
+;   Y (r28:r29)     framebuffer pointer (param)
+;   Z (r30:r31)     string flash pointer (param)
+puts_n:
+    .if PC_SIZE == 3
+    pop r0  ; save a byte
+    .endif
+    push r17
+    mov r17, r24
+    mov r20, r21
+    lsl r20
+    movw XL, YL
+_putsn_loop:
+    subi r17, 1
+    brlo _putsn_end
+    elpm r22, Z+
+    cpi r22, 0
+    breq _putsn_end
+    cpi r22, 10 ; '\n'
+    breq _putsn_newline
+    cpi r22, ' '
+    breq _putsn_halfwidth
+    cpi r22, 'i'
+    breq _putsn_halfwidth
+    cpi r22, '.'
+    breq _putsn_halfwidth
+    cpi r22, '!'
+    breq _putsn_halfwidth
+    cpi r22, ':'
+    breq _putsn_halfwidth
+    cpi r22, 39 ; '\''
+    breq _putsn_halfwidth
+_putsn_char:
+    movw r18, ZL
+    rcall putc
+    movw ZL, r18
+    adiw XL, FONT_DISPLAY_WIDTH
+    subi r20, 2
+    brsh _putsn_loop
+_putsn_newline:
+    mov r20, r21
+    lsl r20
+    subi YL, low(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
+    sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
+    movw XL, YL
+    rjmp _putsn_loop
+_putsn_halfwidth:
+    sbiw XL, FONT_DISPLAY_WIDTH/4
+    movw r18, ZL
+    rcall putc
+    movw ZL, r18
+    adiw XL, 3*FONT_DISPLAY_WIDTH/4
+    subi r20, 1
+    brsh _putsn_loop
+    rjmp _putsn_newline
+_putsn_end:
+    mov r24, r17
+    pop r17
+    .if PC_SIZE == 3
+    push r1
+    .endif
+    ret
+
 ; Render a UI element with the given dimensions, taking transparency into account.
 ; The entire element is rendered.
 ;
