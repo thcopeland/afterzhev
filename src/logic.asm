@@ -340,3 +340,39 @@ _kdqu_next_npc:
     brne _kdqu_npc_iter
 _kdqu_end:
     ret
+
+sector_town_tavern_1_update:
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
+    sts npc_move_flags, r25
+    call update_standard
+_sst1u_store_tutorial:
+    player_distance_imm 75, 116
+    cpi r25, 16
+    brsh _stt1u_end
+    try_start_conversation bartender
+_stt1u_end:
+    ret
+
+sector_town_tavern_2_update:
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
+    sts npc_move_flags, r25
+    call update_standard
+_stt2u_robbery:
+    lds r25, sector_npcs+NPC_IDX_OFFSET
+    cpi r25, NPC_ANNOYED_GUEST
+    brne _stt2u_end
+    lds r25, sector_loose_items+SECTOR_ITEM_IDX_OFFSET
+    cpi r25, 128|50
+    breq _stt2u_end
+    lds r25, npc_presence+((NPC_ROBBED_GUEST-1)>>3)
+    andi r25, 1<<((NPC_ROBBED_GUEST-1)&7)
+    brne _stt2u_add_robbed
+    sts sector_npcs+NPC_IDX_OFFSET, r1
+    rjmp _stt2u_end
+_stt2u_add_robbed:
+    ldi r25, NPC_ROBBED_GUEST
+    sts sector_npcs+NPC_IDX_OFFSET, r25
+    try_start_conversation robbed_guest
+    rjmp _stt2u_end
+_stt2u_end:
+    ret

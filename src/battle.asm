@@ -478,7 +478,7 @@ _red_loose_items_iter:
     subi r25, -(CHARACTER_SPRITE_WIDTH-STATIC_ITEM_WIDTH)/2
     std Z+SECTOR_ITEM_X_OFFSET, r25
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    subi r25, -(CHARACTER_SPRITE_HEIGHT-STATIC_ITEM_HEIGHT+4)/2
+    subi r25, -(CHARACTER_SPRITE_HEIGHT-STATIC_ITEM_HEIGHT+10)/2
     std Z+SECTOR_ITEM_Y_OFFSET, r25
     rjmp _red_player_xp
 _red_loose_items_next:

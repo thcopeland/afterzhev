@@ -638,7 +638,7 @@ _hmb_npc_iter:
     sbrc r21, 7
     neg r21
     add r20, r21
-    cpi r20, 3*(TILE_WIDTH+TILE_HEIGHT)/4
+    cpi r20, (TILE_WIDTH+TILE_HEIGHT)/2
     brsh _hmb_npc_next
     ldi ZL, low(2*npc_table)
     ldi ZH, high(2*npc_table)

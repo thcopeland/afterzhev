@@ -101,13 +101,57 @@ _conv_kidnapped7:               DECL_LINE kidnapped7, NPC_GRIEVING_FATHER, griev
 _conv_kidnapped8:               DECL_LINE my_thanks, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
 _conv_kidnapped9:               DECL_LINE kidnapped9, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
 _conv_kidnapped10:              DECL_LINE kidnapped10, 0, PLAYER, END_CONVERSATION
+DECL_CONVERSATION nice_day
+_conv_nice_day:                 DECL_LINE nice_day, NPC_FISHERMAN, fisherman, nice_day2
+_conv_nice_day2:                DECL_BRANCH 2
+                                DECL_CHOICE yes, nice_day3
+                                DECL_CHOICE no, nice_day3
+_conv_nice_day3:                DECL_LINE nice_day3, NPC_FISHERMAN, fisherman, END_CONVERSATION
+DECL_CONVERSATION welcome
+_conv_welcome:                  DECL_LINE welcome, NPC_WELCOME, farmer, welcome2
+_conv_welcome2:                 DECL_LINE welcome2, NPC_WELCOME, farmer, welcome3
+_conv_welcome3:                 DECL_BRANCH 3
+                                DECL_CHOICE welcome_c1, welcome4
+                                DECL_CHOICE welcome_c2, welcome6
+                                DECL_CHOICE welcome_c3, END_CONVERSATION
+_conv_welcome4:                 DECL_LINE welcome4, NPC_WELCOME, farmer, welcome5
+_conv_welcome5:                 DECL_LINE welcome5, NPC_WELCOME, farmer, welcome3
+_conv_welcome6:                 DECL_LINE welcome6, NPC_WELCOME, farmer, welcome7
+_conv_welcome7:                 DECL_LINE welcome7, NPC_WELCOME, farmer, welcome8
+_conv_welcome8:                 DECL_LINE welcome8, 0, PLAYER, welcome9
+_conv_welcome9:                 DECL_LINE welcome9, NPC_WELCOME, farmer, welcome3
+_conv_tavern_sign:              DECL_LINE tavern_sign, NPC_TAVERN_SIGN, empty, END_CONVERSATION
+DECL_CONVERSATION bartender
+_conv_bartender:                DECL_LINE bartender, NPC_BARTENDER, bartender, bartender2
+_conv_bartender2:               DECL_LINE bartender2, 0, PLAYER, END_CONVERSATION
+DECL_CONVERSATION drunk_hiccup
+_conv_drunk_hiccup:             DECL_LINE drunk_hiccup, NPC_DRUNK2, drunk, drunk_hiccup2
+_conv_drunk_hiccup2:            DECL_LINE drunk_hiccup2, NPC_DRUNK2, drunk, drunk_hiccup3
+_conv_drunk_hiccup3:            DECL_LINE drunk_hiccup3, NPC_DRUNK2, drunk, drunk_hiccup4
+_conv_drunk_hiccup4:            DECL_LINE drunk_hiccup4, NPC_BARTENDER, bartender, drunk_hiccup5
+_conv_drunk_hiccup5:            DECL_LINE drunk_hiccup5, NPC_DRUNK2, drunk, END_CONVERSATION
+_conv_just_beat_it:             DECL_LINE just_beat_it, NPC_ANNOYED_GUEST, inn_guest, END_CONVERSATION
+DECL_CONVERSATION robbed_guest
+_conv_robbed_guest:             DECL_LINE robbed_guest, NPC_ROBBED_GUEST, inn_guest, END_CONVERSATION
+_conv_guest_quest:              DECL_LINE guest_quest, NPC_GUEST_QUEST, inn_guest, guest_quest2
+_conv_guest_quest2:             DECL_LINE guest_quest2, NPC_GUEST_QUEST, inn_guest, guest_quest3
+_conv_guest_quest3:             DECL_BRANCH 2
+                                DECL_CHOICE yes, guest_quest4
+                                DECL_CHOICE no, guest_quest5
+_conv_guest_quest4:             DECL_LINE guest_quest4, NPC_GUEST_QUEST, inn_guest, END_CONVERSATION
+_conv_guest_quest5:             DECL_LINE guest_quest5, NPC_GUEST_QUEST, inn_guest, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
 _conv_speaker_ruffian_str:      .db "Ruffian", 0
 _conv_speaker_bandit_str:       .db "Bandit", 0, 0
 _conv_speaker_drunk_str:        .db "Town drunk", 0, 0
+_conv_speaker_fisherman_str:    .db "Fisherman", 0
+_conv_speaker_farmer_str:       .db "Farmer", 0, 0
 _conv_speaker_grieving_father_str: .db "Grieving father", 0
+_conv_speaker_bartender_str:    .db "Bartender", 0
+_conv_speaker_inn_guest_str:    .db "Inn guest", 0
+_conv_speaker_empty_str:        .db 0, 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
 _conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
 _conv_what_happened3_str:       .db "It must have been stolen. I haveto get it back at any cost.", 0
@@ -126,7 +170,7 @@ _conv_bandit_plead_str:         .db "I yield! Spare me, adventurer!", 0, 0
 _conv_bandit_plead2_str:        .db "Then tell me quickly: did you", 10, "steal my letter?", 0, 0
 _conv_bandit_plead3_str:        .db "Uh... it weren", 39, "t I, adventurer!", 10, "The others took it, but the big", 10, "boss", 39, "s men have it now.", 0
 _conv_bandit_plead4_str:        .db "Big boss?", 0
-_conv_bandit_plead5_str:        .db "His gang have a house in the woodwest of the town. Please,", 10, "adventure, we didn", 39, "t harm you!", 0
+_conv_bandit_plead5_str:        .db "His gang have a house in the woodeast of the town. Please,", 10, "adventurer, we didn", 39, "t harm you!", 0, 0
 _conv_bandit_plead_c1_str:      .db "Ha! That letter means my life,", 10, "you will pay dearly!", 0
 _conv_bandit_plead_c2_str:      .db "I spare you. But you must stop", 10, "robbing travelers.", 0
 _conv_bandit_plead6_str:        .db "I swear it! I give you my sword asproof.", 0, 0
@@ -146,3 +190,32 @@ _conv_kidnapped7_str:           .db "Thank you, adventurer! Please", 10, "accept
 _conv_my_thanks_str:            .db "My thanks, adventurer!", 0, 0
 _conv_kidnapped9_str:           .db "Foxes too much for you,", 10, "adventurer? My poor boy!", 0, 0
 _conv_kidnapped10_str:          .db "Come with me if you want to live!", 0
+_conv_nice_day_str:             .db "Mornin", 39, "! Nice day for fishing,", 10, "ain", 39, "t it?", 0, 0
+_conv_yes_str:                  .db "Yes", 0
+_conv_no_str:                   .db "No", 0, 0
+_conv_nice_day3_str:            .db "Huah hah!", 0
+_conv_welcome_str:              .db "Hello there, adventurer! And", 10, "welcome to Frogford town!", 0, 0
+_conv_welcome2_str:             .db "Anything I can do for you?", 0, 0
+_conv_welcome_c1_str:           .db "Bandits have stolen something", 10, "of mine, I must find them.", 0, 0
+_conv_welcome_c2_str:           .db "I must to get to the city of DorHaldir.", 0
+_conv_welcome_c3_str:           .db "Goodbye.", 0, 0
+_conv_welcome4_str:             .db "Speak softly, adventurer... yes,I", 39, "ve heard the bandits have somesort of hideout in the woods eastof here.", 0
+_conv_welcome5_str:             .db "But be careful! I", 39, "ve no doubt youare a capable warrior, but the", 10, "bandits are a fearsome band. I", 10, "should rest here a while before", 10, "doing anything rash.", 0
+_conv_welcome6_str:             .db "Dor Haldir? That", 39, "s an easy one,", 10, "adventurer, just follow the", 10, "main road south.", 0, 0
+_conv_welcome7_str:             .db "But I warn you, the Highway", 10, "Guard has closed the road. They won", 39, "t let anyone through withouta pass.", 0
+_conv_welcome8_str:             .db "Why is the road closed?", 0
+_conv_welcome9_str:             .db "The Guard won", 39, "t say. But as an", 10, "adventurer, you may be able to", 10, "get more out of them.", 0
+_conv_tavern_sign_str:          .db "The Bristling Boar: Tavern & Inn", 10, 10, 10, 10, 10, 10, "        A Licensed Victualler", 0
+_conv_bartender_str:            .db "What ho, adventurer! Can I", 10, "interest you in a drink or two?", 0, 0
+_conv_bartender2_str:           .db 10, 10, 10, 10, 10, "  Press <A> to buy items", 10, "      and <B> to sell.", 0, 0
+_conv_drunk_hiccup_str:         .db "H-hey you! You ain", 39, "t from these", 10, "parts, huh?", 0
+_conv_drunk_hiccup2_str:        .db "Ha... you look like one of them", 10, "envoys.", 0
+_conv_drunk_hiccup3_str:        .db "Yeah... Ah useta be like you...", 10, "watch out, they", 39, "ll throw y-you", 10, "away too.", 0, 0
+_conv_drunk_hiccup4_str:        .db "Hey drunk! Leave the adventureralone!", 0
+_conv_drunk_hiccup5_str:        .db "Hic!", 0, 0
+_conv_just_beat_it_str:         .db "Hey! What do you think you", 39, "re", 10, "doing here?", 0
+_conv_robbed_guest_str:         .db "So! A thief, are ye?", 0, 0
+_conv_guest_quest_str:          .db "Hello, adventurer! What are youdoing in my room?", 0, 0
+_conv_guest_quest2_str:         .db "Silent type, eh? Doesn", 39, "t matter.", 10, 10, "Listen, I", 39, "ve lost my journal", 10, "somewhere around town. Could", 10, "you find it for me? There", 39, "ll be", 10, "something in it for you.", 0, 0
+_conv_guest_quest4_str:         .db "Very obliging of you!", 0
+_conv_guest_quest5_str:         .db "Fine, I", 39, "ll find it myself. I can dothat, you know.", 0, 0

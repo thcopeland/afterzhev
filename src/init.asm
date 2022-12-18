@@ -47,6 +47,7 @@ _init_zero_iter:
     sti inventory_selection, 0
     stiw preplaced_item_presence, 0xffff
     stiw npc_presence, 0xffff
+    stiw npc_presence+2, 0xffff
     sti clock, 0
     sti mode_clock, 0
     sti current_shop_index, NO_SHOP
@@ -57,10 +58,10 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    sti player_position_x, 156
-    sti player_position_y, 132
+    sti player_position_x, 193
+    sti player_position_y, 88
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_TOWN_ENTRANCE_1
+    .equ INITIAL_SECTOR = SECTOR_TOWN_TAVERN_2
     ; .equ INITIAL_SECTOR = SECTOR_START_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)

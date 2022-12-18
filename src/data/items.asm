@@ -30,6 +30,9 @@
     .set __ITEM_IDX = __ITEM_IDX+1
     .dw 2*(_item_str_@0_name-item_string_table), 2*(_item_str_@0_desc-item_string_table)
     .db @1, low(@2), high(2), @3, @4, @5, @6, @7
+    .if (@3 != 0) && (@4 != 0) && (@5 != 0) && (@6 != 0)
+        .error "(@0) No item may affect more than THREE attributes"
+    .endif
 .endm
 
 .set __LOSE_ITEM_IDX = 1
@@ -49,14 +52,19 @@ item_table:
     DECL_ITEM green_hood,           ITEM_WEARABLE,                      10,     0,  0,  3,  2,      0
     DECL_ITEM leather_armor,        (4<<2)|ITEM_WEARABLE,               50,     0,  2, -3,  0,      0
     DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              10000,  0,  0,  0,  0,      0
+    DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              60,     6,  0,  0,  0,      0
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
-    DECL_ITEM raw_meat,             (1<<3)|ITEM_USABLE,                 20,     0, 10,  0,  0,      0
+    DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0
     DECL_ITEM health_potion,        (0<<3)|ITEM_USABLE,                 100,    0, 64,  0,  0,      0
+    DECL_ITEM beer,                 (3<<3)|ITEM_USABLE,                 5,      5,  5,  0, -5,      0
+    DECL_ITEM croissant,            (3<<3)|ITEM_USABLE,                 10,     0, 10,  0,  0,      0
+    DECL_ITEM whiskey,              (1<<3)|ITEM_USABLE,                 20,    10,  5, -5,  0,      0
 
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
 DECL_LOOSE_ITEM foxes_feathered_hat
+DECL_LOOSE_ITEM tavern_guest_gold
 
 item_string_table:
 _item_str_wood_stick_name:          .db "Tree branch", 0
@@ -71,6 +79,8 @@ _item_str_leather_armor_name:       .db "Leather armor", 0
 _item_str_leather_armor_desc:       .db "Scarred and worn, it has clearly seen much use.", 0
 _item_str_invisible_weapon_name:
 _item_str_invisible_weapon_desc:    .db 0, 0
+_item_str_steel_sword_name:         .db "Steel sword", 0
+_item_str_steel_sword_desc:         .db "An elegant blade.", 0
 _item_str_inventory_book_name:      .db "Book of Inventory", 0
 _item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <B> to use a potion.", 10, "Press <select> to drop.", 0
 _item_str_raw_meat_name:            .db "Raw meat", 0, 0
@@ -79,3 +89,9 @@ _item_str_rotten_meat_name:         .db "Rotten meat", 0
 _item_str_rotten_meat_desc:         .db "Tinged a poisonous green.", 0
 _item_str_health_potion_name:       .db "Health potion", 0
 _item_str_health_potion_desc:       .db "Quickly recover from even mortal wounds.", 0, 0
+_item_str_beer_name:                .db "Pint of beer", 0, 0
+_item_str_beer_desc:                .db "The local brew is", 10, "unusually bitter.", 0
+_item_str_croissant_name:           .db "Croissant", 0
+_item_str_croissant_desc:           .db "Fresh and flaky.", 0, 0
+_item_str_whiskey_name:             .db "Whiskey", 0
+_item_str_whiskey_desc:             .db "Burns the esophageal", 10, "tissues on the way down.", 0

@@ -11,6 +11,8 @@ def extract_item_sprites(fname, type, name)
         match[2..5].map(&:to_i)
     end
 
+    # `convert #{fname} -stroke red -fill none -strokewidth 1 -draw '#{components.map { |w, h, x, y| "rectangle #{x}, #{y}, #{w+x}, #{h+y} " }.join}' out.png`
+
     components.sort_by! do |w, h, x, y|
         ((x+w/2) / 16) + ((y+h/2) / 16) * 16
     end

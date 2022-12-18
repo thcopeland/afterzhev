@@ -210,8 +210,8 @@ _sss_end:
 .equ SHOP_UI_GOLD_ICON_MARGIN = 30*DISPLAY_WIDTH+80
 .equ SHOP_UI_HEALTH_MARGIN = 31*DISPLAY_WIDTH+105
 .equ SHOP_UI_HEALTH_ICON_MARGIN = 30*DISPLAY_WIDTH+110
-.equ SHOP_UI_PRICE_LABEL_MARGIN = 47*DISPLAY_WIDTH+100
-.equ SHOP_UI_PRICE_MARGIN = 58*DISPLAY_WIDTH+111
+.equ SHOP_UI_PRICE_LABEL_MARGIN = 47*DISPLAY_WIDTH+103
+.equ SHOP_UI_PRICE_MARGIN = 58*DISPLAY_WIDTH+114
 
 ; Render the shop and player inventories, as well as the selected item information.
 ;
@@ -422,11 +422,24 @@ _srg_selection_description:
     clr r1
     elpm r24, Z+
     elpm r25, Z+
+    adiw ZL, ITEM_STATS_OFFSET-ITEM_DESC_PTR_OFFSET-2
+    ; allow more horizontal space for descriptions when no stats changed
+    ; this is to match the inventory behavior, kinda hacky here.
+    elpm r20, Z+
+    elpm r21, Z+
+    elpm r22, Z+
+    elpm r23, Z+
+    or r20, r21
+    ldi r21, 22
+    or r22, r23
+    or r20, r22
+    brne _srg_render_description
+    ldi r21, 28
+_srg_render_description:
     movw ZL, r24
     subi ZL, low(-2*item_string_table)
     sbci ZH, high(-2*item_string_table)
     ldi r23, 0
-    ldi r21, 22
     call puts
 _srg_selection_buy_price:
     ldi YL, low(framebuffer+SHOP_UI_PRICE_LABEL_MARGIN)
@@ -434,6 +447,8 @@ _srg_selection_buy_price:
     ldi r21, 29
     tst r17
     brne _srg_selection_sell_price
+    ldi ZL, byte3(2*ui_string_table)
+    out RAMPZ, ZL
     ldi ZL, low(2*ui_str_buy_label)
     ldi ZH, high(2*ui_str_buy_label)
     call puts
@@ -446,6 +461,8 @@ _srg_selection_buy_price:
     call putw
     rjmp _srg_coin_icon
 _srg_selection_sell_price:
+    ldi ZL, byte3(2*ui_string_table)
+    out RAMPZ, ZL
     ldi ZL, low(2*ui_str_sell_label)
     ldi ZH, high(2*ui_str_sell_label)
     call puts
