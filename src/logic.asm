@@ -382,3 +382,72 @@ _stt2u_add_robbed:
     rjmp _stt2u_end
 _stt2u_end:
     ret
+
+sector_town_tavern_2_conversation:
+    ldi r20, high(2*_conv_guest_quest)
+    cpi r24, low(2*_conv_guest_quest)
+    cpc r25, r20
+    brne _stt2c_end
+    ldi ZL, low(player_inventory)
+    ldi ZH, high(player_inventory)
+    ldi r20, PLAYER_INVENTORY_SIZE
+_stt2c_inventory_iter:
+    ld r21, Z+
+    cpi r21, ITEM_journal
+    breq _stt2c_have_journal
+_stt2c_next:
+    dec r20
+    brne _stt2c_inventory_iter
+_stt2c_no_journal:
+    lds r20, global_data+QUEST_JOURNAL
+    andi r20, 0x03
+    breq _stt2c_end
+    cpi r20, 3
+    breq _stt2c_completed
+    ldi r24, low(2*_conv_guest_quest6)
+    ldi r25, high(2*_conv_guest_quest6)
+    rjmp _stt2c_end
+_stt2c_have_journal:
+    st -Z, r1
+    lds r24, player_xp
+    lds r25, player_xp+1
+    subi r24, low(-QUEST_JOURNAL_XP)
+    sbci r25, high(-QUEST_JOURNAL_XP)
+    sts player_xp, r24
+    sts player_xp+1, r25
+    lds r20, global_data+QUEST_JOURNAL
+    ldi r25, 3
+    sts global_data+QUEST_JOURNAL, r25
+    ldi r25, ITEM_wooden_bow
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
+    ldi r25, 52
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
+    ldi r25, 41
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
+     andi r20, 0x03
+    breq _stt2c_accepted
+_stt2c_refused:
+    cpi r20, 2
+    brne _stt2c_test_accepted
+    ldi r24, low(2*_conv_guest_quest7)
+    ldi r25, high(2*_conv_guest_quest7)
+    rjmp _stt2c_end
+_stt2c_test_accepted:
+    cpi r20, 1
+    brne _stt2c_completed
+_stt2c_accepted:
+    ldi r24, low(2*_conv_guest_quest8)
+    ldi r25, high(2*_conv_guest_quest8)
+    rjmp _stt2c_end
+_stt2c_completed:
+    ldi r24, low(2*_conv_guest_quest9)
+    ldi r25, high(2*_conv_guest_quest9)
+_stt2c_end:
+    ret
+
+sector_town_tavern_2_choice:
+    lds r25, selected_choice
+    inc r25
+    sts global_data+QUEST_JOURNAL, r25
+    ret

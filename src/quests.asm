@@ -10,3 +10,11 @@
 ;   5 - rescued
 ;   6 - quest over
 .equ QUEST_KIDNAPPED_XP = 200
+
+.equ QUEST_JOURNAL = 1
+; Bits 0-2:
+;   0 - not begun
+;   1 - refused
+;   2 - accepted
+;   3 - quest over
+.equ QUEST_JOURNAL_XP = 100

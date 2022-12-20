@@ -42,7 +42,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 216, 72, SECTOR_TOWN_TAVERN_1, 156, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_OPEN, 192, 72, FEATURE_DOOR_OPEN, 36, 72, FEATURE_BARREL, 214, 36, FEATURE_SHUTTERS, 172, 12, FEATURE_SHUTTERS, 114, 12, FEATURE_CHAIR_UP, 59, 20
-.dw sector_town_tavern_2_update, NO_HANDLER, add_nearby_followers, NO_HANDLER, NO_HANDLER
+.dw sector_town_tavern_2_update, NO_HANDLER, add_nearby_followers, sector_town_tavern_2_conversation, sector_town_tavern_2_choice
 
 ; Sector 1 "town_section_tavern_1"
 .db 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, \
@@ -206,7 +206,7 @@ sector_table:
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 065, 034, 034, 033, 033, 066, 039, 039, 039, 039
 .db 7, 8, 7, 6
 .db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-.db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+.db ITEM_journal, LOOSE_ITEM_lost_journal, 74, 30, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 64, 118, FEATURE_SHUTTERS, 64, 100, FEATURE_SHUTTERS, 44, 100, FEATURE_SHUTTERS, 124, 66, FEATURE_SHUTTERS, 140, 66, FEATURE_SHUTTERS, 160, 90

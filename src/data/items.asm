@@ -53,6 +53,7 @@ item_table:
     DECL_ITEM leather_armor,        (4<<2)|ITEM_WEARABLE,               50,     0,  2, -3,  0,      0
     DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              10000,  0,  0,  0,  0,      0
     DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              60,     6,  0,  0,  0,      0
+    DECL_ITEM wooden_bow,           ITEM_RANGED,                        30,     0,  0,  0,  0,      0
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0
@@ -60,11 +61,13 @@ item_table:
     DECL_ITEM beer,                 (3<<3)|ITEM_USABLE,                 5,      5,  5,  0, -5,      0
     DECL_ITEM croissant,            (3<<3)|ITEM_USABLE,                 10,     0, 10,  0,  0,      0
     DECL_ITEM whiskey,              (1<<3)|ITEM_USABLE,                 20,    10,  5, -5,  0,      0
+    DECL_ITEM journal,              ITEM_USABLE,                        10,     0,  0,  0,  0,      1
 
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
 DECL_LOOSE_ITEM foxes_feathered_hat
 DECL_LOOSE_ITEM tavern_guest_gold
+DECL_LOOSE_ITEM lost_journal
 
 item_string_table:
 _item_str_wood_stick_name:          .db "Tree branch", 0
@@ -81,6 +84,8 @@ _item_str_invisible_weapon_name:
 _item_str_invisible_weapon_desc:    .db 0, 0
 _item_str_steel_sword_name:         .db "Steel sword", 0
 _item_str_steel_sword_desc:         .db "An elegant blade.", 0
+_item_str_wooden_bow_name:          .db "Wooden bow", 0, 0
+_item_str_wooden_bow_desc:          .db "Crudely made, yet unexpectedlystrong.", 0
 _item_str_inventory_book_name:      .db "Book of Inventory", 0
 _item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <B> to use a potion.", 10, "Press <select> to drop.", 0
 _item_str_raw_meat_name:            .db "Raw meat", 0, 0
@@ -95,3 +100,5 @@ _item_str_croissant_name:           .db "Croissant", 0
 _item_str_croissant_desc:           .db "Fresh and flaky.", 0, 0
 _item_str_whiskey_name:             .db "Whiskey", 0
 _item_str_whiskey_desc:             .db "Burns the esophageal", 10, "tissues on the way down.", 0
+_item_str_journal_name:             .db "Missing journal", 0
+_item_str_journal_desc:             .db "A mysterious leather-bound", 10, "journal, tightly clasped shut.", 0

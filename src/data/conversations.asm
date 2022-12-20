@@ -140,6 +140,10 @@ _conv_guest_quest3:             DECL_BRANCH 2
                                 DECL_CHOICE no, guest_quest5
 _conv_guest_quest4:             DECL_LINE guest_quest4, NPC_GUEST_QUEST, inn_guest, END_CONVERSATION
 _conv_guest_quest5:             DECL_LINE guest_quest5, NPC_GUEST_QUEST, inn_guest, END_CONVERSATION
+_conv_guest_quest6:             DECL_LINE guest_quest6, NPC_GUEST_QUEST, inn_guest, END_CONVERSATION
+_conv_guest_quest7:             DECL_LINE guest_quest7, NPC_GUEST_QUEST, inn_guest, guest_quest8
+_conv_guest_quest8:             DECL_LINE guest_quest8, NPC_GUEST_QUEST, inn_guest, END_CONVERSATION
+_conv_guest_quest9:             DECL_LINE guest_quest9, NPC_GUEST_QUEST, inn_guest, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -213,9 +217,13 @@ _conv_drunk_hiccup2_str:        .db "Ha... you look like one of them", 10, "envo
 _conv_drunk_hiccup3_str:        .db "Yeah... Ah useta be like you...", 10, "watch out, they", 39, "ll throw y-you", 10, "away too.", 0, 0
 _conv_drunk_hiccup4_str:        .db "Hey drunk! Leave the adventureralone!", 0
 _conv_drunk_hiccup5_str:        .db "Hic!", 0, 0
-_conv_just_beat_it_str:         .db "Hey! What do you think you", 39, "re", 10, "doing here?", 0
-_conv_robbed_guest_str:         .db "So! A thief, are ye?", 0, 0
+_conv_just_beat_it_str:         .db "And whit dae ye think ye", 39, "re daen", 39, 10, "here?", 0
+_conv_robbed_guest_str:         .db "Sae! A thief, are ye?", 0
 _conv_guest_quest_str:          .db "Hello, adventurer! What are youdoing in my room?", 0, 0
 _conv_guest_quest2_str:         .db "Silent type, eh? Doesn", 39, "t matter.", 10, 10, "Listen, I", 39, "ve lost my journal", 10, "somewhere around town. Could", 10, "you find it for me? There", 39, "ll be", 10, "something in it for you.", 0, 0
 _conv_guest_quest4_str:         .db "Very obliging of you!", 0
 _conv_guest_quest5_str:         .db "Fine, I", 39, "ll find it myself. I can dothat, you know.", 0, 0
+_conv_guest_quest6_str:         .db "Got my journal yet?", 0
+_conv_guest_quest7_str:         .db "Changed your mind, eh?", 0, 0
+_conv_guest_quest8_str:         .db "Well, I thank you for returning my journal, adventurer. I, uh,", 10, "hope you didn", 39, "t read... anyway,", 10, "take this bow.", 0
+_conv_guest_quest9_str:         .db "What do you want now? Hoping", 10, "you", 39, "ll get more for hanging", 10, "around?", 0, 0
