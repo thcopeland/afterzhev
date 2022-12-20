@@ -53,7 +53,7 @@ item_table:
     DECL_ITEM leather_armor,        (4<<2)|ITEM_WEARABLE,               50,     0,  2, -3,  0,      0
     DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              10000,  0,  0,  0,  0,      0
     DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              60,     6,  0,  0,  0,      0
-    DECL_ITEM wooden_bow,           ITEM_RANGED,                        30,     0,  0,  0,  0,      0
+    DECL_ITEM wooden_bow,           (2<<6)|ITEM_RANGED,                 30,     0,  0,  0,  0,      EFFECT_ARROW
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0

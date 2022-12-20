@@ -26,7 +26,7 @@ _init_zero_iter:
     sti player_velocity_y, 0
     sti player_class, CLASS_ROGUE
     sti player_character, CHARACTER_HALFLING
-    sti player_weapon, ITEM_bloody_sword
+    sti player_weapon, ITEM_wooden_bow ;ITEM_bloody_sword
     sti player_armor, ITEM_feathered_hat
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_LEFT

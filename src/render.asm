@@ -1050,9 +1050,17 @@ render_effect_animation:
     ; At this point, r21 - direction, r22 - frame, r23 - effect
 _rce_effect_damage:
     cpi r23, EFFECT_DAMAGE
-    brne _rce_effect_attack_fire
+    brne _rce_effect_arrow
     ldi ZL, low(2*effect_damage_sprites)
     ldi ZH, high(2*effect_damage_sprites)
+    rjmp _rce_render_effect_sprite
+_rce_effect_arrow:
+    cpi r23, EFFECT_ARROW
+    brne _rce_effect_attack_fire
+    ldi ZL, low(2*effect_arrow_sprites)
+    ldi ZH, high(2*effect_arrow_sprites)
+    sbrc r21, 6
+    inc r22
     rjmp _rce_render_effect_sprite
 _rce_effect_attack_fire:
     cpi r23, EFFECT_ATTACK_FIRE

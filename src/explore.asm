@@ -939,9 +939,6 @@ _uae_update_effect_position:
     lsr r23
     andi r23, 0x03  ; speed
     breq _uae_update_effect_frame
-    lds r24, clock
-    andi r24, 0x01
-    brne _uae_active_effect_next
     mov r24, r21
     andi r24, 0xc0 ; direction
     sbrc r24, 7
