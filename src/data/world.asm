@@ -426,7 +426,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_CAMPFIRE, 94, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw sector_start_fight_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_start_fight_update, clear_sector_data, NO_HANDLER, NO_HANDLER, sector_start_fight_choice
 
 ; Sector 17 "start_section_post_fight"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 041, 179, 038, 039, 039, 039, 039, \

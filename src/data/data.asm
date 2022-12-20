@@ -77,7 +77,6 @@ shop_selection:
 selected_choice:
 upgrade_selection:
 gameover_state:     .byte 1
-last_choice:        .byte 1
 
 current_shop_index: .byte 1
 shop_inventory:     .byte SHOP_INVENTORY_SIZE

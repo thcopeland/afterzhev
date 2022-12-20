@@ -94,7 +94,7 @@ _ssfu_fight:
     cpi r25, NPC_BANDIT_3
     brne _ssfu_last_bandit_update
 _ssfu_last_bandit_stand:
-    lds r25, last_choice
+    lds r25, sector_data
     cpi r25, 0
     brne _ssfu_last_bandit_attack
     ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
@@ -128,6 +128,12 @@ _ssfu_last_bandit_update:
     call player_resolve_melee_damage
     call player_resolve_effect_damage
 _ssfu_end:
+    ret
+
+sector_start_fight_choice:
+    lds r25, selected_choice
+    inc r25
+    sts sector_data, r25
     ret
 
 sector_start_pretown_1_update:

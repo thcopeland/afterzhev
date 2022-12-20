@@ -57,9 +57,6 @@ _chc_branch_button1:
     rjmp _chc_branch_down
     adiw ZL, CONVERSATION_BRANCH_CHOICE1_OFFSET+2
     lds r20, selected_choice
-    inc r20
-    sts last_choice, r20
-    dec r20
     ldi r21, CONVERSATION_BRANCH_CHOICE_MEMSIZE
     mul r20, r21
     add ZL, r0

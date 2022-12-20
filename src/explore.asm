@@ -1441,7 +1441,6 @@ load_sector:
     push YH
     sts current_sector, ZL
     sts current_sector+1, ZH
-    sts last_choice, r1
     sts following_timer, r1
     lds r18, player_position_x
     lds r19, player_position_y
