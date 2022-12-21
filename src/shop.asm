@@ -423,16 +423,9 @@ _srg_selection_description:
     elpm r24, Z+
     elpm r25, Z+
     adiw ZL, ITEM_STATS_OFFSET-ITEM_DESC_PTR_OFFSET-2
-    ; allow more horizontal space for descriptions when no stats changed
-    ; this is to match the inventory behavior, kinda hacky here.
-    elpm r20, Z+
-    elpm r21, Z+
-    elpm r22, Z+
-    elpm r23, Z+
-    or r20, r21
     ldi r21, 22
-    or r22, r23
-    or r20, r22
+    ; special case for inventory book
+    cpi r16, ITEM_inventory_book-1
     brne _srg_render_description
     ldi r21, 28
 _srg_render_description:

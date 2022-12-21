@@ -43,6 +43,8 @@ ui_str_strength:    .db "Strength", 0, 0
 ui_str_vitality:    .db "Vitality", 0, 0
 ui_str_dexterity:   .db "Dexterity", 0
 ui_str_intellect:   .db "Intellect", 0
+ui_str_damage_abbr:     .db "Dmg", 0
+ui_str_defense_abbr:    .db "Def", 0
 ui_str_strength_abbr:   .db "Str", 0
 ui_str_vitality_abbr:   .db "Vit ", 0, 0 ; the trailing space ensures all abbreviations have the same width
 ui_str_dexterity_abbr:  .db "Dex", 0

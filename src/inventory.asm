@@ -487,16 +487,9 @@ _irg_render_selected_item_description:
     clr r1
     elpm r24, Z+
     elpm r25, Z+
-    adiw ZL, ITEM_STATS_OFFSET-ITEM_DESC_PTR_OFFSET-2
-    ; allow more horizontal space for descriptions when no stats changed
-    elpm r20, Z+
-    elpm r21, Z+
-    elpm r22, Z+
-    elpm r23, Z+
-    or r20, r21
     ldi r21, 22
-    or r22, r23
-    or r20, r22
+    ; special case for inventory book
+    cpi r16, ITEM_inventory_book-1
     brne _irg_render_description
     ldi r21, 28
 _irg_render_description:
@@ -508,19 +501,48 @@ _irg_render_description:
 _irg_render_item_stats:
     ldi YL, low(framebuffer+INVENTORY_UI_ITEM_STATS_MARGIN)
     ldi YH, high(framebuffer+INVENTORY_UI_ITEM_STATS_MARGIN)
-    ldi ZL, low(2*item_table+ITEM_STATS_OFFSET)
-    ldi ZH, high(2*item_table+ITEM_STATS_OFFSET)
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
     ldi r19, ITEM_MEMSIZE
     mul r16, r19
     add ZL, r0
     adc ZH, r1
     clr r1
+    elpm r20, Z
+    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
+    elpm r21, Z
+    sbiw ZL, ITEM_EXTRA_OFFSET-ITEM_STATS_OFFSET
     elpm r14, Z+
     elpm r15, Z+
     elpm r16, Z+
     elpm r17, Z+
     ldi ZL, byte3(2*ui_string_table)
     out RAMPZ, ZL
+    andi r20, 0x3
+    cpi r20, ITEM_USABLE
+    breq _irg_render_item_strength
+    cpi r20, ITEM_WEARABLE
+    breq _irg_render_wearable_defense
+_irg_render_weapon_damage:
+    swap r21
+    andi r21, 0x0f
+    breq _irg_render_item_strength
+    ldi ZL, low(2*ui_str_damage_abbr)
+    ldi ZH, high(2*ui_str_damage_abbr)
+    mov r25, r21
+    rcall render_item_stat
+    subi YL, low(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
+    sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
+    rjmp _irg_render_item_strength
+_irg_render_wearable_defense:
+    andi r21, 0x0f
+    breq _irg_render_item_strength
+    ldi ZL, low(2*ui_str_defense_abbr)
+    ldi ZH, high(2*ui_str_defense_abbr)
+    mov r25, r21
+    rcall render_item_stat
+    subi YL, low(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
+    sbci YH, high(-FONT_DISPLAY_HEIGHT*DISPLAY_WIDTH)
 _irg_render_item_strength:
     tst r14
     breq _irg_render_item_vitality

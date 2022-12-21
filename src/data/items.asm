@@ -93,7 +93,7 @@ _item_str_invisible_weapon_desc:    .db 0, 0
 _item_str_steel_sword_name:         .db "Steel sword", 0
 _item_str_steel_sword_desc:         .db "An elegant blade.", 0
 _item_str_wooden_bow_name:          .db "Wooden bow", 0, 0
-_item_str_wooden_bow_desc:          .db "Crudely made, yet unexpectedlystrong.", 0
+_item_str_wooden_bow_desc:          .db "An old but sturdy wooden bow.", 0
 _item_str_inventory_book_name:      .db "Book of Inventory", 0
 _item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <B> to use a potion.", 10, "Press <select> to drop.", 0
 _item_str_raw_meat_name:            .db "Raw meat", 0, 0
