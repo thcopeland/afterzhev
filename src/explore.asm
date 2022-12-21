@@ -1158,8 +1158,8 @@ _rfs_end:
 ;
 ; Register Usage
 ;   r20-r21         calculations
-;   r22             effect data 1 (param)
-;   r23             effect data 2 (param)
+;   r22             effect data 1 [direction:2][effect:3][frame:3] (param)
+;   r23             effect data 2 [strength:4][speed:2][role:2] (param)
 ;   r24, r25        position (param)
 ;   Z (r30:r31)     memory pointer
 add_active_effect:
@@ -1247,7 +1247,7 @@ _up_ranged_attack:
     andi r20, ATTACK_FRAME_DURATION_MASK
     brne _up_animation_trampoline
     lds r20, player_frame
-    cpi r20, 0 ; NOTE: looks better than RANGED_LAUNCH_FRAME
+    cpi r20, 1 ; NOTE: looks better than RANGED_LAUNCH_FRAME
     brne _up_animation_trampoline
     lds r20, player_weapon
     dec r20
@@ -1290,31 +1290,21 @@ _up_facing_right:
     brne _up_add_effect
     subi r24, -2*EFFECT_SPRITE_WIDTH/3
 _up_add_effect:
-    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
-    elpm r23, Z
-    andi r23, 0x07
-    lsl r23
     swap r22
-    or r22, r23
     lsl r22
     lsl r22
-    andi r20, 0xc0
+    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
+    elpm r21, Z
+    mov r23, r21
+    andi r23, 0xf0
     swap r20
-    ldi r23, EFFECT_ROLE_DAMAGE_NPCS
+    andi r20, 0x0c
     or r23, r20
-    movw r20, r22
-    mov r26, r24
-    push r25
-    lds r23, player_weapon
-    lds r24, player_augmented_stats+STATS_STRENGTH_OFFSET
-    lds r25, player_augmented_stats+STATS_INTELLECT_OFFSET
-    call calculate_effect_power
-    mov r24, r26
-    movw r22, r20
-    swap r25
-    andi r25, 0xf0
-    or r23, r25
-    pop r25
+    ori r23, EFFECT_ROLE_DAMAGE_NPCS
+    swap r21
+    lsr r21
+    andi r21, 0x38
+    or r22, r21
     rcall add_active_effect
 _up_animation:
     lds r21, player_effect

@@ -7,14 +7,22 @@
 ; table uses the same item indexes, wieldable and wearable items must come before
 ; any usable items.
 ;
+; strength - additional melee attack
+; vitality - health, healing
+; dexterity - speed
+; intellect - additional ranged attack, necessary for high level ranged
+;
+; attack = weapon attack + (strength or intellect)/2
+; damage = max(rand(attack, attack*2) - defense
+;
 ; Wieldable Flags: [range:2][cooldown:3][unused:1][type:2]
-; Wieldable Extra: [unused:8]
+; Wieldable Extra: [attack:4][unused:4]
 ;
-; Ranged Flags: [effect speed/range:2][cooldown:3][high level:1][type:2]
-; Ranged Extra: [extra damage:4][magical:1][effect:3]
+; Ranged Flags: [speed:2][cooldown:3][high level:1][type:2]
+; Ranged Extra: [attack:4][magical:1][effect:3]
 ;
-; Wearable Flags: [speed:2][health:4][type:2]
-; Wearable Extra: [unused:8]
+; Wearable Flags: [signed health:6][type:2]
+; Wearable Extra: [unused:4][defence:4]
 ;
 ; Usable Flags: [interval mask:5][eternal:1][type:2]
 ; Usable Extra: [unused:7][not actually usable:1]
@@ -47,13 +55,13 @@
 
 item_table:
     DECL_ITEM wood_stick,           (1<<6)|(2<<3)|ITEM_WIELDABLE,       2,      2,  0,  0,  0,      0
-    DECL_ITEM feathered_hat,        ITEM_WEARABLE,                      20,     0,  0,  2,  4,      0
-    DECL_ITEM bloody_sword,         (1<<6)|(1<<3)|ITEM_WIELDABLE,       50,     6,  0,  0,  0,      0
+    DECL_ITEM feathered_hat,        ITEM_WEARABLE,                      20,     0,  0,  2,  4,      3
+    DECL_ITEM bloody_sword,         (1<<6)|(1<<3)|ITEM_WIELDABLE,       50,     6,  0,  0,  0,      (5<<4)
     DECL_ITEM green_hood,           ITEM_WEARABLE,                      10,     0,  0,  3,  2,      0
     DECL_ITEM leather_armor,        (4<<2)|ITEM_WEARABLE,               50,     0,  2, -3,  0,      0
     DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              10000,  0,  0,  0,  0,      0
     DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              60,     6,  0,  0,  0,      0
-    DECL_ITEM wooden_bow,           (2<<6)|ITEM_RANGED,                 30,     0,  0,  0,  0,      EFFECT_ARROW
+    DECL_ITEM wooden_bow,           (2<<6)|ITEM_RANGED,                 30,     0,  0,  0,  0,      (3<<4)|EFFECT_ARROW
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0

@@ -120,6 +120,9 @@ _loop_work:
     eor r0, r16
     out PORTB, r0
 
+    call rand
+    clr r1
+
     lds r24, clock
     lds r25, clock+1
     adiw r24, 1

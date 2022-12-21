@@ -183,7 +183,7 @@ _fc_combine_channels_%:
 .endm
 
 .macro DEBUG ; reg
-    .dw 0xfff0 | (@0 & 0x0f)
+    .dw 0xffe0 | (@0 & 0x1f)
 .endm
 
 ; rapidly write 12 pixels to the given port

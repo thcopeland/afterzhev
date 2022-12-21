@@ -221,10 +221,8 @@ _cmh_armor:
     adc ZH, r1
     clr r1
     elpm r25, Z
-    lsr r25
-    andi r25, 0x1e
-    sbrc r25, 4
-    ori r25, 0xe0
+    asr r25
+    asr r25
 _cmh_stat:
     lds r24, player_stats + STATS_STRENGTH_OFFSET
     add r25, r24
@@ -236,23 +234,6 @@ _cmh_stat:
     lds r24, player_stats + STATS_VITALITY_OFFSET
     add r25, r24
     add r25, r24
-    ret
-
-; Calculate the damage done in an attack.
-;   damage = max(0, S1/2 + (D1 - D2)/4) + 1
-;
-; Register Usage
-;   r23     attacker strength (param), damage
-;   r24     attacker dexterity (param)
-;   r25     defender dexterity (param)
-calculate_damage:
-    sub r24, r25
-    asr r24
-    add r23, r24
-    asr r23
-    sbrc r23, 7
-    clr r23
-    inc r23
     ret
 
 ; Calculate the player's acceleration.
@@ -337,66 +318,4 @@ calculate_dash_cooldown:
     mov r0, r25
     lsl r25
     add r25, r0
-    ret
-
-; Calculate the strength of an effect's damage (the actual damage done will
-; depend on the stats of the NPC or player).
-;            { ((strength + intellect)/4 + weapon)  if non magical
-; strength = { (intellect/2 + weapon)               if magical
-;            { EFFECT_DEFAULT_DAMAGE                no weapon (unnecessary?)
-;
-; Register Usage
-;   r22             calculations
-;   r23             weapon id (param)
-;   r24             strength (param)
-;   r25             intellect (param), calculated strength
-;   Z (r30:r31)     weapon data pointer (assumed to be ranged)
-calculate_effect_power:
-    dec r23
-    brpl _cep_check_weapon
-    ldi r25, EFFECT_DEFAULT_DAMAGE
-    rjmp _cep_end
-_cep_check_weapon:
-    ldi ZL, byte3(2*item_table+ITEM_EXTRA_OFFSET)
-    out RAMPZ, ZL
-    ldi ZL, low(2*item_table+ITEM_EXTRA_OFFSET)
-    ldi ZH, high(2*item_table+ITEM_EXTRA_OFFSET)
-    ldi r22, ITEM_MEMSIZE
-    mul r22, r23
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    elpm r22, Z
-    sbrc r22, 3
-    rjmp _cep_magical
-_cep_non_magical:
-    add r25, r24
-    lsr r25
-    lsr r25
-    swap r22
-    andi r22, 0x0f
-    add r25, r22
-    rjmp _cep_end
-_cep_magical:
-    lsr r25
-    swap r22
-    andi r22, 0x0f
-    add r25, r22
-_cep_end:
-    ret
-
-; Calculate the damage done by an active effect to a character.
-;   damage = max(4*strength - dexterity, 1)
-;
-; Register Usage
-;   r24             dexterity (param)
-;   r25             data2 (param), damage
-calculate_effect_damage:
-    swap r25
-    andi r25, 0x0f
-    lsl r25
-    lsl r25
-    sub r25, r24
-    sbrc r25, 7
-    ldi r25, 1
     ret

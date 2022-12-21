@@ -16,8 +16,8 @@
 ;   x, y position - (2 bytes)
 ;   x, y velocity - (2 bytes)
 ;   acceleration - used for movement (1 byte)
-;   strength - related to damage (1 byte)
-;   dexterity - related to defense (1 byte)
+;   attack - weapon boosts are not considered (1 byte)
+;   defense - wearable and weapon boosts are not considered (1 byte)
 ;   drop 1,2,3 - one is randomly dropped upon death (3 bytes) NOTE: prob distribution 50% 25% 25%
 ;
 ; Shopkeeper (16 bytes)
@@ -151,7 +151,10 @@ npc_table:
     DECL_TALK_DATA  NO_NPC, 0, just_beat_it, 0, just_beat_it
 
     DECL_NPC        NPC_ROBBED_GUEST, NPC_ENEMY, CHARACTER_BANDIT, ITEM_steel_sword, ITEM_feathered_hat, DIRECTION_DOWN, 30, 192, 40
-    DECL_ENEMY_DATA 0, 0, 6, 10, 5, NO_ITEM, ITEM_feathered_hat, ITEM_feathered_hat
+    DECL_ENEMY_DATA 0, 0, 6, 6, 5, NO_ITEM, ITEM_feathered_hat, ITEM_feathered_hat
 
     DECL_NPC        NPC_GUEST_QUEST, NPC_TALKER, CHARACTER_MAN, NO_ITEM, ITEM_leather_armor, DIRECTION_LEFT, 10, 59, 34
     DECL_TALK_DATA  NO_NPC, 0, guest_quest, 0, guest_quest
+
+    DECL_NPC        NPC_TEST_ATTACK, NPC_ENEMY, CHARACTER_MAN, ITEM_wooden_bow, ITEM_leather_armor, DIRECTION_LEFT, 50, 80, 90
+    DECL_ENEMY_DATA 0, 0, 6, 10, 3, NO_ITEM, NO_ITEM, NO_ITEM

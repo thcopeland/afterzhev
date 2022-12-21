@@ -1,3 +1,14 @@
+; must match order of active effects defined in gamedefs.asm
+estimated_effect_ranges:
+    .db 0,                              \
+        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
+        EFFECT_ARROW_RANGE_ESTIMATE,    \
+        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
+        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
+        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
+        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
+        EFFECT_DEFAULT_RANGE_ESTIMATE
+
 ; Move the given enemy around and attack as necessary. The exact behavior is
 ; specified by npc_move_flags, see gamedefs.asm.
 ;
@@ -129,10 +140,6 @@ _nm_test_attack:
     sbrs r20, log2(NPC_MOVE_ATTACK)
 _nm_test_move_trampoline:
     rjmp _nm_test_move
-    ldd r24, Y+NPC_ANIM_OFFSET
-    cpi r24, ACTION_ATTACK<<5
-    brlo _nm_test_weapon
-    rjmp _nm_attack_end
 _nm_test_weapon:
     movw XL, ZL
     adiw ZL, NPC_TABLE_WEAPON_OFFSET
@@ -149,31 +156,47 @@ _nm_test_weapon:
     add ZL, r0
     adc ZH, r1
     clr r1
+    elpm r21, Z
+_nm_estimate_range:
+    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
     elpm r20, Z
+    andi r20, 0x03
+    ldi ZL, low(2*estimated_effect_ranges)
+    ldi ZH, high(2*estimated_effect_ranges)
+    add ZL, r20
+    adc ZH, r1
+    lpm r20, Z
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     movw ZL, XL
-    mov r21, r20
     andi r21, 0x03
     cpi r21, ITEM_RANGED
     brne _nm_test_melee_attack
 _nm_test_ranged_attack:
+    ldd r24, Y+NPC_ANIM_OFFSET
+    mov r21, r24
+    cpi r24, ACTION_ATTACK<<5
+    brsh _nm_ranged_attack_end
     ldd r21, Y+NPC_ANIM_OFFSET
     andi r21, 0x03
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     lds r24, player_position_x
     sub r22, r24
+    sbrc r22, 7
+    neg r22
     lds r25, player_position_y
     sub r23, r25
+    sbrc r23, 7
+    neg r23
 _nm_test_ranged_up:
     cpi r21, DIRECTION_UP
     brne _nm_test_ranged_down
     sbrc r22, 7
     neg r22
-    cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2-1
+    cpi r22, 4*EFFECT_DAMAGE_DISTANCE/3-1
     brsh _nm_test_move
-    cpi r23, EFFECT_ESTIMATED_RANGE
+    cp r23, r20
     brsh _nm_test_move
     rjmp _nm_ranged_attack
 _nm_test_ranged_down:
@@ -181,37 +204,41 @@ _nm_test_ranged_down:
     brne _nm_test_ranged_left
     sbrc r22, 7
     neg r22
-    cpi r22, 3*EFFECT_DAMAGE_DISTANCE/2-1
+    cpi r22, 4*EFFECT_DAMAGE_DISTANCE/3-1
     brsh _nm_test_move
-    cpi r23, low(-EFFECT_ESTIMATED_RANGE)
-    brlo _nm_test_move
+    cp r23, r20
+    brsh _nm_test_move
     rjmp _nm_ranged_attack
 _nm_test_ranged_left:
     cpi r21, DIRECTION_LEFT
     brne _nm_test_ranged_right
     sbrc r23, 7
     neg r23
-    cpi r23, 3*EFFECT_DAMAGE_DISTANCE/2
+    cpi r23, 4*EFFECT_DAMAGE_DISTANCE/3-1
     brsh _nm_test_move
-    cpi r22, EFFECT_ESTIMATED_RANGE
+    cp r22, r20
     brsh _nm_test_move
     rjmp _nm_ranged_attack
 _nm_test_ranged_right:
     cpi r21, DIRECTION_right
-    brne _nm_attack_end
+    brne _nm_ranged_attack_end
     sbrc r23, 7
     neg r23
-    cpi r23, 3*EFFECT_DAMAGE_DISTANCE/2
+    cpi r23, 4*EFFECT_DAMAGE_DISTANCE/3-1
     brsh _nm_test_move
-    cpi r22, low(-EFFECT_ESTIMATED_RANGE)
-    brlo _nm_test_move
+    cp r22, r20
+    brsh _nm_test_move
 _nm_ranged_attack:
     ldd r24, Y+NPC_ANIM_OFFSET
     andi r24, 0x1f
     ori r24, ACTION_ATTACK<<5
     std Y+NPC_ANIM_OFFSET, r24
-    rjmp _nm_attack_end
+_nm_ranged_attack_end:
+    ret
 _nm_test_melee_attack:
+    ldd r24, Y+NPC_ANIM_OFFSET
+    cpi r24, ACTION_ATTACK<<5
+    brsh _nm_attack_end
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     lds r24, player_position_x
@@ -391,9 +418,11 @@ _nm_end:
     ret
 
 ; Update an NPCs's animations, and if an enemy, move and check for collisions.
+; Also, if the NPC is using a ranged weapon, add projectiles.
 ;
 ; Register Usage
 ;   r21-r25         calculations
+;   X (r26:r27)     temp pointer
 ;   Y (r28:r29)     npc pointer (param)
 ;   Z (r30:r31)     aux enemy pointer, flash pointer
 npc_update:
@@ -432,10 +461,12 @@ _eu_check_type:
     clr r1
     elpm r25, Z
     cpi r25, NPC_ENEMY
-    brne _eu_end
+    brne _eu_end_trampoline
 _eu_collisions:
     rcall enemy_fighting_space
 _eu_npc_on_npc_collision:
+    adiw ZL, NPC_TABLE_WEAPON_OFFSET
+    elpm r21, Z
     ldi ZL, low(sector_npcs+(SECTOR_DYNAMIC_NPC_COUNT-1)*NPC_MEMSIZE)
     ldi ZH, high(sector_npcs+(SECTOR_DYNAMIC_NPC_COUNT-1)*NPC_MEMSIZE)
 _eu_npc_iter:
@@ -446,11 +477,93 @@ _eu_npc_iter:
     breq _eu_npc_next
     cp YL, ZL
     cpc YH, ZH
-    breq _eu_end
+    breq _eu_ranged_attack
     rcall enemy_personal_space
 _eu_npc_next:
     sbiw ZL, NPC_MEMSIZE
     rjmp _eu_npc_iter
+_eu_ranged_attack:
+    lds r22, clock
+    andi r22, ATTACK_FRAME_DURATION_MASK
+    brne _eu_end
+    dec r21
+    brmi _eu_end
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r22, ITEM_MEMSIZE
+    mul r21, r22
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r21, Z
+    andi r21, 0x03
+    cpi r21, ITEM_RANGED
+    brne _eu_end
+    ldd r22, Y+NPC_ANIM_OFFSET
+    mov r23, r22
+    andi r23, 0xe0
+    cpi r23, ACTION_ATTACK<<5
+    brne _eu_end
+    andi r22, 0x1c
+    cpi r22, RANGED_LAUNCH_FRAME<<2
+    breq _eu_add_ranged_effect
+_eu_end_trampoline:
+    rjmp _eu_end
+_eu_add_ranged_effect:
+; Ranged Flags: [speed:2][cooldown:3][high level:1][type:2]
+; Ranged Extra: [attack:4][magical:1][effect:3]
+;   r22             effect data 1 [direction:2][effect:3][frame:3] (param)
+;   r23             effect data 2 [strength:4][speed:2][role:2] (param)
+
+    elpm r23, Z
+    swap r23
+    andi r23, 0x0c
+    ; r23 = [0:4][speed:2][0:2]
+    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
+    elpm r21, Z
+    mov r22, r21
+    andi r21, 0xf0
+    or r23, r21
+    ori r23, EFFECT_ROLE_DAMAGE_PLAYER
+    ; r23 = [attack:4][speed:2][role:2]
+    swap r22
+    ; r22 = [magical:1][effect:3][attack:4]
+    lsr r22
+    andi r22, 0x38
+    ; r22 = [0:2][effect:3][0:3]
+
+    ldd r21, Y+NPC_ANIM_OFFSET
+    swap r21
+    lsl r21
+    lsl r21
+    andi r21, 0xc0
+    or r22, r21
+    ; r22 = [dir:2][effect:3][0:3]
+
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    ldd r21, Y+NPC_ANIM_OFFSET
+    andi r21, 0x03
+_eu_ranged_facing_up:
+    cpi r21, DIRECTION_UP
+    brne _eu_ranged_facing_down
+    subi r25, 2*EFFECT_SPRITE_HEIGHT/3
+_eu_ranged_facing_down:
+    cpi r21, DIRECTION_DOWN
+    brne _eu_ranged_facing_left
+    subi r25, -2*EFFECT_SPRITE_HEIGHT/3
+_eu_ranged_facing_left:
+    cpi r21, DIRECTION_LEFT
+    brne _eu_ranged_facing_right
+    subi r24, 2*EFFECT_SPRITE_WIDTH/3
+_eu_ranged_facing_right:
+    cpi r21, DIRECTION_RIGHT
+    brne _eu_add_effect
+    subi r24, -2*EFFECT_SPRITE_WIDTH/3
+_eu_add_effect:
+    call add_active_effect
 _eu_end:
     ret
 

@@ -7,18 +7,28 @@
 ;   Z (r30:r31)     npc table pointer
 player_resolve_melee_damage:
     lds r25, clock
+    inc r25 ; offset by one frame to avoid doing everything on one frame
     andi r25, ATTACK_FRAME_DURATION_MASK
-    breq _prmd_iter_setup
-    rjmp _prmd_end
-_prmd_iter_setup:
+    breq _prmd_main
+    ret
+_prmd_main:
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
     ldi r27, SECTOR_NPC_COUNT
-_prmd_npc_iter:
+_prmd_iter:
     ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_CORPSE
+    breq _prmd_next_trampoline
     dec r25
-    brmi _prmd_next_npc_trampoline
-_prmd_flash_ptr:
+    brmi _prmd_next_trampoline
+    ldd r24, Y+NPC_ANIM_OFFSET
+    mov r23, r24
+    andi r24, 0xe0
+    cpi r24, ACTION_ATTACK<<5
+    brne _prmd_next_trampoline
+    andi r23, 0x1c
+    cpi r23, ATTACK_DAMAGE_FRAME<<2
+    brne _prmd_next_trampoline
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     ldi ZL, low(2*npc_table)
@@ -30,19 +40,13 @@ _prmd_flash_ptr:
     clr r1
     elpm r25, Z
     cpi r25, NPC_ENEMY
-    brne _prmd_next_npc_trampoline
-    ldd r25, Y+NPC_ANIM_OFFSET
-    lsr r25
-    swap r25
-    andi r25, 0x7
-    cpi r25, ACTION_ATTACK
-    brne _prmd_next_npc_trampoline
+    brne _prmd_next_trampoline
 _prmd_check_weapon:
     movw r24, ZL
     adiw ZL, NPC_TABLE_WEAPON_OFFSET
     elpm r22, Z
     dec r22
-    brmi _prmd_next_npc_trampoline
+    brmi _prmd_next_trampoline
     ldi ZL, byte3(2*item_table+ITEM_FLAGS_OFFSET)
     out RAMPZ, ZL
     ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
@@ -52,75 +56,22 @@ _prmd_check_weapon:
     add ZL, r0
     adc ZH, r1
     clr r1
-    elpm r20, Z
-    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
-    elpm r21, Z
+    elpm r23, Z
+    andi r23, 0x03
+    cpi r23, ITEM_WIELDABLE
+    breq _prmd_more_checks
+_prmd_next_trampoline:
+    rjmp _prmd_next
+_prmd_more_checks:
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     movw ZL, r24
-    mov r24, r20
-    andi r24, 3
-    cpi r24, ITEM_RANGED
-    brne _prmd_check_melee_frame
-_prmd_check_ranged_frame:
-    ldd r24, Y+NPC_ANIM_OFFSET
-    andi r24, 0x1c
-    cpi r24, RANGED_LAUNCH_FRAME << 2
-    breq _prmd_add_ranged_effect
-_prmd_next_npc_trampoline:
-    rjmp _prmd_next_npc
-_prmd_add_ranged_effect:
-    ldd r22, Y+NPC_ANIM_OFFSET
-    swap r22
-    lsl r22
-    lsl r22
-    andi r22, 0xc0
-    mov r25, r21
-    lsl r25
-    lsl r25
-    lsl r25
-    andi r25, 0x38
-    or r22, r25
-    ldi r23, EFFECT_ROLE_DAMAGE_PLAYER
-    swap r20
-    andi r20, 0x0c
-    or r23, r20
-    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
-    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    ldd r20, Y+NPC_ANIM_OFFSET
-    andi r20, 0x03
-_prmd_ranged_facing_up:
-    cpi r20, DIRECTION_UP
-    brne _prmd_ranged_facing_down
-    subi r25, 2*EFFECT_SPRITE_HEIGHT/3
-_prmd_ranged_facing_down:
-    cpi r20, DIRECTION_DOWN
-    brne _prmd_ranged_facing_left
-    subi r25, -2*EFFECT_SPRITE_HEIGHT/3
-_prmd_ranged_facing_left:
-    cpi r20, DIRECTION_LEFT
-    brne _prmd_ranged_facing_right
-    subi r24, 2*EFFECT_SPRITE_WIDTH/3
-_prmd_ranged_facing_right:
-    cpi r20, DIRECTION_RIGHT
-    brne _prmd_add_effect
-    subi r24, -2*EFFECT_SPRITE_WIDTH/3
-_prmd_add_effect:
-    call add_active_effect
-    rjmp _prmd_end
-_prmd_check_melee_frame:
-    ldd r24, Y+NPC_ANIM_OFFSET
-    mov r26, r24
-    lsr r24
-    lsr r24
-    andi r24, 0x7
-    cpi r24, ATTACK_DAMAGE_FRAME
-    brne _prmd_next_npc_trampoline
 _prmd_check_distance:
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     lds r24, player_position_x
     lds r25, player_position_y
+    ldd r26, Y+NPC_ANIM_OFFSET
     andi r26, 0x3
     call biased_character_distance
     mov r26, r25
@@ -130,7 +81,7 @@ _prmd_check_distance:
     call character_striking_distance
     movw ZL, r22
     cp r26, r0
-    brsh _prmd_end
+    brsh _prmd_next_trampoline
 _prmd_damage_effect:
     lds r22, player_effect
     andi r22, 0x38
@@ -138,14 +89,47 @@ _prmd_damage_effect:
     ldi r22, EFFECT_DAMAGE<<3
     sts player_effect, r22
 _prmd_damage:
-    adiw ZL, NPC_TABLE_ENEMY_STRENGTH_OFFSET
-    elpm r23, Z+
-    elpm r24, Z+
-    sbiw ZL, NPC_TABLE_ENEMY_STRENGTH_OFFSET+2
-    lds r25, player_augmented_stats+STATS_DEXTERITY_OFFSET
-    call calculate_damage
+    adiw ZL, NPC_TABLE_ENEMY_ATTACK_OFFSET
+    elpm r26, Z
+    sbiw ZL, NPC_TABLE_ENEMY_ATTACK_OFFSET
+    ldi r24, 0x0f
+_prmd_attack_roll1:
+    call rand
+    and r0, r24
+    cp r0, r26
+    brlo _prmd_calculate_defense
+_prmd_attack_roll2:
+    mov r0, r1
+    and r0, r24
+    cp r0, r26
+    brlo _prmd_calculate_defense
+_prmd_fallback:
+    mov r0, r26
+    lsr r0
+_prmd_calculate_defense:
+    clr r1
+    add r26, r0
+    lds r22, player_armor
+    dec r22
+    brmi _prmd_apply_damage
+    ldi ZL, byte3(2*item_table+ITEM_EXTRA_OFFSET)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_EXTRA_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_EXTRA_OFFSET)
+    ldi r23, ITEM_MEMSIZE
+    mul r22, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    andi r25, 0x0f
+    sub r26, r25
+    brsh _prmd_apply_damage
+    ldi r26, 1
+_prmd_apply_damage:
+    inc r26
     lds r24, player_health
-    sub r24, r23
+    sub r24, r26
     sts player_health, r24
     brsh _prmd_push
     sts player_health, r1
@@ -153,8 +137,7 @@ _prmd_damage:
     call load_gameover
     rjmp _prmd_end
 _prmd_push:
-    lsl r23
-    mov r22, r23
+    mov r22, r26
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     lds r25, player_position_x
     cp r24, r25
@@ -168,16 +151,16 @@ _prmd_push_x:
     lds r25, player_position_y
     cp r24, r25
     brlo _prmd_push_y
-    neg r23
+    neg r26
 _prmd_push_y:
     lds r25, player_velocity_y
-    adnv r25, r23
+    adnv r25, r26
     sts player_velocity_y, r25
-_prmd_next_npc:
+_prmd_next:
     adiw YL, NPC_MEMSIZE
     dec r27
     breq _prmd_end
-    rjmp _prmd_npc_iter
+    rjmp _prmd_iter
 _prmd_end:
     ret
 
@@ -186,11 +169,14 @@ _prmd_end:
 ; Register Usage
 ;   r22-r25         calculations
 ;   Y (r28:r29)     effect pointer
+;   Z (r30:r31)     item pointer
 player_resolve_effect_damage:
     lds r25, player_effect
     andi r25, 0x38
     cpi r25, EFFECT_DAMAGE << 3
-    breq _pred_end
+    brne _pred_main
+    ret
+_pred_main:
     ldi YL, low(active_effects)
     ldi YH, high(active_effects)
     ldi r22, ACTIVE_EFFECT_COUNT
@@ -214,17 +200,58 @@ _pred_effect_iter:
     sbrc r24, 7
     neg r24
     cpi r24, EFFECT_DAMAGE_DISTANCE
-    brsh _pred_effect_next
-    lds r24, player_augmented_stats+STATS_DEXTERITY_OFFSET
-    ldd r25, Y+ACTIVE_EFFECT_DATA2_OFFSET
-    call calculate_effect_damage
+    brlo _pred_damage_effect
+_pred_effect_next:
+    adiw YL, ACTIVE_EFFECT_MEMSIZE
+    dec r22
+    brne  _pred_effect_iter
+    ret
 _pred_damage_effect:
     lds r24, player_effect
     andi r24, 0x38
-    brne _pred_damage
+    brne _pred_calculate_damage
     ldi r24, EFFECT_DAMAGE<<3
     sts player_effect, r24
+_pred_calculate_damage:
+    ldd r25, Y+ACTIVE_EFFECT_DATA2_OFFSET
+    swap r25
+    andi r25, 0x0f
+    ldi r24, 0x0f
+_pred_attack_roll1:
+    call rand
+    and r0, r24
+    cp r0, r25
+    brlo _pred_calculate_defense
+_pred_attack_roll2:
+    mov r0, r1
+    and r0, r24
+    cp r0, r25
+    brlo _pred_calculate_defense
+_pred_fallback:
+    mov r0, r25
+    lsr r0
+_pred_calculate_defense:
+    clr r1
+    add r25, r0
+    lds r23, player_armor
+    dec r23
+    brmi _pred_damage
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_EXTRA_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_EXTRA_OFFSET)
+    ldi r24, ITEM_MEMSIZE
+    mul r23, r24
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r24, Z
+    andi r24, 0x0f
+    sub r25, r24
+    brsh _pred_damage
+    ldi r25, 1
 _pred_damage:
+    inc r25
     lds r24, player_health
     sub r24, r25
     sts player_health, r24
@@ -232,12 +259,6 @@ _pred_damage:
     sts player_health, r1
     ldi r25, GAME_OVER_DEAD
     call load_gameover
-    rjmp _pred_end
-_pred_effect_next:
-    adiw YL, ACTIVE_EFFECT_MEMSIZE
-    dec r22
-    brne  _pred_effect_iter
-_pred_end:
     ret
 
 ; If an enemy, apply damage to the given enemy and push it away from the player. The pushing
@@ -245,7 +266,7 @@ _pred_end:
 ; NPC (probably an enemy).
 ;
 ; Register Usage
-;   r22-r25         calculations
+;   r22-r26         calculations
 ;   Y (r28:r29)     enemy pointer (param)
 ;   Z (r30:r31)     npc table pointer (param)
 npc_resolve_melee_damage:
@@ -261,9 +282,21 @@ _nrmd_check_action:
     brne _nrmd_end_trampoline
     lds r25, player_frame
     cpi r25, ATTACK_DAMAGE_FRAME
-    breq _nrmd_check_weapon
-_nrmd_end_trampoline:
-    rjmp _nrmd_end
+    brne _nrmd_end_trampoline
+_nrmd_check_distance:
+    lds r22, player_position_x
+    lds r23, player_position_y
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    lds r26, player_direction
+    call biased_character_distance
+    mov r26, r25
+    movw r22, ZL ; save regs
+    lds r25, player_weapon
+    call character_striking_distance
+    movw ZL, r22 ; restore regs
+    cp r26, r0
+    brsh _nrmd_end_trampoline
 _nrmd_check_weapon:
     lds r25, player_weapon
     dec r25
@@ -279,26 +312,16 @@ _nrmd_check_weapon:
     adc ZH, r1
     clr r1
     elpm r25, Z
+    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
+    elpm r24, Z
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     movw ZL, r22
     andi r25, 0x03
-    cpi r25, ITEM_RANGED
-    breq _nrmd_end_trampoline
-_nrmd_check_distance:
-    lds r22, player_position_x
-    lds r23, player_position_y
-    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
-    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    lds r26, player_direction
-    call biased_character_distance
-    mov r26, r25
-    movw r22, ZL ; save regs
-    lds r25, player_weapon
-    call character_striking_distance
-    movw ZL, r22 ; restore regs
-    cp r26, r0
-    brsh _nrmd_end_trampoline
+    cpi r25, ITEM_WIELDABLE
+    breq _nrmd_damage_effect
+_nrmd_end_trampoline:
+    rjmp _nrmd_end
 _nrmd_damage_effect:
     ldd r22, Y+NPC_EFFECT_OFFSET
     andi r22, 0x38
@@ -306,28 +329,45 @@ _nrmd_damage_effect:
     ldi r22, EFFECT_DAMAGE<<3
     std Y+NPC_EFFECT_OFFSET, r22
 _nrmd_calc_damage:
-    lds r23, player_augmented_stats+STATS_STRENGTH_OFFSET
-    lds r24, player_augmented_stats+STATS_DEXTERITY_OFFSET
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _nrmd_use_default_dexterity
-_nrmd_read_enemy_dexterity:
-    adiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
-    elpm r25, Z
-    sbiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
-    rjmp _nrmd_apply_damage
-_nrmd_use_default_dexterity:
-    ldi r25, NPC_DEFAULT_DEXTERITY
+    mov r25, r24
+    swap r25
+    andi r25, 0x0f
+    ldi r24, 0x0f
+_nrmd_attack_roll1:
+    call rand
+    and r0, r24
+    cp r0, r25
+    brlo _nrmd_strength_damage
+_nrmd_attack_roll2:
+    mov r0, r1
+    and r0, r24
+    cp r0, r25
+    brlo _nrmd_strength_damage
+_nrmd_fallback:
+    mov r0, r25
+    lsr r0
+_nrmd_strength_damage:
+    clr r1
+    add r25, r0
+    lds r24, player_augmented_stats+STATS_STRENGTH_OFFSET
+    asr r24
+    add r25, r24
+    adiw ZL, NPC_TABLE_ENEMY_DEFENSE_OFFSET
+    elpm r24, Z
+    sbiw ZL, NPC_TABLE_ENEMY_DEFENSE_OFFSET
+    sub r25, r24
+    brsh _nrmd_apply_damage
+    ldi r25, 1
 _nrmd_apply_damage:
-    call calculate_damage
+    inc r25
     ldd r24, Y+NPC_HEALTH_OFFSET
-    sub r24, r23
+    sub r24, r25
     std Y+NPC_HEALTH_OFFSET, r24
     brsh _nrmd_push
-_nrmd_kill_enemy:
     rcall resolve_enemy_death
     rjmp _nrmd_end
 _nrmd_push:
+    mov r23, r25
     lsl r23
     mov r22, r23
     lds r24, player_position_x
@@ -361,11 +401,16 @@ _nrmd_end:
 npc_resolve_ranged_damage:
     ldd r25, Y+NPC_IDX_OFFSET
     tst r25
-    breq _nrrd_hard_end
+    breq _nrrd_early_exit
+    cpi r25, NPC_CORPSE
+    breq _nrrd_early_exit
+_nrrd_main:
     ldd r25, Y+NPC_EFFECT_OFFSET
     andi r25, 0x38
     cpi r25, EFFECT_DAMAGE<<3
-    breq _nrrd_hard_end
+    brne _nrrd_resolve_effects
+_nrrd_early_exit:
+    ret
 _nrrd_resolve_effects:
     movw XL, ZL
     ldi ZL, low(active_effects)
@@ -374,40 +419,105 @@ _nrrd_resolve_effects:
 _nrrd_effect_iter:
     ldd r24, Z+ACTIVE_EFFECT_DATA_OFFSET
     andi r24, 0x38
-    breq _nrrd_effect_next
+    breq _nrrd_next_trampoline
     ldd r24, Z+ACTIVE_EFFECT_DATA2_OFFSET
     andi r24, 0x01
-    breq _nrrd_effect_next
+    breq _nrrd_next_trampoline
     ldd r24, Z+ACTIVE_EFFECT_X_OFFSET
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     sub r24, r25
     sbrc r24, 7
     neg r24
     cpi r24, EFFECT_DAMAGE_DISTANCE
-    brsh _nrrd_effect_next
+    brsh _nrrd_next_trampoline
     ldd r24, Z+ACTIVE_EFFECT_Y_OFFSET
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     sub r24, r25
     sbrc r24, 7
     neg r24
     cpi r24, EFFECT_DAMAGE_DISTANCE
-    brsh _nrrd_effect_next
-    mov r0, ZL
-    mov r23, ZH
-    movw ZL, XL
-    adiw ZL, NPC_TABLE_ENEMY_DEXTERITY_OFFSET
-    elpm r24, Z
-    mov ZL, r0
-    mov ZH, r23
-    ldd r25, Z+ACTIVE_EFFECT_DATA2_OFFSET
-    call calculate_effect_damage
+    brlo _nrrd_damage_effect
+_nrrd_next_trampoline:
+    rjmp _nrrd_effect_next
 _nrrd_damage_effect:
     ldd r23, Y+NPC_EFFECT_OFFSET
     andi r23, 0x38
-    brne _nrrd_damage
+    brne _nrrd_calculate_damage
     ldi r23, EFFECT_DAMAGE<<3
     std Y+NPC_EFFECT_OFFSET, r23
-_nrrd_damage:
+_nrrd_calculate_damage:
+    ldd r25, Z+ACTIVE_EFFECT_DATA2_OFFSET
+    mov r24, r25
+    swap r25
+    andi r25, 0x0f
+    andi r24, 0x2
+    brne _nrrd_calculate_defense
+    ldi r24, 0x0f
+_nrrd_attack_roll1:
+    call rand
+    and r0, r24
+    cp r0, r25
+    brlo _nrrd_additional_damage
+_nrrd_attack_roll2:
+    mov r0, r1
+    and r0, r24
+    cp r0, r25
+    brlo _nrrd_additional_damage
+_nrrd_fallback:
+    mov r0, r25
+    lsr r0
+_nrrd_additional_damage:
+    clr r1
+    add r25, r0
+_nrrd_check_weapon:
+    lds r22, player_weapon
+    dec r22
+    brmi _nrrd_calculate_defense
+    push ZL
+    push ZH
+    ldi ZL, byte3(2*item_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
+    ldi r24, ITEM_MEMSIZE
+    mul r22, r24
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r22, Z
+    adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
+    elpm r23, Z
+    pop ZH
+    pop ZL
+    andi r22, 0x03
+    cpi r22, ITEM_RANGED
+    brne _nrrd_calculate_defense
+    lds r24, player_augmented_stats+STATS_INTELLECT_OFFSET
+    lsr r24
+    andi r23, RANGED_MAGICAL
+    brne _nrrd_apply_additional
+_nrrd_non_magical_ranged:
+    lds r23, player_augmented_stats+STATS_STRENGTH_OFFSET
+    lsr r23
+    add r24, r23
+    lsr r24
+_nrrd_apply_additional:
+    add r25, r24
+_nrrd_calculate_defense:
+    mov r0, ZL
+    mov r23, ZH
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    movw ZL, XL
+    adiw ZL, NPC_TABLE_ENEMY_DEFENSE_OFFSET
+    elpm r24, Z
+    mov ZL, r0
+    mov ZH, r23
+    sub r25, r24
+    brsh _nrrd_apply_damage
+    ldi r25, 1
+_nrrd_apply_damage:
+    inc r25
     ldd r24, Y+NPC_HEALTH_OFFSET
     sub r24, r25
     std Y+NPC_HEALTH_OFFSET, r24
@@ -418,10 +528,10 @@ _nrrd_damage:
 _nrrd_effect_next:
     adiw ZL, ACTIVE_EFFECT_MEMSIZE
     dec r22
-    brne _nrrd_effect_iter
+    breq _nrrd_end
+    rjmp _nrrd_effect_iter
 _nrrd_end:
     movw ZL, XL
-_nrrd_hard_end:
     ret
 
 ; Record an NPC's death and replace it with a corpse. If an enemy, also
@@ -495,11 +605,12 @@ _red_player_xp:
     lsr r22
     add r22, r25
     adc r23, r1
-    elpm r25, Z+ ; strength
+    elpm r25, Z+ ; attack
     lsl r25
     add r22, r25
     adc r23, r1
-    elpm r25, Z+ ; dexterity
+    elpm r25, Z+ ; defense
+    lsl r25
     add r22, r25
     adc r23, r1
     sbiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET+3
