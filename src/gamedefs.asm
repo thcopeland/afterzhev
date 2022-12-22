@@ -86,7 +86,7 @@
 .equ NPC_MOVE_RETURN   = 0x40   ; return to starting point if beyond some distance
 .equ NPC_MOVE_POLTROON = 0x80   ; move away from the player if health is low
 
-.equ NPC_INTEREST_DISTANCE = 60 ; NPC_MOVE_FALLOFF distance
+.equ NPC_INTEREST_DISTANCE = 48 ; NPC_MOVE_FALLOFF distance
 .equ NPC_FLEE_HEALTH = 10       ; NPC_MOVE_POLTROON health
 
 .equ RUN_FRAME_DURATION_MASK = 0x3

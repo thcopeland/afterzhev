@@ -68,7 +68,7 @@ sector_table:
 .db 154, 118, 86, 69
 .db 156, 60, SECTOR_TOWN_TAVERN_2, 216, 75, 60, 134, SECTOR_TOWN_ENTRANCE_2, 120, 98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_CLOSED, 156, 136, FEATURE_DOOR_OPEN, 60, 136, FEATURE_CHAIR_LEFT, 77, 52, FEATURE_CHAIR_LEFT, 77, 76, FEATURE_CHAIR_RIGHT, 91, 52, FEATURE_CHAIR_UP, 112, 84
-.dw sector_town_tavern_1_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_town_tavern_1_update, NO_HANDLER, add_nearby_followers, NO_HANDLER, NO_HANDLER
 
 ; Sector 2 "town_section_forest_path_1"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, \
@@ -165,10 +165,10 @@ sector_table:
 .db NPC_FISHERMAN, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
-.db 0, 0, 0, 0
+.db 224, 141, 146, 33
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BUSH, 132, 48, FEATURE_BUSH, 156, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw NO_HANDLER, NO_HANDLER, add_nearby_followers, NO_HANDLER, NO_HANDLER
 
 ; Sector 6 "town_section_entrance_2"
 .db 039, 039, 039, 039, 056, 046, 045, 045, 057, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, \
