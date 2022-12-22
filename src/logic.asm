@@ -137,6 +137,7 @@ sector_start_fight_choice:
     ret
 
 sector_start_pretown_1_update:
+    call update_standard
     player_distance_imm 170, 32
     cpi r25, 12
     brsh _ssp1u_end

@@ -43,7 +43,7 @@
 ;   conversation 1 ptr - first conversation (2 bytes)
 ;   conversation 2 id -  (1 byte)
 ;   conversation 2 ptr - second conversation, used if the first is over (2 bytes)
-;   empty - (1 bytes)
+;   replacement - if attacked and nonzero, replaces the talker (1 byte)
 ;
 ; Special (16 bytes)
 ;   type - always NPC_SPECIAL (1 byte)
@@ -62,7 +62,7 @@
     .db @1, @2, @3, @4, @5, @6, @7, @8
 .endm
 
-.macro DECL_ENEMY_DATA ; xvel, yvel, acceleration, strength, dexterity, drop1, drop2, drop3
+.macro DECL_ENEMY_DATA ; xvel, yvel, acceleration, attack, defense, drop1, drop2, drop3
     .db @0, @1, @2, @3, @4, @5, @6, @7
 .endm
 
@@ -70,10 +70,10 @@
     .db @0, @1, 0, 0, 0, 0, 0, 0
 .endm
 
-.macro DECL_TALK_DATA ; avenger, id 1, conv 1, id 2, conv 2
+.macro DECL_TALK_DATA ; avenger, id 1, conv 1, id 2, conv 2, replacement
     .db @0, @1
     .dw 2*(_conv_@2-conversation_table)
-    .db @3, low(2*(_conv_@4-conversation_table)), high(2*(_conv_@4-conversation_table)), 0
+    .db @3, low(2*(_conv_@4-conversation_table)), high(2*(_conv_@4-conversation_table)), @5
 .endm
 
 .macro DECL_SPECIAL_DATA ; 8 bytes
@@ -83,6 +83,9 @@
 npc_table:
     DECL_NPC        NPC_CORPSE, NPC_SPECIAL, 128|NPC_CORPSE_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 0, 0, 0
     DECL_SPECIAL_DATA 0, 0, 0, 0, 0, 0, 0, 0
+
+    DECL_NPC        NPC_TOWN_GUARD_ANGRY, NPC_ENEMY, CHARACTER_MAN, ITEM_steel_sword, ITEM_guard_hat, DIRECTION_DOWN, 30, 0, 0
+    DECL_ENEMY_DATA 0, 0, 8, 8, 5, ITEM_guard_hat, ITEM_guard_hat, ITEM_steel_sword
 
     DECL_NPC        NPC_BATTLE_TUTORIAL, NPC_ENEMY, CHARACTER_BANDIT, ITEM_bloody_sword, NO_ITEM, DIRECTION_DOWN, 5, 180, 26
     DECL_ENEMY_DATA 0, 0, 8, 4, 10, ITEM_bloody_sword, ITEM_bloody_sword, ITEM_bloody_sword
@@ -100,10 +103,10 @@ npc_table:
     DECL_ENEMY_DATA 0, 0, 8, 4, 10, 128|20, ITEM_green_hood, ITEM_green_hood
 
     DECL_NPC        NPC_DRUNK, NPC_TALKER, 128|NPC_DRUNK_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 10, 165, 26
-    DECL_TALK_DATA  NO_NPC, CONVERSATION_drunks_warning_ID, drunks_warning, 0, drunks_warning2
+    DECL_TALK_DATA  NO_NPC, CONVERSATION_drunks_warning_ID, drunks_warning, 0, drunks_warning2, NO_NPC
 
     DECL_NPC        NPC_GRIEVING_FATHER, NPC_TALKER, 128|NPC_GRIEVING_FATHER_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 10, 82, 132
-    DECL_TALK_DATA  NO_NPC, 0, kidnapped, 0, END_CONVERSATION
+    DECL_TALK_DATA  NO_NPC, 0, kidnapped, 0, END_CONVERSATION, NO_NPC
 
     DECL_NPC        NPC_FOX_1, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_RIGHT, 10, 24, 24
     DECL_ENEMY_DATA 0, 0, 7, 2, 5, ITEM_raw_meat, ITEM_rotten_meat, 128|5
@@ -124,13 +127,13 @@ npc_table:
     DECL_ENEMY_DATA 0, 0, 6, 2, 5, NO_ITEM, NO_ITEM, NO_ITEM
 
     DECL_NPC        NPC_FISHERMAN, NPC_TALKER, 128|NPC_FISHERMAN_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 10, 146, 90
-    DECL_TALK_DATA  NO_NPC, CONVERSATION_nice_day_ID, nice_day, 0, nice_day3
+    DECL_TALK_DATA  NO_NPC, CONVERSATION_nice_day_ID, nice_day, 0, nice_day3, NO_NPC
 
     DECL_NPC        NPC_WELCOME, NPC_TALKER, 128|NPC_WELCOME_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 10, 156, 133
-    DECL_TALK_DATA  NO_NPC, CONVERSATION_welcome_ID, welcome, 0, welcome3
+    DECL_TALK_DATA  NPC_TOWN_GUARD_ANGRY, CONVERSATION_welcome_ID, welcome, 0, welcome3, NO_NPC
 
     DECL_NPC        NPC_TAVERN_SIGN, NPC_TALKER, 128|NPC_SIGN_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 10, 140, 100
-    DECL_TALK_DATA  NO_NPC, 0, tavern_sign, 0, tavern_sign
+    DECL_TALK_DATA  NO_NPC, 0, tavern_sign, 0, tavern_sign, NO_NPC
 
     DECL_NPC        NPC_DRINKER1, NPC_SPECIAL, 128|NPC_DRINKER_DOWN_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 0, 105, 66
     DECL_SPECIAL_DATA 0, 0, 0, 0, 0, 0, 0, 0
@@ -142,19 +145,19 @@ npc_table:
     DECL_SPECIAL_DATA 0, 0, 0, 0, 0, 0, 0, 0
 
     DECL_NPC        NPC_BARTENDER, NPC_SHOPKEEPER, 128|NPC_BUSINESSMAN_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 0, 71, 112
-    DECL_SHOP_DATA  NO_NPC, SHOP_bartender_ID
+    DECL_SHOP_DATA  NPC_TOWN_GUARD_ANGRY, SHOP_bartender_ID
 
     DECL_NPC        NPC_DRUNK2, NPC_TALKER, 128|NPC_DRUNK_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_LEFT, 10, 170, 95
-    DECL_TALK_DATA  NO_NPC, CONVERSATION_drunk_hiccup_ID, drunk_hiccup, 0, drunk_hiccup5
+    DECL_TALK_DATA  NPC_TOWN_GUARD_ANGRY, CONVERSATION_drunk_hiccup_ID, drunk_hiccup, 0, drunk_hiccup5, NO_NPC
 
     DECL_NPC        NPC_ANNOYED_GUEST, NPC_TALKER, CHARACTER_BANDIT, NO_ITEM, ITEM_feathered_hat, DIRECTION_DOWN, 30, 192, 40
-    DECL_TALK_DATA  NO_NPC, 0, just_beat_it, 0, just_beat_it
+    DECL_TALK_DATA  NO_NPC, 0, just_beat_it, 0, just_beat_it, NPC_ROBBED_GUEST
 
     DECL_NPC        NPC_ROBBED_GUEST, NPC_ENEMY, CHARACTER_BANDIT, ITEM_steel_sword, ITEM_feathered_hat, DIRECTION_DOWN, 30, 192, 40
     DECL_ENEMY_DATA 0, 0, 6, 6, 5, NO_ITEM, ITEM_feathered_hat, ITEM_feathered_hat
 
     DECL_NPC        NPC_GUEST_QUEST, NPC_TALKER, CHARACTER_MAN, NO_ITEM, ITEM_leather_armor, DIRECTION_LEFT, 10, 59, 34
-    DECL_TALK_DATA  NO_NPC, 0, guest_quest, 0, guest_quest
+    DECL_TALK_DATA  NO_NPC, 0, guest_quest, 0, guest_quest, NO_NPC
 
     DECL_NPC        NPC_TEST_ATTACK, NPC_ENEMY, CHARACTER_MAN, ITEM_wooden_bow, ITEM_leather_armor, DIRECTION_LEFT, 50, 80, 90
     DECL_ENEMY_DATA 0, 0, 6, 10, 3, NO_ITEM, NO_ITEM, NO_ITEM

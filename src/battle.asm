@@ -328,6 +328,17 @@ _nrmd_damage_effect:
     brne _nrmd_calc_damage
     ldi r22, EFFECT_DAMAGE<<3
     std Y+NPC_EFFECT_OFFSET, r22
+_nrmd_check_replacement:
+    elpm r22, Z
+    cpi r22, NPC_TALKER
+    brne _nrmd_calc_damage
+    adiw ZL, NPC_TABLE_TALKER_REPLACEMENT_OFFSET
+    elpm r22, Z
+    sbiw ZL, NPC_TABLE_TALKER_REPLACEMENT_OFFSET
+    tst r22
+    breq _nrmd_calc_damage
+    std Y+NPC_IDX_OFFSET, r22
+    rjmp _nrmd_end
 _nrmd_calc_damage:
     mov r25, r24
     swap r25
@@ -352,9 +363,16 @@ _nrmd_strength_damage:
     lds r24, player_augmented_stats+STATS_STRENGTH_OFFSET
     asr r24
     add r25, r24
+    elpm r24, Z
+    cpi r24, NPC_ENEMY
+    breq _nrmd_enemy_defense
+    ldi r24, NPC_DEFAULT_DEFENSE
+    rjmp _nrmd_apply_defense
+_nrmd_enemy_defense:
     adiw ZL, NPC_TABLE_ENEMY_DEFENSE_OFFSET
     elpm r24, Z
     sbiw ZL, NPC_TABLE_ENEMY_DEFENSE_OFFSET
+_nrmd_apply_defense:
     sub r25, r24
     brsh _nrmd_apply_damage
     ldi r25, 1
@@ -442,9 +460,22 @@ _nrrd_next_trampoline:
 _nrrd_damage_effect:
     ldd r23, Y+NPC_EFFECT_OFFSET
     andi r23, 0x38
-    brne _nrrd_calculate_damage
+    brne _nrrd_check_replacement
     ldi r23, EFFECT_DAMAGE<<3
     std Y+NPC_EFFECT_OFFSET, r23
+_nrrd_check_replacement:
+    movw r24, ZL
+    movw ZL, XL
+    elpm r23, Z
+    adiw ZL, NPC_TABLE_TALKER_REPLACEMENT_OFFSET
+    elpm r0, Z
+    movw ZL, r24
+    cpi r23, NPC_TALKER
+    brne _nrrd_calculate_damage
+    tst r0
+    breq _nrrd_calculate_damage
+    std Y+NPC_IDX_OFFSET, r0
+    rjmp _nrrd_end
 _nrrd_calculate_damage:
     ldd r25, Z+ACTIVE_EFFECT_DATA2_OFFSET
     mov r24, r25
@@ -509,8 +540,15 @@ _nrrd_calculate_defense:
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     movw ZL, XL
+    elpm r24, Z
+    cpi r24, NPC_ENEMY
+    breq _nrrd_enemy_defense
+    ldi r24, NPC_DEFAULT_DEFENSE
+    rjmp _nrrd_apply_defense
+_nrrd_enemy_defense:
     adiw ZL, NPC_TABLE_ENEMY_DEFENSE_OFFSET
     elpm r24, Z
+_nrrd_apply_defense:
     mov ZL, r0
     mov ZH, r23
     sub r25, r24

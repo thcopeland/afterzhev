@@ -62,6 +62,7 @@ item_table:
     DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              10000,  0,  0,  0,  0,      0
     DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              60,     6,  0,  0,  0,      0
     DECL_ITEM wooden_bow,           (2<<6)|ITEM_RANGED,                 30,     0,  0,  0,  0,      (3<<4)|EFFECT_ARROW
+    DECL_ITEM guard_hat,            ITEM_WEARABLE,                      10,     0,  0, -2,  0,      2
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0
@@ -94,6 +95,8 @@ _item_str_steel_sword_name:         .db "Steel sword", 0
 _item_str_steel_sword_desc:         .db "An elegant blade.", 0
 _item_str_wooden_bow_name:          .db "Wooden bow", 0, 0
 _item_str_wooden_bow_desc:          .db "An old but sturdy wooden bow.", 0
+_item_str_guard_hat_name:           .db "Guard", 39, "s hat", 0
+_item_str_guard_hat_desc:           .db "Worn only by members of", 10, "the Town Guard, and", 10, "shameless murderers.", 0, 0
 _item_str_inventory_book_name:      .db "Book of Inventory", 0
 _item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <B> to use a potion.", 10, "Press <select> to drop.", 0
 _item_str_raw_meat_name:            .db "Raw meat", 0, 0

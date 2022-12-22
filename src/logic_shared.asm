@@ -123,15 +123,17 @@ _usn_not_corpse:
     add ZL, r0
     adc ZH, r1
     clr r1
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _usn_end
     push ZL
     push ZH
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _usn_update
     call npc_move
+_usn_update:
     call npc_update
     pop ZH
     pop ZL
+_usn_battle:
     call npc_resolve_ranged_damage
     call npc_resolve_melee_damage
 _usn_end:
@@ -164,15 +166,17 @@ _umn_not_corpse:
     add ZL, r0
     adc ZH, r1
     clr r1
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _umn_next
     push ZL
     push ZH
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _umn_update
     call npc_move
+_umn_update:
     call npc_update
     pop ZH
     pop ZL
+_umn_battle:
     call npc_resolve_ranged_damage
     call npc_resolve_melee_damage
 _umn_next:
@@ -207,12 +211,13 @@ _us_not_corpse:
     add ZL, r0
     adc ZH, r1
     clr r1
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _us_next
     push ZL
     push ZH
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _us_update
     call npc_move
+_us_update:
     call npc_update
     pop ZH
     pop ZL

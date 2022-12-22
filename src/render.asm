@@ -978,7 +978,7 @@ render_character_icon:
     add XL, r20
     adc XH, r1
     ldi r20, DISPLAY_WIDTH
-    mul r20, r21
+    mulsu r21, r20
     add XL, r0
     adc XH, r1
     clr r1
@@ -1007,7 +1007,7 @@ _rci_write_weapon_sprite:
     add XL, r20
     adc XH, r1
     ldi r20, DISPLAY_WIDTH
-    mul r20, r21
+    mulsu r21, r20
     add XL, r0
     adc XH, r1
     clr r1

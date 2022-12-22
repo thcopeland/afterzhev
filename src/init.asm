@@ -34,7 +34,8 @@ _init_zero_iter:
     sti player_effect, 0
     sti player_inventory, ITEM_inventory_book
     sti player_inventory+1, ITEM_green_hood
-    sti player_inventory+1, ITEM_leather_armor
+    sti player_inventory+2, ITEM_leather_armor
+    sti player_inventory+3, ITEM_bloody_sword
     sti player_stats, 10
     sti player_stats+1, 30
     sti player_stats+2, 10

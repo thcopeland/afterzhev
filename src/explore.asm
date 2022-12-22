@@ -51,7 +51,12 @@ explore_update_game:
     elpm r24, Z+
     elpm r25, Z+
     tst r25
-    breq _eup_end
+    brne _eup_custom
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_FALLOFF|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_ATTACK
+    sts npc_move_flags, r25
+    call update_standard
+    rjmp _eup_end
+_eup_custom:
     movw ZL, r24
     icall
 _eup_end:
@@ -1616,6 +1621,8 @@ load_npc:
     sbiw ZL, NPC_TABLE_YPOS_OFFSET+1
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
+    ldi r25, NPC_DEFAULT_HEALTH
+    std Y+NPC_HEALTH_OFFSET, r25
     ret
 _npc_load_enemy:
     elpm r25, Z+    ; initial x velocity
