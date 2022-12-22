@@ -45,24 +45,6 @@ _pdi_3_%:
     distance_between r24, r25, @0, @1
 .endm
 
-; Calculate the manhattan distance from the player to the given coordinates.
-; Only the first two given registers are changed, the distance is placed in the
-; second.
-.macro distance_between ; x1, y2, x2, y2
-    sub @0, @2
-    brsh _db_1_%
-    neg @0
-_db_1_%:
-    sub @1, @3
-    brsh _db_2_%
-    neg @1
-_db_2_%:
-    add @1, @0
-    brcc _db_3_%
-    ser @1
-_db_3_%:
-.endm
-
 ; Check whether a conversation has occurred or not. Z flag is cleared if it has.
 ;
 ; Register Usage

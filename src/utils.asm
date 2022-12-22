@@ -186,6 +186,24 @@ _fc_combine_channels_%:
     .dw 0xffe0 | (@0 & 0x1f)
 .endm
 
+; Calculate the manhattan distance from the player to the given coordinates.
+; Only the first two given registers are changed, the distance is placed in the
+; second.
+.macro distance_between ; x1, y2, x2, y2
+    sub @0, @2
+    brsh _db_1_%
+    neg @0
+_db_1_%:
+    sub @1, @3
+    brsh _db_2_%
+    neg @1
+_db_2_%:
+    add @1, @0
+    brcc _db_3_%
+    ser @1
+_db_3_%:
+.endm
+
 ; rapidly write 12 pixels to the given port
 ; clobbers r0
 .macro write_12_pixels ; port, X|Y|Z

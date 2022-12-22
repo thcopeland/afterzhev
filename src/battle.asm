@@ -725,14 +725,10 @@ _an_end:
     movw YL, XL
     ret
 
-; Try to add an NPC as far as possible from the player. This is done by
-; casting four axis-aligned rays from the player's position, ensuring that
-; the position is reachable and valid. Ideally the NPC would be outside
-; the camera view, but that's difficult to guarantee.
-;
-; Temporary
-;   0-1             player tile-aligned location
-;   2-3             store Z pointer for internal reuse
+
+; Try to add an NPC as far as possible from the camera view. This is done by
+; choosing the farthest of the two avenger places for the sector. Ideally the NPC
+; would be outside the camera view, but that's difficult to guarantee.
 ;
 ; Register Usage
 ;   r20-21, r24     calculations
@@ -754,123 +750,29 @@ _adn_npc_iter:
     rjmp _adn_end
 _adn_slot_found:
     call load_npc
-_adn_reposition:
-    lds r24, player_position_x
-    lds r25, player_position_y
-    subi r24, low(-CHARACTER_SPRITE_WIDTH/2)
-    subi r25, low(-CHARACTER_SPRITE_HEIGHT/2)
-    div12u r24, r20
-    div12u r25, r21
-    ldi r24, 12
-    ldi r25, SECTOR_WIDTH
-    mul r20, r24
-    sts subroutine_tmp, r0
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r0
-    mul r21, r24
-    sts subroutine_tmp+1, r0
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r0
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     lds ZL, current_sector
     lds ZH, current_sector+1
-    mul r21, r25
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    add ZL, r20
-    adc ZH, r1
-    sts subroutine_tmp+2, ZL
-    sts subroutine_tmp+3, ZH
-_adn_raycast_up:
-    clr r25
-    lds r20, subroutine_tmp+1
-    rjmp _adn_up_check
-_adn_up_iter:
-    sbiw ZL, SECTOR_WIDTH
-    elpm r24, Z
-    cpi r24, END_FULL_BLOCKING_IDX
-    brsh _adn_up_save
-    inc r25
-    subi r20, TILE_HEIGHT
-    cpi r25, ADD_NPC_MAX_Y_DISTANCE
-    brsh _adn_up_save
-_adn_up_check:
-    cpi r20, TILE_HEIGHT
-    brsh _adn_up_iter
-_adn_up_save:
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
-_adn_raycast_down:
-    lds ZL, subroutine_tmp+2
-    lds ZH, subroutine_tmp+3
-    clr r21
-    lds r20, subroutine_tmp+1
-    rjmp _adn_down_check
-_adn_down_iter:
-    adiw ZL, SECTOR_WIDTH
-    elpm r24, Z
-    cpi r24, END_FULL_BLOCKING_IDX
-    brlo _adn_down_save
-    inc r21
-    subi r20, low(-TILE_HEIGHT)
-    cpi r21, ADD_NPC_MAX_Y_DISTANCE
-    brsh _adn_down_save
-_adn_down_check:
-    cpi r20, (SECTOR_HEIGHT-1)*TILE_HEIGHT
-    brlo _adn_down_iter
-_adn_down_save:
-    cp r25, r21
-    brsh _adn_raycast_left
-    mov r25, r21
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
-_adn_raycast_left:
-    lds ZL, subroutine_tmp+2
-    lds ZH, subroutine_tmp+3
-    clr r21
-    lds r20, subroutine_tmp
-    rjmp _adn_left_check
-_adn_left_iter:
-    sbiw ZL, 1
-    elpm r24, Z
-    cpi r24, END_FULL_BLOCKING_IDX
-    brlo _adn_left_save
-    inc r21
-    subi r20, TILE_WIDTH
-    cpi r21, ADD_NPC_MAX_X_DISTANCE
-    brsh _adn_left_save
-_adn_left_check:
-    cpi r20, TILE_WIDTH
-    brsh _adn_left_iter
-_adn_left_save:
-    cp r25, r21
-    brlo _adn_raycast_right
-    mov r25, r21
+    subi ZL, low(-SECTOR_AVENGER_PLACES_OFFSET)
+    sbci ZH, high(-SECTOR_AVENGER_PLACES_OFFSET)
+    lds r24, camera_position_x
+    subi r24, low(-DISPLAY_WIDTH/2)
+    lds r25, camera_position_y
+    subi r25, low(-DISPLAY_HEIGHT/2)
+    elpm r20, Z+
+    elpm r21, Z+
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r20
-    lds r20, subroutine_tmp+1
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
-_adn_raycast_right:
-    lds ZL, subroutine_tmp+2
-    lds ZH, subroutine_tmp+3
-    clr r21
-    lds r20, subroutine_tmp
-    rjmp _adn_right_check
-_adn_right_iter:
-    adiw ZL, 1
-    elpm r24, Z
-    cpi r24, END_FULL_BLOCKING_IDX
-    brlo _adn_right_save
-    inc r21
-    subi r20, low(-TILE_WIDTH)
-    cpi r21, ADD_NPC_MAX_X_DISTANCE
-    brsh _adn_right_save
-_adn_right_check:
-    cpi r20, (SECTOR_WIDTH-1)*TILE_WIDTH
-    brlo _adn_right_iter
-_adn_right_save:
-    cp r25, r21
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r21
+    distance_between r20, r21, r24, r25
+    mov r0, r21
+    elpm r20, Z+
+    elpm r21, Z+
+    distance_between r24, r25, r20, r21
+    cp r0, r25
     brsh _adn_end
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r20
-    lds r20, subroutine_tmp+1
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r20
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r21
 _adn_end:
     movw YL, XL
     ret
