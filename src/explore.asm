@@ -1585,8 +1585,9 @@ _ls_end:
 ; Load the NPC into the current sector.
 ;
 ; Register Usage
-;   r24             calculations
+;   r22-r24         calculations
 ;   r25             NPC index (param)
+;   X (r26:r27)     memory lookup
 ;   Y (r28-r29)     NPC memory pointer (param, preserved)
 ;   Z (r30-r31)     NPC flash pointer (set to new NPC flash location)
 load_npc:
@@ -1619,6 +1620,30 @@ load_npc:
     cpi r24, NPC_ENEMY
     breq _npc_load_enemy
     sbiw ZL, NPC_TABLE_YPOS_OFFSET+1
+    cpi r24, NPC_TALKER
+    brne _npc_clear_unnecessary
+    ; do not load a talker if the replacement has been killed
+    adiw ZL, NPC_TABLE_TALKER_REPLACEMENT_OFFSET
+    elpm r25, Z
+    sbiw ZL, NPC_TABLE_TALKER_REPLACEMENT_OFFSET
+    dec r25
+    brmi _npc_clear_unnecessary
+    mov r24, r25
+    lsr r25
+    lsr r25
+    lsr r25
+    movw r22, XL
+    ldi XL, low(npc_presence)
+    ldi XH, high(npc_presence)
+    add XL, r25
+    adc XH, r1
+    ld r25, X
+    movw XL, r22
+    nbit r25, r24
+    brne _npc_clear_unnecessary
+    std Y+NPC_IDX_OFFSET, r1
+    ret
+_npc_clear_unnecessary:
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
     ldi r25, NPC_DEFAULT_HEALTH
