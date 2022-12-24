@@ -247,6 +247,8 @@ _rg_render_static_npc:
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     call render_effect_animation
+_rg_render_npc_health:
+    rcall render_npc_health_bar
 _rg_render_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r16
@@ -279,7 +281,7 @@ _rg_render_dynamic_npc:
     ldi YH, high(character_render)
     call render_character
     movw YL, r14
-    rjmp _rg_render_npcs_next
+    rjmp _rg_render_npc_health
 _rg_render_player:
     lds r24, player_position_x
     lds r25, player_position_y
@@ -471,6 +473,104 @@ _rg_effects_iter:
     inc r20
     cpi r20, PLAYER_EFFECT_COUNT
     brne _rg_effects_iter
+    ret
+
+; Render a health bar above an NPC.
+;
+; Register Usage
+;   r20-r25         calculations
+;   X (r26:r27)     calculations, framebuffer pointer
+;   Y (r28:r29)     enemy pointer (param)
+;   Z (r30:r31)     enemy flash pointer
+render_npc_health_bar:
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    ldd r25, Y+NPC_IDX_OFFSET
+    dec r25
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    ldi r25, NPC_DEFAULT_HEALTH
+    elpm r24, Z
+    cpi r24, NPC_ENEMY
+    brne _rnhb_load_health
+    adiw ZL, NPC_TABLE_HEALTH_OFFSET
+    elpm r25, Z
+_rnhb_load_health:
+    ldd r26, Y+NPC_HEALTH_OFFSET
+    cp r26, r25
+    brlo _rnhb_calculate_bar
+    ; force health to expected bounds. this probably should be done upon
+    ; replacement/load, but it's very convenient here
+    std Y+NPC_HEALTH_OFFSET, r25
+    rjmp _rnhb_end
+_rnhb_calculate_bar:
+    ldi r20, NPC_HEALTH_BAR_LENGTH
+    ldi r21, NPC_HEALTH_BAR_LENGTH
+    mul r21, r26
+    movw r26, r0
+    clr r1
+_rnhb_div:
+    dec r20
+    sub r26, r25
+    sbc r27, r1
+    brsh _rnhb_div
+    ldi XL, low(framebuffer)
+    ldi XH, high(framebuffer)
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    subi r22, low((NPC_HEALTH_BAR_LENGTH-CHARACTER_SPRITE_WIDTH)/2)
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    subi r23, 3
+    brlo _rnhb_end
+    lds r24, camera_position_x
+    lds r25, camera_position_y
+_rnhb_vertical_cut:
+    sub r23, r25
+    brlo _rnhb_end
+    cpi r23, DISPLAY_HEIGHT
+    brsh _rnhb_end
+    ldi r25, DISPLAY_WIDTH
+    mul r23, r25
+    add XL, r0
+    adc XH, r1
+    clr r1
+_rnhb_left_cut:
+    mov r23, r22
+    sub r23, r24
+    brsh _rnhb_right_cut
+    add r21, r23
+    brmi _rnhb_end
+    rjmp _rnhb_render
+_rnhb_right_cut:
+    subi r22, low(-NPC_HEALTH_BAR_LENGTH)
+    subi r24, low(-DISPLAY_WIDTH)
+    sub r22, r24
+    brlo _rnhb_x_offset
+    sub r20, r22
+    sbrc r20, 7
+    clr r20
+    sub r21, r22
+    brmi _rnhb_end
+_rnhb_x_offset:
+    add XL, r23
+    adc XH, r1
+_rnhb_render:
+    ldi r25, 0x06
+    tst r21
+    breq _rnhb_end
+_rnhb_iter:
+    cp r20, r21
+    brlo _rnhb_write
+    ldi r25, 0x02
+_rnhb_write:
+    st X+, r25
+    dec r21
+    brne _rnhb_iter
+_rnhb_end:
     ret
 
 ; Handle button presses.

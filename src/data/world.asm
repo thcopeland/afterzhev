@@ -9,6 +9,7 @@
 ;   a list of preplaced loose items, each item occupies four bytes: item index,
 ;       loose item index (used to track whether an item was picked up), x, y. (16 bytes)
 ;   savepoint data: savepoint index, x, y, padding (4 bytes)
+;   avenger locations: (x, y), (x, y) (4 bytes)
 ;   list of portals, each occupies five bytes
 ;       x, y, dest sector, dest x, dest y. (20 bytes)
 ;   world layer two objects (like loose items, but can't be picked up), each occupies three bytes
