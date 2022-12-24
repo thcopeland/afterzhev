@@ -644,6 +644,7 @@ _hc_end:
 ; Register Usage
 ;   r18-r25         calculations
 ;   X (r26:r27)     memory pointer 2
+;   Y (r28:r29)     memory pointer 3
 ;   Z (r30:r31)     memory pointer
 handle_main_button:
     lds r18, player_position_x
@@ -874,6 +875,14 @@ _hmb_nearby_portal:
     elpm r20, Z+
     elpm r22, Z+
     elpm r23, Z+
+_hmb_add_followers:
+    lds ZL, current_sector
+    lds ZH, current_sector+1
+    subi ZL, low(-SECTOR_FLAGS_OFFSET)
+    sbci ZH, high(-SECTOR_FLAGS_OFFSET)
+    elpm r25, Z
+    sbrc r25, log2(SECTOR_FLAG_FOLLOW_PORTAL)
+    rcall add_nearby_followers
 _hmb_exit_event:
     lds ZL, current_sector
     lds ZH, current_sector+1
@@ -912,7 +921,8 @@ _hmb_switch_sectors:
 _hmb_portal_next:
     adiw ZL, SECTOR_PORTAL_MEMSIZE-2
     dec r22
-    brne _hmb_portal_iter
+    breq _hmb_end
+    rjmp _hmb_portal_iter
 _hmb_end:
     ret
 
@@ -1441,7 +1451,7 @@ _up_end:
 ; sector.
 ;
 ; Register Usage
-;   r24, r25        player position, calculations
+;   r22-r25         calculations
 ;   Z (r30:r31)     pointer to the adjacent sector
 check_sector_bounds:
     lds r24, player_position_x
@@ -1466,16 +1476,23 @@ _csb_exit_event:
     movw ZL, r24
     icall
 _csb_check_sides:
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
     lds ZL, current_sector
     lds ZH, current_sector+1
-    subi ZL, low(-SECTOR_AJD_OFFSET)
-    sbci ZH, high(-SECTOR_AJD_OFFSET)
+    subi ZL, low(-SECTOR_FLAGS_OFFSET)
+    sbci ZH, high(-SECTOR_FLAGS_OFFSET)
+    elpm r22, Z
 _csb_check_sector_left:
     lds r24, player_position_x
     lds r25, player_position_y
     cpi r24, SECTOR_WIDTH*TILE_WIDTH
     brlo _csb_check_sector_right
-    adiw ZL, 3
+    subi ZL, low(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET-3)
+    sbci ZH, high(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET-3)
+    elpm r23, Z
+    sbrc r22, log2(SECTOR_FLAG_FOLLOW_LEFT)
+    rcall add_nearby_followers
     ldi r24, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH
     sts player_position_x, r24
     subi r24, DISPLAY_WIDTH
@@ -1484,14 +1501,22 @@ _csb_check_sector_left:
 _csb_check_sector_right:
     cpi r24, SECTOR_WIDTH*TILE_WIDTH-CHARACTER_SPRITE_WIDTH+1
     brlo _csb_check_sector_top
-    adiw ZL, 1
+    subi ZL, low(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET-1)
+    sbci ZH, high(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET-1)
+    elpm r23, Z
+    sbrc r22, log2(SECTOR_FLAG_FOLLOW_RIGHT)
+    rcall add_nearby_followers
     sts player_position_x, r1
     sts camera_position_x, r1
     rjmp _csb_switch_sector
 _csb_check_sector_top:
     cpi r25, SECTOR_HEIGHT*TILE_HEIGHT
     brlo _csb_check_sector_bottom
-    adiw ZL, 2
+    subi ZL, low(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET-2)
+    sbci ZH, high(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET-2)
+    elpm r23, Z
+    sbrc r22, log2(SECTOR_FLAG_FOLLOW_UP)
+    rcall add_nearby_followers
     ldi r24, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT
     sts player_position_y, r24
     subi r24, DISPLAY_HEIGHT-FOOTER_HEIGHT
@@ -1500,13 +1525,16 @@ _csb_check_sector_top:
 _csb_check_sector_bottom:
     cpi r25, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT+1
     brlo _csb_end
+    subi ZL, low(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET)
+    sbci ZH, high(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET)
+    elpm r23, Z
+    sbrc r22, log2(SECTOR_FLAG_FOLLOW_UP)
+    rcall add_nearby_followers
     sts player_position_y, r1
     sts camera_position_y, r1
 _csb_switch_sector:
-    call load_upgrade_if_necessary
-    elpm r24, Z
     ldi r25, SECTOR_MEMSIZE/2
-    mul r24, r25
+    mul r23, r25
     lsl r0
     rol r1
     ldi ZL, byte3(2*sector_table)
@@ -1517,6 +1545,7 @@ _csb_switch_sector:
     adc ZH, r1
     clr r1
     rcall load_sector
+    call load_upgrade_if_necessary
 _csb_end:
     ret
 
@@ -1618,13 +1647,34 @@ _ls_load_npcs_iter:
     ld r23, Z
     nbit r23, r21
     breq _ls_load_npcs_next
-_ls_following_check: ; don't add if in following list
+_ls_check_replacment:
+    mov r19, r25
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    mul r20, r24
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r24, Z
+    cpi r24, NPC_TALKER
+    brne _ls_following_check
+    adiw ZL, NPC_TABLE_TALKER_REPLACEMENT_OFFSET
+    elpm r19, Z
+    cpse r19, r1
+    rjmp _ls_following_check
+    mov r19, r25
+_ls_following_check: ; don't add if in (or replacement) following list
     ldi ZL, low(following_npcs)
     ldi ZH, high(following_npcs)
     ldi r24, FOLLOWING_NPC_COUNT
 _ls_following_iter:
     ld r23, Z+
     cp r23, r25
+    breq _ls_load_npcs_next
+    cp r23, r19
     breq _ls_load_npcs_next
     dec r24
     brne _ls_following_iter
@@ -1861,7 +1911,7 @@ _uf_end:
     ret
 
 
-; Add nearby moving NPCs as followers. Intended to be called from the exit hook.
+; Add nearby moving NPCs as followers.
 ;
 ; Register Usage
 ;   r24-r25         calculations

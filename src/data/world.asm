@@ -14,6 +14,7 @@
 ;       x, y, dest sector, dest x, dest y. (20 bytes)
 ;   world layer two objects (like loose items, but can't be picked up), each occupies three bytes
 ;       idx, x, y (24 bytes)
+;   flags (2 bytes)
 ;   update subroutine (2 bytes)
 ;   on enter subroutine (2 bytes)
 ;   on exit subroutine (2 bytes)
@@ -38,13 +39,14 @@ sector_table:
     112, 086, 014, 022, 195, 195, 099, 098, 199, 200, 200, 200, 201, 195, 099, 112, 113, 113, 113, 114, \
     073, 112, 113, 113, 113, 113, 114, 112, 113, 113, 113, 113, 113, 113, 114, 073, 073, 073, 073, 073
 .db 1, 0, 0, 0
-.db NPC_ANNOYED_GUEST, NPC_GUEST_QUEST, NPC_TEST_ATTACK, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_ANNOYED_GUEST, NPC_GUEST_QUEST, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db 128|50, LOOSE_ITEM_tavern_guest_gold, 122, 28, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
 .db 216, 72, SECTOR_TOWN_TAVERN_1, 156, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_OPEN, 192, 72, FEATURE_DOOR_OPEN, 36, 72, FEATURE_BARREL, 214, 36, FEATURE_SHUTTERS, 172, 12, FEATURE_SHUTTERS, 114, 12, FEATURE_CHAIR_UP, 59, 20
-.dw sector_town_tavern_2_update, NO_HANDLER, add_nearby_followers, sector_town_tavern_2_conversation, sector_town_tavern_2_choice
+.dw SECTOR_FLAG_FOLLOW_PORTAL
+.dw sector_town_tavern_2_update, NO_HANDLER, NO_HANDLER, sector_town_tavern_2_conversation, sector_town_tavern_2_choice
 
 ; Sector 1 "town_section_tavern_1"
 .db 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, \
@@ -69,7 +71,8 @@ sector_table:
 .db 154, 118, 86, 69
 .db 156, 60, SECTOR_TOWN_TAVERN_2, 216, 75, 60, 134, SECTOR_TOWN_ENTRANCE_2, 120, 98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_CLOSED, 156, 136, FEATURE_DOOR_OPEN, 60, 136, FEATURE_CHAIR_LEFT, 77, 52, FEATURE_CHAIR_LEFT, 77, 76, FEATURE_CHAIR_RIGHT, 91, 52, FEATURE_CHAIR_UP, 112, 84
-.dw sector_town_tavern_1_update, NO_HANDLER, add_nearby_followers, NO_HANDLER, NO_HANDLER
+.dw SECTOR_FLAG_FOLLOW_PORTAL
+.dw sector_town_tavern_1_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 2 "town_section_forest_path_1"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, \
@@ -94,6 +97,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BLOOD_BONE, 182, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 3 "town_section_forest_path_2"
@@ -119,6 +123,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 4 "town_section_den_2"
@@ -144,6 +149,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 144, 60, SECTOR_TOWN_DEN, 132, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BARREL, 48, 96, FEATURE_BARREL, 51, 102, FEATURE_SHUTTERS, 72, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 5 "town_section_1"
@@ -169,7 +175,8 @@ sector_table:
 .db 224, 141, 146, 33
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BUSH, 132, 48, FEATURE_BUSH, 156, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw NO_HANDLER, NO_HANDLER, add_nearby_followers, NO_HANDLER, NO_HANDLER
+.dw SECTOR_FLAG_FOLLOW_RIGHT
+.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 6 "town_section_entrance_2"
 .db 039, 039, 039, 039, 056, 046, 045, 045, 057, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, \
@@ -194,6 +201,7 @@ sector_table:
 .db 225, 91, 79, 89
 .db 120, 96, SECTOR_TOWN_TAVERN_1, 60, 132, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 136, 94, FEATURE_WINDOW, 174, 94, FEATURE_SHUTTERS, 156, 74, FEATURE_SHUTTERS, 39, 131, FEATURE_WINDOW, 20, 112, 0, 0, 0
+.dw SECTOR_FLAG_FOLLOW_RIGHT|SECTOR_FLAG_FOLLOW_LEFT|SECTOR_FLAG_FOLLOW_PORTAL
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 7 "town_section_2"
@@ -219,6 +227,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 64, 118, FEATURE_SHUTTERS, 64, 100, FEATURE_SHUTTERS, 44, 100, FEATURE_SHUTTERS, 124, 66, FEATURE_SHUTTERS, 140, 66, FEATURE_SHUTTERS, 160, 90
+.dw SECTOR_FLAG_FOLLOW_RIGHT|SECTOR_FLAG_FOLLOW_LEFT
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 8 "town_section_fields"
@@ -244,6 +253,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 9 "town_section_forest_path_3"
@@ -269,6 +279,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_CAMPFIRE, 66, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 10 "town_section_den"
@@ -294,6 +305,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 132, 24, SECTOR_TOWN_DEN_2, 144, 63, 174, 88, SECTOR_TOWN_FOREST_PATH_5, 156, 74, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_OPEN, 174, 88, FEATURE_DOOR_CLOSED, 50, 124, FEATURE_CHAIR_LEFT, 65, 54, FEATURE_CHAIR_LEFT, 65, 70, FEATURE_CHAIR_UP, 48, 98, FEATURE_ARMCHAIR_LEFT, 70, 86
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 11 "town_section_wolves"
@@ -319,7 +331,8 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BONE, 200, 142, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw sector_town_wolves_update, NO_HANDLER, add_nearby_followers, NO_HANDLER, NO_HANDLER
+.dw SECTOR_FLAG_FOLLOW_ALL
+.dw sector_town_wolves_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 12 "town_section_entrance_1"
 .db 039, 039, 039, 039, 039, 039, 039, 041, 180, 179, 189, 172, 167, 171, 189, 189, 180, 180, 038, 039, \
@@ -344,6 +357,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_INVISIBLE, 184, 127, FEATURE_INVISIBLE, 82, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw SECTOR_FLAG_FOLLOW_UP|SECTOR_FLAG_FOLLOW_LEFT
 .dw sector_town_entrance_1_update, NO_HANDLER, NO_HANDLER, sector_town_entrance_1_conversation, sector_town_entrance_1_choice
 
 ; Sector 13 "town_section_forest_path_4"
@@ -369,6 +383,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 14 "town_section_forest_path_5"
@@ -394,6 +409,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 156, 72, SECTOR_TOWN_DEN, 174, 86, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_SHUTTERS, 132, 70, FEATURE_SHUTTERS, 156, 55, FEATURE_SHUTTERS, 100, 65, FEATURE_SHUTTERS, 80, 65, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 15 "start_section_2"
@@ -419,6 +435,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw sector_start_2_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 16 "start_section_fight"
@@ -444,6 +461,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_CAMPFIRE, 94, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw SECTOR_FLAG_FOLLOW_RIGHT
 .dw sector_start_fight_update, clear_sector_data, NO_HANDLER, NO_HANDLER, sector_start_fight_choice
 
 ; Sector 17 "start_section_post_fight"
@@ -469,7 +487,8 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw sector_start_post_fight_update, NO_HANDLER, add_nearby_followers, NO_HANDLER, NO_HANDLER
+.dw SECTOR_FLAG_FOLLOW_UP|SECTOR_FLAG_FOLLOW_LEFT
+.dw sector_start_post_fight_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 18 "start_section_pretown_1"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 041, 189, 172, 173, 171, 179, 038, 039, 039, 039, \
@@ -494,6 +513,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw sector_start_pretown_1_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 19 "start_section_1"
@@ -519,6 +539,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw sector_start_1_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 20 "start_section_pretown_2"
@@ -544,6 +565,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 21 "deep_forest_section_4"
@@ -569,6 +591,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 22 "deep_forest_section_5"
@@ -594,6 +617,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 23 "start_section_hidden_1"
@@ -619,6 +643,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BONE, 184, 146, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 24 "start_section_hidden_2"
@@ -644,6 +669,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 25 "road_section_1"
@@ -669,6 +695,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 26 "deep_forest_section_2"
@@ -694,6 +721,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 27 "deep_forest_section_3"
@@ -719,6 +747,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 28 "city_robbers_den_3"
@@ -744,6 +773,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 96, 72, SECTOR_CITY_ROBBERS_DEN_2, 108, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_CHAIR_DOWN, 106, 96, FEATURE_CHAIR_RIGHT, 100, 102, FEATURE_CHAIR_LEFT, 115, 101, FEATURE_CHAIR_UP, 108, 108, FEATURE_STOOL, 132, 84, FEATURE_STOOL, 148, 120
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 29 "road_section_2"
@@ -769,6 +799,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_CAMPFIRE, 163, 112, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 30 "deep_forest_section_1"
@@ -794,6 +825,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 31 "bridge_section_hidden"
@@ -819,6 +851,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 48, 60, SECTOR_RIVER_HIDDEN_HOUSE, 124, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 48, 49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 32 "river_section_hidden_house"
@@ -844,6 +877,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 124, 110, SECTOR_BRIDGE_HIDDEN, 48, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_OPEN, 124, 112, FEATURE_ARMCHAIR_RIGHT, 74, 100, FEATURE_ARMCHAIR_LEFT, 96, 100, FEATURE_CHAIR_UP, 138, 84, FEATURE_WINDOW, 76, 48, FEATURE_WINDOW, 140, 48
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 33 "city_robbers_den_2"
@@ -869,6 +903,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 132, 48, SECTOR_CITY_ROBBERS_DEN, 132, 39, 108, 48, SECTOR_CITY_ROBBERS_DEN_3, 96, 75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_STOOL, 108, 108, FEATURE_BARREL, 110, 124, FEATURE_BARREL, 117, 124, FEATURE_BARREL, 125, 124, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 34 "road_section_3"
@@ -894,6 +929,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 35 "road_section_4"
@@ -919,6 +955,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 36 "bridge_section"
@@ -944,6 +981,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 37 "road_section_5"
@@ -969,6 +1007,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 38 "mine_exit_house"
@@ -994,6 +1033,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 120, 48, SECTOR_UNDERGROUND_4, 174, 17, 120, 84, SECTOR_ROAD_8, 132, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_OPEN, 120, 88, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 39 "city_fields_2"
@@ -1019,6 +1059,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 40 "city_robbers_den"
@@ -1044,6 +1085,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 120, 108, SECTOR_CITY_2, 120, 98, 132, 36, SECTOR_CITY_ROBBERS_DEN_2, 132, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_OPEN, 120, 110, FEATURE_CHAIR_UP, 97, 108, FEATURE_CHAIR_LEFT, 113, 90, FEATURE_CHAIR_LEFT, 114, 56, FEATURE_CHAIR_LEFT, 113, 64, FEATURE_SHUTTERS, 100, 36
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 41 "final_section_8"
@@ -1069,6 +1111,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 42 "final_castle_2"
@@ -1094,6 +1137,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 48, 48, SECTOR_FINAL_8, 72, 40, 180, 48, SECTOR_FINAL_8, 156, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 43 "final_battle"
@@ -1119,6 +1163,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 44 "mine_section_1"
@@ -1144,6 +1189,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 45 "bridge_section_2"
@@ -1169,6 +1215,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 46 "road_section_6"
@@ -1194,6 +1241,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 47 "road_section_7"
@@ -1219,6 +1267,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 48 "road_section_8"
@@ -1244,6 +1293,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 132, 50, SECTOR_MINE_EXIT_HOUSE, 120, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 49 "city_shop_1"
@@ -1269,6 +1319,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 120, 108, SECTOR_CITY_1, 96, 74, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_OPEN, 120, 110, FEATURE_CHAIR_DOWN, 96, 52, FEATURE_CHAIR_UP, 96, 74, FEATURE_CHAIR_UP, 150, 75, FEATURE_ARMCHAIR_RIGHT, 190, 90, FEATURE_WINDOW, 148, 36
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 50 "city_fields_1"
@@ -1294,6 +1345,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 51 "final_section_2"
@@ -1319,6 +1371,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 52 "final_section_6"
@@ -1344,6 +1397,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 168, 96, SECTOR_FINAL_CASTLE, 180, 108, 60, 96, SECTOR_FINAL_CASTLE, 48, 108, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 53 "final_castle"
@@ -1369,6 +1423,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 180, 108, SECTOR_FINAL_6, 168, 98, 48, 108, SECTOR_FINAL_6, 60, 98, 96, 48, SECTOR_FINAL_BATTLE, 84, 132, 132, 48, SECTOR_FINAL_BATTLE, 132, 132
 .db FEATURE_DOOR_OPEN, 180, 112, FEATURE_DOOR_OPEN, 48, 112, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 54 "mine_entrance_house"
@@ -1394,6 +1449,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 140, 108, SECTOR_MINE_2, 120, 110, 60, 60, SECTOR_UNDERGROUND_1, 44, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_OPEN, 140, 112, FEATURE_SHUTTERS, 112, 60, FEATURE_CHAIR_DOWN, 54, 88, FEATURE_CHAIR_DOWN, 68, 84, FEATURE_CHAIR_UP, 126, 70, FEATURE_CHAIR_UP, 140, 68
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 55 "mine_section_2"
@@ -1419,6 +1475,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 120, 108, SECTOR_MINE_ENTRANCE_HOUSE, 140, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_SHUTTERS, 90, 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 56 "mine_section_3"
@@ -1444,6 +1501,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 57 "skull_cult_section_1"
@@ -1469,6 +1527,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 58 "skull_cult_section_2"
@@ -1494,6 +1553,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 59 "skull_cult_section_4"
@@ -1519,6 +1579,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BLOOD_BONE, 164, 72, FEATURE_BLOOD_BONE, 184, 72, FEATURE_BLOOD_BONE, 164, 108, FEATURE_BLOOD_BONE, 184, 108, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 60 "road_section_9"
@@ -1544,6 +1605,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 61 "city_section_1"
@@ -1569,6 +1631,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 96, 72, SECTOR_CITY_SHOP_1, 120, 108, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 112, 70, FEATURE_SHUTTERS, 102, 31, FEATURE_SHUTTERS, 112, 49, FEATURE_SHUTTERS, 92, 49, FEATURE_SHUTTERS, 93, 145, FEATURE_BUSH, 120, 8
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 62 "city_section_2"
@@ -1594,6 +1657,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 120, 96, SECTOR_CITY_ROBBERS_DEN, 120, 108, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_SHUTTERS, 136, 94, FEATURE_SHUTTERS, 136, 78, FEATURE_SHUTTERS, 115, 77, FEATURE_BUSH, 196, 138, FEATURE_BUSH, 36, 100, FEATURE_WINDOW, 18, 85
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 63 "final_section_1"
@@ -1619,6 +1683,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 64 "final_section_3"
@@ -1644,6 +1709,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 65 "final_section_4"
@@ -1669,6 +1735,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 66 "final_section_7"
@@ -1694,6 +1761,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 67 "underground_1"
@@ -1719,6 +1787,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 44, 12, SECTOR_MINE_ENTRANCE_HOUSE, 60, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_LADDER, 44, 14, FEATURE_BARREL, 142, 90, FEATURE_BARREL, 150, 90, FEATURE_BARREL, 159, 91, FEATURE_BARREL, 177, 90, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 68 "underground_2"
@@ -1744,6 +1813,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BARREL, 186, 76, FEATURE_BARREL, 182, 80, FEATURE_BARREL, 184, 92, FEATURE_BARREL, 182, 104, FEATURE_BARREL, 197, 91, FEATURE_STOOL, 170, 84
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 69 "underground_4"
@@ -1769,6 +1839,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 174, 14, SECTOR_MINE_EXIT_HOUSE, 120, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_LADDER, 174, 14, FEATURE_BARREL, 150, 20, FEATURE_BARREL, 157, 21, FEATURE_BARREL, 153, 25, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 70 "skull_cult_section_3"
@@ -1794,6 +1865,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BLOOD_BONE, 114, 122, FEATURE_BLOOD_BONE, 148, 72, FEATURE_BLOOD_BONE, 63, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 71 "city_house_3"
@@ -1819,6 +1891,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 132, 48, SECTOR_CITY_HOUSE_2, 132, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_CHAIR_LEFT, 194, 70, FEATURE_CHAIR_LEFT, 195, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 72 "city_section_3"
@@ -1844,6 +1917,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 168, 96, SECTOR_CITY_HOUSE_2, 96, 144, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 162, 73, FEATURE_WINDOW, 198, 73, FEATURE_BUSH, 58, 40, FEATURE_BUSH, 86, 41, FEATURE_SHUTTERS, 130, 109, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 73 "city_section_4"
@@ -1869,6 +1943,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 108, 84, SECTOR_CITY_BANK_1, 96, 96, 168, 96, SECTOR_CITY_BANK_1, 176, 144, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 82, 66, FEATURE_WINDOW, 102, 66, FEATURE_WINDOW, 122, 66, FEATURE_WINDOW, 152, 78, FEATURE_WINDOW, 172, 78, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 74 "underground_3"
@@ -1894,6 +1969,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_CHAIR_UP, 114, 98, FEATURE_CHAIR_UP, 124, 100, FEATURE_CHAIR_UP, 130, 104, FEATURE_CHAIR_LEFT, 100, 100, FEATURE_CHAIR_DOWN, 113, 112, FEATURE_BARREL, 138, 66
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 75 "city_house_2"
@@ -1919,6 +1995,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 96, 148, SECTOR_CITY_3, 168, 98, 132, 36, SECTOR_CITY_HOUSE_3, 132, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_DOOR_OPEN, 96, 148, FEATURE_DOOR_CLOSED, 132, 148, FEATURE_CHAIR_LEFT, 149, 63, FEATURE_CHAIR_UP, 172, 42, FEATURE_CHAIR_RIGHT, 67, 60, FEATURE_CHAIR_UP, 84, 84
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 76 "city_section_island"
@@ -1944,6 +2021,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 77 "city_bank_1"
@@ -1969,6 +2047,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 96, 96, SECTOR_CITY_4, 108, 86, 174, 144, SECTOR_CITY_4, 168, 98, 168, 36, SECTOR_CITY_BANK_4, 168, 39, 84, 36, SECTOR_CITY_BANK_2, 80, 27
 .db FEATURE_DOOR_OPEN, 96, 100, FEATURE_DOOR_OPEN, 176, 148, FEATURE_CHAIR_DOWN, 174, 49, FEATURE_CHAIR_DOWN, 66, 49, FEATURE_BARREL, 194, 44, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 78 "city_bank_2"
@@ -1994,6 +2073,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 80, 24, SECTOR_CITY_BANK_1, 84, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_LADDER, 80, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 79 "city_bank_4"
@@ -2019,6 +2099,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 168, 36, SECTOR_CITY_BANK_1, 168, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_CHAIR_RIGHT, 160, 100, FEATURE_CHAIR_RIGHT, 161, 110, FEATURE_CHAIR_DOWN, 172, 96, FEATURE_BARREL, 195, 100, FEATURE_CHAIR_LEFT, 192, 106, FEATURE_CHAIR_UP, 178, 117
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 80 "city_bank_3"
@@ -2044,4 +2125,5 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.dw 0
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER

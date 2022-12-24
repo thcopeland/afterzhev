@@ -155,6 +155,3 @@ npc_table:
 
     DECL_NPC        NPC_GUEST_QUEST, NPC_TALKER, CHARACTER_MAN, NO_ITEM, ITEM_leather_armor, DIRECTION_LEFT, 10, 59, 34
     DECL_TALK_DATA  NO_NPC, 0, guest_quest, 0, guest_quest, NO_NPC
-
-    DECL_NPC        NPC_TEST_ATTACK, NPC_ENEMY, CHARACTER_MAN, ITEM_wooden_bow, ITEM_leather_armor, DIRECTION_LEFT, 50, 80, 90
-    DECL_ENEMY_DATA 0, 0, 6, 10, 3, NO_ITEM, NO_ITEM, NO_ITEM
