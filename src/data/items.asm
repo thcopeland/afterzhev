@@ -63,6 +63,28 @@ item_table:
     DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              60,     6,  0,  0,  0,      0
     DECL_ITEM wooden_bow,           (2<<6)|ITEM_RANGED,                 30,     0,  0,  0,  0,      (3<<4)|EFFECT_ARROW
     DECL_ITEM guard_hat,            ITEM_WEARABLE,                      10,     0,  0, -2,  0,      2
+    DECL_ITEM beard,                ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM club,                 ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM glass_dagger,         ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM glass_shard,          ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM great_bow,            ITEM_RANGED,                        10,     0,  0,  0,  0,      0
+    DECL_ITEM green_cloak,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM purple_cloak,         ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM purple_hood,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM hammer,               ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM iron_armor,           ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM iron_helmet,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM iron_staff,           ITEM_RANGED,                        10,     0,  0,  0,  0,      0
+    DECL_ITEM wood_staff,           ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM ivory_wand,           ITEM_RANGED,                        10,     0,  0,  0,  0,      0
+    DECL_ITEM mithril_armor,        ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM mithril_cap,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM mithril_dagger,       ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM mithril_spike,        ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM spear,                ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM wooden_shield,        ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0
@@ -90,7 +112,9 @@ _item_str_green_hood_desc:          .db "Bestows upon the wearer", 10, "an indef
 _item_str_leather_armor_name:       .db "Leather armor", 0
 _item_str_leather_armor_desc:       .db "Scarred and worn, it has clearly seen much use.", 0
 _item_str_invisible_weapon_name:
-_item_str_invisible_weapon_desc:    .db 0, 0
+_item_str_invisible_weapon_desc:
+_item_str_beard_name:
+_item_str_beard_desc:				.dw 0
 _item_str_steel_sword_name:         .db "Steel sword", 0
 _item_str_steel_sword_desc:         .db "An elegant blade.", 0
 _item_str_wooden_bow_name:          .db "Wooden bow", 0, 0
@@ -113,3 +137,45 @@ _item_str_whiskey_name:             .db "Whiskey", 0
 _item_str_whiskey_desc:             .db "Burns the esophageal", 10, "tissues on the way down.", 0
 _item_str_journal_name:             .db "Missing journal", 0
 _item_str_journal_desc:             .db "A mysterious leather-bound", 10, "journal, tightly clasped shut.", 0
+_item_str_club_name:				.db "Club", 0, 0
+_item_str_club_desc:				.db "A clumsy, random weapon", 10, "for an uncivillized age.", 0, 0
+_item_str_glass_dagger_name:		.db "Glass dagger", 0, 0
+_item_str_glass_dagger_desc:		.db "Fashioned from fabled", 10, "green glass, this blade", 10, "has a bloody history.", 0
+_item_str_glass_shard_name:			.db "Glass shard", 0
+_item_str_glass_shard_desc:			.db "A fragment of rare green glass.", 0
+_item_str_great_bow_name:			.db "Great bow", 0
+_item_str_great_bow_desc:			.db "A mighty bow, once used torepel the northern", 10, "serpents.", 0, 0
+_item_str_green_cloak_name:			.db "Woodsman", 39, "s cloak", 0, 0
+_item_str_green_cloak_desc:			.db "Useful on a cold day.", 0
+_item_str_purple_cloak_name:		.db "Noble cloak", 0
+_item_str_purple_cloak_desc:		.db "A beautiful purple", 10, "garment.", 0
+_item_str_purple_hood_name:			.db "Purple hood", 0
+_item_str_purple_hood_desc:			.db "Elegant and expensive.", 0, 0
+_item_str_hammer_name:				.db "Hammer", 0, 0
+_item_str_hammer_desc:				.db "Better suited to metal-", 10, "working than fighting.", 0, 0
+_item_str_iron_armor_name:			.db "Iron armor", 0, 0
+_item_str_iron_armor_desc:			.db "Traditionally worn by theNorthern Legions during", 10, "the dragon wars.", 0
+_item_str_iron_breastplate_name:	.db "Iron breastplate", 0, 0
+_item_str_iron_breastplate_desc:	.db "Protects against nearly", 10, "everything, except for", 10, "dragonfire.", 0, 0
+_item_str_iron_helmet_name:			.db "Iron helmet", 0
+_item_str_iron_helmet_desc:			.db "A heavy iron helmet.", 0, 0
+_item_str_iron_staff_name:			.db "Iron staff", 0, 0
+_item_str_iron_staff_desc:			.db "Traditionally wielded by", 10, "dark wizards, but could", 10, "be put to nobler uses.", 0
+_item_str_wood_staff_name:			.db "Wooden staff", 0, 0
+_item_str_wood_staff_desc:			.db "Unassuming, but packs a", 10, "punch.", 0, 0
+_item_str_ivory_wand_name:			.db "Ivory wand", 0, 0
+_item_str_ivory_wand_desc:			.db "Mostly used for various", 10, "ceremonial purposes.", 0, 0
+_item_str_mithril_armor_name:		.db "Mithril armor", 0
+_item_str_mithril_armor_desc:		.db "An unparalleled suit of", 10, "armor. Many noble kings", 10, "have murdered for less.", 0
+_item_str_mithril_breastplate_name:	.db "Mithril breastplate", 0
+_item_str_mithril_breastplate_desc:	.db "The posessor may laugh atarrows.", 0, 0
+_item_str_mithril_cap_name:			.db "Mithril cap", 0
+_item_str_mithril_cap_desc:			.db "No better helm exists,", 10, "yet it is the least part ofthe full suit.", 0, 0
+_item_str_mithril_dagger_name:		.db "Mithril dagger", 0, 0
+_item_str_mithril_dagger_desc:		.db "Wonderfully forged, yet little better than any", 10, "other dagger.", 0, 0
+_item_str_mithril_spike_name:		.db "Mithril spike", 0
+_item_str_mithril_spike_desc:		.db "A poor weapon, but worth a princely sum.", 0, 0
+_item_str_spear_name:				.db "Spear", 0
+_item_str_spear_desc:				.db "When wielded with skill, adevastating weapon.", 0
+_item_str_wooden_shield_name:		.db "Wooden shield", 0
+_item_str_wooden_shield_desc:		.db "Not particularly elegantbut useful in a pinch.", 0, 0
