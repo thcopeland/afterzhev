@@ -868,8 +868,8 @@ _rc_render_weapon_below:
     movw r24, r16
     elpm r20, Z+
     elpm r21, Z+
-    subi r20, 14
-    subi r21, 2
+    subi r20, 16
+    subi r21, 4
     sub r24, r20
     add r25, r21
     elpm r22, Z+
@@ -901,8 +901,8 @@ _rc_write_armor_sprite:
     movw r24, r16
     elpm r20, Z+
     elpm r21, Z+
-    subi r20, 2
-    subi r21, 2
+    subi r20, 4
+    subi r21, 4
     add r24, r20
     add r25, r21
     elpm r22, Z+
@@ -928,8 +928,8 @@ _rc_render_weapon_above:
     movw r24, r16
     elpm r20, Z+
     elpm r21, Z+
-    subi r20, 2
-    subi r21, 2
+    subi r20, 4
+    subi r21, 4
     add r24, r20
     add r25, r21
     elpm r22, Z+
@@ -973,8 +973,8 @@ render_character_icon:
     movw r18, XL
     elpm r20, Z+
     elpm r21, Z+
-    subi r20, 2
-    subi r21, 2
+    subi r20, 4
+    subi r21, 4
     add XL, r20
     adc XH, r1
     ldi r20, DISPLAY_WIDTH
@@ -1002,8 +1002,8 @@ _rci_write_weapon_sprite:
     call determine_weapon_sprite
     elpm r20, Z+
     elpm r21, Z+
-    subi r20, 2
-    subi r21, 2
+    subi r20, 4
+    subi r21, 4
     add XL, r20
     adc XH, r1
     ldi r20, DISPLAY_WIDTH

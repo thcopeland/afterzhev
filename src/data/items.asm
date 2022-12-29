@@ -69,7 +69,7 @@ item_table:
     DECL_ITEM glass_shard,          ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
     DECL_ITEM great_bow,            ITEM_RANGED,                        10,     0,  0,  0,  0,      0
     DECL_ITEM green_cloak,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM purple_cloak,         ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
+    DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
     DECL_ITEM purple_hood,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
     DECL_ITEM hammer,               ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
     DECL_ITEM iron_armor,           ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
@@ -145,10 +145,10 @@ _item_str_glass_shard_name:			.db "Glass shard", 0
 _item_str_glass_shard_desc:			.db "A fragment of rare green glass.", 0
 _item_str_great_bow_name:			.db "Great bow", 0
 _item_str_great_bow_desc:			.db "A mighty bow, once used torepel the northern", 10, "serpents.", 0, 0
+_item_str_green_cloak_small_name:
 _item_str_green_cloak_name:			.db "Woodsman", 39, "s cloak", 0, 0
+_item_str_green_cloak_small_desc:
 _item_str_green_cloak_desc:			.db "Useful on a cold day.", 0
-_item_str_purple_cloak_name:		.db "Noble cloak", 0
-_item_str_purple_cloak_desc:		.db "A beautiful purple", 10, "garment.", 0
 _item_str_purple_hood_name:			.db "Purple hood", 0
 _item_str_purple_hood_desc:			.db "Elegant and expensive.", 0, 0
 _item_str_hammer_name:				.db "Hammer", 0, 0

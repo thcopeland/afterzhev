@@ -40,656 +40,656 @@
 .endm
 
 animated_item_table:
-    item_animation_entry 2, 9, tree_branch_sprite_0
-    item_animation_entry 2, 6, tree_branch_sprite_1
-    item_animation_entry 3, 5, tree_branch_sprite_2
-    item_animation_entry 2, 6, tree_branch_sprite_1
-    item_animation_entry 6, 9, tree_branch_sprite_3
-    item_animation_entry 6, 8, tree_branch_sprite_4
-    item_animation_entry 8, 7, tree_branch_sprite_5
-    item_animation_entry 7, 8, tree_branch_sprite_4
-    item_animation_entry 4, 7, tree_branch_sprite_6
-    item_animation_entry 8, 7, tree_branch_sprite_5
-    item_animation_entry 2, 5, tree_branch_sprite_7
-    item_animation_entry 2, 7, tree_branch_sprite_8
-    item_animation_entry 2, 9, tree_branch_sprite_9
-    item_animation_entry 2, 9, tree_branch_sprite_10
-    item_animation_entry 8, 5, tree_branch_sprite_11
-    item_animation_entry 7, 7, tree_branch_sprite_12
-    item_animation_entry 7, 8, tree_branch_sprite_13
-    item_animation_entry 6, 8, tree_branch_sprite_4
+item_animation_entry 4, 11, tree_branch_sprite_0
+    item_animation_entry 4, 8, tree_branch_sprite_1
+    item_animation_entry 5, 7, tree_branch_sprite_2
+    item_animation_entry 4, 8, tree_branch_sprite_1
+    item_animation_entry 8, 11, tree_branch_sprite_3
+    item_animation_entry 8, 10, tree_branch_sprite_4
+    item_animation_entry 10, 9, tree_branch_sprite_5
+    item_animation_entry 9, 10, tree_branch_sprite_4
+    item_animation_entry 6, 9, tree_branch_sprite_6
+    item_animation_entry 10, 9, tree_branch_sprite_5
+    item_animation_entry 4, 7, tree_branch_sprite_7
+    item_animation_entry 4, 9, tree_branch_sprite_8
+    item_animation_entry 4, 11, tree_branch_sprite_9
+    item_animation_entry 4, 11, tree_branch_sprite_10
+    item_animation_entry 10, 7, tree_branch_sprite_11
+    item_animation_entry 9, 9, tree_branch_sprite_12
+    item_animation_entry 9, 10, tree_branch_sprite_13
+    item_animation_entry 8, 10, tree_branch_sprite_4
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 2, 2, feathered_hat_sprite_0
-    item_animation_entry 2, 2, feathered_hat_sprite_1
-    item_animation_entry 2, 2, feathered_hat_sprite_2
-    item_animation_entry 2, 2, feathered_hat_sprite_2
-    item_animation_entry 4, 2, feathered_hat_sprite_3
-    item_animation_entry 5, 2, feathered_hat_sprite_4
-    item_animation_entry 5, 2, feathered_hat_sprite_5
-    item_animation_entry 5, 2, feathered_hat_sprite_4
-    item_animation_entry 3, 2, feathered_hat_sprite_6
-    item_animation_entry 3, 2, feathered_hat_sprite_7
-    item_animation_entry 3, 2, feathered_hat_sprite_8
-    item_animation_entry 3, 2, feathered_hat_sprite_8
-    item_animation_entry 4, 2, feathered_hat_sprite_9
-    item_animation_entry 3, 2, feathered_hat_sprite_9
-    item_animation_entry 3, 2, feathered_hat_sprite_9
-    item_animation_entry 3, 2, feathered_hat_sprite_9
-    item_animation_entry 2, 2, feathered_hat_sprite_2
-    item_animation_entry 5, 2, feathered_hat_sprite_10
-    item_animation_entry 3, 2, feathered_hat_sprite_8
-    item_animation_entry 3, 2, feathered_hat_sprite_9
+    item_animation_entry 4, 4, feathered_hat_sprite_0
+    item_animation_entry 4, 4, feathered_hat_sprite_1
+    item_animation_entry 4, 4, feathered_hat_sprite_2
+    item_animation_entry 4, 4, feathered_hat_sprite_2
+    item_animation_entry 6, 4, feathered_hat_sprite_3
+    item_animation_entry 7, 4, feathered_hat_sprite_4
+    item_animation_entry 7, 4, feathered_hat_sprite_5
+    item_animation_entry 7, 4, feathered_hat_sprite_4
+    item_animation_entry 5, 4, feathered_hat_sprite_6
+    item_animation_entry 5, 4, feathered_hat_sprite_7
+    item_animation_entry 5, 4, feathered_hat_sprite_8
+    item_animation_entry 5, 4, feathered_hat_sprite_8
+    item_animation_entry 6, 4, feathered_hat_sprite_9
+    item_animation_entry 5, 4, feathered_hat_sprite_9
+    item_animation_entry 5, 4, feathered_hat_sprite_9
+    item_animation_entry 5, 4, feathered_hat_sprite_9
+    item_animation_entry 4, 4, feathered_hat_sprite_2
+    item_animation_entry 7, 4, feathered_hat_sprite_10
+    item_animation_entry 5, 4, feathered_hat_sprite_8
+    item_animation_entry 5, 4, feathered_hat_sprite_9
 
-    item_animation_entry 4, 9, bloody_sword_sprite_0
-    item_animation_entry 4, 9, bloody_sword_sprite_1
-    item_animation_entry 3, 8, bloody_sword_sprite_2
-    item_animation_entry 5, 9, bloody_sword_sprite_1
-    item_animation_entry 6, 9, bloody_sword_sprite_0
-    item_animation_entry 9, 9, bloody_sword_sprite_1
-    item_animation_entry 8, 7, bloody_sword_sprite_2
-    item_animation_entry 9, 9, bloody_sword_sprite_1
-    item_animation_entry 4, 7, bloody_sword_sprite_2
-    item_animation_entry 8, 7, bloody_sword_sprite_2
-    item_animation_entry 4, 4, bloody_sword_sprite_3
-    item_animation_entry 4, 5, bloody_sword_sprite_4
-    item_animation_entry 5, 9, bloody_sword_sprite_5
-    item_animation_entry 4, 9, bloody_sword_sprite_5
-    item_animation_entry 8, 3, bloody_sword_sprite_3
-    item_animation_entry 8, 5, bloody_sword_sprite_4
-    item_animation_entry 9, 9, bloody_sword_sprite_5
-    item_animation_entry 8, 10, bloody_sword_sprite_5
+    item_animation_entry 6, 11, bloody_sword_sprite_0
+    item_animation_entry 6, 11, bloody_sword_sprite_1
+    item_animation_entry 5, 10, bloody_sword_sprite_2
+    item_animation_entry 7, 11, bloody_sword_sprite_1
+    item_animation_entry 8, 11, bloody_sword_sprite_0
+    item_animation_entry 11, 11, bloody_sword_sprite_1
+    item_animation_entry 10, 9, bloody_sword_sprite_2
+    item_animation_entry 11, 11, bloody_sword_sprite_1
+    item_animation_entry 6, 9, bloody_sword_sprite_2
+    item_animation_entry 10, 9, bloody_sword_sprite_2
+    item_animation_entry 6, 6, bloody_sword_sprite_3
+    item_animation_entry 6, 7, bloody_sword_sprite_4
+    item_animation_entry 7, 11, bloody_sword_sprite_5
+    item_animation_entry 6, 11, bloody_sword_sprite_5
+    item_animation_entry 10, 5, bloody_sword_sprite_3
+    item_animation_entry 10, 7, bloody_sword_sprite_4
+    item_animation_entry 11, 11, bloody_sword_sprite_5
+    item_animation_entry 10, 12, bloody_sword_sprite_5
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 3, 3, green_hood_sprite_0
-    item_animation_entry 3, 2, green_hood_sprite_0
-    item_animation_entry 3, 2, green_hood_sprite_0
-    item_animation_entry 3, 2, green_hood_sprite_0
-    item_animation_entry 5, 2, green_hood_sprite_1
-    item_animation_entry 6, 2, green_hood_sprite_1
-    item_animation_entry 6, 2, green_hood_sprite_1
-    item_animation_entry 6, 2, green_hood_sprite_1
-    item_animation_entry 4, 3, green_hood_sprite_2
-    item_animation_entry 4, 2, green_hood_sprite_2
-    item_animation_entry 4, 2, green_hood_sprite_2
-    item_animation_entry 4, 2, green_hood_sprite_2
-    item_animation_entry 4, 2, green_hood_sprite_3
-    item_animation_entry 3, 2, green_hood_sprite_3
-    item_animation_entry 3, 2, green_hood_sprite_3
-    item_animation_entry 3, 2, green_hood_sprite_3
-    item_animation_entry 3, 2, green_hood_sprite_0
-    item_animation_entry 6, 2, green_hood_sprite_1
-    item_animation_entry 4, 2, green_hood_sprite_2
-    item_animation_entry 3, 2, green_hood_sprite_3
+    item_animation_entry 5, 5, green_hood_sprite_0
+    item_animation_entry 5, 4, green_hood_sprite_0
+    item_animation_entry 5, 4, green_hood_sprite_0
+    item_animation_entry 5, 4, green_hood_sprite_0
+    item_animation_entry 7, 4, green_hood_sprite_1
+    item_animation_entry 8, 4, green_hood_sprite_1
+    item_animation_entry 8, 4, green_hood_sprite_1
+    item_animation_entry 8, 4, green_hood_sprite_1
+    item_animation_entry 6, 5, green_hood_sprite_2
+    item_animation_entry 6, 4, green_hood_sprite_2
+    item_animation_entry 6, 4, green_hood_sprite_2
+    item_animation_entry 6, 4, green_hood_sprite_2
+    item_animation_entry 6, 4, green_hood_sprite_3
+    item_animation_entry 5, 4, green_hood_sprite_3
+    item_animation_entry 5, 4, green_hood_sprite_3
+    item_animation_entry 5, 4, green_hood_sprite_3
+    item_animation_entry 5, 4, green_hood_sprite_0
+    item_animation_entry 8, 4, green_hood_sprite_1
+    item_animation_entry 6, 4, green_hood_sprite_2
+    item_animation_entry 5, 4, green_hood_sprite_3
 
-    item_animation_entry 5, 9, leather_armor_sprite_0
-    item_animation_entry 5, 8, leather_armor_sprite_1
-    item_animation_entry 5, 8, leather_armor_sprite_2
-    item_animation_entry 5, 8, leather_armor_sprite_1
-    item_animation_entry 7, 8, leather_armor_sprite_3
-    item_animation_entry 7, 8, leather_armor_sprite_4
-    item_animation_entry 7, 8, leather_armor_sprite_5
-    item_animation_entry 7, 8, leather_armor_sprite_4
-    item_animation_entry 5, 9, leather_armor_sprite_6
-    item_animation_entry 5, 8, leather_armor_sprite_7
-    item_animation_entry 5, 8, leather_armor_sprite_8
-    item_animation_entry 5, 8, leather_armor_sprite_7
-    item_animation_entry 5, 8, leather_armor_sprite_5
-    item_animation_entry 5, 8, leather_armor_sprite_9
-    item_animation_entry 5, 8, leather_armor_sprite_3
-    item_animation_entry 5, 8, leather_armor_sprite_9
-    item_animation_entry 5, 8, leather_armor_sprite_10
-    item_animation_entry 7, 8, leather_armor_sprite_4
-    item_animation_entry 5, 8, leather_armor_sprite_11
-    item_animation_entry 5, 8, leather_armor_sprite_9
+    item_animation_entry 7, 11, leather_armor_sprite_0
+    item_animation_entry 7, 10, leather_armor_sprite_1
+    item_animation_entry 7, 10, leather_armor_sprite_2
+    item_animation_entry 7, 10, leather_armor_sprite_1
+    item_animation_entry 9, 10, leather_armor_sprite_3
+    item_animation_entry 9, 10, leather_armor_sprite_4
+    item_animation_entry 9, 10, leather_armor_sprite_5
+    item_animation_entry 9, 10, leather_armor_sprite_6
+    item_animation_entry 7, 11, leather_armor_sprite_7
+    item_animation_entry 7, 10, leather_armor_sprite_8
+    item_animation_entry 7, 10, leather_armor_sprite_9
+    item_animation_entry 7, 10, leather_armor_sprite_8
+    item_animation_entry 7, 10, leather_armor_sprite_10
+    item_animation_entry 7, 10, leather_armor_sprite_11
+    item_animation_entry 7, 10, leather_armor_sprite_12
+    item_animation_entry 7, 10, leather_armor_sprite_13
+    item_animation_entry 7, 10, leather_armor_sprite_14
+    item_animation_entry 9, 10, leather_armor_sprite_6
+    item_animation_entry 7, 10, leather_armor_sprite_15
+    item_animation_entry 7, 10, leather_armor_sprite_13
 
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
-    item_animation_entry 0, 0, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
+    item_animation_entry 2, 2, invisible_sprite_0
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 4, 9, steel_sword_sprite_0
-    item_animation_entry 4, 9, steel_sword_sprite_1
-    item_animation_entry 3, 8, steel_sword_sprite_2
-    item_animation_entry 5, 9, steel_sword_sprite_1
-    item_animation_entry 6, 9, steel_sword_sprite_0
-    item_animation_entry 9, 9, steel_sword_sprite_1
-    item_animation_entry 8, 7, steel_sword_sprite_2
-    item_animation_entry 9, 9, steel_sword_sprite_1
-    item_animation_entry 4, 7, steel_sword_sprite_2
-    item_animation_entry 8, 7, steel_sword_sprite_2
-    item_animation_entry 4, 4, steel_sword_sprite_3
-    item_animation_entry 4, 5, steel_sword_sprite_4
-    item_animation_entry 5, 9, steel_sword_sprite_5
-    item_animation_entry 4, 9, steel_sword_sprite_5
-    item_animation_entry 8, 3, steel_sword_sprite_3
-    item_animation_entry 8, 5, steel_sword_sprite_4
-    item_animation_entry 9, 9, steel_sword_sprite_5
-    item_animation_entry 8, 10, steel_sword_sprite_5
+    item_animation_entry 6, 11, steel_sword_sprite_0
+    item_animation_entry 6, 11, steel_sword_sprite_1
+    item_animation_entry 5, 10, steel_sword_sprite_2
+    item_animation_entry 7, 11, steel_sword_sprite_1
+    item_animation_entry 8, 11, steel_sword_sprite_0
+    item_animation_entry 11, 11, steel_sword_sprite_1
+    item_animation_entry 10, 9, steel_sword_sprite_2
+    item_animation_entry 11, 11, steel_sword_sprite_1
+    item_animation_entry 6, 9, steel_sword_sprite_2
+    item_animation_entry 10, 9, steel_sword_sprite_2
+    item_animation_entry 6, 6, steel_sword_sprite_3
+    item_animation_entry 6, 7, steel_sword_sprite_4
+    item_animation_entry 7, 11, steel_sword_sprite_5
+    item_animation_entry 6, 11, steel_sword_sprite_5
+    item_animation_entry 10, 5, steel_sword_sprite_3
+    item_animation_entry 10, 7, steel_sword_sprite_4
+    item_animation_entry 11, 11, steel_sword_sprite_5
+    item_animation_entry 10, 12, steel_sword_sprite_5
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 3, 7, wood_bow_sprite_0
-    item_animation_entry 3, 7, wood_bow_sprite_0
-    item_animation_entry 3, 8, wood_bow_sprite_0
-    item_animation_entry 3, 7, wood_bow_sprite_0
-    item_animation_entry 4, 8, wood_bow_sprite_1
-    item_animation_entry 6, 9, wood_bow_sprite_1
-    item_animation_entry 7, 8, wood_bow_sprite_1
-    item_animation_entry 6, 9, wood_bow_sprite_1
-    item_animation_entry 3, 8, wood_bow_sprite_0
-    item_animation_entry 6, 9, wood_bow_sprite_1
-    item_animation_entry 3, 7, wood_bow_sprite_2
-    item_animation_entry 5, 5, wood_bow_sprite_3
-    item_animation_entry 4, 5, wood_bow_sprite_4
-    item_animation_entry 5, 6, wood_bow_sprite_3
-    item_animation_entry 6, 7, wood_bow_sprite_5
-    item_animation_entry 11, 5, wood_bow_sprite_6
-    item_animation_entry 9, 5, wood_bow_sprite_7
-    item_animation_entry 12, 5, wood_bow_sprite_8
+    item_animation_entry 5, 9, wood_bow_sprite_0
+    item_animation_entry 5, 9, wood_bow_sprite_0
+    item_animation_entry 5, 10, wood_bow_sprite_0
+    item_animation_entry 5, 9, wood_bow_sprite_0
+    item_animation_entry 6, 10, wood_bow_sprite_1
+    item_animation_entry 8, 11, wood_bow_sprite_1
+    item_animation_entry 9, 10, wood_bow_sprite_1
+    item_animation_entry 8, 11, wood_bow_sprite_1
+    item_animation_entry 5, 10, wood_bow_sprite_0
+    item_animation_entry 8, 11, wood_bow_sprite_1
+    item_animation_entry 5, 9, wood_bow_sprite_2
+    item_animation_entry 7, 7, wood_bow_sprite_3
+    item_animation_entry 6, 7, wood_bow_sprite_4
+    item_animation_entry 7, 8, wood_bow_sprite_3
+    item_animation_entry 8, 9, wood_bow_sprite_5
+    item_animation_entry 13, 7, wood_bow_sprite_6
+    item_animation_entry 11, 7, wood_bow_sprite_7
+    item_animation_entry 14, 7, wood_bow_sprite_8
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 4, 1, guard_hat_sprite_0
-    item_animation_entry 4, 0, guard_hat_sprite_0
-    item_animation_entry 4, 0, guard_hat_sprite_0
-    item_animation_entry 4, 0, guard_hat_sprite_0
-    item_animation_entry 4, 1, guard_hat_sprite_1
-    item_animation_entry 5, 1, guard_hat_sprite_1
-    item_animation_entry 5, 1, guard_hat_sprite_1
-    item_animation_entry 5, 1, guard_hat_sprite_1
-    item_animation_entry 4, 1, guard_hat_sprite_2
-    item_animation_entry 4, 0, guard_hat_sprite_2
-    item_animation_entry 4, 0, guard_hat_sprite_2
-    item_animation_entry 4, 0, guard_hat_sprite_2
-    item_animation_entry 4, 1, guard_hat_sprite_3
-    item_animation_entry 3, 1, guard_hat_sprite_3
-    item_animation_entry 3, 1, guard_hat_sprite_3
-    item_animation_entry 3, 1, guard_hat_sprite_3
-    item_animation_entry 4, 0, guard_hat_sprite_0
-    item_animation_entry 5, 1, guard_hat_sprite_1
-    item_animation_entry 4, 0, guard_hat_sprite_2
-    item_animation_entry 3, 1, guard_hat_sprite_3
+    item_animation_entry 6, 3, guard_hat_sprite_0
+    item_animation_entry 6, 2, guard_hat_sprite_0
+    item_animation_entry 6, 2, guard_hat_sprite_0
+    item_animation_entry 6, 2, guard_hat_sprite_0
+    item_animation_entry 6, 3, guard_hat_sprite_1
+    item_animation_entry 7, 3, guard_hat_sprite_1
+    item_animation_entry 7, 3, guard_hat_sprite_1
+    item_animation_entry 7, 3, guard_hat_sprite_1
+    item_animation_entry 6, 3, guard_hat_sprite_2
+    item_animation_entry 6, 2, guard_hat_sprite_2
+    item_animation_entry 6, 2, guard_hat_sprite_2
+    item_animation_entry 6, 2, guard_hat_sprite_2
+    item_animation_entry 6, 3, guard_hat_sprite_3
+    item_animation_entry 5, 3, guard_hat_sprite_3
+    item_animation_entry 5, 3, guard_hat_sprite_3
+    item_animation_entry 5, 3, guard_hat_sprite_3
+    item_animation_entry 6, 2, guard_hat_sprite_0
+    item_animation_entry 7, 3, guard_hat_sprite_1
+    item_animation_entry 6, 2, guard_hat_sprite_2
+    item_animation_entry 5, 3, guard_hat_sprite_3
 
-    item_animation_entry 4, 7, beard_sprite_0
-    item_animation_entry 4, 6, beard_sprite_0
-    item_animation_entry 4, 6, beard_sprite_0
-    item_animation_entry 4, 6, beard_sprite_0
-    item_animation_entry 7, 6, beard_sprite_1
-    item_animation_entry 8, 6, beard_sprite_2
-    item_animation_entry 8, 6, beard_sprite_2
-    item_animation_entry 8, 6, beard_sprite_2
-    item_animation_entry 7, 8, beard_sprite_3
-    item_animation_entry 8, 7, beard_sprite_3
-    item_animation_entry 8, 7, beard_sprite_3
-    item_animation_entry 8, 7, beard_sprite_3
-    item_animation_entry 6, 7, beard_sprite_4
-    item_animation_entry 4, 7, beard_sprite_5
-    item_animation_entry 4, 7, beard_sprite_5
-    item_animation_entry 4, 7, beard_sprite_5
-    item_animation_entry 4, 6, beard_sprite_0
-    item_animation_entry 8, 6, beard_sprite_2
-    item_animation_entry 8, 7, beard_sprite_3
-    item_animation_entry 4, 7, beard_sprite_5
+    item_animation_entry 6, 9, beard_sprite_0
+    item_animation_entry 6, 8, beard_sprite_0
+    item_animation_entry 6, 8, beard_sprite_0
+    item_animation_entry 6, 8, beard_sprite_0
+    item_animation_entry 9, 8, beard_sprite_1
+    item_animation_entry 10, 8, beard_sprite_2
+    item_animation_entry 10, 8, beard_sprite_2
+    item_animation_entry 10, 8, beard_sprite_2
+    item_animation_entry 9, 10, beard_sprite_3
+    item_animation_entry 10, 9, beard_sprite_3
+    item_animation_entry 10, 9, beard_sprite_3
+    item_animation_entry 10, 9, beard_sprite_3
+    item_animation_entry 8, 9, beard_sprite_4
+    item_animation_entry 6, 9, beard_sprite_5
+    item_animation_entry 6, 9, beard_sprite_5
+    item_animation_entry 6, 9, beard_sprite_5
+    item_animation_entry 6, 8, beard_sprite_0
+    item_animation_entry 10, 8, beard_sprite_2
+    item_animation_entry 10, 9, beard_sprite_3
+    item_animation_entry 6, 9, beard_sprite_5
 
-    item_animation_entry 4, 8, club_sprite_0
-    item_animation_entry 4, 7, club_sprite_0
-    item_animation_entry 4, 8, club_sprite_0
-    item_animation_entry 4, 7, club_sprite_0
-    item_animation_entry 6, 6, club_sprite_1
-    item_animation_entry 8, 7, club_sprite_1
-    item_animation_entry 8, 7, club_sprite_1
-    item_animation_entry 8, 7, club_sprite_1
-    item_animation_entry 3, 8, club_sprite_1
-    item_animation_entry 8, 7, club_sprite_1
-    item_animation_entry 4, 5, club_sprite_2
-    item_animation_entry 5, 7, club_sprite_1
-    item_animation_entry 5, 10, club_sprite_3
-    item_animation_entry 3, 10, club_sprite_3
-    item_animation_entry 8, 5, club_sprite_2
-    item_animation_entry 9, 7, club_sprite_1
-    item_animation_entry 9, 10, club_sprite_3
-    item_animation_entry 7, 10, club_sprite_3
+    item_animation_entry 6, 10, club_sprite_0
+    item_animation_entry 6, 9, club_sprite_0
+    item_animation_entry 6, 10, club_sprite_0
+    item_animation_entry 6, 9, club_sprite_0
+    item_animation_entry 8, 8, club_sprite_1
+    item_animation_entry 10, 9, club_sprite_1
+    item_animation_entry 10, 9, club_sprite_1
+    item_animation_entry 10, 9, club_sprite_1
+    item_animation_entry 5, 10, club_sprite_1
+    item_animation_entry 10, 9, club_sprite_1
+    item_animation_entry 6, 7, club_sprite_2
+    item_animation_entry 7, 9, club_sprite_1
+    item_animation_entry 7, 12, club_sprite_3
+    item_animation_entry 5, 12, club_sprite_3
+    item_animation_entry 10, 7, club_sprite_2
+    item_animation_entry 11, 9, club_sprite_1
+    item_animation_entry 11, 12, club_sprite_3
+    item_animation_entry 9, 12, club_sprite_3
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 0, 9, glass_dagger_sprite_0
-    item_animation_entry 2, 9, glass_dagger_sprite_1
-    item_animation_entry 3, 10, glass_dagger_sprite_2
-    item_animation_entry 4, 9, glass_dagger_sprite_3
-    item_animation_entry 4, 9, glass_dagger_sprite_0
-    item_animation_entry 7, 9, glass_dagger_sprite_1
-    item_animation_entry 8, 8, glass_dagger_sprite_4
-    item_animation_entry 6, 9, glass_dagger_sprite_1
-    item_animation_entry 4, 10, glass_dagger_sprite_2
-    item_animation_entry 8, 10, glass_dagger_sprite_2
-    item_animation_entry 4, 10, glass_dagger_sprite_2
-    item_animation_entry 4, 10, glass_dagger_sprite_3
-    item_animation_entry 4, 9, glass_dagger_sprite_4
-    item_animation_entry 2, 10, glass_dagger_sprite_1
-    item_animation_entry 8, 8, glass_dagger_sprite_2
-    item_animation_entry 11, 8, glass_dagger_sprite_3
-    item_animation_entry 11, 7, glass_dagger_sprite_4
-    item_animation_entry 7, 9, glass_dagger_sprite_1
+    item_animation_entry 2, 11, glass_dagger_sprite_0
+    item_animation_entry 4, 11, glass_dagger_sprite_1
+    item_animation_entry 5, 12, glass_dagger_sprite_2
+    item_animation_entry 6, 11, glass_dagger_sprite_3
+    item_animation_entry 6, 11, glass_dagger_sprite_0
+    item_animation_entry 9, 11, glass_dagger_sprite_1
+    item_animation_entry 10, 10, glass_dagger_sprite_4
+    item_animation_entry 8, 11, glass_dagger_sprite_1
+    item_animation_entry 6, 12, glass_dagger_sprite_2
+    item_animation_entry 10, 12, glass_dagger_sprite_2
+    item_animation_entry 6, 12, glass_dagger_sprite_2
+    item_animation_entry 6, 12, glass_dagger_sprite_3
+    item_animation_entry 6, 11, glass_dagger_sprite_4
+    item_animation_entry 4, 12, glass_dagger_sprite_1
+    item_animation_entry 10, 10, glass_dagger_sprite_2
+    item_animation_entry 13, 10, glass_dagger_sprite_3
+    item_animation_entry 13, 9, glass_dagger_sprite_4
+    item_animation_entry 9, 11, glass_dagger_sprite_1
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 5, 10, glass_shard_sprite_0
-    item_animation_entry 5, 10, glass_shard_sprite_1
-    item_animation_entry 4, 11, glass_shard_sprite_2
-    item_animation_entry 5, 10, glass_shard_sprite_1
-    item_animation_entry 5, 9, glass_shard_sprite_3
-    item_animation_entry 8, 11, glass_shard_sprite_4
-    item_animation_entry 10, 9, glass_shard_sprite_5
-    item_animation_entry 8, 11, glass_shard_sprite_4
-    item_animation_entry 5, 11, glass_shard_sprite_6
-    item_animation_entry 8, 11, glass_shard_sprite_4
-    item_animation_entry 4, 11, glass_shard_sprite_7
-    item_animation_entry 3, 9, glass_shard_sprite_8
-    item_animation_entry 4, 9, glass_shard_sprite_3
-    item_animation_entry 4, 11, glass_shard_sprite_9
-    item_animation_entry 8, 10, glass_shard_sprite_4
-    item_animation_entry 10, 9, glass_shard_sprite_4
-    item_animation_entry 10, 10, glass_shard_sprite_3
-    item_animation_entry 9, 10, glass_shard_sprite_3
+    item_animation_entry 7, 12, glass_shard_sprite_0
+    item_animation_entry 7, 12, glass_shard_sprite_1
+    item_animation_entry 6, 13, glass_shard_sprite_2
+    item_animation_entry 7, 12, glass_shard_sprite_1
+    item_animation_entry 7, 11, glass_shard_sprite_3
+    item_animation_entry 10, 13, glass_shard_sprite_4
+    item_animation_entry 12, 11, glass_shard_sprite_5
+    item_animation_entry 10, 13, glass_shard_sprite_4
+    item_animation_entry 7, 13, glass_shard_sprite_6
+    item_animation_entry 10, 13, glass_shard_sprite_4
+    item_animation_entry 6, 13, glass_shard_sprite_7
+    item_animation_entry 5, 11, glass_shard_sprite_8
+    item_animation_entry 6, 11, glass_shard_sprite_3
+    item_animation_entry 6, 13, glass_shard_sprite_9
+    item_animation_entry 10, 12, glass_shard_sprite_4
+    item_animation_entry 12, 11, glass_shard_sprite_4
+    item_animation_entry 12, 12, glass_shard_sprite_3
+    item_animation_entry 11, 12, glass_shard_sprite_3
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 3, 7, great_bow_sprite_0
-    item_animation_entry 3, 7, great_bow_sprite_0
-    item_animation_entry 3, 8, great_bow_sprite_0
-    item_animation_entry 3, 7, great_bow_sprite_0
-    item_animation_entry 3, 8, great_bow_sprite_1
-    item_animation_entry 5, 9, great_bow_sprite_1
-    item_animation_entry 6, 8, great_bow_sprite_1
-    item_animation_entry 5, 9, great_bow_sprite_1
-    item_animation_entry 3, 8, great_bow_sprite_0
-    item_animation_entry 5, 9, great_bow_sprite_1
-    item_animation_entry 2, 6, great_bow_sprite_2
-    item_animation_entry 5, 4, great_bow_sprite_3
-    item_animation_entry 3, 4, great_bow_sprite_4
-    item_animation_entry 5, 5, great_bow_sprite_3
-    item_animation_entry 5, 6, great_bow_sprite_5
-    item_animation_entry 11, 4, great_bow_sprite_6
-    item_animation_entry 9, 5, great_bow_sprite_7
-    item_animation_entry 12, 4, great_bow_sprite_8
+    item_animation_entry 5, 9, great_bow_sprite_0
+    item_animation_entry 5, 9, great_bow_sprite_0
+    item_animation_entry 5, 10, great_bow_sprite_0
+    item_animation_entry 5, 9, great_bow_sprite_0
+    item_animation_entry 5, 10, great_bow_sprite_1
+    item_animation_entry 7, 11, great_bow_sprite_1
+    item_animation_entry 8, 10, great_bow_sprite_1
+    item_animation_entry 7, 11, great_bow_sprite_1
+    item_animation_entry 5, 10, great_bow_sprite_0
+    item_animation_entry 7, 11, great_bow_sprite_1
+    item_animation_entry 4, 8, great_bow_sprite_2
+    item_animation_entry 7, 6, great_bow_sprite_3
+    item_animation_entry 5, 6, great_bow_sprite_4
+    item_animation_entry 7, 7, great_bow_sprite_3
+    item_animation_entry 7, 8, great_bow_sprite_5
+    item_animation_entry 13, 6, great_bow_sprite_6
+    item_animation_entry 11, 7, great_bow_sprite_7
+    item_animation_entry 14, 6, great_bow_sprite_8
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 4, 11, green_cloak_sprite_0
-    item_animation_entry 4, 8, green_cloak_sprite_1
-    item_animation_entry 5, 8, green_cloak_sprite_2
-    item_animation_entry 5, 8, green_cloak_sprite_3
-    item_animation_entry 3, 8, green_cloak_sprite_4
-    item_animation_entry 3, 8, green_cloak_sprite_5
-    item_animation_entry 3, 8, green_cloak_sprite_6
-    item_animation_entry 3, 8, green_cloak_sprite_7
-    item_animation_entry 4, 9, green_cloak_sprite_8
-    item_animation_entry 4, 8, green_cloak_sprite_9
-    item_animation_entry 5, 8, green_cloak_sprite_10
-    item_animation_entry 5, 8, green_cloak_sprite_11
-    item_animation_entry 5, 8, green_cloak_sprite_12
-    item_animation_entry 5, 8, green_cloak_sprite_13
-    item_animation_entry 5, 8, green_cloak_sprite_14
-    item_animation_entry 5, 8, green_cloak_sprite_13
-    item_animation_entry 4, 8, green_cloak_sprite_15
-    item_animation_entry 3, 8, green_cloak_sprite_4
-    item_animation_entry 4, 8, green_cloak_sprite_16
-    item_animation_entry 6, 8, green_cloak_sprite_17
+    item_animation_entry 6, 13, green_cloak_sprite_0
+    item_animation_entry 6, 10, green_cloak_sprite_1
+    item_animation_entry 7, 10, green_cloak_sprite_2
+    item_animation_entry 7, 10, green_cloak_sprite_3
+    item_animation_entry 5, 10, green_cloak_sprite_4
+    item_animation_entry 5, 10, green_cloak_sprite_5
+    item_animation_entry 5, 10, green_cloak_sprite_6
+    item_animation_entry 5, 10, green_cloak_sprite_7
+    item_animation_entry 6, 11, green_cloak_sprite_8
+    item_animation_entry 6, 10, green_cloak_sprite_9
+    item_animation_entry 7, 10, green_cloak_sprite_10
+    item_animation_entry 7, 10, green_cloak_sprite_11
+    item_animation_entry 7, 10, green_cloak_sprite_12
+    item_animation_entry 7, 10, green_cloak_sprite_13
+    item_animation_entry 7, 10, green_cloak_sprite_14
+    item_animation_entry 7, 10, green_cloak_sprite_13
+    item_animation_entry 6, 10, green_cloak_sprite_15
+    item_animation_entry 5, 10, green_cloak_sprite_4
+    item_animation_entry 6, 10, green_cloak_sprite_16
+    item_animation_entry 8, 10, green_cloak_sprite_17
 
-    item_animation_entry 4, 11, purple_cloak_sprite_0
-    item_animation_entry 4, 8, purple_cloak_sprite_1
-    item_animation_entry 5, 8, purple_cloak_sprite_2
-    item_animation_entry 5, 8, purple_cloak_sprite_3
-    item_animation_entry 3, 8, purple_cloak_sprite_4
-    item_animation_entry 3, 8, purple_cloak_sprite_5
-    item_animation_entry 3, 8, purple_cloak_sprite_6
-    item_animation_entry 3, 8, purple_cloak_sprite_7
-    item_animation_entry 4, 9, purple_cloak_sprite_8
-    item_animation_entry 4, 8, purple_cloak_sprite_9
-    item_animation_entry 5, 8, purple_cloak_sprite_10
-    item_animation_entry 5, 8, purple_cloak_sprite_11
-    item_animation_entry 5, 8, purple_cloak_sprite_12
-    item_animation_entry 5, 8, purple_cloak_sprite_13
-    item_animation_entry 5, 8, purple_cloak_sprite_14
-    item_animation_entry 5, 8, purple_cloak_sprite_13
-    item_animation_entry 4, 8, purple_cloak_sprite_15
-    item_animation_entry 3, 8, purple_cloak_sprite_4
-    item_animation_entry 4, 8, purple_cloak_sprite_16
-    item_animation_entry 6, 8, purple_cloak_sprite_17
+    item_animation_entry 6, 12, green_cloak_small_sprite_0
+    item_animation_entry 6, 10, green_cloak_small_sprite_1
+    item_animation_entry 7, 10, green_cloak_small_sprite_2
+    item_animation_entry 7, 10, green_cloak_small_sprite_3
+    item_animation_entry 5, 10, green_cloak_sprite_4
+    item_animation_entry 5, 10, green_cloak_sprite_5
+    item_animation_entry 5, 10, green_cloak_sprite_6
+    item_animation_entry 5, 10, green_cloak_sprite_7
+    item_animation_entry 6, 11, green_cloak_sprite_8
+    item_animation_entry 6, 10, green_cloak_sprite_9
+    item_animation_entry 7, 10, green_cloak_sprite_10
+    item_animation_entry 7, 10, green_cloak_sprite_11
+    item_animation_entry 7, 10, green_cloak_sprite_12
+    item_animation_entry 7, 10, green_cloak_sprite_13
+    item_animation_entry 7, 10, green_cloak_sprite_14
+    item_animation_entry 7, 10, green_cloak_sprite_13
+    item_animation_entry 6, 10, green_cloak_small_sprite_15
+    item_animation_entry 5, 10, green_cloak_sprite_4
+    item_animation_entry 6, 10, green_cloak_sprite_16
+    item_animation_entry 8, 10, green_cloak_sprite_17
 
-    item_animation_entry 3, 3, purple_hood_sprite_0
-    item_animation_entry 3, 2, purple_hood_sprite_0
-    item_animation_entry 3, 2, purple_hood_sprite_0
-    item_animation_entry 3, 2, purple_hood_sprite_0
-    item_animation_entry 5, 2, purple_hood_sprite_1
-    item_animation_entry 6, 2, purple_hood_sprite_1
-    item_animation_entry 6, 2, purple_hood_sprite_1
-    item_animation_entry 6, 2, purple_hood_sprite_1
-    item_animation_entry 4, 3, purple_hood_sprite_2
-    item_animation_entry 4, 2, purple_hood_sprite_2
-    item_animation_entry 4, 2, purple_hood_sprite_2
-    item_animation_entry 4, 2, purple_hood_sprite_2
-    item_animation_entry 4, 2, purple_hood_sprite_3
-    item_animation_entry 3, 2, purple_hood_sprite_3
-    item_animation_entry 3, 2, purple_hood_sprite_3
-    item_animation_entry 3, 2, purple_hood_sprite_3
-    item_animation_entry 3, 2, purple_hood_sprite_0
-    item_animation_entry 6, 2, purple_hood_sprite_1
-    item_animation_entry 4, 2, purple_hood_sprite_2
-    item_animation_entry 3, 2, purple_hood_sprite_3
+    item_animation_entry 5, 5, purple_hood_sprite_0
+    item_animation_entry 5, 4, purple_hood_sprite_0
+    item_animation_entry 5, 4, purple_hood_sprite_0
+    item_animation_entry 5, 4, purple_hood_sprite_0
+    item_animation_entry 7, 4, purple_hood_sprite_1
+    item_animation_entry 8, 4, purple_hood_sprite_1
+    item_animation_entry 8, 4, purple_hood_sprite_1
+    item_animation_entry 8, 4, purple_hood_sprite_1
+    item_animation_entry 6, 5, purple_hood_sprite_2
+    item_animation_entry 6, 4, purple_hood_sprite_2
+    item_animation_entry 6, 4, purple_hood_sprite_2
+    item_animation_entry 6, 4, purple_hood_sprite_2
+    item_animation_entry 6, 4, purple_hood_sprite_3
+    item_animation_entry 5, 4, purple_hood_sprite_3
+    item_animation_entry 5, 4, purple_hood_sprite_3
+    item_animation_entry 5, 4, purple_hood_sprite_3
+    item_animation_entry 5, 4, purple_hood_sprite_0
+    item_animation_entry 8, 4, purple_hood_sprite_1
+    item_animation_entry 6, 4, purple_hood_sprite_2
+    item_animation_entry 5, 4, purple_hood_sprite_3
 
-    item_animation_entry 5, 9, hammer_sprite_0
-    item_animation_entry 4, 9, hammer_sprite_0
-    item_animation_entry 4, 10, hammer_sprite_0
-    item_animation_entry 4, 9, hammer_sprite_0
-    item_animation_entry 6, 9, hammer_sprite_1
-    item_animation_entry 8, 10, hammer_sprite_1
-    item_animation_entry 9, 9, hammer_sprite_1
-    item_animation_entry 8, 10, hammer_sprite_1
-    item_animation_entry 4, 10, hammer_sprite_0
-    item_animation_entry 8, 10, hammer_sprite_1
-    item_animation_entry 4, 6, hammer_sprite_2
-    item_animation_entry 5, 6, hammer_sprite_3
-    item_animation_entry 5, 10, hammer_sprite_4
-    item_animation_entry 3, 10, hammer_sprite_5
-    item_animation_entry 8, 5, hammer_sprite_6
-    item_animation_entry 8, 6, hammer_sprite_7
-    item_animation_entry 8, 9, hammer_sprite_4
-    item_animation_entry 7, 10, hammer_sprite_5
+    item_animation_entry 7, 11, hammer_sprite_0
+    item_animation_entry 6, 11, hammer_sprite_0
+    item_animation_entry 6, 12, hammer_sprite_0
+    item_animation_entry 6, 11, hammer_sprite_0
+    item_animation_entry 8, 11, hammer_sprite_1
+    item_animation_entry 10, 12, hammer_sprite_1
+    item_animation_entry 11, 11, hammer_sprite_1
+    item_animation_entry 10, 12, hammer_sprite_1
+    item_animation_entry 6, 12, hammer_sprite_0
+    item_animation_entry 10, 12, hammer_sprite_1
+    item_animation_entry 6, 8, hammer_sprite_2
+    item_animation_entry 7, 8, hammer_sprite_3
+    item_animation_entry 7, 12, hammer_sprite_4
+    item_animation_entry 5, 12, hammer_sprite_5
+    item_animation_entry 10, 7, hammer_sprite_6
+    item_animation_entry 10, 8, hammer_sprite_7
+    item_animation_entry 10, 11, hammer_sprite_4
+    item_animation_entry 9, 12, hammer_sprite_5
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 4, 0, iron_armor_sprite_0
-    item_animation_entry 4, 0, iron_armor_sprite_1
-    item_animation_entry 4, 0, iron_armor_sprite_2
-    item_animation_entry 4, 0, iron_armor_sprite_1
-    item_animation_entry 4, 15, iron_armor_sprite_3
-    item_animation_entry 5, 15, iron_armor_sprite_4
-    item_animation_entry 5, 15, iron_armor_sprite_5
-    item_animation_entry 5, 15, iron_armor_sprite_6
-    item_animation_entry 4, 0, iron_armor_sprite_7
-    item_animation_entry 4, 15, iron_armor_sprite_8
-    item_animation_entry 4, 15, iron_armor_sprite_9
-    item_animation_entry 4, 15, iron_armor_sprite_8
-    item_animation_entry 3, 15, iron_armor_sprite_10
-    item_animation_entry 2, 15, iron_armor_sprite_11
-    item_animation_entry 2, 15, iron_armor_sprite_12
-    item_animation_entry 2, 15, iron_armor_sprite_13
-    item_animation_entry 4, 15, iron_armor_sprite_14
-    item_animation_entry 5, 15, iron_armor_sprite_15
-    item_animation_entry 4, 15, iron_armor_sprite_16
-    item_animation_entry 2, 15, iron_armor_sprite_17
+    item_animation_entry 6, 2, iron_armor_sprite_0
+    item_animation_entry 6, 2, iron_armor_sprite_1
+    item_animation_entry 6, 2, iron_armor_sprite_2
+    item_animation_entry 6, 2, iron_armor_sprite_1
+    item_animation_entry 6, 1, iron_armor_sprite_3
+    item_animation_entry 7, 1, iron_armor_sprite_4
+    item_animation_entry 7, 1, iron_armor_sprite_5
+    item_animation_entry 7, 1, iron_armor_sprite_6
+    item_animation_entry 6, 2, iron_armor_sprite_7
+    item_animation_entry 6, 1, iron_armor_sprite_8
+    item_animation_entry 6, 1, iron_armor_sprite_9
+    item_animation_entry 6, 1, iron_armor_sprite_8
+    item_animation_entry 5, 1, iron_armor_sprite_10
+    item_animation_entry 4, 1, iron_armor_sprite_11
+    item_animation_entry 4, 1, iron_armor_sprite_12
+    item_animation_entry 4, 1, iron_armor_sprite_13
+    item_animation_entry 6, 1, iron_armor_sprite_14
+    item_animation_entry 7, 1, iron_armor_sprite_15
+    item_animation_entry 6, 1, iron_armor_sprite_16
+    item_animation_entry 4, 1, iron_armor_sprite_17
 
-    item_animation_entry 5, 9, iron_breastplate_sprite_0
-    item_animation_entry 5, 8, iron_breastplate_sprite_1
-    item_animation_entry 5, 8, iron_breastplate_sprite_2
-    item_animation_entry 5, 8, iron_breastplate_sprite_1
-    item_animation_entry 7, 8, iron_breastplate_sprite_3
-    item_animation_entry 7, 8, iron_breastplate_sprite_4
-    item_animation_entry 7, 8, iron_breastplate_sprite_5
-    item_animation_entry 7, 8, iron_breastplate_sprite_6
-    item_animation_entry 5, 9, iron_breastplate_sprite_7
-    item_animation_entry 5, 8, iron_breastplate_sprite_8
-    item_animation_entry 5, 8, iron_breastplate_sprite_9
-    item_animation_entry 5, 8, iron_breastplate_sprite_8
-    item_animation_entry 5, 8, iron_breastplate_sprite_10
-    item_animation_entry 5, 8, iron_breastplate_sprite_11
-    item_animation_entry 5, 8, iron_breastplate_sprite_12
-    item_animation_entry 5, 8, iron_breastplate_sprite_13
-    item_animation_entry 5, 8, iron_breastplate_sprite_14
-    item_animation_entry 7, 8, iron_breastplate_sprite_15
-    item_animation_entry 5, 8, iron_breastplate_sprite_16
-    item_animation_entry 5, 8, iron_breastplate_sprite_17
+    item_animation_entry 7, 11, iron_breastplate_sprite_0
+    item_animation_entry 7, 10, iron_breastplate_sprite_1
+    item_animation_entry 7, 10, iron_breastplate_sprite_2
+    item_animation_entry 7, 10, iron_breastplate_sprite_1
+    item_animation_entry 9, 10, iron_breastplate_sprite_3
+    item_animation_entry 9, 10, iron_breastplate_sprite_4
+    item_animation_entry 9, 10, iron_breastplate_sprite_5
+    item_animation_entry 9, 10, iron_breastplate_sprite_6
+    item_animation_entry 7, 11, iron_breastplate_sprite_7
+    item_animation_entry 7, 10, iron_breastplate_sprite_8
+    item_animation_entry 7, 10, iron_breastplate_sprite_9
+    item_animation_entry 7, 10, iron_breastplate_sprite_8
+    item_animation_entry 7, 10, iron_breastplate_sprite_10
+    item_animation_entry 7, 10, iron_breastplate_sprite_11
+    item_animation_entry 7, 10, iron_breastplate_sprite_12
+    item_animation_entry 7, 10, iron_breastplate_sprite_13
+    item_animation_entry 7, 10, iron_breastplate_sprite_14
+    item_animation_entry 9, 10, iron_breastplate_sprite_15
+    item_animation_entry 7, 10, iron_breastplate_sprite_16
+    item_animation_entry 7, 10, iron_breastplate_sprite_17
 
-    item_animation_entry 4, 3, iron_helmet_sprite_0
-    item_animation_entry 4, 2, iron_helmet_sprite_0
-    item_animation_entry 4, 2, iron_helmet_sprite_0
-    item_animation_entry 4, 2, iron_helmet_sprite_0
-    item_animation_entry 5, 2, iron_helmet_sprite_1
+    item_animation_entry 6, 2, iron_helmet_sprite_0
     item_animation_entry 6, 2, iron_helmet_sprite_1
     item_animation_entry 6, 2, iron_helmet_sprite_1
     item_animation_entry 6, 2, iron_helmet_sprite_1
-    item_animation_entry 4, 3, iron_helmet_sprite_2
-    item_animation_entry 4, 2, iron_helmet_sprite_2
-    item_animation_entry 4, 2, iron_helmet_sprite_2
-    item_animation_entry 4, 2, iron_helmet_sprite_2
-    item_animation_entry 3, 2, iron_helmet_sprite_3
-    item_animation_entry 2, 2, iron_helmet_sprite_3
-    item_animation_entry 2, 2, iron_helmet_sprite_3
-    item_animation_entry 2, 2, iron_helmet_sprite_3
-    item_animation_entry 4, 2, iron_helmet_sprite_0
-    item_animation_entry 6, 2, iron_helmet_sprite_1
-    item_animation_entry 4, 2, iron_helmet_sprite_2
-    item_animation_entry 2, 2, iron_helmet_sprite_3
+    item_animation_entry 6, 1, iron_helmet_sprite_2
+    item_animation_entry 7, 1, iron_helmet_sprite_2
+    item_animation_entry 7, 1, iron_helmet_sprite_2
+    item_animation_entry 7, 1, iron_helmet_sprite_2
+    item_animation_entry 6, 2, iron_helmet_sprite_3
+    item_animation_entry 6, 1, iron_helmet_sprite_3
+    item_animation_entry 6, 1, iron_helmet_sprite_3
+    item_animation_entry 6, 1, iron_helmet_sprite_3
+    item_animation_entry 5, 1, iron_helmet_sprite_4
+    item_animation_entry 4, 1, iron_helmet_sprite_4
+    item_animation_entry 4, 1, iron_helmet_sprite_4
+    item_animation_entry 4, 1, iron_helmet_sprite_4
+    item_animation_entry 6, 1, iron_helmet_sprite_0
+    item_animation_entry 7, 1, iron_helmet_sprite_2
+    item_animation_entry 6, 1, iron_helmet_sprite_3
+    item_animation_entry 4, 1, iron_helmet_sprite_4
 
-    item_animation_entry 3, 10, iron_staff_sprite_0
-    item_animation_entry 3, 9, iron_staff_sprite_1
-    item_animation_entry 3, 8, iron_staff_sprite_2
-    item_animation_entry 3, 10, iron_staff_sprite_3
-    item_animation_entry 5, 9, iron_staff_sprite_4
-    item_animation_entry 6, 9, iron_staff_sprite_5
-    item_animation_entry 6, 7, iron_staff_sprite_6
-    item_animation_entry 6, 9, iron_staff_sprite_5
-    item_animation_entry 3, 6, iron_staff_sprite_7
-    item_animation_entry 7, 6, iron_staff_sprite_8
-    item_animation_entry 3, 6, iron_staff_sprite_7
-    item_animation_entry 3, 4, iron_staff_sprite_7
-    item_animation_entry 3, 5, iron_staff_sprite_7
-    item_animation_entry 3, 6, iron_staff_sprite_7
-    item_animation_entry 7, 7, iron_staff_sprite_8
-    item_animation_entry 7, 6, iron_staff_sprite_8
-    item_animation_entry 9, 5, iron_staff_sprite_8
-    item_animation_entry 7, 7, iron_staff_sprite_8
-    empty_animation_entry
-    empty_animation_entry
-
-    item_animation_entry 4, 9, wood_staff_sprite_0
-    item_animation_entry 4, 10, wood_staff_sprite_1
-    item_animation_entry 4, 8, wood_staff_sprite_2
-    item_animation_entry 4, 10, wood_staff_sprite_1
-    item_animation_entry 4, 9, wood_staff_sprite_3
-    item_animation_entry 6, 10, wood_staff_sprite_4
-    item_animation_entry 6, 8, wood_staff_sprite_5
-    item_animation_entry 6, 10, wood_staff_sprite_4
-    item_animation_entry 3, 8, wood_staff_sprite_6
-    item_animation_entry 7, 7, wood_staff_sprite_7
-    item_animation_entry 4, 9, wood_staff_sprite_0
-    item_animation_entry 4, 9, wood_staff_sprite_8
-    item_animation_entry 3, 9, wood_staff_sprite_9
-    item_animation_entry 4, 9, wood_staff_sprite_8
-    item_animation_entry 7, 7, wood_staff_sprite_7
-    item_animation_entry 10, 5, wood_staff_sprite_7
-    item_animation_entry 9, 7, wood_staff_sprite_7
-    item_animation_entry 8, 7, wood_staff_sprite_7
+    item_animation_entry 5, 12, iron_staff_sprite_0
+    item_animation_entry 5, 11, iron_staff_sprite_1
+    item_animation_entry 5, 10, iron_staff_sprite_2
+    item_animation_entry 5, 12, iron_staff_sprite_3
+    item_animation_entry 7, 11, iron_staff_sprite_4
+    item_animation_entry 8, 11, iron_staff_sprite_5
+    item_animation_entry 8, 9, iron_staff_sprite_6
+    item_animation_entry 8, 11, iron_staff_sprite_5
+    item_animation_entry 5, 8, iron_staff_sprite_7
+    item_animation_entry 9, 8, iron_staff_sprite_8
+    item_animation_entry 5, 8, iron_staff_sprite_7
+    item_animation_entry 5, 6, iron_staff_sprite_7
+    item_animation_entry 5, 7, iron_staff_sprite_7
+    item_animation_entry 5, 8, iron_staff_sprite_7
+    item_animation_entry 9, 9, iron_staff_sprite_8
+    item_animation_entry 9, 8, iron_staff_sprite_8
+    item_animation_entry 11, 7, iron_staff_sprite_8
+    item_animation_entry 9, 9, iron_staff_sprite_8
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 4, 10, ivory_wand_sprite_0
-    item_animation_entry 5, 10, ivory_wand_sprite_1
-    item_animation_entry 4, 10, ivory_wand_sprite_2
-    item_animation_entry 5, 10, ivory_wand_sprite_1
-    item_animation_entry 6, 9, ivory_wand_sprite_2
-    item_animation_entry 7, 11, ivory_wand_sprite_3
-    item_animation_entry 9, 8, ivory_wand_sprite_4
-    item_animation_entry 7, 11, ivory_wand_sprite_3
-    item_animation_entry 4, 9, ivory_wand_sprite_4
-    item_animation_entry 8, 9, ivory_wand_sprite_4
-    item_animation_entry 4, 9, ivory_wand_sprite_5
-    item_animation_entry 3, 10, ivory_wand_sprite_6
-    item_animation_entry 4, 10, ivory_wand_sprite_7
-    item_animation_entry 3, 10, ivory_wand_sprite_6
-    item_animation_entry 8, 9, ivory_wand_sprite_4
-    item_animation_entry 9, 10, ivory_wand_sprite_8
-    item_animation_entry 8, 10, ivory_wand_sprite_9
-    item_animation_entry 8, 10, ivory_wand_sprite_8
+    item_animation_entry 6, 11, wood_staff_sprite_0
+    item_animation_entry 6, 12, wood_staff_sprite_1
+    item_animation_entry 6, 10, wood_staff_sprite_2
+    item_animation_entry 6, 12, wood_staff_sprite_1
+    item_animation_entry 6, 11, wood_staff_sprite_3
+    item_animation_entry 8, 12, wood_staff_sprite_4
+    item_animation_entry 8, 10, wood_staff_sprite_5
+    item_animation_entry 8, 12, wood_staff_sprite_4
+    item_animation_entry 5, 10, wood_staff_sprite_6
+    item_animation_entry 9, 9, wood_staff_sprite_7
+    item_animation_entry 6, 11, wood_staff_sprite_0
+    item_animation_entry 6, 11, wood_staff_sprite_8
+    item_animation_entry 5, 11, wood_staff_sprite_9
+    item_animation_entry 6, 11, wood_staff_sprite_8
+    item_animation_entry 9, 9, wood_staff_sprite_7
+    item_animation_entry 12, 7, wood_staff_sprite_7
+    item_animation_entry 11, 9, wood_staff_sprite_7
+    item_animation_entry 10, 9, wood_staff_sprite_7
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 4, 3, mithril_armor_sprite_0
-    item_animation_entry 4, 2, mithril_armor_sprite_1
-    item_animation_entry 4, 2, mithril_armor_sprite_2
-    item_animation_entry 4, 2, mithril_armor_sprite_3
-    item_animation_entry 5, 2, mithril_armor_sprite_4
-    item_animation_entry 6, 2, mithril_armor_sprite_5
-    item_animation_entry 6, 2, mithril_armor_sprite_6
-    item_animation_entry 6, 2, mithril_armor_sprite_7
-    item_animation_entry 4, 3, mithril_armor_sprite_8
-    item_animation_entry 4, 2, mithril_armor_sprite_9
-    item_animation_entry 4, 2, mithril_armor_sprite_10
-    item_animation_entry 4, 2, mithril_armor_sprite_9
-    item_animation_entry 4, 2, mithril_armor_sprite_11
-    item_animation_entry 3, 2, mithril_armor_sprite_12
-    item_animation_entry 3, 2, mithril_armor_sprite_13
-    item_animation_entry 3, 2, mithril_armor_sprite_14
-    item_animation_entry 4, 2, mithril_armor_sprite_15
-    item_animation_entry 6, 2, mithril_armor_sprite_16
-    item_animation_entry 4, 2, mithril_armor_sprite_17
-    item_animation_entry 3, 2, mithril_armor_sprite_18
-
-    item_animation_entry 5, 9, mithril_breastplate_sprite_0
-    item_animation_entry 5, 8, mithril_breastplate_sprite_1
-    item_animation_entry 5, 8, mithril_breastplate_sprite_2
-    item_animation_entry 5, 8, mithril_breastplate_sprite_1
-    item_animation_entry 7, 8, mithril_breastplate_sprite_3
-    item_animation_entry 7, 8, mithril_breastplate_sprite_4
-    item_animation_entry 7, 8, mithril_breastplate_sprite_5
-    item_animation_entry 7, 8, mithril_breastplate_sprite_6
-    item_animation_entry 5, 9, mithril_breastplate_sprite_7
-    item_animation_entry 5, 8, mithril_breastplate_sprite_8
-    item_animation_entry 5, 8, mithril_breastplate_sprite_9
-    item_animation_entry 5, 8, mithril_breastplate_sprite_8
-    item_animation_entry 5, 8, mithril_breastplate_sprite_10
-    item_animation_entry 5, 8, mithril_breastplate_sprite_11
-    item_animation_entry 5, 8, mithril_breastplate_sprite_12
-    item_animation_entry 5, 8, mithril_breastplate_sprite_13
-    item_animation_entry 5, 8, mithril_breastplate_sprite_14
-    item_animation_entry 7, 8, mithril_breastplate_sprite_15
-    item_animation_entry 5, 8, mithril_breastplate_sprite_16
-    item_animation_entry 5, 8, mithril_breastplate_sprite_17
-
-    item_animation_entry 4, 3, mithril_cap_sprite_0
-    item_animation_entry 4, 2, mithril_cap_sprite_0
-    item_animation_entry 4, 2, mithril_cap_sprite_0
-    item_animation_entry 4, 2, mithril_cap_sprite_0
-    item_animation_entry 5, 2, mithril_cap_sprite_1
-    item_animation_entry 6, 2, mithril_cap_sprite_1
-    item_animation_entry 6, 2, mithril_cap_sprite_1
-    item_animation_entry 6, 2, mithril_cap_sprite_1
-    item_animation_entry 4, 3, mithril_cap_sprite_2
-    item_animation_entry 4, 2, mithril_cap_sprite_2
-    item_animation_entry 4, 2, mithril_cap_sprite_2
-    item_animation_entry 4, 2, mithril_cap_sprite_2
-    item_animation_entry 4, 2, mithril_cap_sprite_3
-    item_animation_entry 3, 2, mithril_cap_sprite_3
-    item_animation_entry 3, 2, mithril_cap_sprite_3
-    item_animation_entry 3, 2, mithril_cap_sprite_3
-    item_animation_entry 4, 2, mithril_cap_sprite_0
-    item_animation_entry 6, 2, mithril_cap_sprite_1
-    item_animation_entry 4, 2, mithril_cap_sprite_2
-    item_animation_entry 3, 2, mithril_cap_sprite_3
-
-    item_animation_entry 0, 9, mithril_dagger_sprite_0
-    item_animation_entry 2, 9, mithril_dagger_sprite_1
-    item_animation_entry 3, 10, mithril_dagger_sprite_2
-    item_animation_entry 4, 9, mithril_dagger_sprite_3
-    item_animation_entry 4, 9, mithril_dagger_sprite_0
-    item_animation_entry 7, 9, mithril_dagger_sprite_1
-    item_animation_entry 8, 8, mithril_dagger_sprite_4
-    item_animation_entry 6, 9, mithril_dagger_sprite_1
-    item_animation_entry 4, 10, mithril_dagger_sprite_2
-    item_animation_entry 8, 10, mithril_dagger_sprite_2
-    item_animation_entry 4, 10, mithril_dagger_sprite_2
-    item_animation_entry 4, 10, mithril_dagger_sprite_3
-    item_animation_entry 4, 9, mithril_dagger_sprite_4
-    item_animation_entry 2, 10, mithril_dagger_sprite_1
-    item_animation_entry 8, 8, mithril_dagger_sprite_2
-    item_animation_entry 11, 8, mithril_dagger_sprite_3
-    item_animation_entry 11, 7, mithril_dagger_sprite_4
-    item_animation_entry 7, 9, mithril_dagger_sprite_1
+    item_animation_entry 6, 12, ivory_wand_sprite_0
+    item_animation_entry 7, 12, ivory_wand_sprite_1
+    item_animation_entry 6, 12, ivory_wand_sprite_2
+    item_animation_entry 7, 12, ivory_wand_sprite_1
+    item_animation_entry 8, 11, ivory_wand_sprite_2
+    item_animation_entry 9, 13, ivory_wand_sprite_3
+    item_animation_entry 11, 10, ivory_wand_sprite_4
+    item_animation_entry 9, 13, ivory_wand_sprite_3
+    item_animation_entry 6, 11, ivory_wand_sprite_4
+    item_animation_entry 10, 11, ivory_wand_sprite_4
+    item_animation_entry 6, 11, ivory_wand_sprite_5
+    item_animation_entry 5, 12, ivory_wand_sprite_6
+    item_animation_entry 6, 12, ivory_wand_sprite_7
+    item_animation_entry 5, 12, ivory_wand_sprite_6
+    item_animation_entry 10, 11, ivory_wand_sprite_4
+    item_animation_entry 11, 12, ivory_wand_sprite_8
+    item_animation_entry 10, 12, ivory_wand_sprite_9
+    item_animation_entry 10, 12, ivory_wand_sprite_8
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 4, 9, mithril_spike_sprite_0
-    item_animation_entry 4, 10, mithril_spike_sprite_1
-    item_animation_entry 4, 9, mithril_spike_sprite_2
-    item_animation_entry 4, 10, mithril_spike_sprite_1
-    item_animation_entry 6, 9, mithril_spike_sprite_3
-    item_animation_entry 8, 11, mithril_spike_sprite_1
-    item_animation_entry 9, 9, mithril_spike_sprite_2
-    item_animation_entry 8, 11, mithril_spike_sprite_1
-    item_animation_entry 5, 11, mithril_spike_sprite_4
-    item_animation_entry 8, 11, mithril_spike_sprite_1
-    item_animation_entry 4, 10, mithril_spike_sprite_0
-    item_animation_entry 5, 11, mithril_spike_sprite_1
-    item_animation_entry 5, 10, mithril_spike_sprite_1
-    item_animation_entry 4, 9, mithril_spike_sprite_0
-    item_animation_entry 9, 9, mithril_spike_sprite_2
-    item_animation_entry 12, 10, mithril_spike_sprite_1
-    item_animation_entry 9, 11, mithril_spike_sprite_1
-    item_animation_entry 7, 11, mithril_spike_sprite_1
+    item_animation_entry 6, 5, mithril_armor_sprite_0
+    item_animation_entry 6, 4, mithril_armor_sprite_1
+    item_animation_entry 6, 4, mithril_armor_sprite_2
+    item_animation_entry 6, 4, mithril_armor_sprite_3
+    item_animation_entry 7, 4, mithril_armor_sprite_4
+    item_animation_entry 8, 4, mithril_armor_sprite_5
+    item_animation_entry 8, 4, mithril_armor_sprite_6
+    item_animation_entry 8, 4, mithril_armor_sprite_7
+    item_animation_entry 6, 5, mithril_armor_sprite_8
+    item_animation_entry 6, 4, mithril_armor_sprite_9
+    item_animation_entry 6, 4, mithril_armor_sprite_10
+    item_animation_entry 6, 4, mithril_armor_sprite_9
+    item_animation_entry 6, 4, mithril_armor_sprite_11
+    item_animation_entry 5, 4, mithril_armor_sprite_12
+    item_animation_entry 5, 4, mithril_armor_sprite_13
+    item_animation_entry 5, 4, mithril_armor_sprite_14
+    item_animation_entry 6, 4, mithril_armor_sprite_15
+    item_animation_entry 8, 4, mithril_armor_sprite_16
+    item_animation_entry 6, 4, mithril_armor_sprite_17
+    item_animation_entry 5, 4, mithril_armor_sprite_18
+
+    item_animation_entry 7, 11, mithril_breastplate_sprite_0
+    item_animation_entry 7, 10, mithril_breastplate_sprite_1
+    item_animation_entry 7, 10, mithril_breastplate_sprite_2
+    item_animation_entry 7, 10, mithril_breastplate_sprite_1
+    item_animation_entry 9, 10, mithril_breastplate_sprite_3
+    item_animation_entry 9, 10, mithril_breastplate_sprite_4
+    item_animation_entry 9, 10, mithril_breastplate_sprite_5
+    item_animation_entry 9, 10, mithril_breastplate_sprite_6
+    item_animation_entry 7, 11, mithril_breastplate_sprite_7
+    item_animation_entry 7, 10, mithril_breastplate_sprite_8
+    item_animation_entry 7, 10, mithril_breastplate_sprite_9
+    item_animation_entry 7, 10, mithril_breastplate_sprite_8
+    item_animation_entry 7, 10, mithril_breastplate_sprite_10
+    item_animation_entry 7, 10, mithril_breastplate_sprite_11
+    item_animation_entry 7, 10, mithril_breastplate_sprite_12
+    item_animation_entry 7, 10, mithril_breastplate_sprite_13
+    item_animation_entry 7, 10, mithril_breastplate_sprite_14
+    item_animation_entry 9, 10, mithril_breastplate_sprite_15
+    item_animation_entry 7, 10, mithril_breastplate_sprite_16
+    item_animation_entry 7, 10, mithril_breastplate_sprite_17
+
+    item_animation_entry 6, 5, mithril_cap_sprite_0
+    item_animation_entry 6, 4, mithril_cap_sprite_0
+    item_animation_entry 6, 4, mithril_cap_sprite_0
+    item_animation_entry 6, 4, mithril_cap_sprite_0
+    item_animation_entry 7, 4, mithril_cap_sprite_1
+    item_animation_entry 8, 4, mithril_cap_sprite_1
+    item_animation_entry 8, 4, mithril_cap_sprite_1
+    item_animation_entry 8, 4, mithril_cap_sprite_1
+    item_animation_entry 6, 5, mithril_cap_sprite_2
+    item_animation_entry 6, 4, mithril_cap_sprite_2
+    item_animation_entry 6, 4, mithril_cap_sprite_2
+    item_animation_entry 6, 4, mithril_cap_sprite_2
+    item_animation_entry 6, 4, mithril_cap_sprite_3
+    item_animation_entry 5, 4, mithril_cap_sprite_3
+    item_animation_entry 5, 4, mithril_cap_sprite_3
+    item_animation_entry 5, 4, mithril_cap_sprite_3
+    item_animation_entry 6, 4, mithril_cap_sprite_0
+    item_animation_entry 8, 4, mithril_cap_sprite_1
+    item_animation_entry 6, 4, mithril_cap_sprite_2
+    item_animation_entry 5, 4, mithril_cap_sprite_3
+
+    item_animation_entry 2, 11, mithril_dagger_sprite_0
+    item_animation_entry 4, 11, mithril_dagger_sprite_1
+    item_animation_entry 5, 12, mithril_dagger_sprite_2
+    item_animation_entry 6, 11, mithril_dagger_sprite_3
+    item_animation_entry 6, 11, mithril_dagger_sprite_0
+    item_animation_entry 9, 11, mithril_dagger_sprite_1
+    item_animation_entry 10, 10, mithril_dagger_sprite_4
+    item_animation_entry 8, 11, mithril_dagger_sprite_1
+    item_animation_entry 6, 12, mithril_dagger_sprite_2
+    item_animation_entry 10, 12, mithril_dagger_sprite_2
+    item_animation_entry 6, 12, mithril_dagger_sprite_2
+    item_animation_entry 6, 12, mithril_dagger_sprite_3
+    item_animation_entry 6, 11, mithril_dagger_sprite_4
+    item_animation_entry 4, 12, mithril_dagger_sprite_1
+    item_animation_entry 10, 10, mithril_dagger_sprite_2
+    item_animation_entry 13, 10, mithril_dagger_sprite_3
+    item_animation_entry 13, 9, mithril_dagger_sprite_4
+    item_animation_entry 9, 11, mithril_dagger_sprite_1
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 3, 8, spear_sprite_0
-    item_animation_entry 4, 10, spear_sprite_1
-    item_animation_entry 4, 9, spear_sprite_2
-    item_animation_entry 4, 8, spear_sprite_3
-    item_animation_entry 4, 9, spear_sprite_4
-    item_animation_entry 5, 10, spear_sprite_5
-    item_animation_entry 5, 8, spear_sprite_6
-    item_animation_entry 5, 10, spear_sprite_5
-    item_animation_entry 4, 4, spear_sprite_7
-    item_animation_entry 8, 4, spear_sprite_7
-    item_animation_entry 4, 9, spear_sprite_8
-    item_animation_entry 4, 8, spear_sprite_9
-    item_animation_entry 4, 9, spear_sprite_10
-    item_animation_entry 4, 9, spear_sprite_11
-    item_animation_entry 7, 6, spear_sprite_12
-    item_animation_entry 10, 9, spear_sprite_5
-    item_animation_entry 6, 10, spear_sprite_5
-    item_animation_entry 4, 10, spear_sprite_5
+    item_animation_entry 6, 11, mithril_spike_sprite_0
+    item_animation_entry 6, 12, mithril_spike_sprite_1
+    item_animation_entry 6, 11, mithril_spike_sprite_2
+    item_animation_entry 6, 12, mithril_spike_sprite_1
+    item_animation_entry 8, 11, mithril_spike_sprite_3
+    item_animation_entry 10, 13, mithril_spike_sprite_1
+    item_animation_entry 11, 11, mithril_spike_sprite_2
+    item_animation_entry 10, 13, mithril_spike_sprite_1
+    item_animation_entry 7, 13, mithril_spike_sprite_4
+    item_animation_entry 10, 13, mithril_spike_sprite_1
+    item_animation_entry 6, 12, mithril_spike_sprite_0
+    item_animation_entry 7, 13, mithril_spike_sprite_1
+    item_animation_entry 7, 12, mithril_spike_sprite_1
+    item_animation_entry 6, 11, mithril_spike_sprite_0
+    item_animation_entry 11, 11, mithril_spike_sprite_2
+    item_animation_entry 14, 12, mithril_spike_sprite_1
+    item_animation_entry 11, 13, mithril_spike_sprite_1
+    item_animation_entry 9, 13, mithril_spike_sprite_1
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 8, 9, wooden_shield_sprite_0
-    item_animation_entry 8, 8, wooden_shield_sprite_0
-    item_animation_entry 8, 7, wooden_shield_sprite_0
-    item_animation_entry 8, 8, wooden_shield_sprite_0
-    item_animation_entry 11, 8, wooden_shield_sprite_1
-    item_animation_entry 9, 11, wooden_shield_sprite_2
-    item_animation_entry 5, 8, wooden_shield_sprite_3
-    item_animation_entry 11, 8, wooden_shield_sprite_1
-    item_animation_entry 8, 10, wooden_shield_sprite_2
-    item_animation_entry 8, 10, wooden_shield_sprite_2
-    item_animation_entry 8, 10, wooden_shield_sprite_2
-    item_animation_entry 8, 10, wooden_shield_sprite_2
-    item_animation_entry 6, 8, wooden_shield_sprite_0
-    item_animation_entry 4, 9, wooden_shield_sprite_0
-    item_animation_entry 3, 8, wooden_shield_sprite_0
-    item_animation_entry 4, 9, wooden_shield_sprite_0
-    item_animation_entry 7, 8, wooden_shield_sprite_0
-    item_animation_entry 11, 7, wooden_shield_sprite_4
-    item_animation_entry 7, 8, wooden_shield_sprite_2
-    item_animation_entry 3, 8, wooden_shield_sprite_0
+    item_animation_entry 5, 10, spear_sprite_0
+    item_animation_entry 6, 12, spear_sprite_1
+    item_animation_entry 6, 11, spear_sprite_2
+    item_animation_entry 6, 10, spear_sprite_3
+    item_animation_entry 6, 11, spear_sprite_4
+    item_animation_entry 7, 12, spear_sprite_5
+    item_animation_entry 7, 10, spear_sprite_6
+    item_animation_entry 7, 12, spear_sprite_5
+    item_animation_entry 6, 6, spear_sprite_7
+    item_animation_entry 10, 6, spear_sprite_7
+    item_animation_entry 6, 11, spear_sprite_8
+    item_animation_entry 6, 10, spear_sprite_9
+    item_animation_entry 6, 11, spear_sprite_10
+    item_animation_entry 6, 11, spear_sprite_11
+    item_animation_entry 9, 8, spear_sprite_12
+    item_animation_entry 12, 11, spear_sprite_5
+    item_animation_entry 8, 12, spear_sprite_5
+    item_animation_entry 6, 12, spear_sprite_5
+    empty_animation_entry
+    empty_animation_entry
+
+    item_animation_entry 10, 11, wooden_shield_sprite_0
+    item_animation_entry 10, 10, wooden_shield_sprite_0
+    item_animation_entry 10, 9, wooden_shield_sprite_0
+    item_animation_entry 10, 10, wooden_shield_sprite_0
+    item_animation_entry 13, 10, wooden_shield_sprite_1
+    item_animation_entry 11, 13, wooden_shield_sprite_2
+    item_animation_entry 7, 10, wooden_shield_sprite_3
+    item_animation_entry 13, 10, wooden_shield_sprite_1
+    item_animation_entry 10, 12, wooden_shield_sprite_2
+    item_animation_entry 10, 12, wooden_shield_sprite_2
+    item_animation_entry 10, 12, wooden_shield_sprite_2
+    item_animation_entry 10, 12, wooden_shield_sprite_2
+    item_animation_entry 8, 10, wooden_shield_sprite_0
+    item_animation_entry 6, 11, wooden_shield_sprite_0
+    item_animation_entry 5, 10, wooden_shield_sprite_0
+    item_animation_entry 6, 11, wooden_shield_sprite_0
+    item_animation_entry 9, 10, wooden_shield_sprite_0
+    item_animation_entry 13, 9, wooden_shield_sprite_4
+    item_animation_entry 9, 10, wooden_shield_sprite_2
+    item_animation_entry 5, 10, wooden_shield_sprite_0
 
 animated_item_sprite_table:
 _tree_branch_sprite_0:
@@ -953,63 +953,116 @@ _green_hood_sprite_3:
         0xc7, 0xc7, 0x09, 0x11, 0x09, 0x09, 0xc7, \
         0xc7, 0xc7, 0x11, 0x11, 0xc7, 0xc7, 0xc7
 _leather_armor_sprite_0:
-    .db 6, 2
+    .db 6, 4
     .db 0x0b, 0x0b, 0xc7, 0xc7, 0x0b, 0x0b, \
-        0xc7, 0x0b, 0x0b, 0x0b, 0x0b, 0x14
+        0x66, 0x0b, 0x0b, 0x0b, 0x0b, 0x14, \
+        0xc7, 0x14, 0x14, 0x14, 0x14, 0x66, \
+        0xc7, 0x14, 0xc7, 0xc7, 0xc7, 0xc7
 _leather_armor_sprite_1:
-    .db 6, 3
+    .db 6, 5
     .db 0x0b, 0x0b, 0xc7, 0xc7, 0x0b, 0x0b, \
         0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14, \
-        0xc7, 0x0b, 0x0b, 0x0b, 0x0b, 0xc7
+        0x66, 0x0b, 0x0b, 0x0b, 0x0b, 0x66, \
+        0xc7, 0x14, 0x14, 0x14, 0x14, 0xc7, \
+        0xc7, 0x14, 0xc7, 0xc7, 0x14, 0xc7
 _leather_armor_sprite_2:
-    .db 6, 3
+    .db 6, 5
     .db 0x0b, 0x0b, 0xc7, 0xc7, 0x0b, 0x0b, \
+        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x66, \
         0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0xc7, \
-        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0xc7
+        0x66, 0x14, 0x14, 0x14, 0x14, 0xc7, \
+        0xc7, 0xc7, 0xc7, 0xc7, 0x14, 0xc7
 _leather_armor_sprite_3:
-    .db 4, 3
+    .db 4, 5
     .db 0x0b, 0x0b, 0x0b, 0x0b, \
         0x0b, 0x14, 0x0b, 0x0b, \
-        0xc7, 0x14, 0x0b, 0x0b
+        0x66, 0x14, 0x0b, 0x0b, \
+        0x14, 0x14, 0x14, 0x14, \
+        0x14, 0xc7, 0xc7, 0x14
 _leather_armor_sprite_4:
-    .db 4, 3
+    .db 4, 5
     .db 0x0b, 0x0b, 0x0b, 0x0b, \
         0x0b, 0x0b, 0x14, 0x0b, \
-        0x0b, 0x0b, 0x14, 0x0b
+        0x0b, 0x0b, 0x14, 0x0b, \
+        0x14, 0x14, 0x66, 0x14, \
+        0x14, 0xc7, 0x14, 0xc7
 _leather_armor_sprite_5:
-    .db 4, 3
+    .db 4, 5
     .db 0x0b, 0x0b, 0x0b, 0x0b, \
         0x0b, 0x0b, 0x14, 0x0b, \
-        0x0b, 0x0b, 0x14, 0xc7
+        0x0b, 0x0b, 0x14, 0x66, \
+        0x14, 0x14, 0x14, 0x14, \
+        0x14, 0xc7, 0x14, 0xc7
 _leather_armor_sprite_6:
-    .db 6, 2
-    .db 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, \
-        0xc7, 0x0b, 0x0b, 0x0b, 0x0b, 0x14
+    .db 4, 5
+    .db 0x0b, 0x0b, 0x0b, 0x0b, \
+        0x0b, 0x0b, 0x14, 0x0b, \
+        0x0b, 0x0b, 0x14, 0x0b, \
+        0x14, 0x14, 0x66, 0x14, \
+        0x14, 0xc7, 0xc7, 0x14
 _leather_armor_sprite_7:
-    .db 6, 3
+    .db 6, 4
+    .db 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, \
+        0xc7, 0x0b, 0x0b, 0x0b, 0x0b, 0x14, \
+        0xc7, 0x14, 0x14, 0x14, 0x14, 0x66, \
+        0xc7, 0x14, 0xc7, 0xc7, 0xc7, 0xc7
+_leather_armor_sprite_8:
+    .db 6, 5
     .db 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, \
         0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14, \
-        0xc7, 0x0b, 0x0b, 0x0b, 0x0b, 0xc7
-_leather_armor_sprite_8:
-    .db 6, 3
-    .db 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, \
-        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0xc7, \
-        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0xc7
+        0x66, 0x0b, 0x0b, 0x0b, 0x0b, 0x66, \
+        0xc7, 0x14, 0x14, 0x14, 0x14, 0xc7, \
+        0xc7, 0x14, 0xc7, 0xc7, 0x14, 0xc7
 _leather_armor_sprite_9:
-    .db 4, 3
+    .db 6, 5
+    .db 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, \
+        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x66, \
+        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0xc7, \
+        0x66, 0x14, 0x14, 0x14, 0x14, 0xc7, \
+        0xc7, 0xc7, 0xc7, 0xc7, 0x14, 0xc7
+_leather_armor_sprite_10:
+    .db 4, 5
+    .db 0x0b, 0x0b, 0x0b, 0x0b, \
+        0x0b, 0x0b, 0x14, 0x0b, \
+        0x0b, 0x0b, 0x14, 0x66, \
+        0x14, 0x14, 0x14, 0x14, \
+        0x14, 0xc7, 0xc7, 0x14
+_leather_armor_sprite_11:
+    .db 4, 5
     .db 0x0b, 0x0b, 0x0b, 0x0b, \
         0x0b, 0x14, 0x0b, 0x0b, \
-        0x0b, 0x14, 0x0b, 0x0b
-_leather_armor_sprite_10:
-    .db 6, 3
+        0x0b, 0x14, 0x0b, 0x0b, \
+        0x14, 0x66, 0x14, 0x14, \
+        0xc7, 0x14, 0xc7, 0x14
+_leather_armor_sprite_12:
+    .db 4, 5
+    .db 0x0b, 0x0b, 0x0b, 0x0b, \
+        0x0b, 0x14, 0x0b, 0x0b, \
+        0x66, 0x14, 0x0b, 0x0b, \
+        0x14, 0x14, 0x14, 0x14, \
+        0xc7, 0x14, 0xc7, 0x14
+_leather_armor_sprite_13:
+    .db 4, 5
+    .db 0x0b, 0x0b, 0x0b, 0x0b, \
+        0x0b, 0x14, 0x0b, 0x0b, \
+        0x0b, 0x14, 0x0b, 0x0b, \
+        0x14, 0x66, 0x14, 0x14, \
+        0x14, 0xc7, 0xc7, 0x14
+_leather_armor_sprite_14:
+    .db 6, 5
     .db 0x0b, 0x0b, 0xc7, 0xc7, 0x0b, 0x0b, \
         0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14, \
-        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14
-_leather_armor_sprite_11:
-    .db 6, 3
+        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14, \
+        0x66, 0x14, 0x14, 0x14, 0x14, 0x66, \
+        0xc7, 0x14, 0xc7, 0xc7, 0x14, 0xc7
+_leather_armor_sprite_15:
+    .db 6, 5
     .db 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, \
         0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14, \
-        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14
+        0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14, \
+        0x66, 0x14, 0x14, 0x14, 0x14, 0x66, \
+        0xc7, 0x14, 0xc7, 0xc7, 0x14, 0xc7
+
 _invisible_sprite_0:
     .db 0, 0
 _steel_sword_sprite_0:
@@ -1528,146 +1581,39 @@ _green_cloak_sprite_17:
         0xc7, 0xc7, 0xc7, 0x11, 0x11, 0x11, 0xc7, 0xc7, \
         0xc7, 0xc7, 0xc7, 0xc7, 0x1b, 0x11, 0x11, 0xc7, \
         0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x1b, 0x11, 0x11
-_purple_cloak_sprite_0:
+_green_cloak_small_sprite_0:
     .db 7, 3
-    .db 0xc7, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0x42, 0xc7, 0x42, 0x42, 0xc7, 0x42, \
-        0x4b, 0x42, 0xc7, 0x42, 0x42, 0x42, 0xc7, PADDING
-_purple_cloak_sprite_1:
-    .db 7, 6
-    .db 0xc7, 0x42, 0x42, 0xc7, 0xc7, 0x42, 0x42, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, 0x42, \
-        0x4b, 0x42, 0xc7, 0x42, 0x42, 0xc7, 0x42, \
-        0xc7, 0xc7, 0xc7, 0x42, 0xc7, 0xc7, 0xc7
-_purple_cloak_sprite_2:
-    .db 7, 6
-    .db 0x42, 0x42, 0xc7, 0xc7, 0x42, 0x42, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x42, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x42, 0xc7, \
-        0x42, 0xc7, 0x42, 0x42, 0xc7, 0x42, 0xc7, \
-        0xc7, 0x42, 0x42, 0x42, 0xc7, 0x42, 0x42
-_purple_cloak_sprite_3:
-    .db 7, 6
-    .db 0x42, 0x42, 0xc7, 0xc7, 0x42, 0x42, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0x42, 0xc7, 0xc7, 0xc7, 0xc7, 0x42, 0xc7, \
-        0x42, 0xc7, 0x42, 0x42, 0xc7, 0x42, 0x42, \
-        0xc7, 0xc7, 0x42, 0x42, 0xc7, 0xc7, 0xc7
-_purple_cloak_sprite_4:
-    .db 8, 6
-    .db 0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0x42, \
-        0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7
-_purple_cloak_sprite_5:
-    .db 8, 6
-    .db 0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0x42, \
-        0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0x42, 0xc7, \
-        0xc7, 0xc7, 0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7
-_purple_cloak_sprite_6:
-    .db 8, 6
-    .db 0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0x42, \
-        0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0x4b, 0x42, 0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0x4b, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7
-_purple_cloak_sprite_7:
-    .db 8, 6
-    .db 0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0x42, \
-        0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7
-_purple_cloak_sprite_8:
+    .db 0xc7, 0x11, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
+        0xc7, 0x11, 0xc7, 0xc7, 0xc7, 0xc7, 0x11, \
+        0x1b, 0x11, 0xc7, 0x11, 0x11, 0x11, 0xc7, PADDING
+_green_cloak_small_sprite_1:
     .db 7, 5
-    .db 0xc7, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, \
-        0xc7, 0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, \
-        0xc7, 0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, \
-        0xc7, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, \
-        0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0xc7, PADDING
-_purple_cloak_sprite_9:
-    .db 7, 6
-    .db 0xc7, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, \
-        0xc7, 0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, \
-        0xc7, 0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, \
-        0xc7, 0x42, 0x42, 0x42, 0x42, 0x4b, 0x42, \
-        0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, \
-        0xc7, 0xc7, 0x42, 0x42, 0x42, 0xc7, 0xc7
-_purple_cloak_sprite_10:
-    .db 7, 6
-    .db 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0xc7, \
-        0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0xc7, \
-        0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, 0xc7, \
-        0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, 0xc7, \
-        0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0xc7, \
-        0xc7, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42
-_purple_cloak_sprite_11:
-    .db 7, 6
-    .db 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0xc7, \
-        0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, 0xc7, \
-        0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, 0xc7, \
-        0x42, 0x4b, 0x42, 0x42, 0x42, 0x42, 0xc7, \
-        0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, \
-        0xc7, 0xc7, 0x42, 0x42, 0x42, 0xc7, 0xc7
-_purple_cloak_sprite_12:
-    .db 8, 6
-    .db 0x42, 0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42
-_purple_cloak_sprite_13:
-    .db 8, 6
-    .db 0x42, 0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0x42, 0x42, 0x42, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0xc7
-_purple_cloak_sprite_14:
-    .db 8, 6
-    .db 0x42, 0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0x42, 0x42, 0x42, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0x42, 0x42, 0x42, 0x42, 0x42, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0xc7, 0xc7
-_purple_cloak_sprite_15:
-    .db 8, 6
-    .db 0xc7, 0x42, 0x42, 0xc7, 0xc7, 0x42, 0x42, 0xc7, \
+    .db 0xc7, 0x11, 0x11, 0xc7, 0xc7, 0x11, 0x11, \
+        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
+        0xc7, 0x11, 0xc7, 0xc7, 0xc7, 0xc7, 0x11, \
+        0x1b, 0x11, 0xc7, 0xc7, 0xc7, 0xc7, 0x11, \
+        0xc7, 0xc7, 0xc7, 0x11, 0x11, 0xc7, 0xc7, PADDING
+_green_cloak_small_sprite_2:
+    .db 7, 5
+    .db 0x11, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
+        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x11, 0xc7, \
+        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x11, 0xc7, \
+        0x11, 0xc7, 0xc7, 0xc7, 0xc7, 0x11, 0xc7, \
+        0xc7, 0x11, 0x11, 0x11, 0xc7, 0x11, 0x11, PADDING
+_green_cloak_small_sprite_3:
+    .db 7, 5
+    .db 0x11, 0x11, 0xc7, 0xc7, 0x11, 0x11, 0xc7, \
+        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
+        0x11, 0xc7, 0xc7, 0xc7, 0xc7, 0x11, 0xc7, \
+        0x11, 0xc7, 0xc7, 0xc7, 0xc7, 0x11, 0x11, \
+        0xc7, 0xc7, 0x11, 0x11, 0xc7, 0xc7, 0xc7, PADDING
+_green_cloak_small_sprite_15:
+    .db 8, 5
+    .db 0xc7, 0x11, 0x11, 0xc7, 0xc7, 0x11, 0x11, 0xc7, \
         0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
         0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0x42, 0xc7, 0x42, 0x42, 0xc7, 0x42, 0xc7, \
-        0x4b, 0x42, 0xc7, 0x42, 0x42, 0xc7, 0x42, 0x42
-_purple_cloak_sprite_16:
-    .db 8, 6
-    .db 0xc7, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0xc7, \
-        0xc7, 0x42, 0x4b, 0x42, 0x42, 0x42, 0x42, 0xc7, \
-        0xc7, 0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, 0xc7, \
-        0xc7, 0x42, 0x4b, 0x42, 0x42, 0x4b, 0x42, 0xc7, \
-        0xc7, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0xc7, \
-        0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42
-_purple_cloak_sprite_17:
-    .db 8, 6
-    .db 0x42, 0x42, 0x42, 0x42, 0xc7, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0x42, 0x42, 0xc7, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0x42, 0x42, 0x42, 0xc7, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42, 0xc7, \
-        0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0x4b, 0x42, 0x42
+        0xc7, 0x11, 0xc7, 0xc7, 0xc7, 0xc7, 0x11, 0xc7, \
+        0x1b, 0x11, 0xc7, 0x11, 0x11, 0xc7, 0x11, 0x11
 _purple_hood_sprite_0:
     .db 10, 8
     .db 0xc7, 0xc7, 0x4b, 0x4b, 0x4b, 0x42, 0x42, 0x42, 0xc7, 0xc7, \
@@ -2170,8 +2116,11 @@ _iron_breastplate_sprite_17:
         0x52, 0x66, 0x52, 0x52, \
         0x52, 0xc7, 0xc7, 0x52
 _iron_helmet_sprite_0:
-    .db 8, 7
-    .db 0xc7, 0xad, 0xad, 0xad, 0xad, 0xa4, 0xa4, 0xc7, \
+    .db 8, 10
+    .db 0xc7, 0xc7, 0x05, 0x05, 0x05, 0x05, 0xc7, 0xc7, \
+        0xc7, 0xc7, 0x05, 0x05, 0x05, 0x05, 0xc7, 0xc7, \
+        0xc7, 0xc7, 0xc7, 0x04, 0x04, 0xc7, 0xc7, 0xc7, \
+        0xc7, 0xad, 0xad, 0xad, 0xad, 0xa4, 0xa4, 0xc7, \
         0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, \
         0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, \
         0xa4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x52, \
@@ -2179,29 +2128,49 @@ _iron_helmet_sprite_0:
         0xc7, 0xa4, 0xad, 0xad, 0x52, 0x52, 0x52, 0xc7, \
         0xc7, 0xc7, 0xc7, 0xad, 0x52, 0xc7, 0xc7, 0xc7
 _iron_helmet_sprite_1:
-    .db 8, 6
-    .db 0xc7, 0xad, 0xad, 0xad, 0xad, 0xa4, 0xc7, 0xc7, \
-        0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xc7, \
-        0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xc7, \
-        0xad, 0xa4, 0xa4, 0x52, 0x00, 0x00, 0x00, 0xc7, \
-        0xa4, 0xa4, 0xa4, 0x52, 0x52, 0xa4, 0xa4, 0xa4, \
-        0xc7, 0xa4, 0x52, 0x52, 0xa4, 0xa4, 0xa4, 0xa4
+    .db 8, 9
+    .db 0xc7, 0xc7, 0x05, 0x05, 0x05, 0x05, 0xc7, 0xc7, \
+        0xc7, 0xc7, 0xc7, 0x04, 0x04, 0xc7, 0xc7, 0xc7, \
+        0xc7, 0xad, 0xad, 0xad, 0xad, 0xa4, 0xa4, 0xc7, \
+        0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, \
+        0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, \
+        0xa4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x52, \
+        0xa4, 0xad, 0xad, 0xad, 0x52, 0x52, 0x52, 0x52, \
+        0xc7, 0xa4, 0xad, 0xad, 0x52, 0x52, 0x52, 0xc7, \
+        0xc7, 0xc7, 0xc7, 0xad, 0x52, 0xc7, 0xc7, 0xc7
 _iron_helmet_sprite_2:
-    .db 8, 6
-    .db 0xc7, 0xad, 0xad, 0xad, 0xad, 0xa4, 0xa4, 0xc7, \
+    .db 9, 9
+    .db 0xc7, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0xc7, \
+        0x05, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, \
+        0x05, 0xc7, 0xc7, 0x04, 0x04, 0xc7, 0xc7, 0xc7, 0x05, \
+        0xc7, 0xc7, 0xad, 0xad, 0xad, 0xad, 0xa4, 0xc7, 0xc7, \
+        0xc7, 0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xc7, \
+        0xc7, 0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0xc7, \
+        0xc7, 0xad, 0xa4, 0xa4, 0x52, 0x00, 0x00, 0x00, 0xc7, \
+        0xc7, 0xa4, 0xa4, 0xa4, 0x52, 0x52, 0xa4, 0xa4, 0xa4, \
+        0xc7, 0xc7, 0xa4, 0x52, 0x52, 0xa4, 0xa4, 0xa4, 0xa4, PADDING
+_iron_helmet_sprite_3:
+    .db 8, 9
+    .db 0xc7, 0xc7, 0x05, 0x05, 0x05, 0x05, 0xc7, 0xc7, \
+        0xc7, 0xc7, 0x05, 0x05, 0x05, 0x05, 0xc7, 0xc7, \
+        0xc7, 0xc7, 0xc7, 0x04, 0x04, 0xc7, 0xc7, 0xc7, \
+        0xc7, 0xad, 0xad, 0xad, 0xad, 0xa4, 0xa4, 0xc7, \
         0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, \
         0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, 0x52, \
         0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, 0x52, \
         0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, 0x52, 0x52, \
         0xc7, 0xa4, 0xa4, 0x52, 0x52, 0x52, 0x52, 0xc7
-_iron_helmet_sprite_3:
-    .db 8, 6
-    .db 0xc7, 0xc7, 0xad, 0xad, 0xad, 0xa4, 0xa4, 0xc7, \
-        0xc7, 0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, \
-        0xc7, 0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, \
-        0xc7, 0x00, 0x00, 0x00, 0xa4, 0x52, 0x52, 0x52, \
-        0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, 0x52, \
-        0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, 0xc7
+_iron_helmet_sprite_4:
+    .db 9, 9
+    .db 0xc7, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0xc7, \
+        0x05, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, \
+        0x05, 0xc7, 0xc7, 0xc7, 0x04, 0x04, 0xc7, 0xc7, 0x05, \
+        0xc7, 0xc7, 0xad, 0xad, 0xad, 0xa4, 0xa4, 0xc7, 0xc7, \
+        0xc7, 0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0xc7, \
+        0xc7, 0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, 0xc7, \
+        0xc7, 0x00, 0x00, 0x00, 0xa4, 0x52, 0x52, 0x52, 0xc7, \
+        0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, 0x52, 0xc7, \
+        0xa4, 0xa4, 0xa4, 0xa4, 0xa4, 0x52, 0x52, 0xc7, 0xc7, PADDING
 _iron_staff_sprite_0:
     .db 5, 5
     .db 0xc7, 0xc7, 0x52, 0xc7, 0xc7, \
@@ -2998,7 +2967,7 @@ _item_leather_armor_sprite:
     .db 0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14	; XXWWWWWWWWXX
     .db 0x14, 0x0b, 0x0b, 0x0b, 0x0b, 0x14	; XXWWWWWWWWXX
     .db 0xc7, 0x0b, 0x0b, 0x0b, 0x0b, 0xc7	;   WWWWWWWW
-    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
+    .db 0xc7, 0x0b, 0xc7, 0xc7, 0x0b, 0xc7	;   WW    WW
 _item_invisible_sprite:
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
@@ -3069,13 +3038,13 @@ _item_green_cloak_sprite:
     .db 0xc7, 0x11, 0x11, 0x1b, 0x11, 0xc7	;   WWWWXXWW
     .db 0xc7, 0x11, 0x11, 0x1b, 0x11, 0xc7	;   WWWWXXWW
     .db 0x11, 0x11, 0x11, 0x11, 0x11, 0x11	; WWWWWWWWWWWW
-_item_purple_cloak_sprite:
+_item_green_cloak_small_sprite:
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
-    .db 0xc7, 0xc7, 0x42, 0x42, 0xc7, 0xc7	;     WWWW
-    .db 0xc7, 0x42, 0x42, 0x42, 0x42, 0xc7	;   WWWWWWWW
-    .db 0xc7, 0x42, 0x42, 0x4b, 0x42, 0xc7	;   WWWWXXWW
-    .db 0xc7, 0x42, 0x42, 0x4b, 0x42, 0xc7	;   WWWWXXWW
-    .db 0x42, 0x42, 0x42, 0x42, 0x42, 0x42	; WWWWWWWWWWWW
+    .db 0xc7, 0xc7, 0x11, 0x11, 0xc7, 0xc7	;     WWWW
+    .db 0xc7, 0x11, 0x11, 0x11, 0x11, 0xc7	;   WWWWWWWW
+    .db 0xc7, 0x11, 0x11, 0x1b, 0x11, 0xc7	;   WWWWXXWW
+    .db 0xc7, 0x11, 0x11, 0x1b, 0x11, 0xc7	;   WWWWXXWW
+    .db 0x11, 0x11, 0x11, 0x11, 0x11, 0x11	; WWWWWWWWWWWW
 _item_purple_hood_sprite:
     .db 0xc7, 0x42, 0x42, 0x42, 0x42, 0xc7	;   WWWWWWWW
     .db 0x42, 0x42, 0x01, 0x01, 0x42, 0x42	; WWWW####WWWW
@@ -3091,19 +3060,19 @@ _item_hammer_sprite:
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0x5b, 0x5b	;         xxxx
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
 _item_iron_armor_sprite:
-    .db 0xc7, 0xc7, 0x05, 0x04, 0xc7, 0xc7	;     XXWW
-    .db 0xc7, 0xad, 0xa4, 0xa4, 0xa4, 0xc7	;   --~~~~~~
-    .db 0xad, 0x00, 0x00, 0x00, 0x00, 0xa4	; --########~~
-    .db 0xad, 0xad, 0xad, 0x52, 0x52, 0x52	; ------XXXXXX
+    .db 0xc7, 0x05, 0x05, 0x04, 0x04, 0xc7	;   XXXXWWWW
+    .db 0xad, 0xad, 0xa4, 0xa4, 0xa4, 0xa4	; ----~~~~~~~~
+    .db 0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0x52	; --~~~~~~~~XX
     .db 0xad, 0xa4, 0xa4, 0xa4, 0x52, 0x52	; --~~~~~~XXXX
     .db 0xc7, 0xa4, 0xa4, 0x52, 0x52, 0xc7	;   ~~~~XXXX
+    .db 0xc7, 0xa4, 0xc7, 0xc7, 0x52, 0xc7	;   ~~    XX
 _item_iron_breastplate_sprite:
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
     .db 0xad, 0xad, 0xa4, 0xa4, 0xa4, 0xa4	; ----~~~~~~~~
     .db 0xad, 0xa4, 0xa4, 0xa4, 0xa4, 0x52	; --~~~~~~~~XX
     .db 0xad, 0xa4, 0xa4, 0xa4, 0x52, 0x52	; --~~~~~~XXXX
     .db 0xc7, 0xa4, 0xa4, 0x52, 0x52, 0xc7	;   ~~~~XXXX
-    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
+    .db 0xc7, 0xa4, 0xc7, 0xc7, 0x52, 0xc7	;   ~~    XX
 _item_iron_helmet_sprite:
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
     .db 0xc7, 0xc7, 0xad, 0xa4, 0xc7, 0xc7	;     --~~
@@ -3133,19 +3102,19 @@ _item_ivory_wand_sprite:
     .db 0xc7, 0xbf, 0xc7, 0xc7, 0xc7, 0xc7	;   ..
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
 _item_mithril_armor_sprite:
-    .db 0xc7, 0xc7, 0xf6, 0xed, 0xc7, 0xc7	;     ..,,
-    .db 0xc7, 0xf6, 0xed, 0xed, 0xe4, 0xc7	;   ..,,,,--
-    .db 0xf6, 0xed, 0xed, 0xe4, 0xed, 0xed	; ..,,,,--,,,,
+    .db 0xc7, 0xed, 0xed, 0xe4, 0xe4, 0xc7	;   ,,,,----
+    .db 0xf6, 0xf6, 0xed, 0xed, 0xed, 0xed	; ....,,,,,,,,
     .db 0xf6, 0xed, 0xed, 0xed, 0xed, 0xe4	; ..,,,,,,,,--
     .db 0xf6, 0xed, 0xed, 0xed, 0xe4, 0xe4	; ..,,,,,,----
     .db 0xc7, 0xed, 0xed, 0xe4, 0xe4, 0xc7	;   ,,,,----
+    .db 0xc7, 0xed, 0xc7, 0xc7, 0xe4, 0xc7	;   ,,    --
 _item_mithril_breastplate_sprite:
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
     .db 0xf6, 0xf6, 0xed, 0xed, 0xed, 0xed	; ....,,,,,,,,
     .db 0xf6, 0xed, 0xed, 0xed, 0xed, 0xe4	; ..,,,,,,,,--
     .db 0xf6, 0xed, 0xed, 0xed, 0xe4, 0xe4	; ..,,,,,,----
     .db 0xc7, 0xed, 0xed, 0xe4, 0xe4, 0xc7	;   ,,,,----
-    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
+    .db 0xc7, 0xed, 0xc7, 0xc7, 0xe4, 0xc7	;   ,,    --
 _item_mithril_cap_sprite:
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
     .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;

@@ -99,7 +99,9 @@ inventory_equip_item:
     adc XH, r1
     ld r18, X
     tst r18
-    breq _iei_unequip_weapon
+    brne _iei_nonempty_selected
+    rjmp _iei_unequip_weapon
+_iei_nonempty_selected:
     mov r20, r18
     dec r20
     ldi ZL, byte3(2*item_table)
@@ -124,6 +126,46 @@ _iei_equip_weapon:
     rjmp _iei_end
 _iei_equip_armor:
     lds r19, player_armor
+_iei_check_iron_breastplate:
+    cpi r18, ITEM_iron_breastplate
+    brne _iei_check_iron_helmet
+    cpi r19, ITEM_iron_helmet
+    brne _iei_check_iron_helmet
+    clr r19
+    ldi r18, ITEM_iron_armor
+    rjmp _iei_do_equip_armor
+_iei_check_iron_helmet:
+    cpi r18, ITEM_iron_helmet
+    brne _iei_check_mithril_breastplate
+    cpi r19, ITEM_iron_breastplate
+    brne _iei_check_mithril_breastplate
+    clr r19
+    ldi r18, ITEM_iron_armor
+    rjmp _iei_do_equip_armor
+_iei_check_mithril_breastplate:
+    cpi r18, ITEM_mithril_breastplate
+    brne _iei_check_mithril_cap
+    cpi r19, ITEM_mithril_cap
+    brne _iei_check_mithril_cap
+    clr r19
+    ldi r18, ITEM_mithril_armor
+    rjmp _iei_do_equip_armor
+_iei_check_mithril_cap:
+    cpi r18, ITEM_mithril_cap
+    brne _iei_check_cloak
+    cpi r19, ITEM_mithril_breastplate
+    brne _iei_check_cloak
+    clr r19
+    ldi r18, ITEM_mithril_armor
+    rjmp _iei_do_equip_armor
+_iei_check_cloak:
+    cpi r18, ITEM_green_cloak
+    brne _iei_do_equip_armor
+    lds r20, player_character
+    cpi r20, CHARACTER_HALFLING
+    brne _iei_do_equip_armor
+    ldi r18, ITEM_GREEN_cloak_small
+_iei_do_equip_armor:
     sts player_armor, r18
     st X, r19
     rjmp _iei_end

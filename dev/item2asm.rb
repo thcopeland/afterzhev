@@ -43,8 +43,8 @@ def extract_item_sprites(fname, type, name)
     images = []
 
     components.each do |w, h, x, y|
-        offset_x = (x % 16)
-        offset_y = (y % 16)
+        offset_x = (x+2) % 16
+        offset_y = (y+2) % 16
         data = `convert #{fname} -crop #{w}x#{h}+#{x}+#{y} +repage -background magenta -alpha background -alpha remove -depth 8 rgb:-`
         pixels = data.unpack("C*").each_slice(3).map { |r, g, b| (b & 0xC0) | ((g >> 2) & 0x38) | ((r >> 5) & 0x07) }
         match = images.find { |w, h, img_pixels| img_pixels == pixels }

@@ -33,10 +33,11 @@ _init_zero_iter:
     sti player_frame, 0
     sti player_effect, 0
     sti player_inventory, ITEM_mithril_cap
-    sti player_inventory+1, ITEM_mithril_dagger
-    sti player_inventory+2, ITEM_mithril_spike
-    sti player_inventory+3, ITEM_spear
-    sti player_inventory+5, ITEM_wooden_shield
+    sti player_inventory+1, ITEM_mithril_breastplate
+    sti player_inventory+2, ITEM_iron_helmet
+    sti player_inventory+3, ITEM_iron_breastplate
+    sti player_inventory+6, ITEM_green_cloak
+    sti player_inventory+7, ITEM_green_cloak_small
     ; sti player_inventory+1, ITEM_green_hood
     ; sti player_inventory+2, ITEM_leather_armor
     ; sti player_inventory+3, ITEM_bloody_sword
@@ -63,10 +64,10 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    sti player_position_x, 193
-    sti player_position_y, 88
+    sti player_position_x, 160
+    sti player_position_y, 160
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_TOWN_TAVERN_2
+    .equ INITIAL_SECTOR = SECTOR_TOWN_ENTRANCE_2
     ; .equ INITIAL_SECTOR = SECTOR_START_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)

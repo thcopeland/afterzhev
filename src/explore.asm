@@ -1460,6 +1460,8 @@ check_sector_bounds:
     brsh _csb_exit_event
     cpi r25, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT+1
     brsh _csb_exit_event
+    cpi r25, 4
+    brlo _csb_exit_event
     ret
 _csb_exit_event:
     ldi ZL, byte3(2*sector_table)
@@ -1510,8 +1512,8 @@ _csb_check_sector_right:
     sts camera_position_x, r1
     rjmp _csb_switch_sector
 _csb_check_sector_top:
-    cpi r25, SECTOR_HEIGHT*TILE_HEIGHT
-    brlo _csb_check_sector_bottom
+    cpi r25, 4
+    brsh _csb_check_sector_bottom
     subi ZL, low(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET-2)
     sbci ZH, high(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET-2)
     elpm r23, Z
@@ -1530,7 +1532,8 @@ _csb_check_sector_bottom:
     elpm r23, Z
     sbrc r22, log2(SECTOR_FLAG_FOLLOW_UP)
     rcall add_nearby_followers
-    sts player_position_y, r1
+    ldi r25, 4
+    sts player_position_y, r25
     sts camera_position_y, r1
 _csb_switch_sector:
     ldi r25, SECTOR_MEMSIZE/2
