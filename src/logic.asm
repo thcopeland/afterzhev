@@ -53,7 +53,7 @@ _ss2u_main:
 _ss2u_move_enemies:
     check_conversation battle_tutorial
     brne _ss2u_end
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
+    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
     sts npc_move_flags, r25
     call update_standard
 _ss2u_loot:
@@ -84,11 +84,11 @@ _ssfu_plead:
 _ssfu_fight:
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
+    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
     sts npc_move_flags, r25
     ldi r25, 2
     call update_multiple_npcs
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
+    ldi r25, NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
     sts npc_move_flags, r25
     ldd r25, Y+NPC_IDX_OFFSET
     cpi r25, NPC_BANDIT_3
@@ -97,13 +97,13 @@ _ssfu_last_bandit_stand:
     lds r25, sector_data
     cpi r25, 0
     brne _ssfu_last_bandit_attack
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
+    ldi r25, NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
     sts npc_move_flags, r25
     rjmp _ssfu_last_bandit_update
 _ssfu_last_bandit_attack:
     cpi r25, 1
     brne _ssfu_reform_bandit
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_ATTACK|NPC_MOVE_GOTO|NPC_MOVE_LOOKAT
+    ldi r25, NPC_MOVE_ATTACK|NPC_MOVE_GOTO|NPC_MOVE_LOOKAT
     sts npc_move_flags, r25
     rjmp _ssfu_last_bandit_update
 _ssfu_reform_bandit:
@@ -320,7 +320,7 @@ _kdqu_not_corpse:
     brne _kdqu_next_npc
     push ZL
     push ZH
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
+    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
     sts npc_move_flags, r25
     ldd r25, Y+NPC_IDX_OFFSET
     cpi r25, NPC_KIDNAPPED
@@ -329,7 +329,7 @@ _kdqu_not_corpse:
     cpi r25, 4
     breq _kdqu_move
 _kdqu_no_move:
-    ldi r25, NPC_MOVE_FRICTION
+    ldi r25, 0
     sts npc_move_flags, r25
 _kdqu_move:
     call npc_move
@@ -349,7 +349,7 @@ _kdqu_end:
     ret
 
 sector_town_tavern_1_update:
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
+    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
     sts npc_move_flags, r25
     call update_standard
 _sst1u_store_tutorial:
@@ -361,7 +361,7 @@ _stt1u_end:
     ret
 
 sector_town_tavern_2_update:
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
+    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
     sts npc_move_flags, r25
     call update_standard
 _stt2u_robbery:
@@ -524,7 +524,7 @@ _stfu_test_right_confrontation:
     brsh _stfu_end
     try_start_conversation_intern bandit_right_reveal, bandit_reveal
 _stfu_fight:
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
+    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
     sts npc_move_flags, r25
     call update_standard
 _stfu_end:

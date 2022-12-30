@@ -176,3 +176,12 @@ npc_table:
 
     DECL_NPC        NPC_UNDERCOVER_GOON2, NPC_ENEMY, CHARACTER_BANDIT, ITEM_bloody_sword, ITEM_green_hood, DIRECTION_UP, 30, 130, 66
     DECL_ENEMY_DATA 0, 0, 6, 7, 4, 128|25, 128|50, 128|ITEM_health_potion
+
+    DECL_NPC        NPC_FOX_6, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_DOWN, 10, 159, 67
+    DECL_ENEMY_DATA 0, 60, 8, 2, 5, ITEM_raw_meat, ITEM_rotten_meat, ITEM_raw_meat
+
+    DECL_NPC        NPC_TMP, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_DOWN, 10, 88, 94
+    DECL_ENEMY_DATA 0, 60, 8, 2, 5, ITEM_raw_meat, ITEM_rotten_meat, ITEM_raw_meat
+
+    DECL_NPC        NPC_TMP2, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_DOWN, 10, 88, 94
+    DECL_ENEMY_DATA 0, 60, 8, 2, 5, ITEM_raw_meat, ITEM_rotten_meat, ITEM_raw_meat

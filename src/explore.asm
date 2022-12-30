@@ -52,7 +52,7 @@ explore_update_game:
     elpm r25, Z+
     tst r25
     brne _eup_custom
-    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_FALLOFF|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_ATTACK
+    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_FALLOFF|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_ATTACK
     sts npc_move_flags, r25
     call update_standard
     rjmp _eup_end
@@ -1315,7 +1315,6 @@ _aae_replace:
 ;   r20-r26         calculations
 ;   Z (r30:r31)     flash pointer
 update_player:
-    ser r26
     ldi YL, low(player_position_data)
     ldi YH, high(player_position_data)
     call move_character
@@ -1346,7 +1345,6 @@ _up_dash_right:
     ldi r20, 127
     sts player_velocity_x, r20
 _up_dash_move_again:
-    clr r26
     call move_character
     call move_character
 _up_ranged_attack:

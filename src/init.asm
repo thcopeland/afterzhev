@@ -54,6 +54,7 @@ _init_zero_iter:
     stiw preplaced_item_presence, 0xffff
     stiw npc_presence, 0xffff
     stiw npc_presence+2, 0xffff
+    stiw npc_presence+3, 0xffff
     sti clock, 0
     sti mode_clock, 0
     sti current_shop_index, NO_SHOP

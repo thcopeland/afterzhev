@@ -24,7 +24,6 @@
 ;
 ; Register Usage
 ;   r20-r25         calculations
-;   r26             whether to apply friction (param)
 ;   Y (r28:r29)     character data pointer (param)
 ;   Z (r30:r31)     flash pointer
 move_character:
@@ -45,8 +44,6 @@ _mc_x_movement:
     adc r20, r24
     std Y+CHARACTER_POSITION_X_L, r25
     std Y+CHARACTER_POSITION_X_H, r20
-    tst r26
-    breq _mcx_save_speed
     decay_90p r22, r24, r25
 _mcx_save_speed:
     std Y+CHARACTER_POSITION_DX, r22
@@ -145,8 +142,6 @@ _mc_y_movement:
     adc r20, r24
     std Y+CHARACTER_POSITION_Y_L, r25
     std Y+CHARACTER_POSITION_Y_H, r20
-    breq _mcy_save_speed
-    tst r26
     decay_90p r22, r24, r25
 _mcy_save_speed:
     std Y+CHARACTER_POSITION_DY, r22

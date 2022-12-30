@@ -76,7 +76,7 @@
 .equ NPC_NPC_REPULSION = 4
 .equ NPC_PLAYER_REPULSION = 4
 
-.equ NPC_MOVE_FRICTION = 0x01   ; affected by friction
+.equ NPC_MOVE_PATROL   = 0x01   ; if undamaged, just wander around (lookat and goto should be set)
 .equ NPC_MOVE_REBOUND  = 0x02   ; bounce off sector boundaries and obstacles
 .equ NPC_MOVE_LOOKAT   = 0x04   ; face some position
 .equ NPC_MOVE_GOTO     = 0x08   ; move within striking distance of some position
@@ -86,6 +86,7 @@
 .equ NPC_MOVE_POLTROON = 0x80   ; move away from the player if health is low
 
 .equ NPC_INTEREST_DISTANCE = 48 ; NPC_MOVE_FALLOFF distance
+.equ NPC_PATROL_DISTANCE = 36
 .equ NPC_FLEE_HEALTH = 10       ; NPC_MOVE_POLTROON health
 
 .equ RUN_FRAME_DURATION_MASK = 0x3

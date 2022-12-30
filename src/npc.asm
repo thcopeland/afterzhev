@@ -17,10 +17,6 @@ estimated_effect_ranges:
 ;   Y (r28:r29)     enemy pointer (param)
 ;   Z (r30:r31)     enemy data pointer (param)
 npc_move:
-    ser r26
-    lds r20, npc_move_flags
-    sbrs r20, log2(NPC_MOVE_FRICTION)
-    clr r26
     push ZL
     push ZH
     adiw YL, NPC_POSITION_OFFSET
@@ -31,67 +27,57 @@ npc_move:
     out RAMPZ, ZL
     pop ZH
     pop ZL
-    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
-    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
-_nm_test_rebound:
+    lds r20, player_position_x
+    lds r21, player_position_y
+    sts subroutine_tmp, r20
+    sts subroutine_tmp+1, r21
+_nm_test_patrol:
     lds r20, npc_move_flags
-    sbrs r20, log2(NPC_MOVE_REBOUND)
+    sbrs r20, log2(NPC_MOVE_PATROL)
     rjmp _nm_test_lookat
-    ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
-    ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
-_nm_rebound:
+_nm_test_patrol_health:
+    adiw ZL, NPC_TABLE_HEALTH_OFFSET
+    elpm r24, Z
+    sbiw ZL, NPC_TABLE_HEALTH_OFFSET
+    ldd r25, Y+NPC_HEALTH_OFFSET
+    cp r25, r24
+    brlo _nm_test_lookat
+_nm_test_patrol_distance:
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
-    tst r20
-    breq _nm_rebound_reverse_x
-    cpi r22, 1
-    brlo _nm_rebound_reverse_x
-    cpi r22, TILE_WIDTH*SECTOR_WIDTH - CHARACTER_SPRITE_WIDTH
-    brlo _nm_rebound_test_reverse_y
-_nm_rebound_reverse_x:
-    mov r20, r24
-    neg r20
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r20
-_nm_rebound_test_reverse_y:
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    tst r21
-    breq _nm_rebound_reverse_y
-    cpi r23, 1
-    brlo _nm_rebound_reverse_y
-    cpi r23, TILE_HEIGHT*SECTOR_HEIGHT - CHARACTER_SPRITE_HEIGHT
-    brlo _nm_rebound_calculate_direction
-_nm_rebound_reverse_y:
-    mov r21, r25
-    neg r21
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r21
-_nm_rebound_calculate_direction:
-    movw r22, r20
-    sbrc r22, 7
-    neg r22
-    sbrc r23, 7
-    neg r23
-    cp r22, r23
-    brlo _nm_rebound_vertical
-_nm_rebound_horizontal:
-    ldi r24, DIRECTION_RIGHT
-    sbrc r20, 7
-    ldi r24, DIRECTION_LEFT
-    rjmp _nm_rebound_set_direction
-_nm_rebound_vertical:
-    ldi r24, DIRECTION_DOWN
-    sbrc r21, 7
-    ldi r24, DIRECTION_UP
-_nm_rebound_set_direction:
-    ldd r25, Y+NPC_ANIM_OFFSET
-    andi r25, 0xfc
-    or r25, r24
-    std Y+NPC_ANIM_OFFSET, r25
+    lds r24, player_position_x
+    lds r25, player_position_y
+    distance_between r24, r25, r22, r23
+    cpi r25, NPC_PATROL_DISTANCE
+    brlo _nm_test_lookat
+_nm_patrol:
+    ; generate a pseudorandom position based on clock/64 and NPC index
+    lds r21, clock
+    lsl r21
+    lsl r21
+    lds r22, clock+1
+    rol r22
+    rol r22
+    ldi r23, 173
+    mul r22, r23
+    mov r22, r0
+    mov r23, r0
+    swap r23
+    ldd r20, Y+NPC_IDX_OFFSET
+    ldi r21, 97
+    mul r20, r21
+    eor r22, r0
+    eor r23, r1
+    clr r1
+    sts subroutine_tmp, r22
+    sts subroutine_tmp+1, r23
 _nm_test_lookat:
     lds r20, npc_move_flags
     sbrs r20, log2(NPC_MOVE_LOOKAT)
     rjmp _nm_test_poltroon1
 _nm_lookat:
-    lds r20, player_position_x
-    lds r21, player_position_y
+    lds r20, subroutine_tmp
+    lds r21, subroutine_tmp+1
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     movw r24, r22
@@ -265,8 +251,8 @@ _nm_test_move:
     sbrs r25, log2(NPC_MOVE_GOTO)
     rjmp _nm_end
 _nm_move_calculations:
-    lds r18, player_position_x
-    lds r19, player_position_y
+    lds r18, subroutine_tmp
+    lds r19, subroutine_tmp+1
     ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     movw r22, r20
