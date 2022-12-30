@@ -700,32 +700,6 @@ _red_add_corpse:
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
     ret
 
-; Add an NPC to the sector, if there's an available slot.
-;
-; Register Usage
-;   r20-r21         calculations
-;   r25             NPC id (param)
-;   X (r26:r27)     temp
-add_npc:
-    movw XL, YL
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-    ldi r20, SECTOR_DYNAMIC_NPC_COUNT
-_an_npc_iter:
-    ld r21, Y
-    tst r21
-    breq _an_slot_found
-    adiw YL, NPC_MEMSIZE
-    dec r20
-    brne _an_npc_iter
-    rjmp _an_end
-_an_slot_found:
-    call load_npc
-_an_end:
-    movw YL, XL
-    ret
-
-
 ; Try to add an NPC as far as possible from the camera view. This is done by
 ; choosing the farthest of the two avenger places for the sector. Ideally the NPC
 ; would be outside the camera view, but that's difficult to guarantee.

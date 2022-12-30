@@ -72,7 +72,6 @@
 .equ NPC_SPECIAL = 3
 
 .equ NPC_DEFAULT_DEFENSE = 5 ; used for shops and talkers
-.equ NPC_DEFAULT_HEALTH = 30
 
 .equ NPC_NPC_REPULSION = 4
 .equ NPC_PLAYER_REPULSION = 4

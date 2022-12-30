@@ -64,7 +64,7 @@ item_table:
     DECL_ITEM wooden_bow,           (2<<6)|ITEM_RANGED,                 30,     0,  0,  0,  0,      (3<<4)|EFFECT_ARROW
     DECL_ITEM guard_hat,            ITEM_WEARABLE,                      10,     0,  0, -2,  0,      2
     DECL_ITEM beard,                ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM club,                 ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM club,                 (1<<6)|ITEM_WIELDABLE,              10,     0,  0,  0,  0,      0
     DECL_ITEM glass_dagger,         ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
     DECL_ITEM glass_shard,          ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
     DECL_ITEM great_bow,            ITEM_RANGED,                        10,     0,  0,  0,  0,      0

@@ -426,7 +426,7 @@ _stt2c_have_journal:
     sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
     ldi r25, 41
     sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
-     andi r20, 0x03
+    andi r20, 0x03
     breq _stt2c_accepted
 _stt2c_refused:
     cpi r20, 2
@@ -451,4 +451,105 @@ sector_town_tavern_2_choice:
     lds r25, selected_choice
     inc r25
     sts global_data+QUEST_JOURNAL, r25
+    ret
+
+sector_town_fields_init:
+    lds r25, global_data+QUEST_BANDITS
+_stfi_test_left_confrontation:
+    cpi r25, 1
+    brne _stfi_test_right_confrontation
+    ldi r25, NPC_UNDERCOVER_BANDIT_UNMASKED
+    call add_npc
+    ldi r25, NPC_UNDERCOVER_GOON1
+    call add_npc
+    ldi r25, NPC_UNDERCOVER_GOON2
+    call add_npc
+    rjmp _stfi_end
+_stfi_test_right_confrontation:
+    cpi r25, 2
+    brne _stfi_end
+    ldi r25, NPC_UNDERCOVER_BANDIT_UNMASKED
+    call add_npc
+    ldi r24, 193
+    ldi r25, 109
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    ldi r25, DIRECTION_RIGHT
+    std Y+NPC_ANIM_OFFSET, r25
+    ldi r25, NPC_UNDERCOVER_GOON1
+    call add_npc
+    ldi r24, 183
+    ldi r25, 118
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    ldi r25, DIRECTION_RIGHT
+    std Y+NPC_ANIM_OFFSET, r25
+    ldi r25, NPC_UNDERCOVER_GOON2
+    call add_npc
+    ldi r24, 185
+    ldi r25, 100
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    ldi r25, DIRECTION_RIGHT
+    std Y+NPC_ANIM_OFFSET, r25
+    rjmp _stfi_end
+_stfi_end:
+    ret
+
+sector_town_fields_update:
+    lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT_UNMASKED-1)>>3)
+    andi r25, exp2((NPC_UNDERCOVER_BANDIT_UNMASKED-1)&0x07)
+    brne _stfu_test_left_confrontation
+    ldi r25, 3
+    sts global_data+QUEST_BANDITS, r25
+    rjmp _stfu_fight
+_stfu_test_left_confrontation:
+    lds r25, global_data+QUEST_BANDITS
+    cpi r25, 1
+    brne _stfu_test_right_confrontation
+    check_conversation bandit_reveal
+    breq _stfu_fight
+    lds r25, player_position_y
+    cpi r25, 45
+    brlo _stfu_end
+    try_start_conversation_intern bandit_left_reveal1, bandit_reveal
+    rjmp _stfu_end
+_stfu_test_right_confrontation:
+    cpi r25, 2
+    brne _stfu_fight
+    check_conversation bandit_reveal
+    breq _stfu_fight
+    lds r25, player_position_x
+    cpi r25, 210
+    brsh _stfu_end
+    try_start_conversation_intern bandit_right_reveal, bandit_reveal
+_stfu_fight:
+    ldi r25, NPC_MOVE_FRICTION|NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
+    sts npc_move_flags, r25
+    call update_standard
+_stfu_end:
+    ret
+
+sector_town_forest_path_2_init:
+    lds r25, global_data+QUEST_BANDITS
+    cpi r25, 3
+    brsh _stfp2_end
+    ldi r25, 1
+    sts global_data+QUEST_BANDITS, r25
+    lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3)
+    andi r25, ~exp2((NPC_UNDERCOVER_BANDIT-1)&0x07)
+    sts npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3), r25
+_stfp2_end:
+    ret
+
+sector_town_forest_path_5_init:
+    lds r25, global_data+QUEST_BANDITS
+    cpi r25, 3
+    brsh _stfp5_end
+    ldi r25, 2
+    sts global_data+QUEST_BANDITS, r25
+    lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3)
+    andi r25, ~exp2((NPC_UNDERCOVER_BANDIT-1)&0x07)
+    sts npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3), r25
+_stfp5_end:
     ret

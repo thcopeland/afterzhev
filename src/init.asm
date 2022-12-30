@@ -26,7 +26,7 @@ _init_zero_iter:
     sti player_velocity_y, 0
     sti player_class, CLASS_ROGUE
     sti player_character, CHARACTER_HALFLING
-    sti player_weapon, ITEM_wooden_bow ;ITEM_bloody_sword
+    sti player_weapon, ITEM_bloody_sword
     sti player_armor, ITEM_feathered_hat
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_LEFT
@@ -43,7 +43,7 @@ _init_zero_iter:
     ; sti player_inventory+3, ITEM_bloody_sword
     sti player_stats, 10
     sti player_stats+1, 30
-    sti player_stats+2, 10
+    sti player_stats+2, 30
     sti player_stats+3, 10
     call calculate_player_stats
     stiw player_gold, 0
@@ -65,9 +65,9 @@ _init_zero_iter:
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     sti player_position_x, 160
-    sti player_position_y, 160
+    sti player_position_y, 80
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_TOWN_ENTRANCE_2
+    .equ INITIAL_SECTOR = SECTOR_TOWN_FIELDS
     ; .equ INITIAL_SECTOR = SECTOR_START_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)

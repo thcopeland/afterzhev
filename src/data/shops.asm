@@ -18,8 +18,12 @@
 .endm
 
 shop_table:
-    DECL_SHOP bartender, 5, 0x28 ; 0.25x+5
+    DECL_SHOP bartender, 5, 0x28 ; 1.25x+5
     DECL_SHOP_ITEMS ITEM_beer, ITEM_beer, ITEM_beer, ITEM_beer, ITEM_whiskey, ITEM_whiskey, ITEM_croissant, ITEM_croissant
+
+    DECL_SHOP blacksmith, 10, 0x24 ; 1.125x+10
+    DECL_SHOP_ITEMS ITEM_steel_sword, ITEM_steel_sword, ITEM_iron_breastplate, ITEM_iron_breastplate, ITEM_iron_staff, ITEM_hammer, ITEM_health_potion, ITEM_health_potion
 
 shop_string_table:
 _shop_bartender_name:           .db "Bristling Boar", 0, 0
+_shop_blacksmith_name:          .db "Boris the Blacksmith", 0, 0

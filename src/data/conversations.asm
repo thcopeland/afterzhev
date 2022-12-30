@@ -130,7 +130,7 @@ _conv_drunk_hiccup2:            DECL_LINE drunk_hiccup2, NPC_DRUNK2, drunk, drun
 _conv_drunk_hiccup3:            DECL_LINE drunk_hiccup3, NPC_DRUNK2, drunk, drunk_hiccup4
 _conv_drunk_hiccup4:            DECL_LINE drunk_hiccup4, NPC_BARTENDER, bartender, drunk_hiccup5
 _conv_drunk_hiccup5:            DECL_LINE drunk_hiccup5, NPC_DRUNK2, drunk, END_CONVERSATION
-_conv_just_beat_it:             DECL_LINE just_beat_it, NPC_ANNOYED_GUEST, inn_guest, END_CONVERSATION
+_conv_whit_ye_daen:             DECL_LINE whit_ye_daen, NPC_ANNOYED_GUEST, inn_guest, END_CONVERSATION
 DECL_CONVERSATION robbed_guest
 _conv_robbed_guest:             DECL_LINE robbed_guest, NPC_ROBBED_GUEST, inn_guest, END_CONVERSATION
 _conv_guest_quest:              DECL_LINE guest_quest, NPC_GUEST_QUEST, inn_guest, guest_quest2
@@ -144,6 +144,18 @@ _conv_guest_quest6:             DECL_LINE guest_quest6, NPC_GUEST_QUEST, inn_gue
 _conv_guest_quest7:             DECL_LINE guest_quest7, NPC_GUEST_QUEST, inn_guest, guest_quest8
 _conv_guest_quest8:             DECL_LINE guest_quest8, NPC_GUEST_QUEST, inn_guest, END_CONVERSATION
 _conv_guest_quest9:             DECL_LINE guest_quest9, NPC_GUEST_QUEST, inn_guest, END_CONVERSATION
+_conv_just_beat_it:             DECL_LINE just_beat_it, NPC_GRUFF_BOUNCER, bouncer, END_CONVERSATION
+DECL_CONVERSATION bandit_lies
+_conv_bandit_lies1:             DECL_LINE bandit_lies1, NPC_UNDERCOVER_BANDIT, undercover, bandit_lies2
+_conv_bandit_lies2:             DECL_LINE bandit_lies2, 0, PLAYER, bandit_lies3
+_conv_bandit_lies3:             DECL_LINE bandit_lies3, NPC_UNDERCOVER_BANDIT, undercover, bandit_lies4
+_conv_bandit_lies4:             DECL_LINE bandit_lies4, NPC_UNDERCOVER_BANDIT, undercover, bandit_good_luck
+_conv_bandit_good_luck:         DECL_LINE bandit_good_luck, NPC_UNDERCOVER_BANDIT, undercover, END_CONVERSATION
+DECL_CONVERSATION bandit_reveal
+_conv_bandit_left_reveal1:      DECL_LINE bandit_left_reveal1, NPC_UNDERCOVER_BANDIT_UNMASKED, bandit_agent, bandit_left_reveal2
+_conv_bandit_left_reveal2:      DECL_LINE bandit_left_reveal2, 0, PLAYER, bandit_left_reveal3
+_conv_bandit_left_reveal3:      DECL_LINE bandit_left_reveal3, NPC_UNDERCOVER_BANDIT_UNMASKED, bandit_agent, END_CONVERSATION
+_conv_bandit_right_reveal:      DECL_LINE bandit_right_reveal, NPC_UNDERCOVER_BANDIT_UNMASKED, bandit_agent, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -155,6 +167,9 @@ _conv_speaker_farmer_str:       .db "Farmer", 0, 0
 _conv_speaker_grieving_father_str: .db "Grieving father", 0
 _conv_speaker_bartender_str:    .db "Bartender", 0
 _conv_speaker_inn_guest_str:    .db "Inn guest", 0
+_conv_speaker_bouncer_str:      .db "Bouncer", 0
+_conv_speaker_undercover_str:   .db "Cloaked villager", 0, 0
+_conv_speaker_bandit_agent_str: .db "Bandit agent", 0, 0
 _conv_speaker_empty_str:        .db 0, 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
 _conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
@@ -217,7 +232,7 @@ _conv_drunk_hiccup2_str:        .db "Ha... you look like one of them", 10, "envo
 _conv_drunk_hiccup3_str:        .db "Yeah... Ah useta be like you...", 10, "watch out, they", 39, "ll throw y-you", 10, "away too.", 0, 0
 _conv_drunk_hiccup4_str:        .db "Hey drunk! Leave the adventureralone!", 0
 _conv_drunk_hiccup5_str:        .db "Hic!", 0, 0
-_conv_just_beat_it_str:         .db "And whit dae ye think ye", 39, "re daen", 39, 10, "here?", 0
+_conv_whit_ye_daen_str:         .db "And whit dae ye think ye", 39, "re daen", 39, 10, "here?", 0
 _conv_robbed_guest_str:         .db "Sae! A thief, are ye?", 0
 _conv_guest_quest_str:          .db "Hello, adventurer! What are youdoing in my room?", 0, 0
 _conv_guest_quest2_str:         .db "Silent type, eh? Doesn", 39, "t matter.", 10, 10, "Listen, I", 39, "ve lost my journal", 10, "somewhere around town. Could", 10, "you find it for me? There", 39, "ll be", 10, "something in it for you.", 0, 0
@@ -227,3 +242,13 @@ _conv_guest_quest6_str:         .db "Got my journal yet?", 0
 _conv_guest_quest7_str:         .db "Changed your mind, eh?", 0, 0
 _conv_guest_quest8_str:         .db "Well, I thank you for returning my journal, adventurer. I, uh,", 10, "hope you didn", 39, "t read... anyway,", 10, "take this bow.", 0
 _conv_guest_quest9_str:         .db "What do you want now? Hoping", 10, "you", 39, "ll get more for hanging", 10, "around?", 0, 0
+_conv_just_beat_it_str:         .db "Just keep moving, stranger.", 0
+_conv_bandit_lies1_str:         .db "Adventurer! At last you", 39, "ve come to rid us of these blasted", 10, "bandits!", 0
+_conv_bandit_lies2_str:         .db "If you", 39, "ll tell me where they areI shall do my best.", 0
+_conv_bandit_lies3_str:         .db "Right glad I am to hear that!", 0
+_conv_bandit_lies4_str:         .db "Two paths lead into the woods,", 10, "take the small, northern one.", 10, "It", 39, "ll be on your left.", 0
+_conv_bandit_good_luck_str:     .db "Good luck, adventurer!", 0, 0
+_conv_bandit_left_reveal1_str:  .db "Well, well. Find any bandits,", 10, "adventurer?", 0
+_conv_bandit_left_reveal2_str:  .db "Hah... what was the point of that misdirection, anyway?", 0
+_conv_bandit_left_reveal3_str:  .db "Obvious, isn", 39, "t it! Charge!", 0, 0
+_conv_bandit_right_reveal_str:  .db "Well, well. I must admit I didn", 39, "t expect to see you again soon,", 10, "adventurer. But no matter, I", 39, "ll set that right.", 0

@@ -757,6 +757,8 @@ _rs_calc_vertical_offset:
     lds r20, camera_position_y
     sub r25, r20
     brlo _rs_check_vertical_offset
+    cpi r25, SECTOR_HEIGHT*TILE_HEIGHT
+    brsh _rs_check_vertical_offset
     ldi r20, DISPLAY_WIDTH
     mul r25, r20
     add XL, r0

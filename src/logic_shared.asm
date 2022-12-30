@@ -213,3 +213,40 @@ _us_finish:
     call player_resolve_melee_damage
     call player_resolve_effect_damage
     ret
+
+; Add an NPC to the sector, if there's an available slot.
+;
+; Register Usage
+;   r20-r21         calculations
+;   r25             NPC id (param)
+;   Y (r28:r29)     temp
+add_npc:
+    ldi YL, low(npc_presence)
+    ldi YH, high(npc_presence)
+    mov r20, r25
+    dec r20
+    brmi _an_end
+    mov r21, r20
+    lsr r20
+    lsr r20
+    lsr r20
+    add YL, r20
+    adc YH, r1
+    ld r20, Y
+    nbit r20, r21
+    breq _an_end
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r20, SECTOR_DYNAMIC_NPC_COUNT
+_an_npc_iter:
+    ld r21, Y
+    tst r21
+    breq _an_slot_found
+    adiw YL, NPC_MEMSIZE
+    dec r20
+    brne _an_npc_iter
+    rjmp _an_end
+_an_slot_found:
+    call load_npc
+_an_end:
+    ret
