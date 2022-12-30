@@ -1760,17 +1760,17 @@ load_npc:
     elpm r25, Z+    ; y pos
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L, r1
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
-    cpi r24, NPC_ENEMY
-    breq _npc_load_enemy
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
     sbiw ZL, NPC_TABLE_YPOS_OFFSET+1
     cpi r24, NPC_TALKER
-    brne _npc_clear_unnecessary
+    brne _lnpc_end
     ; do not load a talker if the replacement has been killed
     adiw ZL, NPC_TABLE_TALKER_REPLACEMENT_OFFSET
     elpm r25, Z
     sbiw ZL, NPC_TABLE_TALKER_REPLACEMENT_OFFSET
     dec r25
-    brmi _npc_clear_unnecessary
+    brmi _lnpc_end
     mov r24, r25
     lsr r25
     lsr r25
@@ -1783,19 +1783,8 @@ load_npc:
     ld r25, X
     movw XL, r22
     nbit r25, r24
-    brne _npc_clear_unnecessary
+    brne _lnpc_end
     std Y+NPC_IDX_OFFSET, r1
-    ret
-_npc_clear_unnecessary:
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
-    ret
-_npc_load_enemy:
-    elpm r25, Z+    ; initial x velocity
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r25
-    elpm r25, Z+    ; initial y velocity
-    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r25
-    sbiw ZL, NPC_TABLE_ENEMY_VELOCITY_OFFSET+2
 _lnpc_end:
     ret
 

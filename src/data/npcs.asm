@@ -14,7 +14,8 @@
 ;   direction - used for rendering and attacks (1 byte)
 ;   health - initial health (1 byte)
 ;   x, y position - (2 bytes)
-;   x, y velocity - (2 bytes)
+;   AI flags - (1 byte)
+;   XP from defeating - (1 byte)
 ;   acceleration - used for movement (1 byte)
 ;   attack - weapon boosts are not considered (1 byte)
 ;   defense - wearable and weapon boosts are not considered (1 byte)
@@ -62,7 +63,7 @@
     .db @1, @2, @3, @4, @5, @6, @7, @8
 .endm
 
-.macro DECL_ENEMY_DATA ; xvel, yvel, acceleration, attack, defense, drop1, drop2, drop3
+.macro DECL_ENEMY_DATA ; flags, xp, acceleration, attack, defense, drop1, drop2, drop3
     .db @0, @1, @2, @3, @4, @5, @6, @7
 .endm
 

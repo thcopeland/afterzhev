@@ -76,6 +76,7 @@ inventory_selection:
 shop_selection:
 selected_choice:
 upgrade_selection:
+npc_move_flags:
 gameover_state:     .byte 1
 
 current_shop_index: .byte 1
@@ -87,5 +88,4 @@ conversation_chars:
 upgrade_points:     .byte 1
 
 character_render:   .byte CHARACTER_MEMSIZE-7
-npc_move_flags:     .byte 1
-subroutine_tmp:     .byte 6
+subroutine_tmp:     .byte 7

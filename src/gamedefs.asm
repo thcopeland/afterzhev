@@ -77,13 +77,18 @@
 .equ NPC_PLAYER_REPULSION = 4
 
 .equ NPC_MOVE_PATROL   = 0x01   ; if undamaged, just wander around (lookat and goto should be set)
-.equ NPC_MOVE_REBOUND  = 0x02   ; bounce off sector boundaries and obstacles
+; .equ NPC_MOVE_REBOUND  = 0x02   ; bounce off sector boundaries and obstacles
 .equ NPC_MOVE_LOOKAT   = 0x04   ; face some position
 .equ NPC_MOVE_GOTO     = 0x08   ; move within striking distance of some position
 .equ NPC_MOVE_FALLOFF  = 0x10   ; only move towards or face position if within some distance
 .equ NPC_MOVE_ATTACK   = 0x20   ; whether to attack
 .equ NPC_MOVE_RETURN   = 0x40   ; return to starting point if beyond some distance
 .equ NPC_MOVE_POLTROON = 0x80   ; move away from the player if health is low
+
+.equ NPC_STOLID  = 0
+.equ NPC_PATROL  = NPC_MOVE_PATROL|NPC_MOVE_LOOKAT|NPC_MOVE_GOTO|NPC_MOVE_ATTACK
+.equ NPC_GUARD   = NPC_MOVE_LOOKAT|NPC_MOVE_GOTO|NPC_MOVE_FALLOFF|NPC_MOVE_ATTACK|NPC_MOVE_RETURN
+.equ NPC_HOSTILE = NPC_MOVE_LOOKAT|NPC_MOVE_GOTO|NPC_MOVE_FALLOFF|NPC_MOVE_ATTACK
 
 .equ NPC_INTEREST_DISTANCE = 48 ; NPC_MOVE_FALLOFF distance
 .equ NPC_PATROL_DISTANCE = 36

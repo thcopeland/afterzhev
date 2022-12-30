@@ -27,12 +27,21 @@ npc_move:
     out RAMPZ, ZL
     pop ZH
     pop ZL
+_nm_setup:
     lds r20, player_position_x
     lds r21, player_position_y
     sts subroutine_tmp, r20
     sts subroutine_tmp+1, r21
+    ldi r20, NPC_STOLID
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _nm_setup_done
+    adiw ZL, NPC_TABLE_ENEMY_FLAGS_OFFSET
+    elpm r20, Z
+    sbiw ZL, NPC_TABLE_ENEMY_FLAGS_OFFSET
+_nm_setup_done:
+    sts npc_move_flags, r20
 _nm_test_patrol:
-    lds r20, npc_move_flags
     sbrs r20, log2(NPC_MOVE_PATROL)
     rjmp _nm_test_lookat
 _nm_test_patrol_health:

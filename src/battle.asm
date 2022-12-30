@@ -635,27 +635,16 @@ _red_loose_items_next:
     brne _red_loose_items_iter
 _red_player_xp:
     movw ZL, r22
-    clr r23
-    adiw ZL, NPC_TABLE_HEALTH_OFFSET
-    elpm r25, Z ; health
-    adiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET-NPC_TABLE_HEALTH_OFFSET
-    elpm r22, Z+ ; acceleration
-    lsr r22
-    add r22, r25
-    adc r23, r1
-    elpm r25, Z+ ; attack
-    lsl r25
-    add r22, r25
-    adc r23, r1
-    elpm r25, Z+ ; defense
-    lsl r25
-    add r22, r25
-    adc r23, r1
-    sbiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET+3
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _red_record_death
+    adiw ZL, NPC_TABLE_ENEMY_XP_OFFSET
+    elpm r23, Z
+    sbiw ZL, NPC_TABLE_ENEMY_XP_OFFSET
     lds r24, player_xp
     lds r25, player_xp+1
-    add r24, r22
-    adc r25, r23
+    add r24, r23
+    adc r25, r1
     sts player_xp, r24
     sts player_xp+1, r25
     movw r22, ZL
