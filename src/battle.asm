@@ -375,7 +375,7 @@ _nrmd_enemy_defense:
 _nrmd_apply_defense:
     sub r25, r24
     brsh _nrmd_apply_damage
-    ldi r25, 1
+    clr r25
 _nrmd_apply_damage:
     inc r25
     ldd r24, Y+NPC_HEALTH_OFFSET
@@ -553,7 +553,7 @@ _nrrd_apply_defense:
     mov ZH, r23
     sub r25, r24
     brsh _nrrd_apply_damage
-    ldi r25, 1
+    clr r25
 _nrrd_apply_damage:
     inc r25
     ldd r24, Y+NPC_HEALTH_OFFSET

@@ -22,7 +22,7 @@ shop_table:
     DECL_SHOP_ITEMS ITEM_beer, ITEM_beer, ITEM_beer, ITEM_beer, ITEM_whiskey, ITEM_whiskey, ITEM_croissant, ITEM_croissant
 
     DECL_SHOP blacksmith, 10, 0x24 ; 1.125x+10
-    DECL_SHOP_ITEMS ITEM_steel_sword, ITEM_steel_sword, ITEM_iron_breastplate, ITEM_iron_breastplate, ITEM_iron_staff, ITEM_hammer, ITEM_health_potion, ITEM_health_potion
+    DECL_SHOP_ITEMS ITEM_steel_sword, ITEM_steel_sword, ITEM_iron_breastplate, ITEM_iron_breastplate, ITEM_iron_staff, ITEM_hammer, ITEM_great_bow, ITEM_health_potion
 
 shop_string_table:
 _shop_bartender_name:           .db "Bristling Boar", 0, 0

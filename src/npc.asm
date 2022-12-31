@@ -41,6 +41,13 @@ _nm_setup:
     sbiw ZL, NPC_TABLE_ENEMY_FLAGS_OFFSET
 _nm_setup_done:
     sts npc_move_flags, r20
+_nm_test_hold:
+    sbrs r20, log2(NPC_MOVE_HOLD)
+    rjmp _nm_test_patrol
+    lds r21, npc_move_flags2
+    tst r21
+    brne _nm_test_patrol
+    rjmp _nm_end
 _nm_test_patrol:
     sbrs r20, log2(NPC_MOVE_PATROL)
     rjmp _nm_test_lookat
@@ -383,8 +390,13 @@ _nm_goto_horizontal_movement:
     cpi r22, 2*STRIKING_DISTANCE
     brsh _nm_goto_horizontal_direction
     asr r26
+    mov r0, r26
+    asr r0
+    add r26, r0
     cpi r22, 2*STRIKING_DISTANCE/3
-    brlo _nm_goto_vertical_movement
+    brsh _nm_goto_horizontal_direction
+    asr r24
+    rjmp _nm_goto_vertical_movement
 _nm_goto_horizontal_direction:
     cp r18, r20
     brsh _nm_goto_acc_x
@@ -401,8 +413,13 @@ _nm_goto_vertical_movement:
     cpi r23, 2*STRIKING_DISTANCE
     brsh _nm_goto_vertical_direction
     asr r27
+    mov r0, r27
+    asr r0
+    add r27, r0
     cpi r23, 2*STRIKING_DISTANCE/3
-    brlo _nm_goto_save_velocity
+    brsh _nm_goto_vertical_direction
+    asr r25
+    rjmp _nm_goto_save_velocity
 _nm_goto_vertical_direction:
     cp r19, r21
     brsh _nm_goto_acc_y

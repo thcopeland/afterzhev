@@ -199,7 +199,7 @@ _uph_end:
     ret
 
 ; Calculate the player's maximum health.
-;   health = (strength + dexterity + intellect)/2 + 2*vitality + armor boost
+;   health = 10+(strength + dexterity + intellect)/2 + 2*vitality + armor boost
 ;
 ; Register Usage
 ;   r24     calculations
@@ -222,7 +222,6 @@ _cmh_armor:
     clr r1
     elpm r25, Z
     asr r25
-    asr r25
 _cmh_stat:
     lds r24, player_stats + STATS_STRENGTH_OFFSET
     add r25, r24
@@ -234,6 +233,7 @@ _cmh_stat:
     lds r24, player_stats + STATS_VITALITY_OFFSET
     add r25, r24
     add r25, r24
+    subi r25, low(-10)
     ret
 
 ; Calculate the player's acceleration.

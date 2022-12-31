@@ -49,13 +49,13 @@
 .equ CLASS_ROGUE = 1
 .equ CLASS_MAGE = 2
 
-.equ LEVEL_1_XP = 100
+.equ LEVEL_1_XP = 30
 .equ LEVEL_2_XP = 600
 .equ LEVEL_3_XP = 3600
 
-.equ UPGRADE_1_POINTS = 8
-.equ UPGRADE_2_POINTS = 8
-.equ UPGRADE_3_POINTS = 6
+.equ UPGRADE_1_POINTS = 6
+.equ UPGRADE_2_POINTS = 6
+.equ UPGRADE_3_POINTS = 8
 
 .equ CHARACTER_MAN = 0
 .equ CHARACTER_HALFLING = 1
@@ -77,7 +77,7 @@
 .equ NPC_PLAYER_REPULSION = 4
 
 .equ NPC_MOVE_PATROL   = 0x01   ; if undamaged, just wander around (lookat and goto should be set)
-; .equ NPC_MOVE_REBOUND  = 0x02   ; bounce off sector boundaries and obstacles
+.equ NPC_MOVE_HOLD     = 0x02   ; move only if npc_move_flags2 nonzero
 .equ NPC_MOVE_LOOKAT   = 0x04   ; face some position
 .equ NPC_MOVE_GOTO     = 0x08   ; move within striking distance of some position
 .equ NPC_MOVE_FALLOFF  = 0x10   ; only move towards or face position if within some distance
@@ -89,6 +89,8 @@
 .equ NPC_PATROL  = NPC_MOVE_PATROL|NPC_MOVE_LOOKAT|NPC_MOVE_GOTO|NPC_MOVE_ATTACK
 .equ NPC_GUARD   = NPC_MOVE_LOOKAT|NPC_MOVE_GOTO|NPC_MOVE_FALLOFF|NPC_MOVE_ATTACK|NPC_MOVE_RETURN
 .equ NPC_HOSTILE = NPC_MOVE_LOOKAT|NPC_MOVE_GOTO|NPC_MOVE_FALLOFF|NPC_MOVE_ATTACK
+.equ NPC_ATTACK  = NPC_MOVE_LOOKAT|NPC_MOVE_GOTO|NPC_MOVE_ATTACK
+.equ NPC_FOLLOW  = NPC_MOVE_LOOKAT|NPC_MOVE_GOTO|NPC_MOVE_FALLOFF
 
 .equ NPC_INTEREST_DISTANCE = 48 ; NPC_MOVE_FALLOFF distance
 .equ NPC_PATROL_DISTANCE = 36

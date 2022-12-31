@@ -72,15 +72,15 @@ DECL_CONVERSATION loot_tutorial
 _conv_loot_tutorial:            DECL_LINE loot_tutorial, 0, PLAYER, loot_tutorial2
 _conv_loot_tutorial2:           DECL_LINE loot_tutorial2, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION bandit_plead
-_conv_bandit_plead:             DECL_LINE bandit_plead, NPC_BANDIT_3, bandit, bandit_plead2
+_conv_bandit_plead:             DECL_LINE bandit_plead, NPC_BANDIT_2, bandit, bandit_plead2
 _conv_bandit_plead2:            DECL_LINE bandit_plead2, 0, PLAYER, bandit_plead3
-_conv_bandit_plead3:            DECL_LINE bandit_plead3, NPC_BANDIT_3, bandit, bandit_plead4
+_conv_bandit_plead3:            DECL_LINE bandit_plead3, NPC_BANDIT_2, bandit, bandit_plead4
 _conv_bandit_plead4:            DECL_LINE bandit_plead4, 0, PLAYER, bandit_plead5
-_conv_bandit_plead5:            DECL_LINE bandit_plead5, NPC_BANDIT_3, bandit, bandit_plead_spare
+_conv_bandit_plead5:            DECL_LINE bandit_plead5, NPC_BANDIT_2, bandit, bandit_plead_spare
 _conv_bandit_plead_spare:       DECL_BRANCH 2
                                 DECL_CHOICE bandit_plead_c1, END_CONVERSATION
                                 DECL_CHOICE bandit_plead_c2, bandit_plead6
-_conv_bandit_plead6:            DECL_LINE bandit_plead6, NPC_BANDIT_3, bandit, END_CONVERSATION
+_conv_bandit_plead6:            DECL_LINE bandit_plead6, NPC_BANDIT_2, bandit, END_CONVERSATION
 DECL_CONVERSATION interact_tutorial
 _conv_interact_tutorial:        DECL_LINE interact_tutorial, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION drunks_warning
@@ -100,7 +100,8 @@ _conv_kidnapped6:               DECL_LINE kidnapped6, NPC_GRIEVING_FATHER, griev
 _conv_kidnapped7:               DECL_LINE kidnapped7, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
 _conv_kidnapped8:               DECL_LINE my_thanks, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
 _conv_kidnapped9:               DECL_LINE kidnapped9, NPC_GRIEVING_FATHER, grieving_father, END_CONVERSATION
-_conv_kidnapped10:              DECL_LINE kidnapped10, 0, PLAYER, END_CONVERSATION
+DECL_CONVERSATION rescue_kidnapped
+_conv_rescue_kidnapped:         DECL_LINE rescue_kidnapped, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION nice_day
 _conv_nice_day:                 DECL_LINE nice_day, NPC_FISHERMAN, fisherman, nice_day2
 _conv_nice_day2:                DECL_BRANCH 2
@@ -208,7 +209,7 @@ _conv_kidnapped6_str:           .db "Hurry, adventurer!", 0, 0
 _conv_kidnapped7_str:           .db "Thank you, adventurer! Please", 10, "accept this potion in token of mydeepest gratitude!", 0
 _conv_my_thanks_str:            .db "My thanks, adventurer!", 0, 0
 _conv_kidnapped9_str:           .db "Foxes too much for you,", 10, "adventurer? My poor boy!", 0, 0
-_conv_kidnapped10_str:          .db "Come with me if you want to live!", 0
+_conv_rescue_kidnapped_str:     .db "Come with me if you want to live!", 0
 _conv_nice_day_str:             .db "Mornin", 39, "! Nice day for fishing,", 10, "ain", 39, "t it?", 0, 0
 _conv_yes_str:                  .db "Yes", 0
 _conv_no_str:                   .db "No", 0, 0

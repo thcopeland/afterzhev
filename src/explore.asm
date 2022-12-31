@@ -42,6 +42,14 @@ explore_update_game:
     ldi XH, high(framebuffer + 30 + 8*DISPLAY_WIDTH)
     call putb
 
+    lds r25, game_mode
+    cpi r25, MODE_EXPLORE
+    brne _eup_end
+
+    rcall update_npcs
+    call player_resolve_melee_damage
+    call player_resolve_effect_damage
+
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     lds ZL, current_sector
@@ -51,11 +59,7 @@ explore_update_game:
     elpm r24, Z+
     elpm r25, Z+
     tst r25
-    brne _eup_custom
-    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_FALLOFF|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_ATTACK
-    sts npc_move_flags, r25
-    call update_standard
-    rjmp _eup_end
+    breq _eup_end
 _eup_custom:
     movw ZL, r24
     icall
@@ -1890,6 +1894,45 @@ _uf_next_follower:
 _uf_end:
     ret
 
+update_npcs:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+_un_loop:
+    ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_CORPSE
+    brne _un_not_corpse
+    call corpse_update
+    rjmp _un_next
+_un_not_corpse:
+    subi r25, 1
+    brlo _un_next
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table)
+    ldi ZH, high(2*npc_table)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    cpi r25, NPC_ENEMY
+    brne _un_update
+    call npc_move
+_un_update:
+    movw r16, ZL
+    call npc_update
+    movw ZL, r16
+    call npc_resolve_ranged_damage
+    call npc_resolve_melee_damage
+_un_next:
+    adiw YL, NPC_MEMSIZE
+    ldi r25, high(sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
+    cpi YL, low(sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT)
+    cpc YH, r25
+    brlo _un_loop
+_un_end:
+    ret
 
 ; Add nearby moving NPCs as followers.
 ;

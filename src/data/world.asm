@@ -91,7 +91,7 @@ sector_table:
     039, 039, 056, 045, 057, 039, 039, 039, 039, 039, 039, 039, 039, 039, 041, 179, 179, 007, 066, 039, \
     039, 039, 065, 033, 066, 039, 039, 039, 039, 039, 039, 039, 039, 039, 041, 189, 189, 038, 039, 039
 .db 8, 3, 2, 2
-.db NPC_FOX_6, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
@@ -247,7 +247,7 @@ sector_table:
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, \
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039
 .db 8, 9, 2, 7
-.db NPC_UNDERCOVER_BANDIT, NPC_TMP, NPC_TMP2, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_UNDERCOVER_BANDIT, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
@@ -455,7 +455,7 @@ sector_table:
     039, 039, 039, 039, 039, 039, 056, 001, 189, 189, 179, 007, 066, 039, 039, 039, 039, 039, 039, 039, \
     039, 039, 039, 039, 039, 039, 065, 033, 034, 034, 034, 066, 039, 039, 039, 039, 039, 039, 039, 039
 .db 16, 17, 16, 15
-.db NPC_BANDIT_1, NPC_BANDIT_2, NPC_BANDIT_3, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_BANDIT_1, NPC_BANDIT_2, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db 128|100, LOOSE_ITEM_intro_bandit_gold, 94, 160, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
@@ -488,7 +488,7 @@ sector_table:
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_UP|SECTOR_FLAG_FOLLOW_LEFT
-.dw sector_start_post_fight_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_start_post_fight_update, NO_HANDLER, NO_HANDLER, sector_start_post_fight_conversation, NO_HANDLER
 
 ; Sector 18 "start_section_pretown_1"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 041, 189, 172, 173, 171, 179, 038, 039, 039, 039, \
@@ -510,7 +510,7 @@ sector_table:
 .db NPC_DRUNK, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
-.db 0, 0, 0, 0
+.db 156, 132, 81, 52
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw 0

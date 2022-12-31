@@ -27,27 +27,18 @@ _init_zero_iter:
     sti player_class, CLASS_ROGUE
     sti player_character, CHARACTER_HALFLING
     sti player_weapon, ITEM_bloody_sword
-    sti player_armor, ITEM_feathered_hat
+    sti player_armor, NO_ITEM
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_LEFT
     sti player_frame, 0
     sti player_effect, 0
-    sti player_inventory, ITEM_mithril_cap
-    sti player_inventory+1, ITEM_mithril_breastplate
-    sti player_inventory+2, ITEM_iron_helmet
-    sti player_inventory+3, ITEM_iron_breastplate
-    sti player_inventory+6, ITEM_green_cloak
-    sti player_inventory+7, ITEM_green_cloak_small
-    ; sti player_inventory+1, ITEM_green_hood
-    ; sti player_inventory+2, ITEM_leather_armor
-    ; sti player_inventory+3, ITEM_bloody_sword
-    sti player_stats, 10
-    sti player_stats+1, 30
-    sti player_stats+2, 30
-    sti player_stats+3, 10
+    sti player_stats, 6
+    sti player_stats+1, 8
+    sti player_stats+2, 10
+    sti player_stats+3, 6
     call calculate_player_stats
     stiw player_gold, 0
-    sti player_health, 40
+    sti player_health, 64
     stiw player_xp, 0
     sti game_mode, MODE_EXPLORE
     sti inventory_selection, 0
@@ -65,11 +56,10 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    sti player_position_x, 160
-    sti player_position_y, 80
+    sti player_position_x, 20
+    sti player_position_y, 100
     call reset_camera
     .equ INITIAL_SECTOR = SECTOR_TOWN_FIELDS
-    ; .equ INITIAL_SECTOR = SECTOR_START_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

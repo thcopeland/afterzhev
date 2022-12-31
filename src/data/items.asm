@@ -37,7 +37,7 @@
     .equ ITEM_@0 = __ITEM_IDX
     .set __ITEM_IDX = __ITEM_IDX+1
     .dw 2*(_item_str_@0_name-item_string_table), 2*(_item_str_@0_desc-item_string_table)
-    .db @1, low(@2), high(2), @3, @4, @5, @6, @7
+    .db @1, low(@2), high(@2), @3, @4, @5, @6, @7
     .if (@3 != 0) && (@4 != 0) && (@5 != 0) && (@6 != 0)
         .error "(@0) No item may affect more than THREE attributes"
     .endif
@@ -54,36 +54,36 @@
 .equ RANGED_MAGICAL = (1 << 3)
 
 item_table:
-    DECL_ITEM wood_stick,           (1<<6)|(2<<3)|ITEM_WIELDABLE,       2,      2,  0,  0,  0,      0
-    DECL_ITEM feathered_hat,        ITEM_WEARABLE,                      20,     0,  0,  2,  4,      3
-    DECL_ITEM bloody_sword,         (1<<6)|(1<<3)|ITEM_WIELDABLE,       50,     6,  0,  0,  0,      (5<<4)
-    DECL_ITEM green_hood,           ITEM_WEARABLE,                      10,     0,  0,  3,  2,      0
-    DECL_ITEM leather_armor,        (4<<2)|ITEM_WEARABLE,               50,     0,  2, -3,  0,      0
-    DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              10000,  0,  0,  0,  0,      0
-    DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              60,     6,  0,  0,  0,      0
+    DECL_ITEM wood_stick,           (1<<6)|(3<<3)|ITEM_WIELDABLE,        3,     0,  0,  0,  0,      (1<<4)
+    DECL_ITEM feathered_hat,        ITEM_WEARABLE,                      10,     0,  0,  1,  0,      1
+    DECL_ITEM bloody_sword,         (1<<6)|(1<<3)|ITEM_WIELDABLE,       30,     0, -1,  0,  0,      (3<<4)
+    DECL_ITEM green_hood,           ITEM_WEARABLE,                      10,     0,  0,  0,  2,      1
+    DECL_ITEM leather_armor,        ITEM_WEARABLE,                      75,     1,  0, -1,  0,      4
+    DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              0,      0,  0,  0,  0,      0
+    DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              40,     0,  0,  0,  0,      (5<<4)
     DECL_ITEM wooden_bow,           (2<<6)|ITEM_RANGED,                 30,     0,  0,  0,  0,      (3<<4)|EFFECT_ARROW
-    DECL_ITEM guard_hat,            ITEM_WEARABLE,                      10,     0,  0, -2,  0,      2
-    DECL_ITEM beard,                ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM club,                 (1<<6)|ITEM_WIELDABLE,              10,     0,  0,  0,  0,      0
-    DECL_ITEM glass_dagger,         ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
-    DECL_ITEM glass_shard,          ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
-    DECL_ITEM great_bow,            ITEM_RANGED,                        10,     0,  0,  0,  0,      0
-    DECL_ITEM green_cloak,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM purple_hood,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM hammer,               ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
-    DECL_ITEM iron_armor,           ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM iron_helmet,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM iron_staff,           ITEM_RANGED,                        10,     0,  0,  0,  0,      0
-    DECL_ITEM wood_staff,           ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
-    DECL_ITEM ivory_wand,           ITEM_RANGED,                        10,     0,  0,  0,  0,      0
-    DECL_ITEM mithril_armor,        ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM mithril_cap,          ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM mithril_dagger,       ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
-    DECL_ITEM mithril_spike,        ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
-    DECL_ITEM spear,                ITEM_WIELDABLE,                     10,     0,  0,  0,  0,      0
+    DECL_ITEM guard_hat,            ITEM_WEARABLE,                      30,     0,  0, -2,  0,      2
+    DECL_ITEM beard,                ITEM_WEARABLE,                      0,      0,  0,  0,  0,      0
+    DECL_ITEM club,                 (1<<6)|(2<<3)|ITEM_WIELDABLE,       10,     0,  0,  0,  0,      (3<<4)
+    DECL_ITEM glass_dagger,         ITEM_WIELDABLE,                     60,     0,  0,  3,  0,      (2<<4)
+    DECL_ITEM glass_shard,          ITEM_WIELDABLE,                     10,     0,  0,  1,  0,      (1<<4)
+    DECL_ITEM great_bow,            (3<<6)|(2<<3)|RANGED_HIGH_LEVEL|ITEM_RANGED, 200,  0,  0,  0,  0,      (7<<4)|EFFECT_ARROW
+    DECL_ITEM green_cloak,          ITEM_WEARABLE,                      20,     0,  0,  0,  0,      2
+    DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      20,     0,  0,  0,  0,      2
+    DECL_ITEM purple_hood,          ITEM_WEARABLE,                      30,     0,  0,  0,  0,      0
+    DECL_ITEM hammer,               (2<<3)|ITEM_WIELDABLE,              40,     0,  0,  0,  0,      (2<<4)
+    DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     2,  0, -10,  0,      10
+    DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                     350,     1,  0, -6,  0,      6
+    DECL_ITEM iron_helmet,          ITEM_WEARABLE,                     200,     1,  0, -4,  0,      2
+    DECL_ITEM iron_staff,           ITEM_RANGED,                        50,     0, -2,  0,  0,      0
+    DECL_ITEM wood_staff,           RANGED_HIGH_LEVEL|ITEM_RANGED,     120,     0,  1,  0,  0,      0
+    DECL_ITEM ivory_wand,           RANGED_HIGH_LEVEL|ITEM_RANGED,     200,     0,  0,  0,  0,      0
+    DECL_ITEM mithril_armor,        ITEM_WEARABLE,                    2000,     0,  5,  0,  0,      15
+    DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                    1400,     0,  3,  0,  0,      10
+    DECL_ITEM mithril_cap,          ITEM_WEARABLE,                     600,     0,  1,  0,  0,      3
+    DECL_ITEM mithril_dagger,       ITEM_WIELDABLE,                    300,     0,  2,  0,  0,      (3<<4)
+    DECL_ITEM mithril_spike,        ITEM_WIELDABLE,                    200,     0,  0,  0,  0,      (2<<4)
+    DECL_ITEM spear,                (2<<6)|(2<<3)|ITEM_WIELDABLE,      100,     0,  0, -2,  0,      (6<<4)
     DECL_ITEM wooden_shield,        ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
@@ -144,7 +144,7 @@ _item_str_glass_dagger_desc:		.db "Fashioned from fabled", 10, "green glass, thi
 _item_str_glass_shard_name:			.db "Glass shard", 0
 _item_str_glass_shard_desc:			.db "A fragment of rare green glass.", 0
 _item_str_great_bow_name:			.db "Great bow", 0
-_item_str_great_bow_desc:			.db "A mighty bow, once used torepel the northern", 10, "serpents.", 0, 0
+_item_str_great_bow_desc:			.db "A mighty bow, once used toextinguish the northern", 10, "serpents.", 0
 _item_str_green_cloak_small_name:
 _item_str_green_cloak_name:			.db "Woodsman", 39, "s cloak", 0, 0
 _item_str_green_cloak_small_desc:

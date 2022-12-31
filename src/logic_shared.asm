@@ -81,140 +81,8 @@ _tsc_end_%:
     try_start_conversation_intern @0, @0
 .endm
 
-; Update a single enemy or corpse NPC. The caller must set npc_move_flags.
-;
-; Register Usage
-;   r24-r25         calculations
-;   Y (r28:r29)     npc memory pointer (param)
-;   Z (r30:r31)     npc flash pointer
-update_single_npc:
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_CORPSE
-    brne _usn_not_corpse
-    call corpse_update
-    ret
-_usn_not_corpse:
-    subi r25, 1
-    brlo _usn_end
-    ldi ZL, byte3(2*npc_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*npc_table)
-    ldi ZH, high(2*npc_table)
-    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
-    mul r24, r25
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    push ZL
-    push ZH
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _usn_update
-    call npc_move
-_usn_update:
-    call npc_update
-    pop ZH
-    pop ZL
-_usn_battle:
-    call npc_resolve_ranged_damage
-    call npc_resolve_melee_damage
-_usn_end:
-    ret
-
-; Update multiple enemy or corpse NPCs. The caller must set npc_move_flags.
-;
-; Register Usage
-;   r24             calculations
-;   r25             the number of NPCs to update (param)
-;   Y (r28:r29)     npc memory pointer (param)
-;   Z (r30:r31)     npc flash pointer
-update_multiple_npcs:
-_umn_loop:
-    push r25
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_CORPSE
-    brne _umn_not_corpse
-    call corpse_update
-    rjmp _umn_next
-_umn_not_corpse:
-    subi r25, 1
-    brlo _umn_next
-    ldi ZL, byte3(2*npc_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*npc_table)
-    ldi ZH, high(2*npc_table)
-    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
-    mul r24, r25
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    push ZL
-    push ZH
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _umn_update
-    call npc_move
-_umn_update:
-    call npc_update
-    pop ZH
-    pop ZL
-_umn_battle:
-    call npc_resolve_ranged_damage
-    call npc_resolve_melee_damage
-_umn_next:
-    adiw YL, NPC_MEMSIZE
-    pop r25
-    dec r25
-    brne _umn_loop
-    ret
-
-; Standard NPC and player update routine. The caller must set npc_move_flags.
-;
-; Register Usage
-;   r0, r20-r31 calculations
-update_standard:
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-_us_loop:
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_CORPSE
-    brne _us_not_corpse
-    call corpse_update
-    rjmp _us_next
-_us_not_corpse:
-    subi r25, 1
-    brlo _us_next
-    ldi ZL, byte3(2*npc_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*npc_table)
-    ldi ZH, high(2*npc_table)
-    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
-    mul r24, r25
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    push ZL
-    push ZH
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _us_update
-    call npc_move
-_us_update:
-    call npc_update
-    pop ZH
-    pop ZL
-    call npc_resolve_ranged_damage
-    call npc_resolve_melee_damage
-_us_next:
-    adiw YL, NPC_MEMSIZE
-    cpiw YL, YH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
-    brlo _us_loop
-_us_finish:
-    call player_resolve_melee_damage
-    call player_resolve_effect_damage
-    ret
-
-; Add an NPC to the sector, if there's an available slot.
+; Add an NPC to the sector, if there's an available slot and the NPC has not been
+; killed.
 ;
 ; Register Usage
 ;   r20-r21         calculations
@@ -249,4 +117,24 @@ _an_npc_iter:
 _an_slot_found:
     call load_npc
 _an_end:
+    ret
+
+; Return a pointer to the given NPC. r20 will be cleared if not found.
+;
+; Register Usage
+;   r20-r21         calculations
+;   r25             NPC id (param)
+;   Y (r28:r29)     temp
+find_npc:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r20, SECTOR_DYNAMIC_NPC_COUNT
+_fn_npc_iter:
+    ld r21, Y
+    cp r21, r25
+    breq _fn_end
+    adiw YL, NPC_MEMSIZE
+    dec r20
+    brne _fn_npc_iter
+_fn_end:
     ret

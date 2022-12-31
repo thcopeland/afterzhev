@@ -31,6 +31,7 @@ _ss1u_end:
     ret
 
 sector_start_2_update:
+    sts npc_move_flags2, r1
     player_distance_imm 134, 128
     cpi r25, 18
     brsh _ss2u_test_ruffian
@@ -38,24 +39,23 @@ sector_start_2_update:
 _ss2u_test_ruffian:
     lds r25, player_position_x
     cpi r25, 160
-    brlo _ss2u_move_enemies
+    brlo _ss2u_fight
     lds r25, player_position_y
     cpi r25, 60
-    brsh _ss2u_move_enemies
+    brsh _ss2u_fight
 _ss2u_halfing:
     lds r25, player_character
     cpi r25, CHARACTER_HALFLING
     brne _ss2u_main
     try_start_conversation_intern battle_tutorial_halfling, battle_tutorial
-    rjmp _ss2u_move_enemies
+    rjmp _ss2u_fight
 _ss2u_main:
     try_start_conversation_intern battle_tutorial_generic, battle_tutorial
-_ss2u_move_enemies:
+_ss2u_fight:
     check_conversation battle_tutorial
     brne _ss2u_end
-    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
-    sts npc_move_flags, r25
-    call update_standard
+    ldi r25, 1
+    sts npc_move_flags2, r25
 _ss2u_loot:
     lds r25, sector_npcs+NPC_IDX_OFFSET
     cpi r25, NPC_CORPSE
@@ -73,71 +73,44 @@ _ss2u_end:
     ret
 
 sector_start_fight_update:
-    lds r25, sector_npcs+(NPC_MEMSIZE*2)+NPC_HEALTH_OFFSET ; health of BANDIT_3
-    cpi r25, 10
-    brsh _ssfu_fight
-_ssfu_plead:
+    lds r25, sector_npcs+NPC_MEMSIZE+NPC_HEALTH_OFFSET
+    cpi r25, 5
+    brsh _ssfu_end
     try_start_conversation bandit_plead
-    tst r25
-    breq _ssfu_fight
-    ret
-_ssfu_fight:
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_RETURN
-    sts npc_move_flags, r25
-    ldi r25, 2
-    call update_multiple_npcs
-    ldi r25, NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
-    sts npc_move_flags, r25
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_BANDIT_3
-    brne _ssfu_last_bandit_update
-_ssfu_last_bandit_stand:
-    lds r25, sector_data
-    cpi r25, 0
-    brne _ssfu_last_bandit_attack
-    ldi r25, NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
-    sts npc_move_flags, r25
-    rjmp _ssfu_last_bandit_update
-_ssfu_last_bandit_attack:
-    cpi r25, 1
-    brne _ssfu_reform_bandit
-    ldi r25, NPC_MOVE_ATTACK|NPC_MOVE_GOTO|NPC_MOVE_LOOKAT
-    sts npc_move_flags, r25
-    rjmp _ssfu_last_bandit_update
-_ssfu_reform_bandit:
-    ldi r25, NPC_BANDIT_3_REFORMED
-    std Y+NPC_IDX_OFFSET, r25
-    ldi r25, ITEM_bloody_sword
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
-    ldi r25, 118
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
-    ldi r25, 150
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
-    lds r25, npc_presence+((NPC_BANDIT_3-1)>>3)
-    andi r25, ~(1<<((NPC_BANDIT_3-1)&7))
-    sts npc_presence+((NPC_BANDIT_3-1)>>3), r25
-    sts player_effect, r1
-    std Y+NPC_EFFECT_OFFSET, r1
-    ldi r25, ACTION_IDLE
-    sts player_action, r25
-_ssfu_last_bandit_update:
-    call update_single_npc
-    call player_resolve_melee_damage
-    call player_resolve_effect_damage
 _ssfu_end:
     ret
 
 sector_start_fight_choice:
     lds r25, selected_choice
-    inc r25
-    sts sector_data, r25
+    cpi r25, 1
+    brne _ssfc_end
+    ldi r25, NPC_BANDIT_2_REFORMED
+    sts sector_npcs+NPC_MEMSIZE+NPC_IDX_OFFSET, r25
+    ldi r25, ITEM_bloody_sword
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
+    lds r25, sector_npcs+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    subi r25, low(-2)
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
+    lds r25, sector_npcs+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    subi r25, low(-10)
+    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
+    lds r25, npc_presence+((NPC_BANDIT_2-1)>>3)
+    andi r25, ~(1<<((NPC_BANDIT_2-1)&7))
+    sts npc_presence+((NPC_BANDIT_2-1)>>3), r25
+    sts player_effect, r1
+    sts sector_npcs+NPC_MEMSIZE+NPC_EFFECT_OFFSET, r1
+    ldi r25, ACTION_IDLE
+    sts player_action, r25
+    lds r24, player_xp
+    lds r25, player_xp+1
+    adiw r24, 10
+    sts player_xp, r24
+    sts player_xp+1, r25
+_ssfc_end:
     ret
 
 sector_start_pretown_1_update:
-    call update_standard
     player_distance_imm 170, 32
     cpi r25, 12
     brsh _ssp1u_end
@@ -146,7 +119,6 @@ _ssp1u_end:
     ret
 
 sector_town_entrance_1_update:
-    call kidnapped_quest_update
     player_distance_imm 184, 130
     cpi r25, 16
     brsh _ste1u_interact
@@ -166,7 +138,7 @@ _ste1u_check_quest:
     ldi r24, SECTOR_DYNAMIC_NPC_COUNT
 _ste1u_npc_iter:
     ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_KIDNAPPED
+    cpi r25, NPC_KIDNAPPED_FOLLOWING
     breq _ste1u_check_position
     adiw YL, NPC_MEMSIZE
     dec r24
@@ -180,6 +152,10 @@ _ste1u_check_position:
     distance_between r24, r25, r22, r23
     cpi r25, 20
     brsh _ste1u_end
+    ldi r25, NPC_KIDNAPPED
+    std Y+NPC_IDX_OFFSET, r25
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
     ldi r25, 5
     sts global_data + QUEST_KIDNAPPED, r25
     lds r25, npc_presence + ((NPC_KIDNAPPED-1)>>3)
@@ -261,98 +237,37 @@ _ste1ch_end:
 sector_town_wolves_update:
     lds r25, global_data + QUEST_KIDNAPPED
     cpi r25, 3
-    brsh _stwu_attack
+    brsh _stwu_end
 _stwu_lurk:
     lds r25, player_position_x
     cpi r25, 80
     brsh _stwu_end
     ldi r25, 3
     sts global_data + QUEST_KIDNAPPED, r25
-_stwu_attack:
-    call kidnapped_quest_update
 _stwu_end:
     ret
 
 sector_start_post_fight_update:
     lds r25, global_data + QUEST_KIDNAPPED
     cpi r25, 4
-    brsh _sspfu_update_npcs
-    player_distance_imm 134, 31
-    cpi r25, 16
-    brsh _sspfu_update_npcs
-    ldi r24, low(2*_conv_kidnapped10)
-    ldi r25, high(2*_conv_kidnapped10)
-    call load_conversation
-    ldi r25, 4
-    sts global_data + QUEST_KIDNAPPED, r25
-    rjmp _sspfu_end
-_sspfu_update_npcs:
-    call kidnapped_quest_update
+    brne _sspfu_end
+    ldi r25, NPC_KIDNAPPED
+    call find_npc
+    tst r20
+    breq _sspfu_end
+    ldi r25, NPC_KIDNAPPED_FOLLOWING
+    std Y+NPC_IDX_OFFSET, r25
 _sspfu_end:
     ret
 
-kidnapped_quest_update:
-    call player_resolve_melee_damage
-    call player_resolve_effect_damage
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-    ldi r16, SECTOR_DYNAMIC_NPC_COUNT
-_kdqu_npc_iter:
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_CORPSE
-    brne _kdqu_not_corpse
-    call corpse_update
-    rjmp _kdqu_next_npc
-_kdqu_not_corpse:
-    subi r25, 1
-    brlo _kdqu_next_npc
-    ldi ZL, byte3(2*npc_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*npc_table)
-    ldi ZH, high(2*npc_table)
-    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
-    mul r24, r25
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    elpm r25, Z
-    cpi r25, NPC_ENEMY
-    brne _kdqu_next_npc
-    push ZL
-    push ZH
-    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT|NPC_MOVE_FALLOFF
-    sts npc_move_flags, r25
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_KIDNAPPED
-    brne _kdqu_move
-    lds r25, global_data + QUEST_KIDNAPPED
-    cpi r25, 4
-    breq _kdqu_move
-_kdqu_no_move:
-    ldi r25, 0
-    sts npc_move_flags, r25
-_kdqu_move:
-    call npc_move
-    call npc_update
-    pop ZH
-    pop ZL
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_KIDNAPPED
-    breq _kdqu_next_npc
-    call npc_resolve_ranged_damage
-    call npc_resolve_melee_damage
-_kdqu_next_npc:
-    adiw YL, NPC_MEMSIZE
-    dec r16
-    brne _kdqu_npc_iter
-_kdqu_end:
+sector_start_post_fight_conversation:
+    ldi r20, 4
+    sts global_data + QUEST_KIDNAPPED, r20
+    ldi r20, NPC_KIDNAPPED_FOLLOWING
+    sts sector_npcs+NPC_IDX_OFFSET, r20
     ret
 
 sector_town_tavern_1_update:
-    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
-    sts npc_move_flags, r25
-    call update_standard
-_sst1u_store_tutorial:
     player_distance_imm 75, 116
     cpi r25, 16
     brsh _stt1u_end
@@ -361,10 +276,6 @@ _stt1u_end:
     ret
 
 sector_town_tavern_2_update:
-    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
-    sts npc_move_flags, r25
-    call update_standard
-_stt2u_robbery:
     lds r25, sector_npcs+NPC_IDX_OFFSET
     cpi r25, NPC_ANNOYED_GUEST
     brne _stt2u_end
@@ -497,6 +408,7 @@ _stfi_end:
     ret
 
 sector_town_fields_update:
+    sts npc_move_flags2, r1
     lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT_UNMASKED-1)>>3)
     andi r25, exp2((NPC_UNDERCOVER_BANDIT_UNMASKED-1)&0x07)
     brne _stfu_test_left_confrontation
@@ -524,9 +436,8 @@ _stfu_test_right_confrontation:
     brsh _stfu_end
     try_start_conversation_intern bandit_right_reveal, bandit_reveal
 _stfu_fight:
-    ldi r25, NPC_MOVE_GOTO|NPC_MOVE_ATTACK|NPC_MOVE_LOOKAT
-    sts npc_move_flags, r25
-    call update_standard
+    ldi r25, 1
+    sts npc_move_flags2, r25
 _stfu_end:
     ret
 
