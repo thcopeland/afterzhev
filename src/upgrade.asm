@@ -7,7 +7,7 @@ upgrade_update_game:
 ; If not, this does nothing.
 ;
 ; Register Usage
-;   r23-r25     calculations
+;   r22-r25     calculations
 load_upgrade_if_necessary:
     lds r23, player_class
     swap r23
@@ -17,7 +17,7 @@ load_upgrade_if_necessary:
 _luin_level_0:
     cpi r23, 0
     brne _luin_level_1
-    cpiw r24, r25, LEVEL_1_XP, r24
+    cpiw r24, r25, LEVEL_1_XP, r22
     brlo _luin_end
     ldi r25, UPGRADE_1_POINTS
     sts upgrade_points, r25
@@ -25,7 +25,7 @@ _luin_level_0:
 _luin_level_1:
     cpi r23, 1
     brne _luin_level_2
-    cpiw r24, r25, LEVEL_2_XP, r24
+    cpiw r24, r25, LEVEL_2_XP, r22
     brlo _luin_end
     ldi r25, UPGRADE_2_POINTS
     sts upgrade_points, r25
@@ -33,7 +33,7 @@ _luin_level_1:
 _luin_level_2:
     cpi r23, 2
     brne _luin_end
-    cpiw r24, r25, LEVEL_3_XP, r24
+    cpiw r24, r25, LEVEL_3_XP, r22
     brlo _luin_end
     ldi r25, UPGRADE_3_POINTS
     sts upgrade_points, r25

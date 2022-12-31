@@ -606,6 +606,7 @@ calculate_sell_price:
     mul r24, r25
     add ZL, r0
     adc ZH, r1
+    clr r1
     elpm r24, Z+
     elpm r25, Z+
     ret
