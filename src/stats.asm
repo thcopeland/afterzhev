@@ -162,39 +162,35 @@ _uep_end:
     rcall calculate_player_stats
     ret
 
-; Update the player's health. Once every few frames, health is either
-; incremented or decremented. If the player dies, the game ends.
-;   update interval = 4*(STATS_RANGE+2-|vitality|)
+; Update the player's health. Once every few frames, health is incremented.
+;   update interval = max(40-vitality, 0)+10
 ;
 ; Register Usage
-;   r23-r25     calculations
+;   r22-r25     calculations
 update_player_health:
-    lds r24, player_augmented_stats + STATS_VITALITY_OFFSET
-    ldi r23, 1
-    cpi r24, 0
-    brge _uph_check_clock
-    neg r24
-    neg r23
-_uph_check_clock:
-    neg r24
-    subi r24, low(-STATS_RANGE-2)
-    lsl r24
-    lsl r24
-    lds r25, clock
-    call divmodb
-    tst r24
+    lds r23, player_augmented_stats + STATS_VITALITY_OFFSET
+    ldi r22, 40
+    sub r22, r23
+    brsh _uph_div
+    clr r22
+_uph_div:
+    subi r22, low(-10)
+    clr r23
+    lds r24, clock
+    lds r25, clock+1
+    call divmodw
+    cp r22, r1
+    cpc r23, r1
     brne _uph_end
+_uph_heal:
+    lds r22, player_health
+    tst r22
+    breq _uph_end
+    inc r22
     call calculate_max_health
-    lds r24, player_health
-    add r24, r23
-    brge _uph_save_health
-    ldi r25, GAME_OVER_POISONED
-    call load_gameover
-    ret
-_uph_save_health:
-    cp r25, r24
+    cp r25, r22
     brlo _uph_end
-    sts player_health, r24
+    sts player_health, r22
 _uph_end:
     ret
 

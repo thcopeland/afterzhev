@@ -88,7 +88,7 @@ item_table:
     DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0
-    DECL_ITEM health_potion,        (0<<3)|ITEM_USABLE,                 100,    0, 64,  0,  0,      0
+    DECL_ITEM health_potion,        (0<<3)|ITEM_USABLE,                 100,    0, 40,  0,  0,      0
     DECL_ITEM beer,                 (3<<3)|ITEM_USABLE,                 5,      5,  5,  0, -5,      0
     DECL_ITEM croissant,            (3<<3)|ITEM_USABLE,                 10,     0, 10,  0,  0,      0
     DECL_ITEM whiskey,              (1<<3)|ITEM_USABLE,                 20,    10,  5, -5,  0,      0

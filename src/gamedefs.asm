@@ -37,8 +37,7 @@
 .equ MODE_GAMEOVER = 10
 
 .equ GAME_OVER_DEAD = 0
-.equ GAME_OVER_POISONED = 1
-.equ GAME_OVER_WIN = 2
+.equ GAME_OVER_WIN = 1
 
 .equ DIRECTION_DOWN = 0 ; ordering is convenient for reusing sprites and bitwise checks, do not change lightly
 .equ DIRECTION_RIGHT = 1

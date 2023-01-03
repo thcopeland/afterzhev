@@ -262,7 +262,7 @@ _mfc_cd_2:
 _mfc_cd_3:
     cpi r21, FEATURE_COLLIDE_RANGE
     brsh _mc_features_next
-    ; NOTE: Not particularly pround of the "check_horizontal/vertical_corners" special
+    ; NOTE: Not particularly proud of the "check_horizontal/vertical_corners" special
     ; casing. Without it, though, there's a tendency to get stuck on the corners.
     ; I tried a lot of stuff to fix it, this is the only one that worked really
     ; reliable.

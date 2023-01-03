@@ -28,6 +28,7 @@ _init_zero_iter:
     sti player_character, CHARACTER_HALFLING
     sti player_weapon, ITEM_bloody_sword
     sti player_armor, NO_ITEM
+    sti player_inventory, ITEM_health_potion
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_LEFT
     sti player_frame, 0
@@ -56,8 +57,8 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    sti player_position_x, 20
-    sti player_position_y, 100
+    sti player_position_x, 111
+    sti player_position_y, 91
     call reset_camera
     .equ INITIAL_SECTOR = SECTOR_TOWN_FIELDS
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)

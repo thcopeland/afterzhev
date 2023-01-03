@@ -36,8 +36,9 @@ const char *fragment_shader_src =                                               
 "out vec4 FragColor;\n"                                                         \
 "in vec2 texCoord;\n"                                                           \
 "uniform sampler2D tex;\n"                                                      \
+"uniform int mask;\n"                                                           \
 "void main() { \n"                                                              \
-"    int val = int(255.0*texture(tex, texCoord).r);\n"                          \
+"    int val = mask & int(255.0*texture(tex, texCoord).r);\n"                   \
 "    FragColor = vec4(float(val&7) / 7.0,\n"                                    \
 "                     float((val>>3)&7) / 7.0,\n"                               \
 "                     float((val>>5)&6) / 7.0, 1.0);\n"                         \
@@ -57,6 +58,7 @@ unsigned quad_indices[] = {
 };
 
 GLFWwindow *window;
+unsigned program;
 
 unsigned compileShaderProgram(const char *vertex_src, const char *frag_src) {
     int success;
@@ -176,6 +178,8 @@ void loop() {
 #endif
 
     if (sync_hold) {
+        int loc = glGetUniformLocation(program, "mask");
+        glProgramUniform1i(program, loc, avr->mem[0x21]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, GAME_DISPLAY_WIDTH, GAME_DISPLAY_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, avr->ram);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
@@ -211,7 +215,7 @@ int main(int argc, char **argv) {
     glClearColor(0, 0, 0, 1);
     glViewport(0, 0, GAME_DISPLAY_WIDTH*SCALE, GAME_DISPLAY_HEIGHT*SCALE);
 
-    unsigned program = compileShaderProgram(vertex_shader_src, fragment_shader_src);
+    program = compileShaderProgram(vertex_shader_src, fragment_shader_src);
     glUseProgram(program);
 
     unsigned texture;

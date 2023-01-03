@@ -287,11 +287,29 @@ _rg_render_dynamic_npc:
     movw YL, r14
     rjmp _rg_render_npc_health
 _rg_render_player:
+    lds r25, player_health
+    cpi r25, 0
+    breq _render_player_corpse
     lds r24, player_position_x
     lds r25, player_position_y
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character
+    rjmp _rg_render_active_effects
+_render_player_corpse:
+    ldi ZL, byte3(2*static_character_sprite_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*(static_character_sprite_table+NPC_CORPSE_SPRITE*CHARACTER_SPRITE_MEMSIZE))
+    ldi ZH, high(2*(static_character_sprite_table+NPC_CORPSE_SPRITE*CHARACTER_SPRITE_MEMSIZE))
+    ldi r22, CHARACTER_SPRITE_WIDTH
+    ldi r23, CHARACTER_SPRITE_HEIGHT
+    lds r24, player_position_x
+    lds r25, player_position_y
+    call render_sprite
+    lds r22, player_effect
+    lds r24, player_position_x
+    lds r25, player_position_y
+    call render_effect_animation
 _rg_render_active_effects:
     ldi YL, low(active_effects)
     ldi YH, high(active_effects)

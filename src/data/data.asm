@@ -13,7 +13,7 @@ controller_values:  .byte 1
 savedmem_start:
 
 clock:              .byte 2
-mode_clock:         .byte 2
+mode_clock:         .byte 1
 seed:               .byte 2
 
 game_mode:          .byte 1
@@ -83,6 +83,7 @@ npc_move_flags2:    .byte 1
 current_shop_index: .byte 1
 shop_inventory:     .byte SHOP_INVENTORY_SIZE
 
+lightning_clock:
 conversation_frame: .byte 2
 
 conversation_chars:

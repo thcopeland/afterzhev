@@ -1,11 +1,14 @@
 gameover_update_game:
     rjmp gameover_render_game
 _gug_return:
-    lds r24, mode_clock
-    lds r25, mode_clock+1
-    adiw r24, 1
-    sts mode_clock, r24
-    sts mode_clock+1, r25
+    lds r25, clock
+    andi r25, 0x3
+    brne _gug_end
+    lds r25, mode_clock
+    inc r25
+    breq _gug_end
+    sts mode_clock, r25
+_gug_end:
     jmp _loop_reenter
 
 ; Switch to the "game over" screen. This is used for all game endings, both wins
@@ -15,14 +18,14 @@ _gug_return:
 ;   r24     calculations
 ;   r25     game status (param)
 load_gameover:
-    lds r24, game_mode
-    cpi r24, MODE_GAMEOVER
+    lds r25, game_mode
+    cpi r25, MODE_GAMEOVER
     breq _lg_end
     sts gameover_state, r25
     ldi r25, MODE_GAMEOVER
     sts game_mode, r25
     sts mode_clock, r1
-    sts mode_clock+1, r1
+    sts lightning_clock, r1
 _lg_end:
     ret
 
@@ -34,11 +37,11 @@ _lg_end:
 ; Register Usage
 ;   r24-r25     calculations
 gameover_render_game:
-    lds r24, mode_clock
-    lds r25, mode_clock+1
-    cpiw r24, r25, GAMEOVER_TIMING_FADE_END, r23
+    lds r25, mode_clock
+    cpi r25, 20
     brsh _grg_check_win
-    rjmp gameover_fade_screen
+    rjmp gameover_lightning
+    rjmp _grg_end
 _grg_check_win:
     lds r25, gameover_state
     cpi r25, GAME_OVER_WIN
@@ -47,8 +50,8 @@ _grg_check_win:
     rjmp _grg_end
 _grg_check_death:
     rcall gameover_render_dead
-_grg_return:
 _grg_end:
+_grg_return:
     rjmp _gug_return
 
 .equ GAMEOVER_UI_HEADER_TEXT_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FONT_DISPLAY_HEIGHT)/2 + (DISPLAY_WIDTH-FONT_DISPLAY_WIDTH*8)/2
@@ -61,197 +64,98 @@ gameover_render_dead:
     ldi r24, DISPLAY_WIDTH
     ldi r25, DISPLAY_HEIGHT
     call render_rect
-_grd_calc_header_fade:
     ldi r21, 20
     ldi r23, 0x05
-    lds r24, mode_clock
-    lds r25, mode_clock+1
-    subi r24, low(GAMEOVER_TIMING_TEXT_FADE_END)
-    sbci r25, high(GAMEOVER_TIMING_TEXT_FADE_END)
-    brsh _grd_render_header
-    neg r24
-    lsr r24
-    lsr r24
-    fade_color r23, r22, r25, r24
-_grd_render_header:
+    ldi r25, 35
     ldi YL, low(framebuffer+GAMEOVER_UI_HEADER_TEXT_MARGIN)
     ldi YH, high(framebuffer+GAMEOVER_UI_HEADER_TEXT_MARGIN)
     ldi ZL, byte3(2*ui_str_you_died)
     out RAMPZ, ZL
     ldi ZL, low(2*ui_str_you_died)
     ldi ZH, high(2*ui_str_you_died)
-    call puts
-_grd_message_line1:
+    rcall gameover_text
     ldi r21, 28
     ldi r23, 0x05
-    ldi r24, 7
-    ldi r25, 66
-    ldi YL, low(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
-    ldi YH, high(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
-    lds r20, gameover_state
-    cpi r20, GAME_OVER_POISONED
-    breq _grd_line1_poisoned
-    ldi ZL, low(2*ui_str_death_message1)
-    ldi ZH, high(2*ui_str_death_message1)
-    rjmp _grd_write_line1
-_grd_line1_poisoned:
-    ldi ZL, low(2*ui_str_poisoned_message1)
-    ldi ZH, high(2*ui_str_poisoned_message1)
-_grd_write_line1:
-    rcall gameover_fade_text
-_grd_message_line2:
-    ldi r23, 0x05
-    ldi r24, 80
-    ldi r25, 66
-    ldi YL, low(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
-    ldi YH, high(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
-    ldi ZL, low(2*ui_str_death_message2)
-    ldi ZH, high(2*ui_str_death_message2)
-    rcall gameover_fade_text
-_grd_message_line3:
-    ldi r23, 0x05
-    ldi r24, 160
-    ldi r25, 66
-    ldi YL, low(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
-    ldi YH, high(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
-    ldi ZL, low(2*ui_str_death_message3)
-    ldi ZH, high(2*ui_str_death_message3)
-    rcall gameover_fade_text
-_grd_play_again:
-    ldi r23, 0x05
-    ldi r24, 240
-    ldi r25, 0
+    ldi r25, 60
     ldi YL, low(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
     ldi YH, high(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
     ldi ZL, low(2*ui_str_press_any_button)
     ldi ZH, high(2*ui_str_press_any_button)
-    rcall gameover_fade_text
-    call restore_from_savepoint
+    rcall gameover_text
     ret
 
 gameover_render_win:
     ret
 
-; Fade in some text, hold it for some time, then fade it out. If the given duration
-; is zero, will never fade out the text.
+; Fade in some text and hold it.
 ;
 ; Register Usage
-;   r20, r22        calculations
 ;   r21             printing width (param)
+;   r22             calculations
 ;   r23             color (param)
-;   r24             time at which to fade in (param)
-;   r25             duration of text (param)
+;   r25             time at which to fade in (param)
 ;   Y (r28:r29)     framebuffer pointer (param)
 ;   Z (r30:r31)     text pointer (param)
-gameover_fade_text:
-    lds r20, mode_clock
-    lds r22, mode_clock+1
-    subi r20, low(GAMEOVER_TIMING_TEXT_FADE_END)
-    sbci r22, high(GAMEOVER_TIMING_TEXT_FADE_END)
-    brlo _gft_end
-    lsr r22
-    ror r20
-    lsr r22
-    ror r20
-_gft_fade_in:
-    sub r20, r24
-    sbc r22, r1
-    brlo _gft_end
-    cp r20, r25
-    cpc r22, r1
-    brsh _gft_fade_out
-    subi r20, 7
-    brsh _gft_render_text
-    neg r20
-    rjmp _gft_fade_text
-_gft_fade_out:
-    sub r20, r25
-    sbc r22, r1
-    brlo _gft_render_text
-    tst r25 ; special case
-    breq _gft_render_text
-    cpi r20, 7
-    cpc r22, r1
-    brsh _gft_end
-_gft_fade_text:
-    fade_color r23, r24, r25, r20
-_gft_render_text:
+gameover_text:
+    lds r24, mode_clock
+    mov r22, r25
+    subi r22, 8
+    cp r24, r22
+    brlo _gt_end
+    sub r25, r24
+    brlo _gt_render
+    fade_color r23, r22, r24, r25
+_gt_render:
     call puts
-_gft_end:
+_gt_end:
     ret
 
-; Perform a closing effect on the screen. The player cannot move, but NPCs continue
-; to move.
+gfs_lightning:
+    .db 0b11111111, 0b11111111, 0b00000000, 0b00011110, 0b00011000, 0b00000000, 0b00000000, 0b11100111, 0b11111111, 0b00000000
+
+; Perform a dying effect.
 ;
 ; Register Usage
 ;   r24-r25         calculations
 ;   Z (r30:r31)     sector update pointer
-gameover_fade_screen:
+gameover_lightning:
     lds r25, mode_clock
-    andi r25, 0x3
-    breq _gfs_render
-    call update_player
-    ldi ZL, byte3(2*sector_table)
-    out RAMPZ, ZL
-    lds ZL, current_sector
-    lds ZH, current_sector+1
-    subi ZL, low(-SECTOR_UPDATE_OFFSET)
-    sbci ZH, high(-SECTOR_UPDATE_OFFSET)
-    elpm r24, Z+
-    elpm r25, Z+
-    cp r24, r1
-    cpc r25, r1
-    breq _gfs_end
-    movw ZL, r24
-    icall
-    rjmp _gfs_end
-_gfs_render:
-    call render_game
-_gfs_fade:
+    cpi r25, 18
+    brlo _gl_lightning
+    ldi r25, 0xff
+    out DDRA, r25
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
-    ldi ZL, low(framebuffer+DISPLAY_WIDTH*DISPLAY_HEIGHT)
-    ldi ZH, high(framebuffer+DISPLAY_WIDTH*DISPLAY_HEIGHT)
-    lds r25, mode_clock
-    lds r24, mode_clock+1
-    lsr r24
-    ror r25
-    lsr r24
-    ror r25
-_gfs_black_outer:
+    clr r22
     ldi r24, DISPLAY_WIDTH
-_gfs_black_inner:
-    st X+, r1
-    st -Z, r1
-    dec r24
-    brne _gfs_black_inner
-    dec r25
-    brpl _gfs_black_outer
-    ldi r24, DISPLAY_WIDTH
-_gfs_dim1:
-    ld r25, X
-    andi r25, 0x24
+    ldi r25, DISPLAY_HEIGHT
+    call render_rect
+    rjmp _gl_end
+_gl_lightning:
+    call render_game
+    call update_active_effects
+    call update_savepoint_animation
+    call update_player
+    call update_npcs
+
+    lds r25, lightning_clock
+    mov r24, r25
     lsr r25
     lsr r25
-    st X+, r25
-    ld r25, -Z
-    andi r25, 0x24
     lsr r25
-    lsr r25
-    st Z, r25
-    dec r24
-    brne _gfs_dim1
-    ldi r24, DISPLAY_WIDTH
-_gfs_dim2:
-    ld r25, X
-    andi r25, 0xb6
-    lsr r25
-    st X+, r25
-    ld r25, -Z
-    andi r25, 0xb6
-    lsr r25
-    st Z, r25
-    dec r24
-    brne _gfs_dim2
-_gfs_end:
+    ldi ZL, low(2*gfs_lightning)
+    ldi ZH, high(2*gfs_lightning)
+    add ZL, r25
+    adc ZH, r1
+    lpm r23, Z
+    clr r25
+    nbit r23, r24
+    breq _gl_red
+    ldi r25, 0x07
+_gl_red:
+    out DDRA, r25
+    lds r25, lightning_clock
+    inc r25
+    sts lightning_clock, r25
+_gl_end:
     rjmp _grg_return
