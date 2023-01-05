@@ -38,7 +38,7 @@ _lg_end:
 ;   r24-r25     calculations
 gameover_render_game:
     lds r25, mode_clock
-    cpi r25, 20
+    cpi r25, 30
     brsh _grg_check_win
     rjmp gameover_lightning
     rjmp _grg_end
@@ -66,7 +66,7 @@ gameover_render_dead:
     call render_rect
     ldi r21, 20
     ldi r23, 0x05
-    ldi r25, 35
+    ldi r25, 45
     ldi YL, low(framebuffer+GAMEOVER_UI_HEADER_TEXT_MARGIN)
     ldi YH, high(framebuffer+GAMEOVER_UI_HEADER_TEXT_MARGIN)
     ldi ZL, byte3(2*ui_str_you_died)
@@ -76,7 +76,7 @@ gameover_render_dead:
     rcall gameover_text
     ldi r21, 28
     ldi r23, 0x05
-    ldi r25, 60
+    ldi r25, 70
     ldi YL, low(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
     ldi YH, high(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
     ldi ZL, low(2*ui_str_press_any_button)
@@ -120,7 +120,7 @@ gfs_lightning:
 ;   Z (r30:r31)     sector update pointer
 gameover_lightning:
     lds r25, mode_clock
-    cpi r25, 18
+    cpi r25, 28
     brlo _gl_lightning
     ldi r25, 0xff
     out DDRA, r25
@@ -137,6 +137,10 @@ _gl_lightning:
     call update_savepoint_animation
     call update_player
     call update_npcs
+
+    lds r25, mode_clock
+    cpi r25, 10
+    brlo _gl_end
 
     lds r25, lightning_clock
     mov r24, r25

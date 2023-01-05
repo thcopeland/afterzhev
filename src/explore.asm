@@ -1,8 +1,8 @@
 explore_update_game:
+    call update_player_stat_effects
     rcall update_savepoint
     rcall render_game
     rcall handle_controls
-    call update_player_stat_effects
     rcall update_active_effects
     rcall update_savepoint_animation
     rcall update_player
@@ -933,7 +933,8 @@ _hmb_switch_sectors:
     add ZL, r0
     adc ZH, r1
     clr r1
-    call load_sector
+    rcall load_sector
+    call load_upgrade_if_necessary
     rjmp _hmb_end
 _hmb_portal_next:
     adiw ZL, SECTOR_PORTAL_MEMSIZE-2
@@ -1099,14 +1100,14 @@ _uae_update_effect_frame:
     mov r23, r21
     andi r21, 0x07  ; frame
     andi r23, 0xc0  ; direction
-_uae_attack_fire:
-    cpi r22, EFFECT_ATTACK_FIRE<<3
+_uae_fireball:
+    cpi r22, EFFECT_FIREBALL<<3
     brne _uae_active_effect_next
     lds r24, clock
-    andi r24, EFFECT_ATTACK_FIRE_FRAME_DURATION_MASK
+    andi r24, EFFECT_FIREBALL_FRAME_DURATION_MASK
     brne _uae_active_effect_next
     inc r21
-    cpi r21, EFFECT_ATTACK_FIRE_DURATION
+    cpi r21, EFFECT_FIREBALL_DURATION
     brlo _uau_save_effect
     clr r22
 _uau_save_effect:

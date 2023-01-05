@@ -223,6 +223,7 @@ private
          << ".db 0, 0, 0, 0\n"                                                              \
          << ".db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\n"              \
          << ".db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\n"                    \
+         << ".dw 0\n"                                                                       \
          << ".dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER\n"              \
          << "\n"
   end

@@ -26,16 +26,18 @@ _init_zero_iter:
     sti player_velocity_y, 0
     sti player_class, CLASS_ROGUE
     sti player_character, CHARACTER_HALFLING
-    sti player_weapon, ITEM_bloody_sword
-    sti player_armor, NO_ITEM
+    sti player_weapon, ITEM_iron_staff ;ITEM_steel_sword
+    sti player_armor, ITEM_iron_breastplate; ITEM_leather_armor
     sti player_inventory, ITEM_health_potion
+    sti player_inventory+1, ITEM_whiskey
+    sti player_inventory+2, ITEM_pass
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_LEFT
     sti player_frame, 0
     sti player_effect, 0
-    sti player_stats, 6
-    sti player_stats+1, 8
-    sti player_stats+2, 10
+    sti player_stats, 10;6
+    sti player_stats+1, 10;8
+    sti player_stats+2, 12;10
     sti player_stats+3, 6
     call calculate_player_stats
     stiw player_gold, 0
@@ -46,21 +48,22 @@ _init_zero_iter:
     stiw preplaced_item_presence, 0xffff
     stiw npc_presence, 0xffff
     stiw npc_presence+2, 0xffff
-    stiw npc_presence+3, 0xffff
+    stiw npc_presence+4, 0xffff
     sti clock, 0
     sti mode_clock, 0
     sti current_shop_index, NO_SHOP
     stiw conversation_over, 0xffff
+    sti conversation_over+2, 0xff
     sti savepoint_used, 0x00
     stiw seed, 1
     sti gameover_state, 0xc0
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    sti player_position_x, 111
-    sti player_position_y, 91
+    sti player_position_x, 32
+    sti player_position_y, 105
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_TOWN_FIELDS
+    .equ INITIAL_SECTOR = SECTOR_TOWN_FOREST_PATH_5
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

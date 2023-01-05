@@ -276,6 +276,9 @@ npc_resolve_melee_damage:
     lds r25, clock
     andi r25, ATTACK_FRAME_DURATION_MASK
     brne  _nrmd_end_trampoline
+    ldd r25, Y+NPC_HEALTH_OFFSET
+    cpi r25, 255
+    breq _nrmd_end_trampoline
 _nrmd_check_action:
     lds r25, player_action
     cpi r25, ACTION_ATTACK
@@ -421,6 +424,9 @@ npc_resolve_ranged_damage:
     tst r25
     breq _nrrd_early_exit
     cpi r25, NPC_CORPSE
+    breq _nrrd_early_exit
+    ldd r25, Y+NPC_HEALTH_OFFSET
+    cpi r25, 255
     breq _nrrd_early_exit
 _nrrd_main:
     ldd r25, Y+NPC_EFFECT_OFFSET

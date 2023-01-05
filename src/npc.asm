@@ -3,7 +3,7 @@ estimated_effect_ranges:
     .db 0,                              \
         EFFECT_DEFAULT_RANGE_ESTIMATE,  \
         EFFECT_ARROW_RANGE_ESTIMATE,    \
-        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
+        EFFECT_FIREBALL_RANGE_ESTIMATE, \
         EFFECT_DEFAULT_RANGE_ESTIMATE,  \
         EFFECT_DEFAULT_RANGE_ESTIMATE,  \
         EFFECT_DEFAULT_RANGE_ESTIMATE,  \
@@ -482,6 +482,9 @@ _eu_collisions:
 _eu_npc_on_npc_collision:
     adiw ZL, NPC_TABLE_WEAPON_OFFSET
     elpm r21, Z
+    adiw ZL, NPC_TABLE_ENEMY_ATTACK_OFFSET-NPC_TABLE_WEAPON_OFFSET
+    elpm r25, Z
+    sts subroutine_tmp, r25
     ldi ZL, low(sector_npcs+(SECTOR_DYNAMIC_NPC_COUNT-1)*NPC_MEMSIZE)
     ldi ZH, high(sector_npcs+(SECTOR_DYNAMIC_NPC_COUNT-1)*NPC_MEMSIZE)
 _eu_npc_iter:
@@ -527,36 +530,25 @@ _eu_ranged_attack:
 _eu_end_trampoline:
     rjmp _eu_end
 _eu_add_ranged_effect:
-; Ranged Flags: [speed:2][cooldown:3][high level:1][type:2]
-; Ranged Extra: [attack:4][magical:1][effect:3]
-;   r22             effect data 1 [direction:2][effect:3][frame:3] (param)
-;   r23             effect data 2 [strength:4][speed:2][role:2] (param)
-
     elpm r23, Z
     swap r23
     andi r23, 0x0c
-    ; r23 = [0:4][speed:2][0:2]
     adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
-    elpm r21, Z
-    mov r22, r21
+    elpm r22, Z
+    lds r21, subroutine_tmp
+    swap r21
     andi r21, 0xf0
     or r23, r21
     ori r23, EFFECT_ROLE_DAMAGE_PLAYER
-    ; r23 = [attack:4][speed:2][role:2]
     swap r22
-    ; r22 = [magical:1][effect:3][attack:4]
     lsr r22
     andi r22, 0x38
-    ; r22 = [0:2][effect:3][0:3]
-
     ldd r21, Y+NPC_ANIM_OFFSET
     swap r21
     lsl r21
     lsl r21
     andi r21, 0xc0
     or r22, r21
-    ; r22 = [dir:2][effect:3][0:3]
-
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     ldd r21, Y+NPC_ANIM_OFFSET

@@ -330,7 +330,7 @@ _stt2c_have_journal:
     lds r20, global_data+QUEST_JOURNAL
     ldi r25, 3
     sts global_data+QUEST_JOURNAL, r25
-    ldi r25, ITEM_wooden_bow
+    ldi r25, 128|5
     sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
     sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
     ldi r25, 52
@@ -366,6 +366,7 @@ sector_town_tavern_2_choice:
 
 sector_town_fields_init:
     lds r25, global_data+QUEST_BANDITS
+    andi r25, 0x3
 _stfi_test_left_confrontation:
     cpi r25, 1
     brne _stfi_test_right_confrontation
@@ -412,11 +413,13 @@ sector_town_fields_update:
     lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT_UNMASKED-1)>>3)
     andi r25, exp2((NPC_UNDERCOVER_BANDIT_UNMASKED-1)&0x07)
     brne _stfu_test_left_confrontation
-    ldi r25, 3
+    lds r25, global_data+QUEST_BANDITS
+    ori r25, 3
     sts global_data+QUEST_BANDITS, r25
     rjmp _stfu_fight
 _stfu_test_left_confrontation:
     lds r25, global_data+QUEST_BANDITS
+    andi r25, 0x03
     cpi r25, 1
     brne _stfu_test_right_confrontation
     check_conversation bandit_reveal
@@ -443,9 +446,12 @@ _stfu_end:
 
 sector_town_forest_path_2_init:
     lds r25, global_data+QUEST_BANDITS
-    cpi r25, 3
+    mov r24, r25
+    andi r24, 0x03
+    cpi r24, 3
     brsh _stfp2_end
-    ldi r25, 1
+    andi r25, 0xfc
+    ori r25, 1
     sts global_data+QUEST_BANDITS, r25
     lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3)
     andi r25, ~exp2((NPC_UNDERCOVER_BANDIT-1)&0x07)
@@ -453,14 +459,56 @@ sector_town_forest_path_2_init:
 _stfp2_end:
     ret
 
+sector_town_forest_path_4_update:
+    lds r25, player_position_y
+    cpi r25, 120
+    brlo _stfp4_end
+    lds r25, player_position_x
+    cpi r25, 100
+    brsh _stfp4_end
+    lds r25, global_data+QUEST_BANDITS
+    sbrc r25, 3
+    rjmp _stfp4_end
+    ori r25, 8
+    sts global_data+QUEST_BANDITS, r25
+    ldi r25, NPC_AMBUSHER
+    call add_npc
+    ldi r25, NPC_AMBUSHER
+    call add_npc
+    ldi r25, 59
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r25
+_stfp4_end:
+    ret
+
 sector_town_forest_path_5_init:
     lds r25, global_data+QUEST_BANDITS
-    cpi r25, 3
-    brsh _stfp5_end
-    ldi r25, 2
+    mov r24, r25
+    andi r24, 0x03
+    cpi r24, 3
+    brsh _stfp2_end
+    andi r25, 0xfc
+    ori r25, 2
     sts global_data+QUEST_BANDITS, r25
     lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3)
     andi r25, ~exp2((NPC_UNDERCOVER_BANDIT-1)&0x07)
     sts npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3), r25
 _stfp5_end:
+    ret
+
+sector_town_den_2_init:
+    try_start_conversation bandit_speech
+    ret
+
+sector_town_den_2_update:
+    lds r24, prev_controller_values
+    lds r25, controller_values
+    com r24
+    and r24, r25
+    sbrs r24, CONTROLS_SPECIAL1
+    rjmp _std2u_end
+    lds r25, sector_loose_items+SECTOR_ITEM_IDX_OFFSET
+    cpi r25, ITEM_pass
+    breq _std2u_end
+    try_start_conversation find_pass
+_std2u_end:
     ret

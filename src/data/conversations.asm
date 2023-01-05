@@ -157,6 +157,16 @@ _conv_bandit_left_reveal1:      DECL_LINE bandit_left_reveal1, NPC_UNDERCOVER_BA
 _conv_bandit_left_reveal2:      DECL_LINE bandit_left_reveal2, 0, PLAYER, bandit_left_reveal3
 _conv_bandit_left_reveal3:      DECL_LINE bandit_left_reveal3, NPC_UNDERCOVER_BANDIT_UNMASKED, bandit_agent, END_CONVERSATION
 _conv_bandit_right_reveal:      DECL_LINE bandit_right_reveal, NPC_UNDERCOVER_BANDIT_UNMASKED, bandit_agent, END_CONVERSATION
+_conv_foxes_didnt_do_this:      DECL_LINE foxes_didnt_do_this, 0, PLAYER, END_CONVERSATION
+DECL_CONVERSATION bandit_speech
+_conv_bandit_speech:            DECL_LINE bandit_speech, NPC_DEN_BANDIT_CHIEF, bandit_chief, bandit_speech2
+_conv_bandit_speech2:           DECL_LINE bandit_speech2, 0, PLAYER, bandit_speech3
+_conv_bandit_speech3:           DECL_LINE bandit_speech3, NPC_DEN_BANDIT_CHIEF, bandit_chief, END_CONVERSATION
+DECL_CONVERSATION find_pass
+_conv_find_pass:                DECL_LINE find_pass, 0, PLAYER, find_pass2
+_conv_find_pass2:               DECL_LINE find_pass2, 0, PLAYER, find_pass3
+_conv_find_pass3:               DECL_LINE find_pass3, 0, PLAYER, END_CONVERSATION
+
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -169,6 +179,7 @@ _conv_speaker_grieving_father_str: .db "Grieving father", 0
 _conv_speaker_bartender_str:    .db "Bartender", 0
 _conv_speaker_inn_guest_str:    .db "Inn guest", 0
 _conv_speaker_bouncer_str:      .db "Bouncer", 0
+_conv_speaker_bandit_chief_str: .db "Bandit chief", 0, 0
 _conv_speaker_undercover_str:   .db "Cloaked villager", 0, 0
 _conv_speaker_bandit_agent_str: .db "Bandit agent", 0, 0
 _conv_speaker_empty_str:        .db 0, 0
@@ -241,7 +252,7 @@ _conv_guest_quest4_str:         .db "Very obliging of you!", 0
 _conv_guest_quest5_str:         .db "Fine, I", 39, "ll find it myself. I can dothat, you know.", 0, 0
 _conv_guest_quest6_str:         .db "Got my journal yet?", 0
 _conv_guest_quest7_str:         .db "Changed your mind, eh?", 0, 0
-_conv_guest_quest8_str:         .db "Well, I thank you for returning my journal, adventurer. I, uh,", 10, "hope you didn", 39, "t read... anyway,", 10, "take this bow.", 0
+_conv_guest_quest8_str:         .db "Well, I thank you for returning my journal, adventurer. I, uh,", 10, "hope you didn", 39, "t read... anyway,", 10, "take this gold.", 0, 0
 _conv_guest_quest9_str:         .db "What do you want now? Hoping", 10, "you", 39, "ll get more for hanging", 10, "around?", 0, 0
 _conv_just_beat_it_str:         .db "Just keep moving, stranger.", 0
 _conv_bandit_lies1_str:         .db "Adventurer! At last you", 39, "ve come to rid us of these blasted", 10, "bandits!", 0
@@ -253,3 +264,10 @@ _conv_bandit_left_reveal1_str:  .db "Well, well. Find any bandits,", 10, "advent
 _conv_bandit_left_reveal2_str:  .db "Hah... what was the point of that misdirection, anyway?", 0
 _conv_bandit_left_reveal3_str:  .db "Obvious, isn", 39, "t it! Charge!", 0, 0
 _conv_bandit_right_reveal_str:  .db "Well, well. I must admit I didn", 39, "t expect to see you again soon,", 10, "adventurer. But no matter, I", 39, "ll set that right.", 0
+_conv_foxes_didnt_do_this_str:  .db "Foxes didn", 39, "t do this...", 0
+_conv_bandit_speech_str:        .db "You", 39, "ll pay for this, adventurer.", 0, 0
+_conv_bandit_speech2_str:       .db "Where is my letter?", 0
+_conv_bandit_speech3_str:       .db "Haw haw... come and see.", 0, 0
+_conv_find_pass_str:            .db "What", 39, "s this? ... A pass for HighwayGuard blockades, sealed by", 10, "Baron Zhev.", 0
+_conv_find_pass2_str:           .db "Looks like the letter isn", 39, "t here.", 0
+_conv_find_pass3_str:           .db "How is Zhev involved in this?", 10, "Perhaps I should travel to Dor", 10, "Haldir and find out.", 0

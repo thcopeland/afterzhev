@@ -54,28 +54,28 @@
 .equ RANGED_MAGICAL = (1 << 3)
 
 item_table:
-    DECL_ITEM wood_stick,           (1<<6)|(3<<3)|ITEM_WIELDABLE,        3,     0,  0,  0,  0,      (1<<4)
+    DECL_ITEM wood_stick,           (1<<6)|(2<<3)|ITEM_WIELDABLE,        3,     0,  0,  0,  0,      (1<<4)
     DECL_ITEM feathered_hat,        ITEM_WEARABLE,                      10,     0,  0,  1,  0,      1
     DECL_ITEM bloody_sword,         (1<<6)|(1<<3)|ITEM_WIELDABLE,       30,     0, -1,  0,  0,      (3<<4)
     DECL_ITEM green_hood,           ITEM_WEARABLE,                      10,     0,  0,  0,  2,      1
-    DECL_ITEM leather_armor,        ITEM_WEARABLE,                      75,     1,  0, -1,  0,      4
+    DECL_ITEM leather_armor,        ITEM_WEARABLE,                      75,     1,  0, -1,  0,      3
     DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              0,      0,  0,  0,  0,      0
     DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              40,     0,  0,  0,  0,      (5<<4)
-    DECL_ITEM wooden_bow,           (2<<6)|ITEM_RANGED,                 30,     0,  0,  0,  0,      (3<<4)|EFFECT_ARROW
+    DECL_ITEM wooden_bow,           (2<<6)|(1<<3)|ITEM_RANGED,          30,     0,  0,  0,  0,      (3<<4)|EFFECT_ARROW
     DECL_ITEM guard_hat,            ITEM_WEARABLE,                      30,     0,  0, -2,  0,      2
     DECL_ITEM beard,                ITEM_WEARABLE,                      0,      0,  0,  0,  0,      0
     DECL_ITEM club,                 (1<<6)|(2<<3)|ITEM_WIELDABLE,       10,     0,  0,  0,  0,      (3<<4)
     DECL_ITEM glass_dagger,         ITEM_WIELDABLE,                     60,     0,  0,  3,  0,      (2<<4)
     DECL_ITEM glass_shard,          ITEM_WIELDABLE,                     10,     0,  0,  1,  0,      (1<<4)
-    DECL_ITEM great_bow,            (3<<6)|(2<<3)|RANGED_HIGH_LEVEL|ITEM_RANGED, 200,  0,  0,  0,  0,      (7<<4)|EFFECT_ARROW
+    DECL_ITEM great_bow,            (3<<6)|(2<<3)|RANGED_HIGH_LEVEL|ITEM_RANGED, 200,  0,  0,  0,  0,      (6<<4)|EFFECT_ARROW
     DECL_ITEM green_cloak,          ITEM_WEARABLE,                      20,     0,  0,  0,  0,      2
     DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      20,     0,  0,  0,  0,      2
     DECL_ITEM purple_hood,          ITEM_WEARABLE,                      30,     0,  0,  0,  0,      0
     DECL_ITEM hammer,               (2<<3)|ITEM_WIELDABLE,              40,     0,  0,  0,  0,      (2<<4)
-    DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     2,  0, -10,  0,      10
+    DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     2,  0, -10,  0,     10
     DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                     350,     1,  0, -6,  0,      6
     DECL_ITEM iron_helmet,          ITEM_WEARABLE,                     200,     1,  0, -4,  0,      2
-    DECL_ITEM iron_staff,           ITEM_RANGED,                        50,     0, -2,  0,  0,      0
+    DECL_ITEM iron_staff,           (2<<6)|(0<<3)|ITEM_RANGED,          50,     0, -2,  0,  0,      (3<<4)|EFFECT_FIREBALL
     DECL_ITEM wood_staff,           RANGED_HIGH_LEVEL|ITEM_RANGED,     120,     0,  1,  0,  0,      0
     DECL_ITEM ivory_wand,           RANGED_HIGH_LEVEL|ITEM_RANGED,     200,     0,  0,  0,  0,      0
     DECL_ITEM mithril_armor,        ITEM_WEARABLE,                    2000,     0,  5,  0,  0,      15
@@ -93,12 +93,18 @@ item_table:
     DECL_ITEM croissant,            (3<<3)|ITEM_USABLE,                 10,     0, 10,  0,  0,      0
     DECL_ITEM whiskey,              (1<<3)|ITEM_USABLE,                 20,    10,  5, -5,  0,      0
     DECL_ITEM journal,              ITEM_USABLE,                        10,     0,  0,  0,  0,      1
+    DECL_ITEM pass,                 ITEM_USABLE,                       100,     0,  0,  0,  0,      1
 
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
 DECL_LOOSE_ITEM foxes_feathered_hat
 DECL_LOOSE_ITEM tavern_guest_gold
 DECL_LOOSE_ITEM lost_journal
+DECL_LOOSE_ITEM abandoned_armor
+DECL_LOOSE_ITEM abandoned_gold_1
+DECL_LOOSE_ITEM abandoned_gold_2
+DECL_LOOSE_ITEM abandoned_whiskey
+DECL_LOOSE_ITEM bandit_pass
 
 item_string_table:
 _item_str_wood_stick_name:          .db "Tree branch", 0
@@ -179,3 +185,5 @@ _item_str_spear_name:				.db "Spear", 0
 _item_str_spear_desc:				.db "When wielded with skill, adevastating weapon.", 0
 _item_str_wooden_shield_name:		.db "Wooden shield", 0
 _item_str_wooden_shield_desc:		.db "Not particularly elegantbut useful in a pinch.", 0, 0
+_item_str_pass_name:	           	.db "Pass", 0, 0
+_item_str_pass_desc:	           	.db "The bearer may pass the", 10, "Highway Guard. Sealed withBaron Zhev", 39, "s stamp.", 0

@@ -1058,20 +1058,20 @@ _rce_effect_damage:
     rjmp _rce_render_effect_sprite
 _rce_effect_arrow:
     cpi r23, EFFECT_ARROW
-    brne _rce_effect_attack_fire
+    brne _rce_effect_fireball
     ldi ZL, low(2*effect_arrow_sprites)
     ldi ZH, high(2*effect_arrow_sprites)
     sbrc r21, 6
     inc r22
     rjmp _rce_render_effect_sprite
-_rce_effect_attack_fire:
-    cpi r23, EFFECT_ATTACK_FIRE
+_rce_effect_fireball:
+    cpi r23, EFFECT_FIREBALL
     brne _rce_render_effect_sprite
-    ldi ZL, low(2*effect_attack_fire_sprites)
-    ldi ZH, high(2*effect_attack_fire_sprites)
-    lsl r22
+    ldi ZL, low(2*effect_fireball_sprites)
+    ldi ZH, high(2*effect_fireball_sprites)
+    andi r22, 1
     sbrc r21, 6
-    inc r22
+    subi r22, low(-2)
 _rce_render_effect_sprite:
     ldi r23, EFFECT_SPRITE_MEMSIZE
     mul r22, r23
