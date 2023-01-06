@@ -116,7 +116,7 @@ _item_str_bloody_sword_desc:        .db "The blade reeks of blood,marks of a cru
 _item_str_green_hood_name:          .db "Faded green hood", 0, 0
 _item_str_green_hood_desc:          .db "Bestows upon the wearer", 10, "an indefinable air of", 10, "mystery.", 0, 0
 _item_str_leather_armor_name:       .db "Leather armor", 0
-_item_str_leather_armor_desc:       .db "Scarred and worn, it has clearly seen much use.", 0
+_item_str_leather_armor_desc:       .db "Scarred and worn, it has", 10, "clearly seen much use.", 0
 _item_str_invisible_weapon_name:
 _item_str_invisible_weapon_desc:
 _item_str_beard_name:
@@ -142,7 +142,7 @@ _item_str_croissant_desc:           .db "Fresh and flaky.", 0, 0
 _item_str_whiskey_name:             .db "Whiskey", 0
 _item_str_whiskey_desc:             .db "Burns the esophageal", 10, "tissues on the way down.", 0
 _item_str_journal_name:             .db "Missing journal", 0
-_item_str_journal_desc:             .db "A mysterious leather-bound", 10, "journal, tightly clasped shut.", 0
+_item_str_journal_desc:             .db "A leather-bound journal filled with mysterious,", 10, "unreadable lettering.", 0
 _item_str_club_name:				.db "Club", 0, 0
 _item_str_club_desc:				.db "A clumsy, random weapon", 10, "for an uncivillized age.", 0, 0
 _item_str_glass_dagger_name:		.db "Glass dagger", 0, 0

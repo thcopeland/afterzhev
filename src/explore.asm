@@ -1544,7 +1544,7 @@ _csb_check_sector_bottom:
     subi ZL, low(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET)
     sbci ZH, high(SECTOR_FLAGS_OFFSET-SECTOR_AJD_OFFSET)
     elpm r23, Z
-    sbrc r22, log2(SECTOR_FLAG_FOLLOW_UP)
+    sbrc r22, log2(SECTOR_FLAG_FOLLOW_DOWN)
     rcall add_nearby_followers
     sts player_position_y, r1
     sts camera_position_y, r1

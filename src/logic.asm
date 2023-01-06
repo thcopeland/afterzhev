@@ -74,7 +74,7 @@ _ss2u_end:
 
 sector_start_fight_update:
     lds r25, sector_npcs+NPC_MEMSIZE+NPC_HEALTH_OFFSET
-    cpi r25, 5
+    cpi r25, 6
     brsh _ssfu_end
     try_start_conversation bandit_plead
 _ssfu_end:

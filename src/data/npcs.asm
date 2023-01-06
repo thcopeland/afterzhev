@@ -88,14 +88,14 @@ npc_table:
     DECL_NPC        NPC_TOWN_GUARD_ANGRY, NPC_ENEMY, CHARACTER_MAN, ITEM_steel_sword, ITEM_guard_hat, DIRECTION_DOWN, 30, 0, 0
     DECL_ENEMY_DATA NPC_ATTACK, 50, 8, 7, 4, ITEM_guard_hat, ITEM_guard_hat, ITEM_steel_sword
 
-    DECL_NPC        NPC_BATTLE_TUTORIAL, NPC_ENEMY, CHARACTER_BANDIT, ITEM_bloody_sword, NO_ITEM, DIRECTION_DOWN, 7, 180, 26
-    DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_GUARD, 10, 6, 2, 0, ITEM_bloody_sword, ITEM_bloody_sword, ITEM_bloody_sword
+    DECL_NPC        NPC_BATTLE_TUTORIAL, NPC_ENEMY, CHARACTER_BANDIT, ITEM_bloody_sword, NO_ITEM, DIRECTION_DOWN, 10, 180, 26
+    DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_GUARD, 10, 6, 2, 1, ITEM_bloody_sword, ITEM_bloody_sword, ITEM_bloody_sword
 
     DECL_NPC        NPC_BANDIT_1, NPC_ENEMY, CHARACTER_BANDIT, ITEM_bloody_sword, ITEM_green_hood, DIRECTION_LEFT, 10, 108, 73
-    DECL_ENEMY_DATA NPC_GUARD, 15, 7, 2, 1, 128|20, ITEM_green_hood, ITEM_green_hood
+    DECL_ENEMY_DATA NPC_GUARD, 15, 7, 2, 2, 128|20, ITEM_green_hood, ITEM_green_hood
 
-    DECL_NPC        NPC_BANDIT_2, NPC_ENEMY, CHARACTER_MAN, ITEM_bloody_sword, ITEM_leather_armor, DIRECTION_UP, 10, 124, 136
-    DECL_ENEMY_DATA NPC_GUARD, 15, 6, 1, 3, ITEM_leather_armor, 128|20, ITEM_bloody_sword
+    DECL_NPC        NPC_BANDIT_2, NPC_ENEMY, CHARACTER_MAN, ITEM_bloody_sword, ITEM_leather_armor, DIRECTION_UP, 15, 124, 136
+    DECL_ENEMY_DATA NPC_GUARD, 15, 6, 2, 3, ITEM_leather_armor, 128|20, ITEM_bloody_sword
 
     DECL_NPC        NPC_BANDIT_2_REFORMED, NPC_ENEMY, CHARACTER_MAN, NO_ITEM, ITEM_leather_armor, DIRECTION_UP, 10, 120, 138
     DECL_ENEMY_DATA NPC_MOVE_LOOKAT, 0, 0, 0, 0, ITEM_leather_armor, 128|20, ITEM_bloody_sword
@@ -107,19 +107,19 @@ npc_table:
     DECL_TALK_DATA  NO_NPC, 0, kidnapped, 0, END_CONVERSATION, NO_NPC
 
     DECL_NPC        NPC_FOX_1, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_RIGHT, 8, 24, 24
-    DECL_ENEMY_DATA NPC_GUARD, 5, 7, 1, 1, ITEM_raw_meat, ITEM_rotten_meat, 128|5
+    DECL_ENEMY_DATA NPC_GUARD, 5, 7, 2, 1, ITEM_raw_meat, ITEM_rotten_meat, 128|5
 
     DECL_NPC        NPC_FOX_2, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_DOWN, 8, 168, 147
-    DECL_ENEMY_DATA NPC_GUARD, 5, 7, 1, 1, ITEM_raw_meat, ITEM_rotten_meat, 128|5
+    DECL_ENEMY_DATA NPC_GUARD, 5, 7, 2, 1, ITEM_raw_meat, ITEM_rotten_meat, 128|5
 
     DECL_NPC        NPC_FOX_3, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_RIGHT, 10, 144, 128
-    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 2, 1, ITEM_raw_meat, ITEM_raw_meat, 128|5
+    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 2, 2, ITEM_raw_meat, ITEM_raw_meat, 128|5
 
     DECL_NPC        NPC_FOX_4, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_LEFT, 8, 190, 120
-    DECL_ENEMY_DATA NPC_GUARD, 5, 7, 1, 1, ITEM_raw_meat, ITEM_rotten_meat, 128|5
+    DECL_ENEMY_DATA NPC_GUARD, 5, 7, 2, 1, ITEM_raw_meat, ITEM_rotten_meat, 128|5
 
     DECL_NPC        NPC_FOX_5, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_UP, 8, 130, 143
-    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 1, 1, ITEM_raw_meat, ITEM_raw_meat, 128|5
+    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 2, 1, ITEM_raw_meat, ITEM_raw_meat, 128|5
 
     DECL_NPC        NPC_KIDNAPPED, NPC_TALKER, CHARACTER_CHILD, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 10, 128, 25
     DECL_TALK_DATA  NO_NPC, CONVERSATION_rescue_kidnapped_ID, rescue_kidnapped, 0, END_CONVERSATION, NPC_KIDNAPPED_FOLLOWING
@@ -179,16 +179,16 @@ npc_table:
     DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_ATTACK, 20, 6, 2, 2, 128|25, 128|50, ITEM_health_potion
 
     DECL_NPC        NPC_FOX_6, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_UP, 8, 66, 26
-    DECL_ENEMY_DATA NPC_PATROL, 5, 6, 1, 1, ITEM_raw_meat, ITEM_raw_meat, NO_ITEM
+    DECL_ENEMY_DATA NPC_PATROL, 5, 6, 2, 1, ITEM_raw_meat, ITEM_raw_meat, NO_ITEM
 
     DECL_NPC        NPC_FOX_7, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_UP, 8, 143, 60
-    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 1, 1, ITEM_raw_meat, ITEM_raw_meat, NO_ITEM
+    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 2, 1, ITEM_raw_meat, ITEM_raw_meat, NO_ITEM
 
     DECL_NPC        NPC_FOX_8, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_UP, 8, 57, 62
-    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 1, 1, ITEM_raw_meat, 128|10, NO_ITEM
+    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 2, 1, ITEM_raw_meat, 128|10, NO_ITEM
 
     DECL_NPC        NPC_FOX_9, NPC_ENEMY, CHARACTER_FOX, ITEM_invisible_weapon, NO_ITEM, DIRECTION_UP, 8, 103, 153
-    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 1, 1, ITEM_raw_meat, 128|10, NO_ITEM
+    DECL_ENEMY_DATA NPC_GUARD, 5, 6, 2, 1, ITEM_raw_meat, 128|10, NO_ITEM
 
     DECL_NPC        NPC_DEAD_1, NPC_TALKER, 128|NPC_CORPSE_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_UP, 255, 202, 12
     DECL_TALK_DATA  NO_NPC, 0, foxes_didnt_do_this, 0, foxes_didnt_do_this, NO_NPC

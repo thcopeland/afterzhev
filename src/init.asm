@@ -31,13 +31,14 @@ _init_zero_iter:
     sti player_inventory, ITEM_health_potion
     sti player_inventory+1, ITEM_whiskey
     sti player_inventory+2, ITEM_pass
+    sti player_inventory+3, ITEM_journal
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_LEFT
     sti player_frame, 0
     sti player_effect, 0
-    sti player_stats, 10;6
-    sti player_stats+1, 10;8
-    sti player_stats+2, 12;10
+    sti player_stats, 4
+    sti player_stats+1, 8
+    sti player_stats+2, 8
     sti player_stats+3, 6
     call calculate_player_stats
     stiw player_gold, 0
@@ -61,10 +62,10 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    sti player_position_x, 166
-    sti player_position_y, 65
+    ; sti player_position_x, 166
+    ; sti player_position_y, 65
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_START_PRETOWN_2
+    .equ INITIAL_SECTOR = SECTOR_START_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector
