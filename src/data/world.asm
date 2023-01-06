@@ -559,14 +559,14 @@ sector_table:
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 056, 001, 189, 172, 173, 171, 180, 038, 039, 039, \
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 041, 179, 189, 172, 173, 171, 180, 038, 039, 039
 .db 25, 21, 18, 20
-.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_HIGHWAY_GUARD_1, NPC_HIGHWAY_GUARD_2, NPC_HIGHWAY_GUARD_3, NPC_HIGHWAY_GUARD_4, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw SECTOR_FLAG_FOLLOW_DOWN
+.dw sector_start_pretown_2_update, clear_sector_data, NO_HANDLER, NO_HANDLER, sector_start_pretown_2_choice
 
 ; Sector 21 "deep_forest_section_4"
 .db 039, 039, 039, 056, 045, 045, 046, 046, 057, 039, 039, 039, 039, 039, 056, 046, 045, 057, 039, 039, \

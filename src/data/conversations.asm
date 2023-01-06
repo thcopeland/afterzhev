@@ -166,7 +166,20 @@ DECL_CONVERSATION find_pass
 _conv_find_pass:                DECL_LINE find_pass, 0, PLAYER, find_pass2
 _conv_find_pass2:               DECL_LINE find_pass2, 0, PLAYER, find_pass3
 _conv_find_pass3:               DECL_LINE find_pass3, 0, PLAYER, END_CONVERSATION
-
+DECL_CONVERSATION highway_guard
+_conv_highway_guard:            DECL_LINE highway_guard, NPC_HIGHWAY_GUARD_1, highway_guard, highway_guard3
+_conv_highway_guard2:           DECL_LINE highway_guard2, NPC_HIGHWAY_GUARD_1, highway_guard, highway_guard3
+_conv_highway_guard3:           DECL_BRANCH 4
+                                DECL_CHOICE highway_guard_c1, highway_guard4
+                                DECL_CHOICE highway_guard_c2, highway_guard7
+                                DECL_CHOICE highway_guard_c3, highway_guard8
+                                DECL_CHOICE highway_guard_c4, END_CONVERSATION
+_conv_highway_guard4:           DECL_LINE highway_guard4, NPC_HIGHWAY_GUARD_1, highway_guard, highway_guard5
+_conv_highway_guard5:           DECL_LINE highway_guard5, 0, PLAYER, highway_guard6
+_conv_highway_guard6:           DECL_LINE highway_guard6, NPC_HIGHWAY_GUARD_1, highway_guard, highway_guard3
+_conv_highway_guard7:           DECL_LINE highway_guard7, NPC_HIGHWAY_GUARD_1, highway_guard, END_CONVERSATION
+_conv_highway_guard8:           DECL_LINE highway_guard8, NPC_HIGHWAY_GUARD_1, highway_guard, END_CONVERSATION
+_conv_highway_guard9:           DECL_LINE highway_guard9, NPC_HIGHWAY_GUARD_1, highway_guard, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -182,6 +195,7 @@ _conv_speaker_bouncer_str:      .db "Bouncer", 0
 _conv_speaker_bandit_chief_str: .db "Bandit chief", 0, 0
 _conv_speaker_undercover_str:   .db "Cloaked villager", 0, 0
 _conv_speaker_bandit_agent_str: .db "Bandit agent", 0, 0
+_conv_speaker_highway_guard_str:.db "Highway guard", 0
 _conv_speaker_empty_str:        .db 0, 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
 _conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
@@ -268,6 +282,18 @@ _conv_foxes_didnt_do_this_str:  .db "Foxes didn", 39, "t do this...", 0
 _conv_bandit_speech_str:        .db "You", 39, "ll pay for this, adventurer.", 0, 0
 _conv_bandit_speech2_str:       .db "Where is my letter?", 0
 _conv_bandit_speech3_str:       .db "Haw haw... come and see.", 0, 0
-_conv_find_pass_str:            .db "What", 39, "s this? ... A pass for HighwayGuard blockades, sealed by", 10, "Baron Zhev.", 0
+_conv_find_pass_str:            .db "What", 39, "s this? ... A pass for HighwayGuard blockades, sealed by", 10, "Baron Zhev?", 0
 _conv_find_pass2_str:           .db "Looks like the letter isn", 39, "t here.", 0
 _conv_find_pass3_str:           .db "How is Zhev involved in this?", 10, "Perhaps I should travel to Dor", 10, "Haldir and find out.", 0
+_conv_highway_guard_str:        .db "No further, adventurer! None", 10, "may pass without a pass.", 0
+_conv_highway_guard2_str:       .db "You again? What do you want? Theroad is closed!", 0
+_conv_highway_guard_c1_str:     .db "Under whose orders?", 0
+_conv_highway_guard_c2_str:     .db "Make way, fools!", 0, 0
+_conv_highway_guard_c3_str:     .db "I have a pass.", 0, 0
+_conv_highway_guard_c4_str:     .db "Sorry, I didn", 39, "t know.", 0
+_conv_highway_guard4_str:       .db "Orders from Dor Haldir. It", 39, "s for your own safety, adventurer.", 0
+_conv_highway_guard5_str:       .db "I must get to Dor Haldir, I", 39, "ll", 10, "take the risk.", 0
+_conv_highway_guard6_str:       .db "Not without a pass, adventurer. Stay back.", 0, 0
+_conv_highway_guard7_str:       .db "Stay back, adventurer, as you", 10, "value your life!", 0, 0
+_conv_highway_guard8_str:       .db "Hmm... everything seems to be in", 10, "order. Pass, friend.", 0
+_conv_highway_guard9_str:       .db "I see no pass. Do not try my", 10, "patience, adventurer. Go back.", 0

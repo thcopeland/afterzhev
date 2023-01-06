@@ -222,3 +222,15 @@ npc_table:
 
     DECL_NPC        NPC_DEN_BANDIT_CHIEF, NPC_ENEMY, CHARACTER_BANDIT, ITEM_iron_staff, ITEM_green_cloak, DIRECTION_DOWN, 40, 65, 86
     DECL_ENEMY_DATA NPC_ATTACK, 100, 8, 8, 3, ITEM_iron_staff, ITEM_iron_staff, ITEM_iron_staff
+
+    DECL_NPC        NPC_HIGHWAY_GUARD_1, NPC_ENEMY, CHARACTER_MAN, ITEM_steel_sword, ITEM_iron_armor, DIRECTION_UP, 40, 155, 106
+    DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_ATTACK, 100, 8, 5, 8, ITEM_steel_sword, ITEM_iron_breastplate, ITEM_iron_helmet
+
+    DECL_NPC        NPC_HIGHWAY_GUARD_2, NPC_ENEMY, CHARACTER_MAN, ITEM_steel_sword, ITEM_iron_breastplate, DIRECTION_UP, 40, 176, 106
+    DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_ATTACK, 100, 8, 5, 6, ITEM_steel_sword, ITEM_iron_breastplate, ITEM_steel_sword
+
+    DECL_NPC        NPC_HIGHWAY_GUARD_3, NPC_ENEMY, CHARACTER_MAN, ITEM_steel_sword, ITEM_iron_breastplate, DIRECTION_UP, 40, 155, 120
+    DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_ATTACK, 100, 8, 5, 6, ITEM_steel_sword, ITEM_iron_breastplate, ITEM_steel_sword
+
+    DECL_NPC        NPC_HIGHWAY_GUARD_4, NPC_ENEMY, CHARACTER_MAN, ITEM_steel_sword, ITEM_iron_breastplate, DIRECTION_UP, 40, 176, 120
+    DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_ATTACK, 100, 8, 5, 6, ITEM_steel_sword, ITEM_iron_breastplate, ITEM_steel_sword

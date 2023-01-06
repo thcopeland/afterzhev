@@ -410,6 +410,8 @@ _stfi_end:
 
 sector_town_fields_update:
     sts npc_move_flags2, r1
+    ldi r25, 3
+    call release_if_damaged
     lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT_UNMASKED-1)>>3)
     andi r25, exp2((NPC_UNDERCOVER_BANDIT_UNMASKED-1)&0x07)
     brne _stfu_test_left_confrontation
@@ -511,4 +513,91 @@ sector_town_den_2_update:
     breq _std2u_end
     try_start_conversation find_pass
 _std2u_end:
+    ret
+
+sector_start_pretown_2_update:
+    sts npc_move_flags2, r1
+    ldi r25, 4
+    call release_if_damaged
+    lds r25, sector_data
+    ; 0 - nothing
+    ; 1 - warned
+    ; 2 - attacking
+    ; 3 - allowing to pass
+_ssp2u_warn:
+    cpi r25, 0
+    brne _ssp2u_attack
+    lds r25, player_position_y
+    cpi r25, 92
+    brlo _ssp2u_attack
+    cpi r25, 128
+    brsh _ssp2u_attack
+    ldi r25, 1
+    sts sector_data, r25
+    try_start_conversation highway_guard
+    tst r25
+    brne _ssp2u_end
+    ldi r24, low(2*_conv_highway_guard2)
+    ldi r25, high(2*_conv_highway_guard2)
+    call load_conversation
+    rjmp _ssp2u_end
+_ssp2u_attack:
+    cpi r25, 1
+    brne _ssp2u_attacking
+    lds r25, player_position_y
+    cpi r25, 100
+    brlo _ssp2u_test_reset
+    cpi r25, 118
+    brsh _ssp2u_test_reset
+    ldi r25, 2
+    sts sector_data, r25
+    rjmp _ssp2u_end
+_ssp2u_test_reset:
+    lds r24, player_position_x
+    cpi r24, 125
+    brlo _ssp2u_reset
+    cpi r25, 80
+    brlo _ssp2u_reset
+    cpi r25, 130
+    brlo _ssp2u_attacking
+_ssp2u_reset:
+    sts sector_data, r1
+    rjmp _ssp2u_end
+_ssp2u_attacking:
+    lds r25, sector_data
+    cpi r25, 2
+    brne _ssp2u_end
+    ldi r25, 1
+    sts npc_move_flags2, r25
+_ssp2u_end:
+    ret
+
+sector_start_pretown_2_choice:
+    lds r25, selected_choice
+_ssp2c_pass:
+    cpi r25, 2
+    brne _ssp2c_sorry
+    ldi ZL, low(player_inventory)
+    ldi ZH, high(player_inventory)
+    ldi r25, PLAYER_INVENTORY_SIZE
+_ssp2c_inventory_loop:
+    ld r24, Z+
+    cpi r24, ITEM_pass
+    breq _ssp2c_have_pass
+    dec r25
+    brne _ssp2c_inventory_loop
+_ssp2c_no_pass:
+    ldi r20, low(2*_conv_highway_guard9)
+    ldi r21, high(2*_conv_highway_guard9)
+    rjmp _ssp2c_end
+_ssp2c_have_pass:
+    ldi r25, 3
+    sts sector_data, r25
+    rjmp _ssp2c_end
+_ssp2c_sorry:
+    cpi r25, 3
+    brne _ssp2c_end
+    ldi r25, 1
+    sts sector_data, r25
+_ssp2c_end:
     ret

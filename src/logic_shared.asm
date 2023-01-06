@@ -5,10 +5,10 @@
 ; Register Usage
 ;   r1          zero
 clear_sector_data:
+    sts sector_data, r1
     sts sector_data+1, r1
-    sts sector_data+1, r1
-    sts sector_data+1, r1
-    sts sector_data+1, r1
+    sts sector_data+2, r1
+    sts sector_data+3, r1
 .if SECTOR_DATA_MEMSIZE != 4
     .error "clear_sector_data clears only 4 bytes of sector, adjust as necessary"
 .endif
@@ -137,4 +137,44 @@ _fn_npc_iter:
     dec r20
     brne _fn_npc_iter
 _fn_end:
+    ret
+
+; Release hold if any of the first N NPCs are damaged.
+;
+; Register Usage
+;   r23-r24         calculations
+;   r25             check first N NPCs (param)
+;   Y (r28:r29)     npc pointer
+;   Z (r30:r31)     flash pointer
+release_if_damaged:
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    tst r25
+    breq _rid_end
+_rid_loop:
+    ldd r23, Y+NPC_IDX_OFFSET
+    subi r23, 1
+    brlo _rid_next
+    ldi ZL, low(2*npc_table+NPC_TABLE_HEALTH_OFFSET)
+    ldi ZH, high(2*npc_table+NPC_TABLE_HEALTH_OFFSET)
+    ldi r24, NPC_TABLE_ENTRY_MEMSIZE
+    mul r23, r24
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r23, Z
+    ldd r24, Y+NPC_HEALTH_OFFSET
+    cp r24, r23
+    brlo _rid_damaged
+_rid_next:
+    adiw YL, NPC_MEMSIZE
+    dec r25
+    brne _rid_loop
+_rid_end:
+    ret
+_rid_damaged:
+    ldi r25, 1
+    sts npc_move_flags2, r25
     ret
