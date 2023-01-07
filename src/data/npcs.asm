@@ -221,7 +221,7 @@ npc_table:
     DECL_ENEMY_DATA NPC_GUARD, 20, 6, 5, 4, ITEM_steel_sword, 128|30, ITEM_leather_armor
 
     DECL_NPC        NPC_DEN_BANDIT_CHIEF, NPC_ENEMY, CHARACTER_BANDIT, ITEM_iron_staff, ITEM_green_cloak, DIRECTION_DOWN, 40, 65, 86
-    DECL_ENEMY_DATA NPC_ATTACK, 100, 8, 8, 3, ITEM_iron_staff, ITEM_iron_staff, ITEM_iron_staff
+    DECL_ENEMY_DATA NPC_ATTACK, 200, 8, 8, 3, ITEM_iron_staff, ITEM_iron_staff, ITEM_iron_staff
 
     DECL_NPC        NPC_HIGHWAY_GUARD_1, NPC_ENEMY, CHARACTER_MAN, ITEM_steel_sword, ITEM_iron_armor, DIRECTION_UP, 40, 155, 106
     DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_ATTACK, 100, 8, 5, 8, ITEM_steel_sword, ITEM_iron_breastplate, ITEM_iron_helmet

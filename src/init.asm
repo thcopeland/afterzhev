@@ -38,7 +38,7 @@ _init_zero_iter:
     sti player_effect, 0
     sti player_stats, 4
     sti player_stats+1, 8
-    sti player_stats+2, 8
+    sti player_stats+2, 60
     sti player_stats+3, 6
     call calculate_player_stats
     stiw player_gold, 0
@@ -65,7 +65,7 @@ _init_zero_iter:
     ; sti player_position_x, 166
     ; sti player_position_y, 65
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_START_1
+    .equ INITIAL_SECTOR = SECTOR_TOWN_ENTRANCE_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

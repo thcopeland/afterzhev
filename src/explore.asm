@@ -1,13 +1,12 @@
 explore_update_game:
-    call update_player_stat_effects
     rcall update_savepoint
+    call update_player_stat_effects
     rcall render_game
     rcall handle_controls
     rcall update_active_effects
     rcall update_savepoint_animation
     rcall update_player
     rcall move_camera
-    rcall update_savepoint
     rcall update_followers
 
     lds r21, player_position_x
@@ -49,6 +48,7 @@ explore_update_game:
     rcall update_npcs
     call player_resolve_melee_damage
     call player_resolve_effect_damage
+    rcall update_savepoint
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
@@ -1147,9 +1147,7 @@ _usa_save_frame:
 _usa_end:
     ret
 
-; Continue saving the game state, if necessary. This does not check EEPE, so
-; the caller must ensure that there's enough time between calls for past
-; accesses to complete.
+; Continue saving the game state, if necessary.
 ;
 ; Saved game layout:
 ;   magic byte SAVEPOINT_MAGIC (1 byte)
@@ -1160,6 +1158,8 @@ _usa_end:
 ;   r22-r25         calculations
 ;   Z (r30:r31)     memory pointer
 update_savepoint:
+    sbic EECR, EEPE
+    rjmp _us_end_trampoline
     lds r25, savepoint_data
     mov r24, r25
     andi r24, 0x38
@@ -1244,7 +1244,7 @@ _us_save_complete:
 _us_end:
     ret
 
-; Restore the game state from the savepoint. Assumes that a valid savepoint exists.
+; Restore the game state from the savepoint. r25 is cleared if a savepoint exists.
 ;
 ; Register Usage
 ;   r22-r25         calculations
@@ -1284,6 +1284,7 @@ _rfs_load_sector: ; load any sector-specific stuff that was not saved
     lds ZL, current_sector
     lds ZH, current_sector+1
     rcall load_sector
+    clr r25
 _rfs_end:
     ret
 

@@ -1,6 +1,7 @@
 gameover_update_game:
     rjmp gameover_render_game
 _gug_return:
+    rcall gameover_handle_controls
     lds r25, clock
     andi r25, 0x3
     brne _gug_end
@@ -31,6 +32,25 @@ _lg_end:
 
 .equ GAMEOVER_TIMING_FADE_END = (DISPLAY_HEIGHT<<1) + 60
 .equ GAMEOVER_TIMING_TEXT_FADE_END = GAMEOVER_TIMING_FADE_END + 31
+
+; Handle controls (resume from last save).
+;
+; Register Usage
+;   r24-r25     calculations
+gameover_handle_controls:
+    lds r24, prev_controller_values
+    lds r25, controller_values
+    com r24
+    and r24, r25
+    breq _ghc_end
+    lds r25, mode_clock
+    cpi r25, 65
+    brlo _ghc_end
+    call restore_from_savepoint
+    tst r25
+    brne _ghc_end ; TODO restart
+_ghc_end:
+    ret
 
 ; Render the game over screen.
 ;
