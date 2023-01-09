@@ -515,16 +515,25 @@ sector_town_den_2_update:
 _std2u_end:
     ret
 
+; 0 - nothing
+; 1 - warned
+; 2 - attacking
+; 3 - allowing to pass
 sector_start_pretown_2_update:
     sts npc_move_flags2, r1
     ldi r25, 4
     call release_if_damaged
+    lds r25, npc_presence+((NPC_HIGHWAY_GUARD_1-1)>>3)
+    andi r25, exp2((NPC_HIGHWAY_GUARD_1-1)&0x07)
+    brne _ssp2u_check
+    ldi r25, 2
+    sts sector_data, r25
+_ssp2u_check:
     lds r25, sector_data
-    ; 0 - nothing
-    ; 1 - warned
-    ; 2 - attacking
-    ; 3 - allowing to pass
 _ssp2u_warn:
+    cpi r25, 0
+    brne _ssp2u_attack
+    lds r25, npc_move_flags2
     cpi r25, 0
     brne _ssp2u_attack
     lds r25, player_position_y
