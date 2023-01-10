@@ -72,12 +72,12 @@ item_table:
     DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      20,     0,  0,  0,  0,      2
     DECL_ITEM purple_hood,          ITEM_WEARABLE,                      30,     0,  0,  0,  0,      0
     DECL_ITEM hammer,               (2<<3)|ITEM_WIELDABLE,              40,     0,  0,  0,  0,      (2<<4)
-    DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     2,  0, -10,  0,     10
+    DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     2,  0, -10, 0,      10
     DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                     350,     1,  0, -6,  0,      6
     DECL_ITEM iron_helmet,          ITEM_WEARABLE,                     200,     1,  0, -4,  0,      2
-    DECL_ITEM iron_staff,           (2<<6)|(0<<3)|ITEM_RANGED,          50,     0, -2,  0,  0,      (3<<4)|EFFECT_FIREBALL
-    DECL_ITEM wood_staff,           RANGED_HIGH_LEVEL|ITEM_RANGED,     120,     0,  1,  0,  0,      0
-    DECL_ITEM ivory_wand,           RANGED_HIGH_LEVEL|ITEM_RANGED,     200,     0,  0,  0,  0,      0
+    DECL_ITEM iron_staff,           (2<<6)|RANGED_MAGICAL|ITEM_RANGED,                 50,     0, -2,  0,  0,      (3<<4)|EFFECT_FIREBALL
+    DECL_ITEM wood_staff,           RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     120,     0,  1,  0,  0,      0
+    DECL_ITEM ivory_wand,           RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     200,     0,  0,  0,  0,      0
     DECL_ITEM mithril_armor,        ITEM_WEARABLE,                    2000,     0,  5,  0,  0,      15
     DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                    1400,     0,  3,  0,  0,      10
     DECL_ITEM mithril_cap,          ITEM_WEARABLE,                     600,     0,  1,  0,  0,      3
@@ -85,15 +85,23 @@ item_table:
     DECL_ITEM mithril_spike,        ITEM_WIELDABLE,                    200,     0,  0,  0,  0,      (2<<4)
     DECL_ITEM spear,                (2<<6)|(2<<3)|ITEM_WIELDABLE,      100,     0,  0, -2,  0,      (6<<4)
     DECL_ITEM wooden_shield,        ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM inventory_book,       ITEM_USABLE,                        0,      0,  0,  0,  0,      1
+    DECL_ITEM axe,                  (2<<6)|ITEM_WIELDABLE,              30,     1,  0,  0,  0,      (3<<4)
+    DECL_ITEM angel_of_death,       (2<<6)|(4<<3)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     500,     0,  0,  0,  0,      (15<<4)|EFFECT_FIREBALL
+    DECL_ITEM inventory_book,       ITEM_USABLE,                         0,     0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
-    DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                 1,      0, -5,  0,  0,      0
-    DECL_ITEM health_potion,        (0<<3)|ITEM_USABLE,                 100,    0, 40,  0,  0,      0
-    DECL_ITEM beer,                 (3<<3)|ITEM_USABLE,                 5,      5,  5,  0, -5,      0
+    DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                  1,     0, -5,  0,  0,      0
+    DECL_ITEM health_potion,        (0<<3)|ITEM_USABLE,                100,     0, 40,  0,  0,      0
+    DECL_ITEM beer,                 (3<<3)|ITEM_USABLE,                  5,     5,  5,  0, -5,      0
     DECL_ITEM croissant,            (3<<3)|ITEM_USABLE,                 10,     0, 10,  0,  0,      0
     DECL_ITEM whiskey,              (1<<3)|ITEM_USABLE,                 20,    10,  5, -5,  0,      0
     DECL_ITEM journal,              ITEM_USABLE,                        10,     0,  0,  0,  0,      1
     DECL_ITEM pass,                 ITEM_USABLE,                       100,     0,  0,  0,  0,      1
+    DECL_ITEM curse_of_ullimar,     USABLE_ETERNAL|ITEM_USABLE,         20,   -10,  0,-10,-10,      0
+    DECL_ITEM large_health_potion,  (1<<3)|ITEM_USABLE,                150,     0, 45,  0,  0,      0
+    DECL_ITEM mint_tonic,           (3<<3)|ITEM_USABLE,                 50,     0,  0,  0, 20,      0
+    DECL_ITEM mint_leaves,          (3<<3)|ITEM_USABLE,                 20,     0,  0,  0, 10,      0
+    DECL_ITEM bismuth_subsalicylate,(3<<3)|ITEM_USABLE,                 10,     0,  2,  0,  0,      0
+    DECL_ITEM strength_potion,      (3<<3)|ITEM_USABLE,                 50,    20,  0,  0,  0,      0
 
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
@@ -133,8 +141,10 @@ _item_str_raw_meat_name:            .db "Raw meat", 0, 0
 _item_str_raw_meat_desc:            .db "Probably safe to eat.", 0
 _item_str_rotten_meat_name:         .db "Rotten meat", 0
 _item_str_rotten_meat_desc:         .db "Tinged a poisonous green.", 0
+_item_str_large_health_potion_name:
 _item_str_health_potion_name:       .db "Health potion", 0
-_item_str_health_potion_desc:       .db "Quickly recover from even mortal wounds.", 0, 0
+_item_str_large_health_potion_desc:
+_item_str_health_potion_desc:       .db "Quickly recover from evenmortal wounds.", 0
 _item_str_beer_name:                .db "Pint of beer", 0, 0
 _item_str_beer_desc:                .db "The local brew is", 10, "unusually bitter.", 0
 _item_str_croissant_name:           .db "Croissant", 0
@@ -187,3 +197,17 @@ _item_str_wooden_shield_name:		.db "Wooden shield", 0
 _item_str_wooden_shield_desc:		.db "Not particularly elegantbut useful in a pinch.", 0, 0
 _item_str_pass_name:	           	.db "Pass", 0, 0
 _item_str_pass_desc:	           	.db "The bearer may pass the", 10, "Highway Guard. Sealed withBaron Zhev", 39, "s stamp.", 0
+_item_str_axe_name:                 .db "Iron axe", 0, 0
+_item_str_axe_desc:                 .db "Can chop trees and peopleequally well.", 0, 0
+_item_str_angel_of_death_name:      .db "Angel of death", 0, 0
+_item_str_angel_of_death_desc:      .db "Legendary.", 0, 0
+_item_str_curse_of_ullimar_name:    .db "Curse of Ullimar", 0, 0
+_item_str_curse_of_ullimar_desc:    .db "If you believe the myths,a few vials of the stuff", 10, "destroyed Ullimar.", 0, 0
+_item_str_mint_tonic_name:          .db "Mint tonic", 0, 0
+_item_str_mint_tonic_desc:          .db "A chilling, stimulating", 10, "beverage distilled from", 10, "mint leaves.", 0, 0
+_item_str_mint_leaves_name:         .db "Mint leaves", 0
+_item_str_mint_leaves_desc:         .db "Unpleasantly slimy when", 10, "chewed, but cheap and", 10, "invigorating.", 0
+_item_str_bismuth_subsalicylate_name: .db "Bismuth subsalicylate", 0
+_item_str_bismuth_subsalicylate_desc: .db "Aids indigestion.", 0
+_item_str_strength_potion_name:     .db "Strength potion", 0
+_item_str_strength_potion_desc:     .db "Banned in all organized", 10, "competion.", 0, 0

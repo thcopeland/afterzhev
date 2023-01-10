@@ -180,6 +180,20 @@ _conv_highway_guard6:           DECL_LINE highway_guard6, NPC_HIGHWAY_GUARD_1, h
 _conv_highway_guard7:           DECL_LINE highway_guard7, NPC_HIGHWAY_GUARD_1, highway_guard, END_CONVERSATION
 _conv_highway_guard8:           DECL_LINE highway_guard8, NPC_HIGHWAY_GUARD_1, highway_guard, END_CONVERSATION
 _conv_highway_guard9:           DECL_LINE highway_guard9, NPC_HIGHWAY_GUARD_1, highway_guard, END_CONVERSATION
+DECL_CONVERSATION cold_feet
+_conv_cold_feet:               DECL_LINE cold_feet, NPC_COLD_FEET, scared_bandit, cold_feet2
+_conv_cold_feet2:              DECL_LINE cold_feet2, NPC_COLD_FEET, scared_bandit, cold_feet3
+_conv_cold_feet3:              DECL_LINE cold_feet3, NPC_COLD_FEET, scared_bandit, END_CONVERSATION
+DECL_CONVERSATION lonely_poet
+_conv_poet1:                    DECL_LINE poet1, NPC_LONELY_POET, poet, poet2
+_conv_poet2:                    DECL_BRANCH 2
+                                DECL_CHOICE poet2_c1, poet3
+                                DECL_CHOICE poet2_c2, poet5
+_conv_poet3:                    DECL_LINE poet3, 0, PLAYER, poet4
+_conv_poet4:                    DECL_LINE poet4, NPC_LONELY_POET, poet, END_CONVERSATION
+_conv_poet5:                    DECL_LINE poet5, 0, PLAYER, poet6
+_conv_poet6:                    DECL_LINE poet6, NPC_LONELY_POET, poet, END_CONVERSATION
+_conv_poet7:                    DECL_LINE poet7, NPC_LONELY_POET, poet, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -196,6 +210,8 @@ _conv_speaker_bandit_chief_str: .db "Bandit chief", 0, 0
 _conv_speaker_undercover_str:   .db "Cloaked villager", 0, 0
 _conv_speaker_bandit_agent_str: .db "Bandit agent", 0, 0
 _conv_speaker_highway_guard_str:.db "Highway guard", 0
+_conv_speaker_scared_bandit_str:.db "Trepid bandit", 0
+_conv_speaker_poet_str:         .db "Lonely poet", 0
 _conv_speaker_empty_str:        .db 0, 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
 _conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
@@ -297,3 +313,14 @@ _conv_highway_guard6_str:       .db "Not without a pass, adventurer. Stay back."
 _conv_highway_guard7_str:       .db "Stay back, adventurer, as you", 10, "value your life!", 0, 0
 _conv_highway_guard8_str:       .db "Hmm... everything seems to be in", 10, "order. Pass, friend.", 0
 _conv_highway_guard9_str:       .db "I see no pass. Do not try my", 10, "patience, adventurer. Go back.", 0
+_conv_cold_feet_str:            .db "Adventurer! They", 39, "re destroying", 10, "the bridge!", 0, 0
+_conv_cold_feet2_str:           .db "I just wanted a bit of fun, I", 10, "swear I never thought it", 39, "d go", 10, "this far...", 0
+_conv_cold_feet3_str:           .db "If you hurry, you can stop them!", 0, 0
+_conv_poet1_str:                .db "A visitor? What a pleasant", 10, "surprise! Stay a while and hear", 10, "my songs!", 0, 0
+_conv_poet2_c1_str:             .db "Refuse politely", 0
+_conv_poet2_c2_str:             .db "Refuse rudely", 0
+_conv_poet3_str:                .db "I", 39, "m sorry, but I have a pressing mission elsewhere.", 0
+_conv_poet4_str:                .db "Huh. I guess you", 39, "d better go", 10, "then.", 0, 0
+_conv_poet5_str:                .db "I", 39, "d sooner die!", 0
+_conv_poet6_str:                .db "Oh, would you?", 0, 0
+_conv_poet7_str:                .db "Come back to hear my songs,", 10, "adventurer? Well, it", 39, "s too late.You", 39, "ve already had your chance.", 0

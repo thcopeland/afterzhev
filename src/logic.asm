@@ -610,3 +610,12 @@ _ssp2c_sorry:
     sts sector_data, r25
 _ssp2c_end:
     ret
+
+sector_river_hidden_house_choice:
+    lds r25, selected_choice
+    cpi r25, 1
+    brne _srhhc_end
+    ldi r25, NPC_ANGRY_POET
+    sts sector_npcs+NPC_IDX_OFFSET, r25
+_srhhc_end:
+    ret

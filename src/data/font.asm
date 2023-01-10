@@ -1,7 +1,7 @@
 ; This is a 4x6 bitmap font by Brian Swetland and Robey Pointer, available at
 ; https://robey.lag.net/2010/01/23/tiny-monospace-font.html.
 ;
-; Each character is stored as 17 bits prefixed by a single bit indicating whether
+; Each character is stored as 15 bits prefixed by a single bit indicating whether
 ; to lower the entire character by one row (used for lowercase and some special
 ; characters).
 ;
