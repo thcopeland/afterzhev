@@ -591,7 +591,7 @@ sector_table:
 .db 96, 26, 201, 126
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 22 "deep_forest_section_5"
@@ -617,7 +617,7 @@ sector_table:
 .db 38, 150, 109, 72
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 23 "start_section_hidden_1"
@@ -721,7 +721,7 @@ sector_table:
 .db 30, 156, 159, 39
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 27 "deep_forest_section_3"
@@ -747,7 +747,7 @@ sector_table:
 .db 34, 129, 140, 7
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 28 "city_robbers_den_3"
@@ -825,7 +825,7 @@ sector_table:
 .db 31, 123, 190, 25
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 31 "bridge_section_hidden"

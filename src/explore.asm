@@ -1266,6 +1266,7 @@ _rfs_load_used:
     out EEARL, r24
     sbi EECR, EERE
     in r23, EEDR
+    sts savepoint_progress, r23
     adiw r24, 1
     ldi ZL, low(savedmem_start)
     ldi ZH, high(savedmem_start)
