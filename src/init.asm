@@ -38,7 +38,6 @@ _init_zero_iter:
     sti player_inventory+7, ITEM_mint_leaves
     sti player_inventory+8, ITEM_bismuth_subsalicylate
     sti player_inventory+9, ITEM_strength_potion
-
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_LEFT
     sti player_frame, 0

@@ -592,7 +592,7 @@ sector_table:
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_ALL
-.dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_deep_forest_update, sector_deep_forest_init, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 22 "deep_forest_section_5"
 .db 040, 039, 039, 056, 045, 045, 057, 039, 039, 039, 039, 056, 045, 046, 045, 046, 045, 046, 057, 039, \
@@ -618,7 +618,7 @@ sector_table:
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_ALL
-.dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_deep_forest_update, sector_deep_forest_init, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 23 "start_section_hidden_1"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 056, 046, 046, 046, 057, \
@@ -722,7 +722,7 @@ sector_table:
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_ALL
-.dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_deep_forest_update, sector_deep_forest_init, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 27 "deep_forest_section_3"
 .db 039, 040, 041, 179, 189, 038, 039, 039, 039, 039, 041, 189, 180, 037, 036, 036, 036, 036, 036, 036, \
@@ -748,7 +748,7 @@ sector_table:
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_ALL
-.dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_deep_forest_update, sector_deep_forest_init, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 28 "city_robbers_den_3"
 .db 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, \
@@ -826,7 +826,7 @@ sector_table:
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_ALL
-.dw sector_deep_forest_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_deep_forest_update, sector_deep_forest_init, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 31 "bridge_section_hidden"
 .db 039, 040, 039, 039, 039, 039, 041, 037, 042, 044, 036, 036, 036, 035, 189, 038, 040, 039, 076, 039, \

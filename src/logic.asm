@@ -627,7 +627,7 @@ sector_deep_forest_update:
     call rand
     mov r22, r0
     clr r1
-    cpi r22, 20
+    cpi r22, 10
     brsh _sdfu_end
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
@@ -651,4 +651,20 @@ _sdfu_next:
     add r25, r22
     call add_distant_npc
 _sdfu_end:
+    ret
+
+sector_deep_forest_init:
+    call rand
+    mov r25, r0
+    clr r1
+    andi r25, 0x03
+    subi r25, low(-NPC_DEEP_FOREST_FOX)
+    call add_distant_npc
+    call rand
+    mov r25, r0
+    clr r1
+    andi r25, 0x03
+    subi r25, low(-NPC_DEEP_FOREST_FOX)
+    call add_distant_npc
+_sdfi_end:
     ret
