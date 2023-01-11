@@ -619,3 +619,36 @@ sector_river_hidden_house_choice:
     sts sector_npcs+NPC_IDX_OFFSET, r25
 _srhhc_end:
     ret
+
+sector_deep_forest_update:
+    lds r25, clock
+    andi r25, 0x0f
+    brne _sdfu_end
+    call rand
+    mov r22, r0
+    clr r1
+    cpi r22, 20
+    brsh _sdfu_end
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    clr r24
+    ldi r25, SECTOR_DYNAMIC_NPC_COUNT
+_sdfu_loop:
+    ldd r23, Y+NPC_IDX_OFFSET
+    tst r23
+    breq _sdfu_next
+    cpi r23, NPC_CORPSE
+    breq _sdfu_next
+    inc r24
+_sdfu_next:
+    adiw YL, NPC_MEMSIZE
+    dec r25
+    brne _sdfu_loop
+    cpi r24, 4
+    brsh _sdfu_end
+    andi r22, 0x03
+    ldi r25, NPC_DEEP_FOREST_FOX
+    add r25, r22
+    call add_distant_npc
+_sdfu_end:
+    ret

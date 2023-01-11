@@ -85,6 +85,14 @@ _nm_patrol:
     eor r22, r0
     eor r23, r1
     clr r1
+    cpi r22, TILE_WIDTH*SECTOR_WIDTH
+    brlo _nm_patrol_x_clamped
+    subi r22, TILE_WIDTH*SECTOR_WIDTH
+_nm_patrol_x_clamped:
+    cpi r23, TILE_HEIGHT*SECTOR_HEIGHT
+    brlo _nm_patrol_y_clamped
+    subi r23, TILE_HEIGHT*SECTOR_HEIGHT
+_nm_patrol_y_clamped:
     sts subroutine_tmp, r22
     sts subroutine_tmp+1, r23
 _nm_test_lookat:
