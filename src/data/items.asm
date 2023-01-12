@@ -60,6 +60,7 @@ item_table:
     DECL_ITEM green_hood,           ITEM_WEARABLE,                      10,     0,  0,  0,  2,      1
     DECL_ITEM leather_armor,        ITEM_WEARABLE,                      75,     1,  0, -1,  0,      3
     DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              0,      0,  0,  0,  0,      0
+    DECL_ITEM invisible_staff,      (2<<6)|ITEM_RANGED,                 0,      0,  0,  0,  0,      (4<<4)|EFFECT_MISSILE
     DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              40,     0,  0,  0,  0,      (5<<4)
     DECL_ITEM wooden_bow,           (2<<6)|(1<<3)|ITEM_RANGED,          30,     0,  0,  0,  0,      (3<<4)|EFFECT_ARROW
     DECL_ITEM guard_hat,            ITEM_WEARABLE,                      30,     0,  0, -2,  0,      2
@@ -127,6 +128,8 @@ _item_str_leather_armor_name:       .db "Leather armor", 0
 _item_str_leather_armor_desc:       .db "Scarred and worn, it has", 10, "clearly seen much use.", 0
 _item_str_invisible_weapon_name:
 _item_str_invisible_weapon_desc:
+_item_str_invisible_staff_name:
+_item_str_invisible_staff_desc:
 _item_str_beard_name:
 _item_str_beard_desc:				.dw 0
 _item_str_steel_sword_name:         .db "Steel sword", 0

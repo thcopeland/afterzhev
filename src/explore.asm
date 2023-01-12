@@ -1102,12 +1102,23 @@ _uae_update_effect_frame:
     andi r23, 0xc0  ; direction
 _uae_fireball:
     cpi r22, EFFECT_FIREBALL<<3
-    brne _uae_active_effect_next
+    brne _uae_missile
     lds r24, clock
     andi r24, EFFECT_FIREBALL_FRAME_DURATION_MASK
     brne _uae_active_effect_next
     inc r21
     cpi r21, EFFECT_FIREBALL_DURATION
+    brlo _uau_save_effect
+    clr r22
+    rjmp _uau_save_effect
+_uae_missile:
+    cpi r22, EFFECT_MISSILE<<3
+    brne _uae_active_effect_next
+    lds r24, clock
+    andi r24, EFFECT_MISSILE_FRAME_DURATION_MASK
+    brne _uae_active_effect_next
+    inc r21
+    cpi r21, EFFECT_MISSILE_DURATION
     brlo _uau_save_effect
     clr r22
 _uau_save_effect:

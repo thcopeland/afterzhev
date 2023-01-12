@@ -622,7 +622,7 @@ _srhhc_end:
 
 sector_deep_forest_update:
     lds r25, clock
-    andi r25, 0x0f
+    andi r25, 0x1f
     brne _sdfu_end
     call rand
     mov r22, r0
@@ -667,4 +667,37 @@ sector_deep_forest_init:
     subi r25, low(-NPC_DEEP_FOREST_FOX)
     call add_distant_npc
 _sdfi_end:
+    ret
+
+sector_underground_update:
+    lds r25, clock
+    andi r25, 0x1f
+    brne _suu_end
+    call rand
+    mov r22, r0
+    clr r1
+    cpi r22, 20
+    brsh _suu_end
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    clr r24
+    ldi r25, SECTOR_DYNAMIC_NPC_COUNT
+_suu_loop:
+    ldd r23, Y+NPC_IDX_OFFSET
+    tst r23
+    breq _suu_next
+    cpi r23, NPC_CORPSE
+    breq _suu_next
+    inc r24
+_suu_next:
+    adiw YL, NPC_MEMSIZE
+    dec r25
+    brne _suu_loop
+    cpi r24, 4
+    brsh _suu_end
+    andi r22, 0x01
+    ldi r25, NPC_GHOUL_1
+    add r25, r22
+    call add_distant_npc
+_suu_end:
     ret

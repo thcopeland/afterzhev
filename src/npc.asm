@@ -4,7 +4,7 @@ estimated_effect_ranges:
         EFFECT_DEFAULT_RANGE_ESTIMATE,  \
         EFFECT_ARROW_RANGE_ESTIMATE,    \
         EFFECT_FIREBALL_RANGE_ESTIMATE, \
-        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
+        EFFECT_MISSILE_RANGE_ESTIMATE,  \
         EFFECT_DEFAULT_RANGE_ESTIMATE,  \
         EFFECT_DEFAULT_RANGE_ESTIMATE,  \
         EFFECT_DEFAULT_RANGE_ESTIMATE
@@ -67,13 +67,15 @@ _nm_test_patrol_distance:
     cpi r25, NPC_PATROL_DISTANCE
     brlo _nm_test_lookat
 _nm_patrol:
-    ; generate a pseudorandom position based on clock/64 and NPC index
+    ; generate a pseudorandom position based on clock/64, NPC index, and NPC pointer
     lds r21, clock
     lsl r21
     lsl r21
     lds r22, clock+1
     rol r22
     rol r22
+    eor r21, YL
+    eor r22, YL
     ldi r23, 173
     mul r22, r23
     mov r22, r0
@@ -170,7 +172,7 @@ _nm_test_weapon:
 _nm_estimate_range:
     adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
     elpm r20, Z
-    andi r20, 0x03
+    andi r20, 0x07
     ldi ZL, low(2*estimated_effect_ranges)
     ldi ZH, high(2*estimated_effect_ranges)
     add ZL, r20
@@ -401,7 +403,7 @@ _nm_goto_horizontal_movement:
     mov r0, r26
     asr r0
     add r26, r0
-    cpi r22, 2*STRIKING_DISTANCE/3
+    cpi r22, STRIKING_DISTANCE
     brsh _nm_goto_horizontal_direction
     asr r24
     rjmp _nm_goto_vertical_movement

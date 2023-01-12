@@ -1066,10 +1066,23 @@ _rce_effect_arrow:
     rjmp _rce_render_effect_sprite
 _rce_effect_fireball:
     cpi r23, EFFECT_FIREBALL
-    brne _rce_render_effect_sprite
+    brne _rce_effect_missile
     ldi ZL, low(2*effect_fireball_sprites)
     ldi ZH, high(2*effect_fireball_sprites)
     andi r22, 1
+    sbrc r21, 6
+    subi r22, low(-2)
+_rce_effect_missile:
+    cpi r23, EFFECT_MISSILE
+    brne _rce_render_effect_sprite
+    ldi ZL, low(2*effect_missile_sprites)
+    ldi ZH, high(2*effect_missile_sprites)
+    mov r23, r22
+    clr r22
+    cpi r23, EFFECT_MISSILE_DURATION-1
+    brlo _rce_effect_missile_orientation
+    inc r22
+_rce_effect_missile_orientation:
     sbrc r21, 6
     subi r22, low(-2)
 _rce_render_effect_sprite:

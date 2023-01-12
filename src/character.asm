@@ -482,5 +482,7 @@ character_striking_distance:
     lsr r1
     ror r0
     clr r1
+    lsr r24
+    add r0, r24
 _csd_end:
     ret
