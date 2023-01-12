@@ -179,7 +179,7 @@ void loop() {
 
     if (sync_hold) {
         int loc = glGetUniformLocation(program, "mask");
-        glProgramUniform1i(program, loc, avr->mem[0x21]);
+        glUniform1i(loc, avr->mem[0x21]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, GAME_DISPLAY_WIDTH, GAME_DISPLAY_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, avr->ram);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
