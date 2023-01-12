@@ -84,11 +84,12 @@ item_table:
     DECL_ITEM mithril_cap,          ITEM_WEARABLE,                     600,     0,  1,  0,  0,      3
     DECL_ITEM mithril_dagger,       ITEM_WIELDABLE,                    300,     0,  2,  0,  0,      (3<<4)
     DECL_ITEM mithril_spike,        ITEM_WIELDABLE,                    200,     0,  0,  0,  0,      (2<<4)
-    DECL_ITEM spear,                (2<<6)|(2<<3)|ITEM_WIELDABLE,      100,     0,  0, -2,  0,      (6<<4)
+    DECL_ITEM spear,                (2<<6)|(2<<3)|ITEM_WIELDABLE,      150,     0,  0, -2,  0,      (6<<4)
     DECL_ITEM wooden_shield,        ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
     DECL_ITEM axe,                  (2<<6)|ITEM_WIELDABLE,              30,     1,  0,  0,  0,      (3<<4)
     DECL_ITEM angel_of_death,       (2<<6)|(4<<3)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     5000,     0,  0,  0,  0,      (15<<4)|EFFECT_FIREBALL
-    DECL_ITEM glass_staff,          (2<<6)|(2<<3)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,      300,     0,  2,  0,  0,      (10<<4)|EFFECT_MISSILE
+    DECL_ITEM glass_staff,          (2<<6)|(2<<3)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,      300,     0,  2,  0,  0,      (8<<4)|EFFECT_MISSILE
+    DECL_ITEM blessed_sword,        (2<<6)|(1<<3)|ITEM_WIELDABLE,      340,     0,  5,  0,  0,      (6<<4)
     DECL_ITEM inventory_book,       ITEM_USABLE,                         0,     0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                  1,     0, -5,  0,  0,      0
@@ -219,3 +220,5 @@ _item_str_strength_potion_name:     .db "Strength potion", 0
 _item_str_strength_potion_desc:     .db "Banned in all organized", 10, "competion.", 0, 0
 _item_str_glass_staff_name:         .db "Glass staff", 0
 _item_str_glass_staff_desc:         .db "An extraordinary weapon,powerful yet fragile.", 0
+_item_str_blessed_sword_name:       .db "Blessed sword", 0
+_item_str_blessed_sword_desc:       .db "Tingles with powerful", 10, "elvish magic.", 0

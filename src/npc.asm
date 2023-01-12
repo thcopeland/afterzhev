@@ -375,9 +375,6 @@ _nm_return_save_direction:
     std Y+NPC_ANIM_OFFSET, r25
     rjmp _nm_move
 _nm_test_move_falloff:
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_TOWN_GUARD_ANGRY+1
-    brlo _nm_move
     lds r25, npc_move_flags
     sbrs r25, log2(NPC_MOVE_FALLOFF)
     rjmp _nm_move

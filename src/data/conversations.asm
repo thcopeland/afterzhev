@@ -32,6 +32,10 @@
 .macro DECL_CONVERSATION ; name
     .equ CONVERSATION_@0_ID = __CONVERSATION_IDX
     .set __CONVERSATION_IDX = __CONVERSATION_IDX+1
+
+    .if __CONVERSATION_IDX == TOTAL_CONVERSATION_COUNT
+        .error "Too many conversations"
+    .endif
 .endm
 
 .macro DECL_LINE ; line, npc, speaker, next
@@ -194,6 +198,32 @@ _conv_poet4:                    DECL_LINE poet4, NPC_LONELY_POET, poet, END_CONV
 _conv_poet5:                    DECL_LINE poet5, 0, PLAYER, poet6
 _conv_poet6:                    DECL_LINE poet6, NPC_LONELY_POET, poet, END_CONVERSATION
 _conv_poet7:                    DECL_LINE poet7, NPC_LONELY_POET, poet, END_CONVERSATION
+DECL_CONVERSATION welcome_to_haldir
+_conv_haldir1:                  DECL_LINE haldir1, NPC_HALDIR_GUARD, haldir_guard, haldir2
+_conv_haldir2:                  DECL_BRANCH 4
+                                DECL_CHOICE haldir2_c1, haldir3
+                                DECL_CHOICE haldir2_c2, haldir5
+                                DECL_CHOICE haldir2_c3, haldir7
+                                DECL_CHOICE haldir2_c4, END_CONVERSATION
+_conv_haldir3:                  DECL_LINE haldir3, 0, PLAYER, haldir4
+_conv_haldir4:                  DECL_LINE haldir4, NPC_HALDIR_GUARD, haldir_guard, haldir2
+_conv_haldir5:                  DECL_LINE haldir5, 0, PLAYER, haldir6
+_conv_haldir6:                  DECL_LINE haldir6, NPC_HALDIR_GUARD, haldir_guard, haldir2
+_conv_haldir7:                  DECL_LINE haldir7, 0, PLAYER, haldir8
+_conv_haldir8:                  DECL_LINE haldir8, NPC_HALDIR_GUARD, haldir_guard, haldir2
+_conv_bard1:                    DECL_LINE bard1, NPC_BARD, bard, bard2
+_conv_bard2:                    DECL_BRANCH 2
+                                DECL_CHOICE accept, bard3
+                                DECL_CHOICE refuse, END_CONVERSATION
+_conv_bard3:                    DECL_LINE bard3, NPC_BARD, bard, bard4
+_conv_bard4:                    DECL_LINE bard4, NPC_BARD, bard, bard5
+_conv_bard5:                    DECL_LINE bard5, NPC_BARD, bard, bard6
+_conv_bard6:                    DECL_LINE bard6, NPC_BARD, bard, bard2
+_conv_no_message:               DECL_LINE no_message, NPC_HALDIR_GUARD_2, haldir_guard, END_CONVERSATION
+_conv_somethings_wrong:         DECL_LINE somethings_wrong, NPC_CITIZEN_1, citizen, END_CONVERSATION
+_conv_might_leave:              DECL_LINE might_leave, NPC_CITIZEN_2, citizen, END_CONVERSATION
+_conv_leaving:                  DECL_LINE leaving, NPC_CITIZEN_3, citizen, leaving2
+_conv_leaving2:                 DECL_LINE leaving2, NPC_CITIZEN_3, citizen, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -212,6 +242,9 @@ _conv_speaker_bandit_agent_str: .db "Bandit agent", 0, 0
 _conv_speaker_highway_guard_str:.db "Highway guard", 0
 _conv_speaker_scared_bandit_str:.db "Trepid bandit", 0
 _conv_speaker_poet_str:         .db "Lonely poet", 0
+_conv_speaker_haldir_guard_str: .db "Haldir guard", 0, 0
+_conv_speaker_bard_str:         .db "Bard", 0, 0
+_conv_speaker_citizen_str:      .db "Citizen", 0
 _conv_speaker_empty_str:        .db 0, 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
 _conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
@@ -254,6 +287,8 @@ _conv_rescue_kidnapped_str:     .db "Come with me if you want to live!", 0
 _conv_nice_day_str:             .db "Mornin", 39, "! Nice day for fishing,", 10, "ain", 39, "t it?", 0, 0
 _conv_yes_str:                  .db "Yes", 0
 _conv_no_str:                   .db "No", 0, 0
+_conv_accept_str:               .db "Accept", 0, 0
+_conv_refuse_str:               .db "Refuse", 0, 0
 _conv_nice_day3_str:            .db "Huah hah!", 0
 _conv_welcome_str:              .db "Hello there, adventurer! And", 10, "welcome to Frogford town!", 0, 0
 _conv_welcome2_str:             .db "Anything I can do for you?", 0, 0
@@ -324,3 +359,24 @@ _conv_poet4_str:                .db "Huh. I guess you", 39, "d better go", 10, "
 _conv_poet5_str:                .db "I", 39, "d sooner die!", 0
 _conv_poet6_str:                .db "Oh, would you?", 0, 0
 _conv_poet7_str:                .db "Come back to hear my songs,", 10, "adventurer? Well, it", 39, "s too late.You", 39, "ve already had your chance.", 0
+_conv_haldir1_str:              .db "Welcome to Haldir, adventurer.", 10, "We", 39, "re glad to have a warrior suchas yourself among us. But don", 39, "t", 10, "cause any trouble.", 0, 0
+_conv_haldir2_c1_str:           .db "Ask about Dor Haldir", 0, 0
+_conv_haldir2_c2_str:           .db "Ask about Baron Zhev", 0, 0
+_conv_haldir2_c3_str:           .db "Romance", 0
+_conv_haldir2_c4_str:           .db "Leave", 0
+_conv_haldir3_str:              .db "How fares Haldir?", 0
+_conv_haldir4_str:              .db "We stand strong, but strange", 10, "things have been sighted nearby,especially at night.", 0
+_conv_haldir5_str:              .db "I have business with Baron Zhev. Where does he live?", 0, 0
+_conv_haldir6_str:              .db "The Baron has a tower east of", 10, "Haldir. Though I warn you,", 10, "adventurer, you might find your welcome somewhat less than", 10, "expected.", 0
+_conv_haldir7_str:              .db "Say, have you been working out?", 0
+_conv_haldir8_str:              .db ". . .", 0
+_conv_bard1_str:                .db "Well met, adventurer! I am a", 10, "bard, singer of songs and bearerof tales. Shall I sing for you?", 0, 0
+_conv_bard3_str:                .db "I wrote this song myself.", 0
+_conv_bard4_str:                .db "In Reginold, the land of gold", 10, "A place now grim and gloomy", 10, "Dwell the dreaded Grim Machol", 10, "Oh Gilmatich! Oh Gilma guey!", 0, 0
+_conv_bard5_str:                .db "But still I see, though dimly now(and only in my head)", 10, "The Machol ships upon the tide", 10, "And how they left us all for", 10, "    dead.", 0, 0
+_conv_bard6_str:                .db "Shall I sing it again?", 0, 0
+_conv_no_message_str:           .db "There", 39, "s been no word from the", 10, "baron for two weeks... I fear", 10, "something", 39, "s amiss.", 0, 0
+_conv_somethings_wrong_str:     .db "Guards in the streets... windows", 10, "shuttered during the day... can", 10, "you feel it? Something", 39, "s coming.", 0
+_conv_might_leave_str:          .db "It", 39, "s so quiet... another group", 10, "left last night. Maybe I", 39, "ll be in the next.", 0, 0
+_conv_leaving_str:              .db "I", 39, "m getting out of Haldir while I can. And if you have any sense,", 10, "so will you.", 0, 0
+_conv_leaving2_str:             .db "If you want, take a look", 10, "upstairs. Anything you want,", 10, "keep it.", 0, 0
