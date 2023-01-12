@@ -1052,9 +1052,15 @@ render_effect_animation:
     ; At this point, r21 - direction, r22 - frame, r23 - effect
 _rce_effect_damage:
     cpi r23, EFFECT_DAMAGE
-    brne _rce_effect_arrow
+    brne _rce_effect_healing
     ldi ZL, low(2*effect_damage_sprites)
     ldi ZH, high(2*effect_damage_sprites)
+    rjmp _rce_render_effect_sprite
+_rce_effect_healing:
+    cpi r23, EFFECT_HEALING
+    brne _rce_effect_arrow
+    ldi ZL, low(2*effect_healing_sprites)
+    ldi ZH, high(2*effect_healing_sprites)
     rjmp _rce_render_effect_sprite
 _rce_effect_arrow:
     cpi r23, EFFECT_ARROW

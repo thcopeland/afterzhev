@@ -173,8 +173,7 @@ _prmd_end:
 player_resolve_effect_damage:
     lds r25, player_effect
     andi r25, 0x38
-    cpi r25, EFFECT_DAMAGE << 3
-    brne _pred_main
+    breq _pred_main
     ret
 _pred_main:
     ldi YL, low(active_effects)

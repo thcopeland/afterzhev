@@ -266,10 +266,7 @@ npc_table:
     DECL_ENEMY_DATA NPC_PATROL, 20, 7, 4, 3, NO_ITEM, ITEM_mint_tonic, ITEM_bloody_sword
 
     DECL_NPC        NPC_GHOUL_1, NPC_ENEMY, CHARACTER_GHOUL, ITEM_invisible_staff, NO_ITEM, DIRECTION_DOWN, 40, 114, 76
-    DECL_ENEMY_DATA NPC_PATROL, 20, 6, 6, 1, NO_ITEM, ITEM_glass_dagger, ITEM_glass_shard
+    DECL_ENEMY_DATA NPC_PATROL, 20, 6, 6, 1, NO_ITEM, NO_ITEM, ITEM_glass_shard
 
     DECL_NPC        NPC_GHOUL_2, NPC_ENEMY, CHARACTER_GHOUL, ITEM_invisible_staff, NO_ITEM, DIRECTION_DOWN, 40, 91, 74
-    DECL_ENEMY_DATA NPC_PATROL, 20, 6, 6, 0, NO_ITEM, ITEM_glass_dagger, ITEM_glass_shard
-
-    DECL_NPC        NPC_GHOUL_3, NPC_ENEMY, CHARACTER_GHOUL, ITEM_invisible_staff, NO_ITEM, DIRECTION_DOWN, 40, 60, 50
-    DECL_ENEMY_DATA NPC_PATROL, 20, 6, 6, 0, NO_ITEM, ITEM_glass_dagger, ITEM_glass_shard
+    DECL_ENEMY_DATA NPC_PATROL, 20, 6, 6, 0, NO_ITEM, NO_ITEM, ITEM_glass_shard

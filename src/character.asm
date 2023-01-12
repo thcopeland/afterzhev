@@ -330,7 +330,14 @@ _uca_effect_damage:
     sbrc r21, 2
     ldi r20, 2*EFFECT_DAMAGE_DURATION
     rjmp _uca_update_effect
-_uca_effect_heal: ; TODO
+_uca_effect_heal:
+    cpi r20, EFFECT_HEALING<<3
+    brne _uca_effect_upgrade
+    lds r20, clock
+    andi r20, EFFECT_HEALING_FRAME_DURATION_MASK
+    brne _uca_action_idle
+    ldi r20, EFFECT_HEALING_DURATION
+    rjmp _uca_update_effect
 _uca_effect_upgrade:
 _uca_update_effect:
     inc r21

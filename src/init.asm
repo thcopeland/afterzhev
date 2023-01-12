@@ -32,7 +32,7 @@ _init_zero_iter:
     sti player_inventory+1, ITEM_whiskey
     sti player_inventory+2, ITEM_pass
     sti player_inventory+3, ITEM_journal
-    sti player_inventory+4, ITEM_curse_of_ullimar
+    sti player_inventory+4, ITEM_glass_staff
     sti player_inventory+5, ITEM_large_health_potion
     sti player_inventory+6, ITEM_mint_tonic
     sti player_inventory+7, ITEM_mint_leaves
@@ -45,7 +45,7 @@ _init_zero_iter:
     sti player_stats, 4
     sti player_stats+1, 8
     sti player_stats+2, 60
-    sti player_stats+3, 6
+    sti player_stats+3, 10
     call calculate_player_stats
     stiw player_gold, 0
     sti player_health, 64
