@@ -145,28 +145,28 @@ void window_key_callback(GLFWwindow* window, int key, int scancode, int action, 
         case GLFW_KEY_ESCAPE:
             glfwSetWindowShouldClose(window, 1);
             break;
-        case GLFW_KEY_W:
+        case GLFW_KEY_UP:
             set_control_bit(7, action == GLFW_RELEASE);
             break;
-        case GLFW_KEY_A:
+        case GLFW_KEY_LEFT:
             set_control_bit(5, action == GLFW_RELEASE);
             break;
-        case GLFW_KEY_S:
+        case GLFW_KEY_DOWN:
             set_control_bit(6, action == GLFW_RELEASE);
             break;
-        case GLFW_KEY_D:
+        case GLFW_KEY_RIGHT:
             set_control_bit(4, action == GLFW_RELEASE);
             break;
-        case GLFW_KEY_1:
+        case GLFW_KEY_A:
             set_control_bit(3, action == GLFW_RELEASE);
             break;
-        case GLFW_KEY_2:
+        case GLFW_KEY_S:
             set_control_bit(2, action == GLFW_RELEASE);
             break;
-        case GLFW_KEY_3:
+        case GLFW_KEY_D:
             set_control_bit(1, action == GLFW_RELEASE);
             break;
-        case GLFW_KEY_4:
+        case GLFW_KEY_F:
             set_control_bit(0, action == GLFW_RELEASE);
             break;
     }
