@@ -1471,7 +1471,7 @@ sector_table:
 .db 67, 56, 55, 55
 .db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
-.db 0, 0, 0, 0
+.db 4, 159, 136, 0
 .db 0, 0, 0, 0
 .db 120, 108, SECTOR_MINE_ENTRANCE_HOUSE, 140, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_SHUTTERS, 90, 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
