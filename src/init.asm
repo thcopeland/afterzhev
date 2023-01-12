@@ -57,6 +57,7 @@ _init_zero_iter:
     stiw npc_presence+2, 0xffff
     stiw npc_presence+4, 0xffff
     stiw npc_presence+6, 0xffff
+    stiw npc_presence+8, 0xffff
     sti clock, 0
     sti mode_clock, 0
     sti current_shop_index, NO_SHOP
@@ -69,9 +70,9 @@ _init_zero_iter:
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     sti player_position_x, 166
-    sti player_position_y, 80
+    sti player_position_y, 35
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_ROAD_3
+    .equ INITIAL_SECTOR = SECTOR_SKULL_CULT_2
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

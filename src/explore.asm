@@ -608,6 +608,7 @@ _hc_up:
     sbnv r21, r20
     sts player_velocity_y, r21
     ldi r21, DIRECTION_UP
+    sbrs r19, CONTROLS_SPECIAL2
     sts player_direction, r21
 _hc_down:
     sbrs r19, CONTROLS_DOWN
@@ -616,6 +617,7 @@ _hc_down:
     adnv r21, r20
     sts player_velocity_y, r21
     ldi r21, DIRECTION_DOWN
+    sbrs r19, CONTROLS_SPECIAL2
     sts player_direction, r21
 _hc_left:
     sbrs r19, CONTROLS_LEFT
@@ -624,6 +626,7 @@ _hc_left:
     sbnv r21, r20
     sts player_velocity_x, r21
     ldi r21, DIRECTION_LEFT
+    sbrs r19, CONTROLS_SPECIAL2
     sts player_direction, r21
 _hc_right:
     sbrs r19, CONTROLS_RIGHT
@@ -632,6 +635,7 @@ _hc_right:
     adnv r21, r20
     sts player_velocity_x, r21
     ldi r21, DIRECTION_RIGHT
+    sbrs r19, CONTROLS_SPECIAL2
     sts player_direction, r21
 _hc_button1:
     sbrs r19, CONTROLS_SPECIAL1
