@@ -189,8 +189,7 @@
 .equ ADD_NPC_MAX_Y_DISTANCE = DISPLAY_HEIGHT/TILE_HEIGHT
 
 .equ FOLLOWER_DELAY = 20
-.equ FOLLOWER_DISTANCE = NPC_INTEREST_DISTANCE-1 ; should be less than interest distance
-.equ FOLLOWER_SPEED = 10 ; should be nonzero, or non-enemy NPCs will follow
+.equ FOLLOWER_DISTANCE = 48 ; should be less than interest distance
 
 .include "names.asm"
 .include "quests.asm"

@@ -2010,17 +2010,29 @@ _anf_dist:
 _anf_check_dist:
     cpi r25, FOLLOWER_DISTANCE
     brsh _anf_npc_next
-_anf_check_speed:
-    ldd r24, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
-    sbrc r24, 7
-    neg r24
-    ldd r25, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
-    sbrc r25, 7
-    neg r24
-    add r24, r25
-    brcs _anf_add_follower
-    cpi r24, FOLLOWER_SPEED
-    brlo _anf_npc_next
+_anf_check_type:
+    sts subroutine_tmp, ZL
+    sts subroutine_tmp+1, ZH
+    in r0, RAMPZ
+    sts subroutine_tmp+2, r0
+    ldd r24, Z+NPC_IDX_OFFSET
+    dec r24
+    ldi r25, NPC_TABLE_ENTRY_MEMSIZE
+    mul r24, r25
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table+NPC_TABLE_TYPE_OFFSET)
+    ldi ZH, high(2*npc_table+NPC_TABLE_TYPE_OFFSET)
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r25, Z
+    lds ZL, subroutine_tmp+2
+    out RAMPZ, ZL
+    lds ZL, subroutine_tmp
+    lds ZH, subroutine_tmp+1
+    cpi r25, NPC_ENEMY
+    brne _anf_npc_next
 _anf_add_follower:
     ldd r25, Z+NPC_IDX_OFFSET
     st Y+, r25
