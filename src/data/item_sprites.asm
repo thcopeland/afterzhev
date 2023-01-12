@@ -292,24 +292,24 @@ item_animation_entry 4, 11, tree_branch_sprite_0
     empty_animation_entry
     empty_animation_entry
 
-    item_animation_entry 2, 11, glass_dagger_sprite_0
-    item_animation_entry 4, 11, glass_dagger_sprite_1
-    item_animation_entry 5, 12, glass_dagger_sprite_2
-    item_animation_entry 6, 11, glass_dagger_sprite_3
     item_animation_entry 6, 11, glass_dagger_sprite_0
-    item_animation_entry 9, 11, glass_dagger_sprite_1
-    item_animation_entry 10, 10, glass_dagger_sprite_4
-    item_animation_entry 8, 11, glass_dagger_sprite_1
+    item_animation_entry 6, 10, glass_dagger_sprite_1
+    item_animation_entry 6, 11, glass_dagger_sprite_2
+    item_animation_entry 6, 10, glass_dagger_sprite_1
+    item_animation_entry 8, 11, glass_dagger_sprite_3
+    item_animation_entry 10, 12, glass_dagger_sprite_3
+    item_animation_entry 11, 10, glass_dagger_sprite_4
+    item_animation_entry 11, 12, glass_dagger_sprite_3
     item_animation_entry 6, 12, glass_dagger_sprite_2
-    item_animation_entry 10, 12, glass_dagger_sprite_2
-    item_animation_entry 6, 12, glass_dagger_sprite_2
-    item_animation_entry 6, 12, glass_dagger_sprite_3
-    item_animation_entry 6, 11, glass_dagger_sprite_4
-    item_animation_entry 4, 12, glass_dagger_sprite_1
-    item_animation_entry 10, 10, glass_dagger_sprite_2
-    item_animation_entry 13, 10, glass_dagger_sprite_3
-    item_animation_entry 13, 9, glass_dagger_sprite_4
-    item_animation_entry 9, 11, glass_dagger_sprite_1
+    item_animation_entry 10, 12, glass_dagger_sprite_3
+    item_animation_entry 6, 11, glass_dagger_sprite_2
+    item_animation_entry 6, 12, glass_dagger_sprite_1
+    item_animation_entry 6, 11, glass_dagger_sprite_1
+    item_animation_entry 6, 11, glass_dagger_sprite_1
+    item_animation_entry 9, 12, glass_dagger_sprite_3
+    item_animation_entry 12, 12, glass_dagger_sprite_3
+    item_animation_entry 10, 12, glass_dagger_sprite_3
+    item_animation_entry 9, 12, glass_dagger_sprite_3
     empty_animation_entry
     empty_animation_entry
 
@@ -1357,38 +1357,40 @@ _club_sprite_3:
         0xc7, 0xc7, 0x0a, 0x0a, 0x0a, 0x0a, 0x01, \
         0xc7, 0xc7, 0xc7, 0xc7, 0x01, 0x01, 0xc7
 _glass_dagger_sprite_0:
-    .db 7, 3
-    .db 0xc7, 0x73, 0x73, 0x73, 0x0b, 0xc7, 0xc7, \
-        0x73, 0x69, 0x69, 0x69, 0x0b, 0x0b, 0x0b, \
-        0xc7, 0x61, 0x61, 0x61, 0x0b, 0xc7, 0xc7, PADDING
+    .db 3, 5
+    .db 0xc7, 0x0b, 0xc7, \
+        0x0b, 0x0b, 0x0b, \
+        0x73, 0x69, 0x61, \
+        0x73, 0x69, 0x61, \
+        0xc7, 0x73, 0xc7, PADDING
 _glass_dagger_sprite_1:
-    .db 5, 5
-    .db 0xc7, 0xc7, 0x0b, 0xc7, 0x0b, \
-        0xc7, 0x73, 0x0b, 0x0b, 0xc7, \
-        0xc7, 0x73, 0x69, 0x0b, 0x0b, \
-        0x73, 0x69, 0x61, 0x61, 0xc7, \
-        0x73, 0x61, 0xc7, 0xc7, 0xc7, PADDING
+    .db 3, 7
+    .db 0xc7, 0x0b, 0xc7, \
+        0xc7, 0x0b, 0xc7, \
+        0x0b, 0x0b, 0x0b, \
+        0x73, 0x69, 0x61, \
+        0x73, 0x69, 0x61, \
+        0x73, 0x69, 0x61, \
+        0xc7, 0x73, 0xc7, PADDING
 _glass_dagger_sprite_2:
-    .db 7, 3
-    .db 0xc7, 0xc7, 0x0b, 0x73, 0x73, 0x73, 0xc7, \
-        0x0b, 0x0b, 0x0b, 0x69, 0x69, 0x69, 0x73, \
-        0xc7, 0xc7, 0x0b, 0x61, 0x61, 0x61, 0xc7, PADDING
-_glass_dagger_sprite_3:
     .db 5, 5
     .db 0x0b, 0xc7, 0x0b, 0xc7, 0xc7, \
         0xc7, 0x0b, 0x0b, 0x73, 0xc7, \
         0x0b, 0x0b, 0x69, 0x73, 0xc7, \
         0xc7, 0x61, 0x61, 0x69, 0x73, \
         0xc7, 0xc7, 0xc7, 0x61, 0x73, PADDING
+_glass_dagger_sprite_3:
+    .db 7, 3
+    .db 0xc7, 0xc7, 0x0b, 0x73, 0x73, 0x73, 0xc7, \
+        0x0b, 0x0b, 0x0b, 0x69, 0x69, 0x69, 0x73, \
+        0xc7, 0xc7, 0x0b, 0x61, 0x61, 0x61, 0xc7, PADDING
 _glass_dagger_sprite_4:
-    .db 3, 7
-    .db 0xc7, 0x0b, 0xc7, \
-        0xc7, 0x0b, 0xc7, \
-        0x0b, 0x0b, 0x0b, \
-        0x69, 0x61, 0x61, \
-        0x73, 0x69, 0x61, \
-        0x73, 0x69, 0x61, \
-        0xc7, 0x73, 0xc7, PADDING
+    .db 5, 5
+    .db 0xc7, 0xc7, 0xc7, 0x73, 0x73, \
+        0xc7, 0x73, 0x73, 0x69, 0x61, \
+        0x0b, 0x0b, 0x69, 0x61, 0xc7, \
+        0xc7, 0x0b, 0x0b, 0x61, 0xc7, \
+        0x0b, 0xc7, 0x0b, 0xc7, 0xc7, PADDING
 _glass_shard_sprite_0:
     .db 1, 2
     .db 0x69, \

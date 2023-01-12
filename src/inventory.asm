@@ -442,6 +442,19 @@ _irg_render_character:
     ldi YL, low(player_character)
     ldi YH, high(player_character)
     call render_character_icon
+    lds r22, player_effect
+    lds r24, camera_position_x
+    lds r25, camera_position_y
+    subi r24, low(-INVENTORY_UI_CHARACTER_MARGIN % DISPLAY_WIDTH)
+    subi r25, low(-INVENTORY_UI_CHARACTER_MARGIN / DISPLAY_WIDTH)
+    call render_effect_animation
+    lds r21, player_effect
+    lds r22, player_action
+    lds r23, player_frame
+    lds r24, player_velocity_x
+    lds r25, player_velocity_y
+    call update_character_animation
+    sts player_effect, r21
     ldi XL, low(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
     ldi XH, high(framebuffer+INVENTORY_UI_ARMOR_MARGIN)
     lds r25, player_armor

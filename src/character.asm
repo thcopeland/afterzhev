@@ -336,7 +336,7 @@ _uca_effect_heal:
     lds r20, clock
     andi r20, EFFECT_HEALING_FRAME_DURATION_MASK
     brne _uca_action_idle
-    ldi r20, EFFECT_HEALING_DURATION
+    ldi r20, EFFECT_HEALING_DURATION+EFFECT_HEALING_DELAY
     rjmp _uca_update_effect
 _uca_effect_upgrade:
 _uca_update_effect:

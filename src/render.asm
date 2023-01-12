@@ -1061,7 +1061,9 @@ _rce_effect_healing:
     brne _rce_effect_arrow
     ldi ZL, low(2*effect_healing_sprites)
     ldi ZH, high(2*effect_healing_sprites)
-    rjmp _rce_render_effect_sprite
+    subi r22, EFFECT_HEALING_DELAY
+    brsh _rce_render_effect_sprite
+    rjmp _rce_end
 _rce_effect_arrow:
     cpi r23, EFFECT_ARROW
     brne _rce_effect_fireball
