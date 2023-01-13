@@ -178,3 +178,43 @@ _rid_damaged:
     ldi r25, 1
     sts npc_move_flags2, r25
     ret
+
+; Occasionally, add NPCs at the sector avenger locations.
+;
+; Register Usage
+;   r20-r21     calculations
+;   r22         clock mask (param)
+;   r23         random threshold (param)
+;   r24         index offset mask (param)
+;   r25         base NPC index (param)
+;   Y (r28:r29) NPC pointer
+spawn_distant_npcs:
+    lds r20, clock
+    and r20, r22
+    brne _sdn_end
+    call rand
+    clr r1
+    cp r0, r23
+    brsh _sdn_end
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    clr r22
+    ldi r23, SECTOR_DYNAMIC_NPC_COUNT
+_sdn_loop:
+    ldd r20, Y+NPC_IDX_OFFSET
+    tst r20
+    breq _sdn_next
+    cpi r20, NPC_CORPSE
+    breq _sdn_next
+    inc r22
+_sdn_next:
+    adiw YL, NPC_MEMSIZE
+    dec r23
+    brne _sdn_loop
+    cpi r22, 4
+    brsh _sdn_end
+    and r0, r24
+    add r25, r0
+    call add_distant_npc
+_sdn_end:
+    ret

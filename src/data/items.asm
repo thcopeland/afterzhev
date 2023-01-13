@@ -90,6 +90,7 @@ item_table:
     DECL_ITEM angel_of_death,       (2<<6)|(4<<3)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     5000,     0,  0,  0,  0,      (15<<4)|EFFECT_FIREBALL
     DECL_ITEM glass_staff,          (2<<6)|(2<<3)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,      300,     0,  2,  0,  0,      (8<<4)|EFFECT_MISSILE
     DECL_ITEM blessed_sword,        (2<<6)|(1<<3)|ITEM_WIELDABLE,      340,     0,  5,  0,  0,      (6<<4)
+    DECL_ITEM white_fox_eyes,       ITEM_WEARABLE,                       0,     0,  0,  0,  0,      0
     DECL_ITEM inventory_book,       ITEM_USABLE,                         0,     0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                  1,     0, -5,  0,  0,      0
@@ -134,6 +135,8 @@ _item_str_invisible_weapon_name:
 _item_str_invisible_weapon_desc:
 _item_str_invisible_staff_name:
 _item_str_invisible_staff_desc:
+_item_str_white_fox_eyes_name:
+_item_str_white_fox_eyes_desc:
 _item_str_beard_name:
 _item_str_beard_desc:				.dw 0
 _item_str_steel_sword_name:         .db "Steel sword", 0

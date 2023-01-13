@@ -58,6 +58,7 @@ _init_zero_iter:
     stiw npc_presence+4, 0xffff
     stiw npc_presence+6, 0xffff
     stiw npc_presence+8, 0xffff
+    stiw npc_presence+10, 0xffff
     sti clock, 0
     sti mode_clock, 0
     sti current_shop_index, NO_SHOP

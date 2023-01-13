@@ -224,6 +224,9 @@ _conv_somethings_wrong:         DECL_LINE somethings_wrong, NPC_CITIZEN_1, citiz
 _conv_might_leave:              DECL_LINE might_leave, NPC_CITIZEN_2, citizen, END_CONVERSATION
 _conv_leaving:                  DECL_LINE leaving, NPC_CITIZEN_3, citizen, leaving2
 _conv_leaving2:                 DECL_LINE leaving2, NPC_CITIZEN_3, citizen, END_CONVERSATION
+_conv_field_foxes:              DECL_LINE field_foxes, NPC_FIELD_QUESTGIVER, citizen, field_foxes2
+_conv_field_foxes2:             DECL_LINE field_foxes2, NPC_FIELD_QUESTGIVER, citizen, END_CONVERSATION
+_conv_cant_leave:               DECL_LINE cant_leave, 0, PLAYER, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -380,3 +383,8 @@ _conv_somethings_wrong_str:     .db "Guards in the streets... windows", 10, "shu
 _conv_might_leave_str:          .db "It", 39, "s so quiet... another group", 10, "left last night. Maybe I", 39, "ll be in the next.", 0, 0
 _conv_leaving_str:              .db "I", 39, "m getting out of Haldir while I can. And if you have any sense,", 10, "so will you.", 0, 0
 _conv_leaving2_str:             .db "If you want, take a look", 10, "upstairs. Anything you want,", 10, "keep it.", 0, 0
+_conv_field_foxes_str:          .db "Adventurer! A strange breed of", 10, "foxes has overrun the fields!", 0, 0
+_conv_field_foxes2_str:         .db "Can", 39, "t pay you myself, but funny thing about these foxes, they", 10, "drop all kinds of stuff. Might", 10, "get lucky.", 0
+_conv_cant_leave_str:           .db "I can", 39, "t leave yet... I must find", 10, "the letter!", 0, 0
+; _conv_field_foxes_str:          .db "Say, adventurer, you look like you could use some gold!", 0
+; _conv_field_foxes2_str:         .db "Could use some myself, heh heh.", 0

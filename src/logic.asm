@@ -621,36 +621,11 @@ _srhhc_end:
     ret
 
 sector_deep_forest_update:
-    lds r25, clock
-    andi r25, 0x1f
-    brne _sdfu_end
-    call rand
-    mov r22, r0
-    clr r1
-    cpi r22, 10
-    brsh _sdfu_end
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-    clr r24
-    ldi r25, SECTOR_DYNAMIC_NPC_COUNT
-_sdfu_loop:
-    ldd r23, Y+NPC_IDX_OFFSET
-    tst r23
-    breq _sdfu_next
-    cpi r23, NPC_CORPSE
-    breq _sdfu_next
-    inc r24
-_sdfu_next:
-    adiw YL, NPC_MEMSIZE
-    dec r25
-    brne _sdfu_loop
-    cpi r24, 4
-    brsh _sdfu_end
-    andi r22, 0x03
+    ldi r22, 0x1f
+    ldi r23, 10
+    ldi r24, 0x03
     ldi r25, NPC_DEEP_FOREST_FOX
-    add r25, r22
-    call add_distant_npc
-_sdfu_end:
+    call spawn_distant_npcs
     ret
 
 sector_deep_forest_init:
@@ -670,34 +645,45 @@ _sdfi_end:
     ret
 
 sector_underground_update:
-    lds r25, clock
-    andi r25, 0x1f
-    brne _suu_end
-    call rand
-    mov r22, r0
-    clr r1
-    cpi r22, 20
-    brsh _suu_end
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-    clr r24
-    ldi r25, SECTOR_DYNAMIC_NPC_COUNT
-_suu_loop:
-    ldd r23, Y+NPC_IDX_OFFSET
-    tst r23
-    breq _suu_next
-    cpi r23, NPC_CORPSE
-    breq _suu_next
-    inc r24
-_suu_next:
-    adiw YL, NPC_MEMSIZE
-    dec r25
-    brne _suu_loop
-    cpi r24, 4
-    brsh _suu_end
-    andi r22, 0x01
+    ldi r22, 0x1f
+    ldi r23, 20
+    ldi r24, 0x01
     ldi r25, NPC_GHOUL_1
-    add r25, r22
+    call spawn_distant_npcs
+    ret
+
+sector_fields_update:
+    ldi r22, 0x1f
+    ldi r23, 20
+    ldi r24, 0x00
+    ldi r25, NPC_FIELD_FOX
+    call spawn_distant_npcs
+    ret
+
+sector_fields_init:
+    ldi r25, NPC_FIELD_FOX
     call add_distant_npc
-_suu_end:
+    ret
+
+sector_final_2_update:
+    lds r24, player_position_x
+    lds r25, player_position_y
+_sf2u_left_edge_check:
+    cpi r24, 226
+    brlo _sf2u_top_check
+    subi r24, 10
+    rjmp _sf2u_talk
+_sf2u_top_check:
+    cpi r25, 4
+    brsh _sf2u_end
+    subi r25, low(-10)
+_sf2u_talk:
+    sts player_velocity_x, r1
+    sts player_velocity_y, r1
+    sts player_position_x, r24
+    sts player_position_y, r25
+    ldi r24, low(2*_conv_cant_leave)
+    ldi r25, high(2*_conv_cant_leave)
+    call load_conversation
+_sf2u_end:
     ret

@@ -40,7 +40,7 @@
 .endm
 
 animated_item_table:
-item_animation_entry 4, 11, tree_branch_sprite_0
+    item_animation_entry 4, 11, tree_branch_sprite_0
     item_animation_entry 4, 8, tree_branch_sprite_1
     item_animation_entry 5, 7, tree_branch_sprite_2
     item_animation_entry 4, 8, tree_branch_sprite_1
@@ -795,6 +795,27 @@ item_animation_entry 4, 11, tree_branch_sprite_0
     item_animation_entry 10, 12, blessed_sword_sprite_5
     empty_animation_entry
     empty_animation_entry
+
+    item_animation_entry 8, 9, fox_white_eyes_sprite_0
+    item_animation_entry 8, 7, fox_white_eyes_sprite_0
+    item_animation_entry 8, 7, fox_white_eyes_sprite_0
+    item_animation_entry 8, 8, fox_white_eyes_sprite_0
+    item_animation_entry 12, 8, fox_white_eyes_sprite_1
+    item_animation_entry 13, 8, fox_white_eyes_sprite_1
+    item_animation_entry 13, 8, fox_white_eyes_sprite_1
+    item_animation_entry 13, 8, fox_white_eyes_sprite_1
+    item_animation_entry 10, 8, invisible_sprite_0
+    item_animation_entry 10, 7, invisible_sprite_0
+    item_animation_entry 10, 7, invisible_sprite_0
+    item_animation_entry 10, 8, invisible_sprite_0
+    item_animation_entry 7, 8, fox_white_eyes_sprite_1
+    item_animation_entry 6, 8, fox_white_eyes_sprite_1
+    item_animation_entry 6, 8, fox_white_eyes_sprite_1
+    item_animation_entry 6, 8, fox_white_eyes_sprite_1
+    item_animation_entry 8, 8, fox_white_eyes_sprite_0
+    item_animation_entry 13, 8, fox_white_eyes_sprite_1
+    item_animation_entry 9, 8, invisible_sprite_0
+    item_animation_entry 6, 8, fox_white_eyes_sprite_1
 
 animated_item_sprite_table:
 _tree_branch_sprite_0:
@@ -3215,6 +3236,13 @@ _blessed_sword_sprite_5:
         0x13, 0x0a, 0xec, 0xec, 0xec, 0xec, 0xec, 0xec, \
         0x0a, 0x0a, 0x9a, 0xa3, 0xa3, 0x9a, 0xa3, 0xa3, \
         0xc7, 0x0a, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7
+_fox_white_eyes_sprite_0:
+    .db 4, 1
+    .db 0xff, 0xc7, 0xc7, 0xff, \
+        0xff, 0xc7, 0xc7, 0xff
+_fox_white_eyes_sprite_1:
+    .db 1, 1
+    .db 0xff, PADDING
 
 static_item_sprite_table:
 _item_wooden_stick_sprite:
@@ -3469,6 +3497,13 @@ _item_blessed_sword_sprite:
     .db 0x13, 0x13, 0x9a, 0xa3, 0xc7, 0xc7	; XXXXxx~~
     .db 0xc7, 0x0a, 0x0a, 0xc7, 0xc7, 0xc7	;   WWWW
     .db 0x0a, 0xc7, 0x0a, 0xc7, 0xc7, 0xc7	; WW  WW
+_item_invisible3_sprite:
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
+    .db 0xc7, 0xc7, 0xc7, 0xc7, 0xc7, 0xc7	;
 _item_intro_book_sprite:
     .db 0x08, 0x10, 0x10, 0x10, 0x10, 0x10	; ############
     .db 0x08, 0x10, 0x00, 0x00, 0x00, 0x10	; ############
