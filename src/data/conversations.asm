@@ -227,6 +227,24 @@ _conv_leaving2:                 DECL_LINE leaving2, NPC_CITIZEN_3, citizen, END_
 _conv_field_foxes:              DECL_LINE field_foxes, NPC_FIELD_QUESTGIVER, citizen, field_foxes2
 _conv_field_foxes2:             DECL_LINE field_foxes2, NPC_FIELD_QUESTGIVER, citizen, END_CONVERSATION
 _conv_cant_leave:               DECL_LINE cant_leave, 0, PLAYER, END_CONVERSATION
+_conv_kill_thieves1:            DECL_LINE kill_thieves1, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves2
+_conv_kill_thieves2:            DECL_LINE kill_thieves2, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves3
+_conv_kill_thieves3:            DECL_LINE kill_thieves3, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves4
+_conv_kill_thieves4:            DECL_BRANCH 3
+                                DECL_CHOICE kill_thieves7, kill_thieves8
+                                DECL_CHOICE accept, kill_thieves10
+                                DECL_CHOICE refuse, kill_thieves5
+_conv_kill_thieves5:            DECL_LINE kill_thieves5, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
+_conv_kill_thieves6:            DECL_LINE kill_thieves6, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves4
+_conv_kill_thieves8:            DECL_LINE kill_thieves8, 0, PLAYER, kill_thieves9
+_conv_kill_thieves9:            DECL_LINE kill_thieves9, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves4
+_conv_kill_thieves10:           DECL_LINE kill_thieves10, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
+_conv_kill_thieves11:           DECL_LINE kill_thieves11, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
+_conv_kill_thieves12:           DECL_LINE kill_thieves12, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
+DECL_CONVERSATION bank_warning
+_conv_bank_warning:             DECL_LINE bank_warning, NPC_BANK_GUARD_1, bank_guard, bank_warning2
+_conv_bank_warning2:            DECL_LINE bank_warning2, NPC_BANK_GUARD_1, bank_guard, END_CONVERSATION
+
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -248,6 +266,7 @@ _conv_speaker_poet_str:         .db "Lonely poet", 0
 _conv_speaker_haldir_guard_str: .db "Haldir guard", 0, 0
 _conv_speaker_bard_str:         .db "Bard", 0, 0
 _conv_speaker_citizen_str:      .db "Citizen", 0
+_conv_speaker_bank_guard_str:   .db "Bank guard", 0, 0
 _conv_speaker_empty_str:        .db 0, 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
 _conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
@@ -386,5 +405,23 @@ _conv_leaving2_str:             .db "If you want, take a look", 10, "upstairs. A
 _conv_field_foxes_str:          .db "Adventurer! A strange breed of", 10, "foxes has overrun the fields!", 0, 0
 _conv_field_foxes2_str:         .db "Can", 39, "t pay you myself, but funny thing about these foxes, they", 10, "drop all kinds of stuff. Might", 10, "get lucky.", 0
 _conv_cant_leave_str:           .db "I can", 39, "t leave yet... I must find", 10, "the letter!", 0, 0
-; _conv_field_foxes_str:          .db "Say, adventurer, you look like you could use some gold!", 0
-; _conv_field_foxes2_str:         .db "Could use some myself, heh heh.", 0
+_conv_kill_thieves1_str:        .db "Bank", 39, "s closed, adventurer. Not", 10, "much left, anyway.", 0
+_conv_kill_thieves2_str:        .db "But listen. Rumor has it a gang ofthieves has a place in Haldir,", 10, "they", 39, "re looking to rob us.", 0
+_conv_kill_thieves3_str:        .db "Find them and clean them out,", 10, "and we", 39, "ll make it worth your", 10, "time. What do you say?", 0
+_conv_kill_thieves5_str:        .db "Offer", 39, "s still open. Come back if", 10, "you change your mind.", 0, 0
+_conv_kill_thieves6_str:        .db "What do you say, adventurer?", 0, 0
+_conv_kill_thieves7_str:        .db "Ask for more information", 0, 0
+_conv_kill_thieves8_str:        .db "Why do you need ME to do this?", 0, 0
+_conv_kill_thieves9_str:        .db "The baron hasn", 39, "t given orders.", 10, "We", 39, "ve been waiting for weeks, butwithout them, we can", 39, "t take", 10, "action. But you don", 39, "t need them.", 10, "So what do you say?", 0, 0
+_conv_kill_thieves10_str:       .db "Great. Good luck, adventurer.", 0
+_conv_kill_thieves11_str:       .db "Come back when you", 39, "ve finished", 10, "the job.", 0
+_conv_kill_thieves12_str:       .db "Thanks, adventurer. You", 39, "ve done Haldir a service.", 0
+_conv_rob_bank1_str:            .db "Say, adventurer, you look like you could use some gold! Could use some myself, heh heh.", 0
+_conv_rob_bank2_str:            .db "What do you want?", 0
+_conv_rob_bank3_str:            .db "You", 39, "re an adventurer, right? There", 39, "s something in the bank that we need. If you bring it to me, it", 39, "ll be worth your while.", 0
+_conv_rob_bank4_str:            .db "Changed your mind? You gonna help us out?", 0
+_conv_rob_bank5_str:            .db "There", 39, "s a small chest in one of the vaults. Not sure which. Don", 39, "t try to open it, you won", 39, "t be able to. Just bring it back here.", 0
+_conv_rob_bank6_str:            .db "Come back when you have it.", 0
+_conv_rob_bank7_str:            .db "Thanks for the help, adventurer.", 0
+_conv_bank_warning_str:         .db "Stay yourself, adventurer!", 10, "Bank", 39, "s closed.", 0
+_conv_bank_warning2_str:        .db "Just turn around and leave.", 0

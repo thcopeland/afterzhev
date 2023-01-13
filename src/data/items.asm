@@ -73,14 +73,14 @@ item_table:
     DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      20,     0,  0,  0,  0,      2
     DECL_ITEM purple_hood,          ITEM_WEARABLE,                      30,     0,  0,  0,  0,      0
     DECL_ITEM hammer,               (2<<3)|ITEM_WIELDABLE,              40,     0,  0,  0,  0,      (2<<4)
-    DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     2,  0, -10, 0,      10
+    DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     2,  0, -10, 0,      8
     DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                     350,     1,  0, -6,  0,      6
     DECL_ITEM iron_helmet,          ITEM_WEARABLE,                     200,     1,  0, -4,  0,      2
     DECL_ITEM iron_staff,           (2<<6)|RANGED_MAGICAL|ITEM_RANGED,                 50,     0, -2,  0,  0,      (3<<4)|EFFECT_FIREBALL
     DECL_ITEM wood_staff,           RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     120,     0,  1,  0,  0,      0
     DECL_ITEM ivory_wand,           RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     200,     0,  0,  0,  0,      0
-    DECL_ITEM mithril_armor,        ITEM_WEARABLE,                    2000,     0,  5,  0,  0,      15
-    DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                    1400,     0,  3,  0,  0,      10
+    DECL_ITEM mithril_armor,        ITEM_WEARABLE,                    2000,     0,  5,  0,  0,      12
+    DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                    1400,     0,  3,  0,  0,      8
     DECL_ITEM mithril_cap,          ITEM_WEARABLE,                     600,     0,  1,  0,  0,      3
     DECL_ITEM mithril_dagger,       ITEM_WIELDABLE,                    300,     0,  2,  0,  0,      (3<<4)
     DECL_ITEM mithril_spike,        ITEM_WIELDABLE,                    200,     0,  0,  0,  0,      (2<<4)
@@ -106,6 +106,10 @@ item_table:
     DECL_ITEM mint_leaves,          (3<<3)|ITEM_USABLE,                 20,     0,  0,  0, 10,      0
     DECL_ITEM bismuth_subsalicylate,(3<<3)|ITEM_USABLE,                 10,     0,  2,  0,  0,      0
     DECL_ITEM strength_potion,      (3<<3)|ITEM_USABLE,                 50,    20,  0,  0,  0,      0
+    DECL_ITEM speed_potion,         (3<<3)|ITEM_USABLE,                 60,     0,  0, 30,  0,      0
+    DECL_ITEM gold_chalice,         ITEM_USABLE,                       200,     0,  0,  0,  0,      1
+    DECL_ITEM gold_bar,             ITEM_USABLE,                       150,     0,  0,  0,  0,      1
+    DECL_ITEM small_chest,          ITEM_USABLE,                        10,     0,  0,  0,  0,      1
 
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
@@ -119,6 +123,15 @@ DECL_LOOSE_ITEM bandit_pass
 DECL_LOOSE_ITEM mine_glass_staff
 DECL_LOOSE_ITEM mine_glass_dagger_1
 DECL_LOOSE_ITEM mine_glass_dagger_2
+DECL_LOOSE_ITEM house_cloak
+DECL_LOOSE_ITEM house_potion
+DECL_LOOSE_ITEM bank_gold_bar_1
+DECL_LOOSE_ITEM bank_gold_bar_2
+DECL_LOOSE_ITEM bank_ullimar
+DECL_LOOSE_ITEM bank_gold_chalice_1
+DECL_LOOSE_ITEM bank_mithril_breastplate
+DECL_LOOSE_ITEM bank_chest
+DECL_LOOSE_ITEM bank_beer
 
 item_string_table:
 _item_str_wood_stick_name:          .db "Tree branch", 0
@@ -225,3 +238,11 @@ _item_str_glass_staff_name:         .db "Glass staff", 0
 _item_str_glass_staff_desc:         .db "An extraordinary weapon,powerful yet fragile.", 0
 _item_str_blessed_sword_name:       .db "Blessed sword", 0
 _item_str_blessed_sword_desc:       .db "Tingles with powerful", 10, "elvish magic.", 0
+_item_str_speed_potion_name:        .db "Essence of Dexterity", 0, 0
+_item_str_speed_potion_desc:        .db "Filled with a strangely", 10, "effervescent blue liquid.", 0
+_item_str_gold_chalice_name:        .db "Gold chalice", 0, 0
+_item_str_gold_chalice_desc:        .db "Beautifully crafted and", 10, "very heavy.", 0
+_item_str_gold_bar_name:            .db "Gold bar", 0, 0
+_item_str_gold_bar_desc:            .db "Of unknown purity.", 0, 0
+_item_str_small_chest_name:         .db "Locked chest", 0, 0
+_item_str_small_chest_desc:         .db "A small wooden chest of", 10, "little apparent value.", 10, "Impossible to open.", 0, 0

@@ -15,10 +15,10 @@
 ;
 ; Register Usage (approximate, just what I've checked)
 ;   update subroutine: all registers are available
+;   enter subroutine: r0, r18-r25, XL, XH, YL, YH, ZL, and ZH available
 ;   exit subroutine: r0, r24-r25, YL, YH, ZL, and ZH available
 ;   conversation subroutine: r0, r20-r25, ZL, and ZH available
 ;   choice subroutine: r0, r22-r25, ZL, and ZH available
-;   other event subroutines: r0, r24, r25, ZL, and ZH available
 
 .include "logic_shared.asm"
 
@@ -200,13 +200,10 @@ _st1ec_rescued:
     sbci r25, high(-QUEST_KIDNAPPED_XP)
     sts player_xp, r24
     sts player_xp+1, r25
-    ldi r25, ITEM_health_potion
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
-    ldi r25, 92
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
+    ldi r23, ITEM_health_potion
+    ldi r24, 92
     ldi r25, 140
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
+    call drop_item
     ldi r23, 6
     sts global_data + QUEST_KIDNAPPED, r23
     ldi r24, low(2*_conv_kidnapped7)
@@ -330,13 +327,10 @@ _stt2c_have_journal:
     lds r20, global_data+QUEST_JOURNAL
     ldi r25, 3
     sts global_data+QUEST_JOURNAL, r25
-    ldi r25, 128|5
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
-    ldi r25, 52
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
+    ldi r23, 128|5
+    ldi r24, 52
     ldi r25, 41
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
+    call drop_item
     andi r20, 0x03
     breq _stt2c_accepted
 _stt2c_refused:
@@ -686,4 +680,164 @@ _sf2u_talk:
     ldi r25, high(2*_conv_cant_leave)
     call load_conversation
 _sf2u_end:
+    ret
+
+sector_city_4_init:
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0xf0
+    cpi r25, QUEST_HALDIR_BANK_ATTACKED
+    brlo _sc4i_end
+    ldi r25, NPC_BANK_QUESTGIVER
+    call find_npc
+    tst r20
+    breq _sc4i_end
+    ldi r25, NPC_BANK_QUESTGIVER_ANGRY
+    std Y+NPC_IDX_OFFSET, r25
+_sc4i_end:
+    ret
+
+sector_city_4_conversation:
+    ldi r20, high(2*_conv_kill_thieves1)
+    cpi r24, low(2*_conv_kill_thieves1)
+    cpc r25, r20
+    breq _sc4c_check_quest_status
+_sc4c_end_fast:
+    ret
+_sc4c_check_quest_status:
+    lds r20, global_data+QUEST_HALDIR
+    andi r20, 0x0f
+    breq _sc4c_end_fast
+_sc4c_refused:
+    cpi r20, QUEST_HALDIR_THIEVES_REFUSED
+    brne _sc4c_accepted
+    ldi r24, low(2*_conv_kill_thieves6)
+    ldi r25, high(2*_conv_kill_thieves6)
+    rjmp _sc4c_end
+_sc4c_accepted:
+    cpi r20, QUEST_HALDIR_THIEVES_ACCEPTED
+    brne _sc4c_complete
+    ldi r24, low(2*_conv_kill_thieves11)
+    ldi r25, high(2*_conv_kill_thieves11)
+    rjmp _sc4c_end
+_sc4c_complete:
+    cpi r20, QUEST_HALDIR_THIEVES_COMPLETE
+    brne _sc4c_rewarded
+    ldi r23, ITEM_mithril_breastplate
+    ldi r24, 120
+    ldi r25, 100
+    call drop_item
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0xf0
+    ori r25, QUEST_HALDIR_THIEVES_REWARDED
+    sts global_data+QUEST_HALDIR, r25
+    ldi r24, low(2*_conv_kill_thieves12)
+    ldi r25, high(2*_conv_kill_thieves12)
+    rjmp _sc4c_end
+_sc4c_rewarded:
+    cpi r20, QUEST_HALDIR_THIEVES_REWARDED
+    brne _sc4c_other
+    ldi r24, low(2*_conv_kill_thieves12)
+    ldi r25, high(2*_conv_kill_thieves12)
+    rjmp _sc4c_end
+_sc4c_other:
+    ldi r24, low(2*_conv_END_CONVERSATION)
+    ldi r25, high(2*_conv_END_CONVERSATION)
+_sc4c_end:
+    ret
+
+sector_city_4_choice:
+    lds r24, global_data+QUEST_HALDIR
+    andi r24, 0xf0
+    lds r25, selected_choice
+_sc4ch_accept:
+    cpi r25, 1
+    brne _sc4ch_refuse
+    ori r24, QUEST_HALDIR_THIEVES_ACCEPTED
+    sts global_data+QUEST_HALDIR, r24
+_sc4ch_refuse:
+    cpi r25, 2
+    brne _sc4ch_end
+    ori r24, QUEST_HALDIR_THIEVES_REFUSED
+    sts global_data+QUEST_HALDIR, r24
+_sc4ch_end:
+    ret
+
+sector_city_bank_1_update:
+    sts npc_move_flags2, r1
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0xf0
+_scb1_check_attacked:
+    cpi r25, QUEST_HALDIR_BANK_ATTACKED
+    brsh _scb1_attack
+    ldi r25, 2
+    call release_if_damaged
+    rjmp _scb1_warning
+_scb1_attack:
+    ldi r25, 1
+    sts npc_move_flags2, r25
+    rjmp _scb1_end
+_scb1_warning:
+    lds r25, player_position_y
+    cpi r25, 60
+    brsh _scb1_end
+    try_start_conversation bank_warning
+_scb1_end:
+    ret
+
+sector_city_bank_2_init:
+    ldi r25, 1
+    sts npc_move_flags2, r25
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0xf0
+    cpi r25, QUEST_HALDIR_BANK_ATTACKED
+    brsh _scb2i_end
+    ldi r25, QUEST_HALDIR_BANK_ATTACKED
+    sts global_data+QUEST_HALDIR, r25
+_scb2i_end:
+    ret
+
+sector_city_bank_3_update:
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0xf0
+    cpi r25, QUEST_HALDIR_BANK_ATTACKED
+    brne _scb3u_end
+_scb3u_check_robbery:
+    ldi YL, low(sector_loose_items)
+    ldi YH, high(sector_loose_items)
+    ldi r24, SECTOR_DYNAMIC_ITEM_COUNT
+_scb3u_loop:
+    ldd r25, Y+SECTOR_ITEM_IDX_OFFSET
+    cpi r25, ITEM_small_chest
+    breq _scb3u_end
+_scb3u_next:
+    adiw YL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    dec r24
+    brne _scb3u_loop
+_scb3u_robbery:
+    ldi r25, QUEST_HALDIR_BANK_ROBBED
+    sts global_data+QUEST_HALDIR, r25
+    ldi r25, NPC_GHOUL_1
+    call add_npc_direct
+    ldi r24, 93
+    ldi r25, 24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    ldi r25, NPC_GHOUL_1
+    call add_npc_direct
+    ldi r24, 147
+    ldi r25, 43
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    ldi r25, NPC_GHOUL_1
+    call add_npc_direct
+    ldi r24, 120
+    ldi r25, 53
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+_scb3u_end:
+    ret
+
+sector_city_bank_4_update:
+    ldi r25, 2
+    call release_if_damaged
     ret

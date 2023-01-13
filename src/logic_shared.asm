@@ -119,6 +119,29 @@ _an_slot_found:
 _an_end:
     ret
 
+; Add an NPC to the sector, if there's an available slot.
+;
+; Register Usage
+;   r20-r21         calculations
+;   r25             NPC id (param)
+;   Y (r28:r29)     temp
+add_npc_direct:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r20, SECTOR_DYNAMIC_NPC_COUNT
+_and_npc_iter:
+    ld r21, Y
+    tst r21
+    breq _and_slot_found
+    adiw YL, NPC_MEMSIZE
+    dec r20
+    brne _and_npc_iter
+    rjmp _and_end
+_and_slot_found:
+    call load_npc
+_and_end:
+    ret
+
 ; Return a pointer to the given NPC. r20 will be cleared if not found.
 ;
 ; Register Usage
@@ -217,4 +240,34 @@ _sdn_next:
     add r25, r0
     call add_distant_npc
 _sdn_end:
+    ret
+
+; Add an item at the given coordinates. If there's no empty slot, replaces the
+; last item.
+;
+; Register Usage
+;   r22             calculations
+;   r23             item (param)
+;   r24, r25        coordinates (param)
+;   Z (r30:r31)     item pointer
+drop_item:
+    ldi ZL, low(sector_loose_items)
+    ldi ZH, high(sector_loose_items)
+    ldi r22, SECTOR_DYNAMIC_ITEM_COUNT
+_di_loop:
+    ldd r0, Z+SECTOR_ITEM_IDX_OFFSET
+    tst r0
+    breq _di_add_item
+_di_next:
+    adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    dec r22
+    brne _di_loop
+_di_no_slots:
+    sbiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+_di_add_item:
+    std Z+SECTOR_ITEM_IDX_OFFSET, r23
+    std Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET, r1
+    std Z+SECTOR_ITEM_X_OFFSET, r24
+    std Z+SECTOR_ITEM_Y_OFFSET, r25
+_di_end:
     ret

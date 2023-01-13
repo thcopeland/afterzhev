@@ -36,8 +36,10 @@ _init_zero_iter:
     sti player_inventory+5, ITEM_large_health_potion
     sti player_inventory+6, ITEM_mint_tonic
     sti player_inventory+7, ITEM_mint_leaves
-    sti player_inventory+8, ITEM_bismuth_subsalicylate
-    sti player_inventory+9, ITEM_strength_potion
+    sti player_inventory+8, ITEM_gold_chalice
+    sti player_inventory+9, ITEM_speed_potion
+    sti player_inventory+10, ITEM_gold_bar
+    sti player_inventory+11, ITEM_small_chest
     sti player_action, ACTION_WALK
     sti player_direction, DIRECTION_LEFT
     sti player_frame, 0
@@ -53,6 +55,7 @@ _init_zero_iter:
     sti game_mode, MODE_EXPLORE
     sti inventory_selection, 0
     stiw preplaced_item_presence, 0xffff
+    sti preplaced_item_presence+2, 0xff
     stiw npc_presence, 0xffff
     stiw npc_presence+2, 0xffff
     stiw npc_presence+4, 0xffff
@@ -63,17 +66,17 @@ _init_zero_iter:
     sti mode_clock, 0
     sti current_shop_index, NO_SHOP
     stiw conversation_over, 0xffff
-    sti conversation_over+2, 0xff
+    stiw conversation_over, 0xffff
     sti savepoint_used, 0x00
     stiw seed, 1
     sti gameover_state, 0xc0
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    sti player_position_x, 12
-    sti player_position_y, 98
+    sti player_position_x, 132
+    sti player_position_y, 100
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_CITY_1
+    .equ INITIAL_SECTOR = SECTOR_CITY_4
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector
