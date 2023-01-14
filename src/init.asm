@@ -66,7 +66,7 @@ _init_zero_iter:
     sti mode_clock, 0
     sti current_shop_index, NO_SHOP
     stiw conversation_over, 0xffff
-    stiw conversation_over, 0xffff
+    stiw conversation_over+2, 0xffff
     sti savepoint_used, 0x00
     stiw seed, 1
     sti gameover_state, 0xc0

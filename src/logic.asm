@@ -684,7 +684,7 @@ _sf2u_end:
 
 sector_city_4_init:
     lds r25, global_data+QUEST_HALDIR
-    andi r25, 0xf0
+    andi r25, 0x0f
     cpi r25, QUEST_HALDIR_BANK_ATTACKED
     brlo _sc4i_end
     ldi r25, NPC_BANK_QUESTGIVER
@@ -708,33 +708,39 @@ _sc4c_check_quest_status:
     andi r20, 0x0f
     breq _sc4c_end_fast
 _sc4c_refused:
-    cpi r20, QUEST_HALDIR_THIEVES_REFUSED
+    cpi r20, QUEST_HALDIR_BANK_REFUSED
     brne _sc4c_accepted
     ldi r24, low(2*_conv_kill_thieves6)
     ldi r25, high(2*_conv_kill_thieves6)
     rjmp _sc4c_end
 _sc4c_accepted:
-    cpi r20, QUEST_HALDIR_THIEVES_ACCEPTED
+    cpi r20, QUEST_HALDIR_BANK_ACCEPTED
     brne _sc4c_complete
     ldi r24, low(2*_conv_kill_thieves11)
     ldi r25, high(2*_conv_kill_thieves11)
     rjmp _sc4c_end
 _sc4c_complete:
-    cpi r20, QUEST_HALDIR_THIEVES_COMPLETE
+    cpi r20, QUEST_HALDIR_BANK_COMPLETED
     brne _sc4c_rewarded
     ldi r23, ITEM_mithril_breastplate
     ldi r24, 120
     ldi r25, 100
     call drop_item
+    lds r24, player_xp
+    lds r25, player_xp+1
+    subi r24, low(-QUEST_HALDIR_XP)
+    subi r25, high(-QUEST_HALDIR_XP)
+    sts player_xp, r24
+    sts player_xp+1, r25
     lds r25, global_data+QUEST_HALDIR
     andi r25, 0xf0
-    ori r25, QUEST_HALDIR_THIEVES_REWARDED
+    ori r25, QUEST_HALDIR_BANK_REWARDED
     sts global_data+QUEST_HALDIR, r25
     ldi r24, low(2*_conv_kill_thieves12)
     ldi r25, high(2*_conv_kill_thieves12)
     rjmp _sc4c_end
 _sc4c_rewarded:
-    cpi r20, QUEST_HALDIR_THIEVES_REWARDED
+    cpi r20, QUEST_HALDIR_BANK_REWARDED
     brne _sc4c_other
     ldi r24, low(2*_conv_kill_thieves12)
     ldi r25, high(2*_conv_kill_thieves12)
@@ -752,12 +758,12 @@ sector_city_4_choice:
 _sc4ch_accept:
     cpi r25, 1
     brne _sc4ch_refuse
-    ori r24, QUEST_HALDIR_THIEVES_ACCEPTED
+    ori r24, QUEST_HALDIR_BANK_ACCEPTED
     sts global_data+QUEST_HALDIR, r24
 _sc4ch_refuse:
     cpi r25, 2
     brne _sc4ch_end
-    ori r24, QUEST_HALDIR_THIEVES_REFUSED
+    ori r24, QUEST_HALDIR_BANK_REFUSED
     sts global_data+QUEST_HALDIR, r24
 _sc4ch_end:
     ret
@@ -765,10 +771,10 @@ _sc4ch_end:
 sector_city_bank_1_update:
     sts npc_move_flags2, r1
     lds r25, global_data+QUEST_HALDIR
-    andi r25, 0xf0
+    andi r25, 0x0f
 _scb1_check_attacked:
     cpi r25, QUEST_HALDIR_BANK_ATTACKED
-    brsh _scb1_attack
+    breq _scb1_attack
     ldi r25, 2
     call release_if_damaged
     rjmp _scb1_warning
@@ -780,7 +786,14 @@ _scb1_warning:
     lds r25, player_position_y
     cpi r25, 60
     brsh _scb1_end
-    try_start_conversation bank_warning
+    lds r25, sector_data
+    tst r25
+    brne _scb1_end
+    ldi r25, 1
+    sts sector_data, r25
+    ldi r24, low(2*_conv_bank_warning)
+    ldi r25, high(2*_conv_bank_warning)
+    call load_conversation
 _scb1_end:
     ret
 
@@ -789,16 +802,13 @@ sector_city_bank_2_init:
     sts npc_move_flags2, r25
     lds r25, global_data+QUEST_HALDIR
     andi r25, 0xf0
-    cpi r25, QUEST_HALDIR_BANK_ATTACKED
-    brsh _scb2i_end
-    ldi r25, QUEST_HALDIR_BANK_ATTACKED
+    ori r25, QUEST_HALDIR_BANK_ATTACKED
     sts global_data+QUEST_HALDIR, r25
-_scb2i_end:
     ret
 
 sector_city_bank_3_update:
     lds r25, global_data+QUEST_HALDIR
-    andi r25, 0xf0
+    andi r25, 0x0f
     cpi r25, QUEST_HALDIR_BANK_ATTACKED
     brne _scb3u_end
 _scb3u_check_robbery:
@@ -814,7 +824,9 @@ _scb3u_next:
     dec r24
     brne _scb3u_loop
 _scb3u_robbery:
-    ldi r25, QUEST_HALDIR_BANK_ROBBED
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0xf0
+    ori r25, QUEST_HALDIR_BANK_ROBBED
     sts global_data+QUEST_HALDIR, r25
     ldi r25, NPC_GHOUL_1
     call add_npc_direct

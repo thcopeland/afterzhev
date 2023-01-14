@@ -241,9 +241,7 @@ _conv_kill_thieves9:            DECL_LINE kill_thieves9, NPC_BANK_QUESTGIVER, ba
 _conv_kill_thieves10:           DECL_LINE kill_thieves10, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
 _conv_kill_thieves11:           DECL_LINE kill_thieves11, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
 _conv_kill_thieves12:           DECL_LINE kill_thieves12, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
-DECL_CONVERSATION bank_warning
-_conv_bank_warning:             DECL_LINE bank_warning, NPC_BANK_GUARD_1, bank_guard, bank_warning2
-_conv_bank_warning2:            DECL_LINE bank_warning2, NPC_BANK_GUARD_1, bank_guard, END_CONVERSATION
+_conv_bank_warning:             DECL_LINE bank_warning, NPC_BANK_GUARD_1, bank_guard, END_CONVERSATION
 
 
 conversation_string_table:
@@ -423,5 +421,4 @@ _conv_rob_bank4_str:            .db "Changed your mind? You gonna help us out?",
 _conv_rob_bank5_str:            .db "There", 39, "s a small chest in one of the vaults. Not sure which. Don", 39, "t try to open it, you won", 39, "t be able to. Just bring it back here.", 0
 _conv_rob_bank6_str:            .db "Come back when you have it.", 0
 _conv_rob_bank7_str:            .db "Thanks for the help, adventurer.", 0
-_conv_bank_warning_str:         .db "Stay yourself, adventurer!", 10, "Bank", 39, "s closed.", 0
-_conv_bank_warning2_str:        .db "Just turn around and leave.", 0
+_conv_bank_warning_str:         .db "Stay yourself, adventurer!", 10, "Bank", 39, "s closed. Just turn around and leave.", 0
