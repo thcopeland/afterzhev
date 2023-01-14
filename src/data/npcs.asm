@@ -349,3 +349,30 @@ npc_table:
 
     DECL_NPC        NPC_BANK_GUARD_4, NPC_ENEMY, CHARACTER_BANDIT, ITEM_steel_sword, ITEM_iron_breastplate, DIRECTION_DOWN, 50, 34, 26
     DECL_ENEMY_DATA NPC_ATTACK, 50, 8, 7, 4, ITEM_steel_sword, ITEM_iron_breastplate, NO_ITEM
+
+    DECL_NPC        NPC_THIEF_QUESTGIVER, NPC_TALKER, CHARACTER_BANDIT, ITEM_spear, ITEM_iron_breastplate, DIRECTION_DOWN, 30, 138, 90
+    DECL_TALK_DATA  NO_NPC, 0, rob_bank1, 0, rob_bank1, NPC_THIEF_QUESTGIVER_ANGRY
+
+    DECL_NPC        NPC_THIEF_QUESTGIVER_ANGRY, NPC_ENEMY, CHARACTER_BANDIT, ITEM_spear, ITEM_iron_breastplate, DIRECTION_DOWN, 30, 138, 90
+    DECL_ENEMY_DATA NPC_ATTACK, 30, 6, 6, 6, ITEM_spear, ITEM_iron_breastplate, NO_ITEM
+
+    DECL_NPC        NPC_THIEF_QUESTGIVER_TRICKY, NPC_ENEMY, CHARACTER_BANDIT, ITEM_spear, ITEM_iron_breastplate, DIRECTION_DOWN, 30, 138, 90
+    DECL_ENEMY_DATA NPC_ATTACK, 30, 6, 6, 6, ITEM_small_chest, ITEM_small_chest, ITEM_small_chest
+
+    DECL_NPC        NPC_THIEF_1, NPC_ENEMY, CHARACTER_BANDIT, ITEM_steel_sword, ITEM_purple_hood, DIRECTION_DOWN, 30, 122, 41
+    DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_ATTACK, 30, 6, 5, 3, ITEM_mint_tonic, ITEM_purple_hood, NO_ITEM
+
+    DECL_NPC        NPC_THIEF_2, NPC_ENEMY, CHARACTER_MAN, ITEM_steel_sword, ITEM_iron_breastplate, DIRECTION_DOWN, 30, 157, 53
+    DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_ATTACK, 30, 6, 5, 6, ITEM_whiskey, ITEM_iron_breastplate, NO_ITEM
+
+    DECL_NPC        NPC_THIEF_3, NPC_ENEMY, CHARACTER_BANDIT, ITEM_steel_sword, ITEM_iron_helmet, DIRECTION_DOWN, 30, 122, 41
+    DECL_ENEMY_DATA NPC_MOVE_HOLD|NPC_ATTACK, 30, 6, 5, 3, ITEM_steel_sword, ITEM_iron_helmet, NO_ITEM
+
+    DECL_NPC        NPC_THIEF_4, NPC_ENEMY, CHARACTER_BANDIT, ITEM_steel_sword, ITEM_iron_breastplate, DIRECTION_DOWN, 30, 104, 61
+    DECL_ENEMY_DATA NPC_ATTACK, 40, 6, 6, 6, ITEM_health_potion, ITEM_iron_breastplate, NO_ITEM
+
+    DECL_NPC        NPC_THIEF_5, NPC_ENEMY, CHARACTER_CULTIST, ITEM_steel_sword, ITEM_iron_breastplate, DIRECTION_UP, 30, 128, 106
+    DECL_ENEMY_DATA NPC_ATTACK, 40, 7, 6, 6, ITEM_iron_breastplate, ITEM_speed_potion, NO_ITEM
+
+    DECL_NPC        NPC_THIEF_BOSS, NPC_ENEMY, CHARACTER_CULTIST, ITEM_glass_staff, ITEM_iron_breastplate, DIRECTION_UP, 50, 106, 120
+    DECL_ENEMY_DATA NPC_ATTACK, 100, 5, 8, 4, 128|100, ITEM_iron_breastplate, ITEM_mint_tonic

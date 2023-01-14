@@ -686,7 +686,7 @@ sector_city_4_init:
     lds r25, global_data+QUEST_HALDIR
     andi r25, 0x0f
     cpi r25, QUEST_HALDIR_BANK_ATTACKED
-    brlo _sc4i_end
+    brne _sc4i_end
     ldi r25, NPC_BANK_QUESTGIVER
     call find_npc
     tst r20
@@ -715,15 +715,16 @@ _sc4c_refused:
     rjmp _sc4c_end
 _sc4c_accepted:
     cpi r20, QUEST_HALDIR_BANK_ACCEPTED
-    brne _sc4c_complete
+    brne _sc4c_rewarded
+    lds r25, npc_presence+((NPC_THIEF_BOSS-1)>>3)
+    andi r25, exp2((NPC_THIEF_BOSS-1)&0x07)
+    breq _sc4c_completed
     ldi r24, low(2*_conv_kill_thieves11)
     ldi r25, high(2*_conv_kill_thieves11)
     rjmp _sc4c_end
-_sc4c_complete:
-    cpi r20, QUEST_HALDIR_BANK_COMPLETED
-    brne _sc4c_rewarded
+_sc4c_completed:
     ldi r23, ITEM_mithril_breastplate
-    ldi r24, 120
+    ldi r24, 126
     ldi r25, 100
     call drop_item
     lds r24, player_xp
@@ -777,7 +778,14 @@ _scb1_check_attacked:
     breq _scb1_attack
     ldi r25, 2
     call release_if_damaged
-    rjmp _scb1_warning
+    lds r0, npc_move_flags2
+    tst r0
+    breq _scb1_warning
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0xf0
+    ori r25, QUEST_HALDIR_BANK_ATTACKED
+    sts global_data+QUEST_HALDIR, r25
+    rjmp _scb1_end
 _scb1_attack:
     ldi r25, 1
     sts npc_move_flags2, r25
@@ -852,4 +860,127 @@ _scb3u_end:
 sector_city_bank_4_update:
     ldi r25, 2
     call release_if_damaged
+    ret
+
+sector_city_robbers_den_update:
+    sts npc_move_flags2, r1
+_scrdcu_check_quest:
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0xf0
+    cpi r25, QUEST_HALDIR_THIEVES_ATTACKING
+    breq _scrdu_attack
+_scrdu_check_player_attacking:
+    ldi r25, 3
+    call release_if_damaged
+    lds r25, npc_move_flags2
+    tst r25
+    breq _scrdu_check_warn
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0x0f
+    ori r25, QUEST_HALDIR_THIEVES_ATTACKING
+    sts global_data+QUEST_HALDIR, r25
+_scrdu_attack:
+    ldi r25, 1
+    sts npc_move_flags2, r25
+    ldi r25, NPC_THIEF_QUESTGIVER
+    call find_npc
+    ldi r25, NPC_THIEF_QUESTGIVER_ANGRY
+    cpse r25, r1
+    std Y+NPC_IDX_OFFSET, r25
+    lds r25, npc_presence+((NPC_THIEF_QUESTGIVER_TRICKY-1)>>3)
+    andi r25, exp2((NPC_THIEF_QUESTGIVER_TRICKY-1)&0x07)
+    brne _scrdu_end
+    std Y+NPC_IDX_OFFSET, r1
+    rjmp _scrdu_end
+_scrdu_check_warn:
+    lds r25, player_position_y
+    cpi r25, 60
+    brsh _scrdu_end
+    lds r25, sector_data
+    tst r25
+    brne _scrdu_end
+    ldi r25, 1
+    sts sector_data, r25
+    ldi r24, low(2*_conv_thieves_warning)
+    ldi r25, high(2*_conv_thieves_warning)
+    call load_conversation
+_scrdu_end:
+    ret
+
+sector_city_robbers_den_conversation:
+    lds r20, global_data+QUEST_HALDIR
+    andi r20, 0xf0
+    breq _scrdc_end
+_scrdc_refused:
+    cpi r20, QUEST_HALDIR_THIEVES_REFUSED
+    brne _scrdc_accepted
+    ldi r24, low(2*_conv_rob_bank5)
+    ldi r25, high(2*_conv_rob_bank5)
+    rjmp _scrdc_end
+_scrdc_accepted:
+    cpi r20, QUEST_HALDIR_THIEVES_ACCEPTED
+    brne _scrdc_other
+    ldi ZL, low(player_inventory)
+    ldi ZH, high(player_inventory)
+    ldi r24, PLAYER_INVENTORY_SIZE
+_scrdc_loop:
+    ld r25, Z+
+    cpi r25, ITEM_small_chest
+    brne _scrdc_next
+_scrdc_completed:
+    st -Z, r1
+    lds r24, player_xp
+    lds r25, player_xp+1
+    subi r24, low(-QUEST_HALDIR_XP)
+    subi r25, high(-QUEST_HALDIR_XP)
+    sts player_xp, r24
+    sts player_xp+1, r25
+    ldi r25, NPC_THIEF_QUESTGIVER
+    call find_npc
+    ldi r25, NPC_THIEF_QUESTGIVER_TRICKY
+    cpse r20, r1
+    std Y+NPC_IDX_OFFSET, r25
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0x0f
+    ori r25, QUEST_HALDIR_THIEVES_ATTACKING
+    sts global_data+QUEST_HALDIR, r25
+    ldi r24, low(2*_conv_rob_bank9)
+    ldi r25, high(2*_conv_rob_bank9)
+    rjmp _scrdc_end
+_scrdc_next:
+    dec r24
+    brne _scrdc_loop
+    ldi r24, low(2*_conv_rob_bank8)
+    ldi r25, high(2*_conv_rob_bank8)
+    rjmp _scrdc_end
+_scrdc_other:
+    ldi r24, low(2*_conv_END_CONVERSATION)
+    ldi r25, high(2*_conv_END_CONVERSATION)
+_scrdc_end:
+    ret
+
+sector_city_robbers_den_choice:
+    lds r24, global_data+QUEST_HALDIR
+    andi r24, 0x0f
+    lds r25, selected_choice
+_scrdch_accept:
+    cpi r25, 0
+    brne _scrdch_refuse
+    ori r24, QUEST_HALDIR_THIEVES_ACCEPTED
+    sts global_data+QUEST_HALDIR, r24
+_scrdch_refuse:
+    cpi r25, 1
+    brne _scrdch_end
+    ori r24, QUEST_HALDIR_THIEVES_REFUSED
+    sts global_data+QUEST_HALDIR, r24
+_scrdch_end:
+    ret
+
+sector_city_robbers_den_2_init:
+    ldi r25, 1
+    sts npc_move_flags2, r25
+    lds r25, global_data+QUEST_HALDIR
+    andi r25, 0x0f
+    ori r25, QUEST_HALDIR_THIEVES_ATTACKING
+    sts global_data+QUEST_HALDIR, r25
     ret

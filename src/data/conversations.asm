@@ -242,7 +242,18 @@ _conv_kill_thieves10:           DECL_LINE kill_thieves10, NPC_BANK_QUESTGIVER, b
 _conv_kill_thieves11:           DECL_LINE kill_thieves11, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
 _conv_kill_thieves12:           DECL_LINE kill_thieves12, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
 _conv_bank_warning:             DECL_LINE bank_warning, NPC_BANK_GUARD_1, bank_guard, END_CONVERSATION
-
+_conv_rob_bank1:                DECL_LINE rob_bank1, NPC_THIEF_QUESTGIVER, dodgy_fellow, rob_bank2
+_conv_rob_bank2:                DECL_LINE rob_bank2, 0, PLAYER, rob_bank3
+_conv_rob_bank3:                DECL_LINE rob_bank3, NPC_THIEF_QUESTGIVER, dodgy_fellow, rob_bank4
+_conv_rob_bank4:                DECL_BRANCH 2
+                                DECL_CHOICE accept, rob_bank7
+                                DECL_CHOICE refuse, rob_bank6
+_conv_rob_bank5:                DECL_LINE rob_bank5, NPC_THIEF_QUESTGIVER, dodgy_fellow, rob_bank4
+_conv_rob_bank6:                DECL_LINE rob_bank6, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
+_conv_rob_bank7:                DECL_LINE rob_bank7, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
+_conv_rob_bank8:                DECL_LINE rob_bank8, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
+_conv_rob_bank9:                DECL_LINE rob_bank9, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
+_conv_thieves_warning:          DECL_LINE thieves_warning, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -265,6 +276,7 @@ _conv_speaker_haldir_guard_str: .db "Haldir guard", 0, 0
 _conv_speaker_bard_str:         .db "Bard", 0, 0
 _conv_speaker_citizen_str:      .db "Citizen", 0
 _conv_speaker_bank_guard_str:   .db "Bank guard", 0, 0
+_conv_speaker_dodgy_fellow_str: .db "Dodgy citizen", 0
 _conv_speaker_empty_str:        .db 0, 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
 _conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
@@ -409,16 +421,18 @@ _conv_kill_thieves3_str:        .db "Find them and clean them out,", 10, "and we
 _conv_kill_thieves5_str:        .db "Offer", 39, "s still open. Come back if", 10, "you change your mind.", 0, 0
 _conv_kill_thieves6_str:        .db "What do you say, adventurer?", 0, 0
 _conv_kill_thieves7_str:        .db "Ask for more information", 0, 0
-_conv_kill_thieves8_str:        .db "Why do you need ME to do this?", 0, 0
+_conv_kill_thieves8_str:        .db "Why do you need me to do this?", 0, 0
 _conv_kill_thieves9_str:        .db "The baron hasn", 39, "t given orders.", 10, "We", 39, "ve been waiting for weeks, butwithout them, we can", 39, "t take", 10, "action. But you don", 39, "t need them.", 10, "So what do you say?", 0, 0
 _conv_kill_thieves10_str:       .db "Great. Good luck, adventurer.", 0
 _conv_kill_thieves11_str:       .db "Come back when you", 39, "ve finished", 10, "the job.", 0
-_conv_kill_thieves12_str:       .db "Thanks, adventurer. You", 39, "ve done Haldir a service.", 0
-_conv_rob_bank1_str:            .db "Say, adventurer, you look like you could use some gold! Could use some myself, heh heh.", 0
+_conv_kill_thieves12_str:       .db "Thanks, adventurer. You", 39, "ve doneHaldir a service.", 0, 0
+_conv_rob_bank1_str:            .db "Say, adventurer, you look like", 10, "you could use some gold! Could", 10, "use some myself, heh heh.", 0
 _conv_rob_bank2_str:            .db "What do you want?", 0
-_conv_rob_bank3_str:            .db "You", 39, "re an adventurer, right? There", 39, "s something in the bank that we need. If you bring it to me, it", 39, "ll be worth your while.", 0
-_conv_rob_bank4_str:            .db "Changed your mind? You gonna help us out?", 0
-_conv_rob_bank5_str:            .db "There", 39, "s a small chest in one of the vaults. Not sure which. Don", 39, "t try to open it, you won", 39, "t be able to. Just bring it back here.", 0
-_conv_rob_bank6_str:            .db "Come back when you have it.", 0
-_conv_rob_bank7_str:            .db "Thanks for the help, adventurer.", 0
+_conv_rob_bank3_str:            .db "You", 39, "re an adventurer, right?", 10, "There", 39, "s something in the bank", 10, "that we need. If you bring it", 10, "here, it", 39, "ll be worth your while.", 0
+_conv_rob_bank5_str:            .db "Changed your mind? You gonna", 10, "help us out?", 0
+_conv_rob_bank6_str:            .db "Then beat it. And don", 39, "t breathe aword of this to anyone.", 0, 0
+_conv_rob_bank7_str:            .db "It", 39, "s a small chest in one of the", 10, "vaults, not sure which. Don", 39, "t tryto open it, you won", 39, "t be able to. Just bring it back here.", 0, 0
+_conv_rob_bank8_str:            .db "Come back when you have it.", 0
+_conv_rob_bank9_str:            .db "Many thanks for your help,", 10, "adventurer. Here", 39, "s the promised", 10, "reward, heh heh...", 0
 _conv_bank_warning_str:         .db "Stay yourself, adventurer!", 10, "Bank", 39, "s closed. Just turn around and leave.", 0
+_conv_thieves_warning_str:      .db "Hey you! Quit snooping or else!", 0
