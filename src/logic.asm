@@ -759,6 +759,10 @@ sector_city_4_choice:
 _sc4ch_accept:
     cpi r25, 1
     brne _sc4ch_refuse
+    cpi r24, QUEST_HALDIR_THIEVES_NOT_BEGUN
+    brne _sc4ch_acc_quest
+    ori r24, QUEST_HALDIR_THIEVES_ATTACKING
+_sc4ch_acc_quest:
     ori r24, QUEST_HALDIR_BANK_ACCEPTED
     sts global_data+QUEST_HALDIR, r24
 _sc4ch_refuse:
