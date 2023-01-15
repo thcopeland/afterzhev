@@ -206,7 +206,8 @@ _conv_haldir2:                  DECL_BRANCH 4
                                 DECL_CHOICE haldir2_c3, haldir7
                                 DECL_CHOICE haldir2_c4, END_CONVERSATION
 _conv_haldir3:                  DECL_LINE haldir3, 0, PLAYER, haldir4
-_conv_haldir4:                  DECL_LINE haldir4, NPC_HALDIR_GUARD, haldir_guard, haldir2
+_conv_haldir4:                  DECL_LINE haldir4, NPC_HALDIR_GUARD, haldir_guard, haldir4_2
+_conv_haldir4_2:                DECL_LINE haldir4_2, NPC_HALDIR_GUARD, haldir_guard, haldir2
 _conv_haldir5:                  DECL_LINE haldir5, 0, PLAYER, haldir6
 _conv_haldir6:                  DECL_LINE haldir6, NPC_HALDIR_GUARD, haldir_guard, haldir2
 _conv_haldir7:                  DECL_LINE haldir7, 0, PLAYER, haldir8
@@ -400,6 +401,7 @@ _conv_haldir2_c3_str:           .db "Romance", 0
 _conv_haldir2_c4_str:           .db "Leave", 0
 _conv_haldir3_str:              .db "How fares Haldir?", 0
 _conv_haldir4_str:              .db "We stand strong, but strange", 10, "things have been sighted nearby,especially at night.", 0
+_conv_haldir4_2_str:            .db "The citizens are fearful, and", 10, "many have left the city. Take", 10, "care, adventurer.", 0
 _conv_haldir5_str:              .db "I have business with Baron Zhev. Where does he live?", 0, 0
 _conv_haldir6_str:              .db "The Baron has a tower east of", 10, "Haldir. Though I warn you,", 10, "adventurer, you might find your welcome somewhat less than", 10, "expected.", 0
 _conv_haldir7_str:              .db "Say, have you been working out?", 0
