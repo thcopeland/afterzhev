@@ -176,20 +176,20 @@ _st1ec_not_begun:
 _st1ec_refused:
     cpi r23, 1
     brne _st1ec_accepted
-    ldi r24, low(2*_conv_kidnapped5)
-    ldi r25, high(2*_conv_kidnapped5)
+    ldi r24, low(2*_conv_kidnapped9)
+    ldi r25, high(2*_conv_kidnapped9)
     rjmp _ste1c_end
 _st1ec_accepted:
     cpi r23, 2
     brne _st1ec_fighting
-    ldi r24, low(2*_conv_kidnapped6)
-    ldi r25, high(2*_conv_kidnapped6)
+    ldi r24, low(2*_conv_kidnapped10)
+    ldi r25, high(2*_conv_kidnapped10)
     rjmp _ste1c_end
 _st1ec_fighting:
     cpi r23, 5
     brsh _st1ec_rescued
-    ldi r24, low(2*_conv_kidnapped9)
-    ldi r25, high(2*_conv_kidnapped9)
+    ldi r24, low(2*_conv_kidnapped13)
+    ldi r25, high(2*_conv_kidnapped13)
     rjmp _ste1c_end
 _st1ec_rescued:
     cpi r23, 5
@@ -206,12 +206,12 @@ _st1ec_rescued:
     call drop_item
     ldi r23, 6
     sts global_data + QUEST_KIDNAPPED, r23
-    ldi r24, low(2*_conv_kidnapped7)
-    ldi r25, high(2*_conv_kidnapped7)
+    ldi r24, low(2*_conv_kidnapped11)
+    ldi r25, high(2*_conv_kidnapped11)
     rjmp _ste1c_end
 _st1ec_completed:
-    ldi r24, low(2*_conv_kidnapped8)
-    ldi r25, high(2*_conv_kidnapped8)
+    ldi r24, low(2*_conv_kidnapped12)
+    ldi r25, high(2*_conv_kidnapped12)
 _ste1c_end:
     ret
 
@@ -590,8 +590,8 @@ _ssp2c_inventory_loop:
     dec r25
     brne _ssp2c_inventory_loop
 _ssp2c_no_pass:
-    ldi r20, low(2*_conv_highway_guard9)
-    ldi r21, high(2*_conv_highway_guard9)
+    ldi r20, low(2*_conv_highway_guard17)
+    ldi r21, high(2*_conv_highway_guard17)
     rjmp _ssp2c_end
 _ssp2c_have_pass:
     ldi r25, 3
