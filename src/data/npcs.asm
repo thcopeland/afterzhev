@@ -376,3 +376,6 @@ npc_table:
 
     DECL_NPC        NPC_THIEF_BOSS, NPC_ENEMY, CHARACTER_CULTIST, ITEM_glass_staff, ITEM_iron_breastplate, DIRECTION_UP, 50, 106, 120
     DECL_ENEMY_DATA NPC_ATTACK, 100, 5, 8, 4, 128|100, ITEM_iron_breastplate, ITEM_mint_tonic
+
+    DECL_NPC        NPC_BRIDGE_BROKEN, NPC_TALKER, CHARACTER_HALFLING, NO_ITEM, ITEM_purple_hood, DIRECTION_RIGHT, 30, 206, 138
+    DECL_TALK_DATA  NO_NPC, 0, bridge_broken, 0, bridge_broken, NPC_HALDIR_GUARD_ANGRY

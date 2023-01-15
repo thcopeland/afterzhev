@@ -75,7 +75,7 @@ _init_zero_iter:
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     sti player_position_x, 132
-    sti player_position_y, 100
+    sti player_position_y, 112
     call reset_camera
     .equ INITIAL_SECTOR = SECTOR_CITY_2
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
