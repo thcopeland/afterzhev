@@ -165,6 +165,10 @@ class WorldCompiler
     end
 
     File.open("world2asm-world.asm", "w") do |f|
+      world_grid.flatten.compact.each do |sector|
+        puts ".equ #{sector_name(sector[:name])} = #{sector[:label]}"
+      end
+
       rows.times do |row|
         cols.times do |col|
           sector = world_grid[row][col]
@@ -216,7 +220,7 @@ private
            << (y < sector_height/tileset.tile_height-1 ? ", \\\n" : "\n")
     end
 
-    file << ".db #{down[:label]}, #{right[:label]}, #{up[:label]}, #{left[:label]}\n"       \
+    file << ".db #{sector_name(down[:name])}, #{sector_name(right[:name])}, #{sector_name(up[:name])}, #{sector_name(left[:name])}\n"       \
          << ".db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC\n"          \
          << ".db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0\n"  \
          << ".db 0, 0, 0, 0\n"                                                              \
@@ -226,6 +230,10 @@ private
          << ".dw 0\n"                                                                       \
          << ".dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER\n"              \
          << "\n"
+  end
+
+  def sector_name(fname)
+    "SECTOR_" + File.basename(fname).gsub(/(\.tmx|section_?)/, "").upcase
   end
 end
 

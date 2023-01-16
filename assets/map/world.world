@@ -533,20 +533,6 @@
             "y": 180
         },
         {
-            "fileName": "final_castle_2.tmx",
-            "height": 180,
-            "width": 240,
-            "x": 3840,
-            "y": 180
-        },
-        {
-            "fileName": "final_battle.tmx",
-            "height": 180,
-            "width": 240,
-            "x": 4080,
-            "y": 180
-        },
-        {
             "fileName": "city_tunnel_2.tmx",
             "height": 180,
             "width": 240,
