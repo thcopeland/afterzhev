@@ -131,7 +131,9 @@ _prmd_apply_damage:
     lds r24, player_health
     sub r24, r26
     sts player_health, r24
+    breq _prmd_die
     brsh _prmd_push
+_prmd_die:
     sts player_health, r1
     ldi r25, GAME_OVER_DEAD
     call load_gameover
@@ -254,7 +256,9 @@ _pred_damage:
     lds r24, player_health
     sub r24, r25
     sts player_health, r24
+    breq _pred_die
     brsh _pred_effect_next
+_pred_die:
     sts player_health, r1
     ldi r25, GAME_OVER_DEAD
     call load_gameover

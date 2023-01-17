@@ -45,7 +45,7 @@
 .equ SECTOR_DYNAMIC_ITEM_MEMSIZE = SECTOR_PREPLACED_ITEM_MEMSIZE
 .equ SECTOR_DYNAMIC_ITEM_COUNT = 8
 
-.equ TOTAL_NPC_COUNT = 128 ; should be divisible by 8
+.equ TOTAL_NPC_COUNT = 112 ; should be divisible by 8
 .equ SECTOR_DYNAMIC_NPC_COUNT = SECTOR_NPC_COUNT
 .equ NPC_IDX_OFFSET = 0
 .equ NPC_ANIM_OFFSET = 1 ; action:3, frame:3, direction:2
