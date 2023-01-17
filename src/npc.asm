@@ -1,11 +1,9 @@
 ; must match order of active effects defined in gamedefs.asm
 estimated_effect_ranges:
-    .db 0,                              \
-        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
+    .db 0, 0, 0,                        \
         EFFECT_ARROW_RANGE_ESTIMATE,    \
         EFFECT_FIREBALL_RANGE_ESTIMATE, \
         EFFECT_MISSILE_RANGE_ESTIMATE,  \
-        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
         EFFECT_DEFAULT_RANGE_ESTIMATE,  \
         EFFECT_DEFAULT_RANGE_ESTIMATE
 
@@ -400,7 +398,7 @@ _nm_goto_horizontal_movement:
     mov r0, r26
     asr r0
     add r26, r0
-    cpi r22, STRIKING_DISTANCE
+    cpi r22, 2*STRIKING_DISTANCE/3
     brsh _nm_goto_horizontal_direction
     asr r24
     rjmp _nm_goto_vertical_movement

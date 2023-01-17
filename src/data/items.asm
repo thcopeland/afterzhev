@@ -77,8 +77,8 @@ item_table:
     DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                     350,     1,  0, -6,  0,      6
     DECL_ITEM iron_helmet,          ITEM_WEARABLE,                     200,     1,  0, -4,  0,      2
     DECL_ITEM iron_staff,           (2<<6)|RANGED_MAGICAL|ITEM_RANGED,                 50,     0, -2,  0,  0,      (3<<4)|EFFECT_FIREBALL
-    DECL_ITEM wood_staff,           RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     120,     0,  1,  0,  0,      0
-    DECL_ITEM ivory_wand,           RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     200,     0,  0,  0,  0,      0
+    DECL_ITEM wood_staff,           (2<<6)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     120,     0,  1,  0,  0,      (4<<4)|EFFECT_FIREBALL
+    DECL_ITEM ivory_wand,           (2<<6)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     300,     0,  0,  0,  0,      (5<<4)|EFFECT_FIREBALL
     DECL_ITEM mithril_armor,        ITEM_WEARABLE,                    2000,     0,  5,  0,  0,      12
     DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                    1400,     0,  3,  0,  0,      8
     DECL_ITEM mithril_cap,          ITEM_WEARABLE,                     600,     0,  1,  0,  0,      3
@@ -91,6 +91,7 @@ item_table:
     DECL_ITEM glass_staff,          (2<<6)|(2<<3)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,      300,     0,  2,  0,  0,      (8<<4)|EFFECT_MISSILE
     DECL_ITEM blessed_sword,        (2<<6)|(1<<3)|ITEM_WIELDABLE,      340,     0,  5,  0,  0,      (6<<4)
     DECL_ITEM white_fox_eyes,       ITEM_WEARABLE,                       0,     0,  0,  0,  0,      0
+    DECL_ITEM iron_breastplate_cloak, ITEM_WEARABLE,                   600,     2,  0, -10, 0,      8
     DECL_ITEM inventory_book,       ITEM_USABLE,                         0,     0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                  1,     0, -5,  0,  0,      0
@@ -150,6 +151,8 @@ _item_str_invisible_staff_name:
 _item_str_invisible_staff_desc:
 _item_str_white_fox_eyes_name:
 _item_str_white_fox_eyes_desc:
+_item_str_iron_breastplate_cloak_name:
+_item_str_iron_breastplate_cloak_desc:
 _item_str_beard_name:
 _item_str_beard_desc:				.dw 0
 _item_str_steel_sword_name:         .db "Steel sword", 0

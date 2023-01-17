@@ -988,3 +988,8 @@ sector_city_robbers_den_2_init:
     ori r25, QUEST_HALDIR_THIEVES_ATTACKING
     sts global_data+QUEST_HALDIR, r25
     ret
+
+sector_final_castle_init:
+    ldi r25, 60
+    sts camera_position_x, r25
+    ret
