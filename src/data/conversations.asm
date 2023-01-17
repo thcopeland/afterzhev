@@ -397,7 +397,7 @@ _conv_find_pass3_str:           .db "How is Zhev involved in this?", 10, "Perhap
 _conv_highway_guard_str:        .db "No further, adventurer! None", 10, "may pass without a pass.", 0
 _conv_highway_guard2_str:       .db "You again? What do you want? Theroad is closed!", 0
 _conv_highway_guard4_str:       .db "Ask for details", 0
-_conv_highway_guard5_str:       .db "Ignore the threat", 0
+_conv_highway_guard5_str:       .db "Push forward", 0, 0
 _conv_highway_guard6_str:       .db "Show your pass", 0, 0
 _conv_highway_guard7_str:       .db "Apologize", 0
 _conv_highway_guard8_str:       .db "Under whose orders?", 0
