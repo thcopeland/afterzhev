@@ -233,6 +233,8 @@ _iui_found_empty_slot:
     ldi r20, 0xff
     std Z+PLAYER_EFFECT_TIME_OFFSET, r20
     st X, r1
+    ldi r20, EFFECT_POTION << 3
+    sts player_effect, r20
 _iui_check_healing_effect:
     cpi r18, ITEM_health_potion
     breq _iui_healing_effect

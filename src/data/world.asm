@@ -1112,7 +1112,7 @@ sector_table:
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_ALL
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_final_battle_update, sector_final_battle_init, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector 42 "mine_section_1"
 .db 039, 039, 039, 039, 039, 039, 041, 173, 172, 190, 038, 039, 039, 039, 039, 039, 039, 039, 039, 039, \

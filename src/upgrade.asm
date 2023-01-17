@@ -51,6 +51,8 @@ _luin_level_up:
     sts player_augmented_stats+STATS_INTELLECT_OFFSET, r1
     ldi r25, MODE_UPGRADE
     sts game_mode, r25
+    ldi r25, EFFECT_UPGRADE<<3
+    sts player_effect, r25
 _luin_end:
     ret
 

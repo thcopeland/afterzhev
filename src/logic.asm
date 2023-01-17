@@ -1004,3 +1004,9 @@ sector_final_castle_init:
     ldi r25, 60
     sts camera_position_x, r25
     ret
+
+sector_final_battle_init:
+    ret
+
+sector_final_battle_update:
+    ret

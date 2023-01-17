@@ -1,11 +1,9 @@
 ; must match order of active effects defined in gamedefs.asm
 estimated_effect_ranges:
-    .db 0, 0, 0,                        \
+    .db 0, 0, 0, 0, 0,                  \
         EFFECT_ARROW_RANGE_ESTIMATE,    \
         EFFECT_FIREBALL_RANGE_ESTIMATE, \
-        EFFECT_MISSILE_RANGE_ESTIMATE,  \
-        EFFECT_DEFAULT_RANGE_ESTIMATE,  \
-        EFFECT_DEFAULT_RANGE_ESTIMATE
+        EFFECT_MISSILE_RANGE_ESTIMATE   \
 
 ; Move the given enemy around and attack as necessary. The exact behavior is
 ; specified by npc_move_flags, see gamedefs.asm.

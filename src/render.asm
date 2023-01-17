@@ -1043,7 +1043,9 @@ render_effect_animation:
     lsr r23
     lsr r23
     andi r23, 0x7
-    breq _rce_end
+    brne _rce_effect_props
+    rjmp _rce_end
+_rce_effect_props:
     mov r21, r22
     andi r21, 0xc0
     andi r22, 0x7
@@ -1058,10 +1060,26 @@ _rce_effect_damage:
     rjmp _rce_render_effect_sprite
 _rce_effect_healing:
     cpi r23, EFFECT_HEALING
-    brne _rce_effect_arrow
+    brne _rce_effect_potion
     ldi ZL, low(2*effect_healing_sprites)
     ldi ZH, high(2*effect_healing_sprites)
     subi r22, EFFECT_HEALING_DELAY
+    brsh _rce_render_effect_sprite
+    rjmp _rce_end
+_rce_effect_potion:
+    cpi r23, EFFECT_POTION
+    brne _rce_effect_upgrade
+    ldi ZL, low(2*effect_potion_sprites)
+    ldi ZH, high(2*effect_potion_sprites)
+    subi r22, EFFECT_POTION_DELAY
+    brsh _rce_render_effect_sprite
+    rjmp _rce_end
+_rce_effect_upgrade:
+    cpi r23, EFFECT_UPGRADE
+    brne _rce_effect_arrow
+    ldi ZL, low(2*effect_upgrade_sprites)
+    ldi ZH, high(2*effect_upgrade_sprites)
+    subi r22, EFFECT_UPGRADE_DELAY
     brsh _rce_render_effect_sprite
     rjmp _rce_end
 _rce_effect_arrow:
