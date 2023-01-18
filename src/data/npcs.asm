@@ -2,10 +2,9 @@
 ; move around, fight the player, and drop a somewhat random item on death. Talkers
 ; are associated with up to two conversations and do not move. Shopkeepers have
 ; items that they can sell and also do not move. Special NPCs can do literally
-; anything and are handled separately. These are used for important or unique
-; chararacters.
-;
-; All NPCs are (for better or worse) stored within a single table.
+; anything and are handled separately. I was originally going to use them for
+; important or unique characters, but it was much easier and useful to expand
+; the other NPCs with interesting behavior.
 ;
 ; Enemy (16 bytes)
 ;   type - always NPC_ENEMY (1 byte)
@@ -401,5 +400,5 @@ npc_table:
     DECL_NPC        NPC_FINAL_BANDIT_4, NPC_ENEMY, CHARACTER_BANDIT, ITEM_great_bow, ITEM_iron_helmet, DIRECTION_LEFT, 30, 164, 130
     DECL_ENEMY_DATA NPC_ATTACK, 40, 6, 8, 4, NO_ITEM, ITEM_great_bow, ITEM_iron_helmet
 
-    DECL_NPC        NPC_ZHEV, NPC_ENEMY, CHARACTER_CULTIST, ITEM_ivory_wand, ITEM_iron_breastplate_cloak, DIRECTION_DOWN, 150, 120, 90
-    DECL_ENEMY_DATA NPC_ATTACK, 200, 7, 5, 10, NO_ITEM, NO_ITEM, NO_ITEM ; letter?
+    DECL_NPC        NPC_ZHEV, NPC_ENEMY, CHARACTER_CULTIST, ITEM_ivory_wand, ITEM_iron_breastplate_cloak, DIRECTION_DOWN, 60, 120, 90
+    DECL_ENEMY_DATA NPC_ATTACK|NPC_MOVE_CIRCLE, 200, 7, 10, 10, NO_ITEM, NO_ITEM, NO_ITEM ; letter?

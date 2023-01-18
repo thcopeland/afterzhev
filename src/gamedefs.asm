@@ -82,7 +82,7 @@
 .equ NPC_MOVE_FALLOFF  = 0x10   ; only move towards or face position if within some distance
 .equ NPC_MOVE_ATTACK   = 0x20   ; whether to attack
 .equ NPC_MOVE_RETURN   = 0x40   ; return to starting point if beyond some distance
-.equ NPC_MOVE_POLTROON = 0x80   ; move away from the player if health is low
+.equ NPC_MOVE_CIRCLE   = 0x80   ; try to circle-strafe the player
 
 .equ NPC_STOLID  = 0
 .equ NPC_PATROL  = NPC_MOVE_PATROL|NPC_MOVE_LOOKAT|NPC_MOVE_GOTO|NPC_MOVE_ATTACK
@@ -93,7 +93,7 @@
 
 .equ NPC_INTEREST_DISTANCE = 60 ; NPC_MOVE_FALLOFF distance
 .equ NPC_PATROL_DISTANCE = 60
-.equ NPC_FLEE_HEALTH = 10       ; NPC_MOVE_POLTROON health
+.equ NPC_CIRCLE_DISTANCE = 24
 
 .equ RUN_FRAME_DURATION_MASK = 0x3
 .equ WALK_FRAME_DURATION_MASK = 0x7

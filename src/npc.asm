@@ -1,9 +1,6 @@
 ; must match order of active effects defined in gamedefs.asm
 estimated_effect_ranges:
-    .db 0, 0, 0, 0, 0,                  \
-        EFFECT_ARROW_RANGE_ESTIMATE,    \
-        EFFECT_FIREBALL_RANGE_ESTIMATE, \
-        EFFECT_MISSILE_RANGE_ESTIMATE   \
+    .db 0, 0, 0, 0, 0, EFFECT_ARROW_RANGE_ESTIMATE, EFFECT_FIREBALL_RANGE_ESTIMATE, EFFECT_MISSILE_RANGE_ESTIMATE
 
 ; Move the given enemy around and attack as necessary. The exact behavior is
 ; specified by npc_move_flags, see gamedefs.asm.
@@ -96,7 +93,7 @@ _nm_patrol_y_clamped:
 _nm_test_lookat:
     lds r20, npc_move_flags
     sbrs r20, log2(NPC_MOVE_LOOKAT)
-    rjmp _nm_test_poltroon1
+    rjmp _nm_test_attack
 _nm_lookat:
     lds r20, subroutine_tmp
     lds r21, subroutine_tmp+1
@@ -113,9 +110,9 @@ _nm_lookat:
     sbrs r18, log2(NPC_MOVE_FALLOFF)
     rjmp _nm_lookat_orientation
     cpi r24, 2*NPC_INTEREST_DISTANCE
-    brsh _nm_test_poltroon1
+    brsh _nm_test_attack
     cpi r25, 2*NPC_INTEREST_DISTANCE
-    brsh _nm_test_poltroon1
+    brsh _nm_test_attack
 _nm_lookat_orientation:
     cp r24, r25
     brlo _nm_lookat_orient_vertical
@@ -135,14 +132,6 @@ _nm_lookat_save_direction:
     andi r25, 0xfc
     or r25, r24
     std Y+NPC_ANIM_OFFSET, r25
-_nm_test_poltroon1:
-    lds r20, npc_move_flags
-    sbrs r20, log2(NPC_MOVE_POLTROON)
-    rjmp _nm_test_attack
-    ldd r20, Y+NPC_HEALTH_OFFSET
-    cpi r20, NPC_FLEE_HEALTH
-    brsh _nm_test_attack
-    rjmp _nm_move_calculations
 _nm_test_attack:
     lds r20, npc_move_flags
     sbrs r20, log2(NPC_MOVE_ATTACK)
@@ -203,9 +192,9 @@ _nm_test_ranged_up:
     sbrc r22, 7
     neg r22
     cpi r22, 4*EFFECT_DAMAGE_DISTANCE/3-1
-    brsh _nm_test_move
+    brsh _nm_test_move_trampoline
     cp r23, r20
-    brsh _nm_test_move
+    brsh _nm_test_move_trampoline
     rjmp _nm_ranged_attack
 _nm_test_ranged_down:
     cpi r21, DIRECTION_DOWN
@@ -242,6 +231,9 @@ _nm_ranged_attack:
     ori r24, ACTION_ATTACK<<5
     std Y+NPC_ANIM_OFFSET, r24
 _nm_ranged_attack_end:
+    lds r25, npc_move_flags
+    andi r25, NPC_MOVE_CIRCLE
+    brne _nm_test_move
     ret
 _nm_test_melee_attack:
     ldd r24, Y+NPC_ANIM_OFFSET
@@ -287,34 +279,6 @@ _nm_move_calculations:
     adiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET
     elpm r26, Z
     sbiw ZL, NPC_TABLE_ENEMY_ACC_OFFSET
-_nm_test_poltroon2:
-    lds r25, npc_move_flags
-    sbrs r25, log2(NPC_MOVE_POLTROON)
-    rjmp _nm_test_return
-    ldd r24, Y+NPC_HEALTH_OFFSET
-    cpi r24, NPC_FLEE_HEALTH
-    brsh _nm_test_return
-    neg r26
-_nm_poltroon_orientation:
-    cp r22, r23
-    brlo _nm_poltroon_orient_vertical
-_nm_poltroon_orient_horizontal:
-    ldi r24, DIRECTION_RIGHT
-    cp r20, r18
-    brsh _nm_poltroon_save_direction
-    ldi r24, DIRECTION_LEFT
-    rjmp _nm_poltroon_save_direction
-_nm_poltroon_orient_vertical:
-    ldi r24, DIRECTION_DOWN
-    cp r21, r19
-    brsh _nm_poltroon_save_direction
-    ldi r24, DIRECTION_UP
-_nm_poltroon_save_direction:
-    ldd r25, Y+NPC_ANIM_OFFSET
-    andi r25, 0xfc
-    or r25, r24
-    std Y+NPC_ANIM_OFFSET, r25
-    rjmp _nm_move
 _nm_test_return:
     lds r25, npc_move_flags
     sbrs r25, log2(NPC_MOVE_RETURN)
@@ -373,14 +337,88 @@ _nm_return_save_direction:
 _nm_test_move_falloff:
     lds r25, npc_move_flags
     sbrs r25, log2(NPC_MOVE_FALLOFF)
-    rjmp _nm_move
+    rjmp _nm_test_circle_strafe
     ldd r24, Y+NPC_EFFECT_OFFSET
     andi r24, 0x38
-    brne _nm_move
+    brne _nm_test_circle_strafe
     cpi r22, NPC_INTEREST_DISTANCE
-    brsh _nm_end
+    brsh _nm_end_trampoline
     cpi r23, NPC_INTEREST_DISTANCE
-    brsh _nm_end
+    brlo _nm_test_circle_strafe
+_nm_end_trampoline:
+    rjmp _nm_end
+_nm_test_circle_strafe:
+    lds r25, npc_move_flags
+    sbrs r25, log2(NPC_MOVE_CIRCLE)
+    rjmp _nm_move
+    lds r18, player_position_x
+    lds r19, player_position_y
+    ldd r20, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r21, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    movw r22, r20
+    sub r22, r18
+    sub r23, r19
+    sbrc r22, 7
+    neg r22
+    sbrc r23, 7
+    neg r23
+    mov r24, r22
+    add r24, r23
+    brcs _nm_move
+    cpi r24, 2*NPC_CIRCLE_DISTANCE
+    brsh _nm_move
+    lds r24, clock+1
+    sbrc r24, 2
+    neg r26
+    mov r27, r26
+_nm_test_circle_up:
+    cp r19, r21
+    brlo _nm_test_circle_down
+    cp r18, r20
+    brlo _nm_circle_upper_right
+_nm_circle_upper_left:
+    neg r26
+    clr r27
+    cp r22, r23
+    brlo _nm_circle_save_speed
+    mov r27, r26
+    neg r27
+    clr r26
+    rjmp _nm_circle_save_speed
+_nm_circle_upper_right:
+    neg r26
+    clr r27
+    cp r22, r23
+    brlo _nm_circle_save_speed
+    mov r27, r26
+    clr r26
+    rjmp _nm_circle_save_speed
+_nm_test_circle_down:
+    cp r18, r20
+    brlo _nm_circle_lower_right
+_nm_circle_lower_left:
+    clr r27
+    cp r22, r23
+    brlo _nm_circle_save_speed
+    mov r27, r26
+    clr r26
+    rjmp _nm_circle_save_speed
+_nm_circle_lower_right:
+    clr r27
+    cp r22, r23
+    brlo _nm_circle_save_speed
+    mov r27, r26
+    neg r27
+    clr r26
+    rjmp _nm_circle_save_speed
+_nm_circle_save_speed:
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+    adnv r24, r26
+    adnv r25, r27
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r25
+    rjmp _nm_end
 _nm_move:
     mov r27, r26
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
