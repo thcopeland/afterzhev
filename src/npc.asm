@@ -367,6 +367,9 @@ _nm_test_circle_strafe:
     brcs _nm_move
     cpi r24, 2*NPC_CIRCLE_DISTANCE
     brsh _nm_move
+    mov r27, r26
+    lsr r27
+    add r26, r27
     lds r24, clock+1
     sbrc r24, 2
     neg r26

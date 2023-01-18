@@ -77,7 +77,7 @@ _init_zero_iter:
     sti player_position_x, 132
     sti player_position_y, 150
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_FINAL_8
+    .equ INITIAL_SECTOR = SECTOR_FINAL_6
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector
