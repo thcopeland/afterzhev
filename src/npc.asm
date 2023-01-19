@@ -371,6 +371,10 @@ _nm_test_circle_strafe:
     lsr r27
     add r26, r27
     lds r24, clock+1
+    ldd r25, Y+NPC_IDX_OFFSET
+    lsl r25
+    lsl r25
+    add r24, r25
     sbrc r24, 2
     neg r26
     mov r27, r26

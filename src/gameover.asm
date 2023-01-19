@@ -19,8 +19,8 @@ _gug_end:
 ;   r24     calculations
 ;   r25     game status (param)
 load_gameover:
-    lds r25, game_mode
-    cpi r25, MODE_GAMEOVER
+    lds r24, game_mode
+    cpi r24, MODE_GAMEOVER
     breq _lg_end
     sts gameover_state, r25
     ldi r25, MODE_GAMEOVER

@@ -434,8 +434,7 @@ npc_resolve_ranged_damage:
 _nrrd_main:
     ldd r25, Y+NPC_EFFECT_OFFSET
     andi r25, 0x38
-    cpi r25, EFFECT_DAMAGE<<3
-    brne _nrrd_resolve_effects
+    breq _nrrd_resolve_effects
 _nrrd_early_exit:
     ret
 _nrrd_resolve_effects:

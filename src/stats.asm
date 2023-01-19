@@ -233,7 +233,7 @@ _cmh_stat:
     ret
 
 ; Calculate the player's acceleration.
-;   acceleration = 4 + dexterity/2 + 2*armor boost
+;   acceleration = 5 + dexterity/2 + 2*armor boost
 ;
 ; Register Usage
 ;   r20             acceleration
@@ -266,7 +266,7 @@ _ca_stat:
     sbrc r21, 7
     clr r21
     add r20, r21
-    subi r20, low(-4)
+    subi r20, low(-5)
     ret
 
 ; Calculate the acceration applied to an enemy when colliding with the player.

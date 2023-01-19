@@ -111,6 +111,7 @@ item_table:
     DECL_ITEM gold_chalice,         ITEM_USABLE,                       200,     0,  0,  0,  0,      1
     DECL_ITEM gold_bar,             ITEM_USABLE,                       150,     0,  0,  0,  0,      1
     DECL_ITEM small_chest,          ITEM_USABLE,                        10,     0,  0,  0,  0,      1
+    DECL_ITEM letter,               ITEM_USABLE,                        10,     0,  0,  0,  0,      1
 
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
@@ -153,6 +154,8 @@ _item_str_white_fox_eyes_name:
 _item_str_white_fox_eyes_desc:
 _item_str_iron_breastplate_cloak_name:
 _item_str_iron_breastplate_cloak_desc:
+_item_str_letter_desc:
+_item_str_letter_name:
 _item_str_beard_name:
 _item_str_beard_desc:				.dw 0
 _item_str_steel_sword_name:         .db "Steel sword", 0

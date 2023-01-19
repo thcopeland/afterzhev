@@ -234,7 +234,7 @@ _sdn_next:
     adiw YL, NPC_MEMSIZE
     dec r23
     brne _sdn_loop
-    cpi r22, 4
+    cpi r22, 4 ; TODO replace last corpse
     brsh _sdn_end
     and r0, r24
     add r25, r0

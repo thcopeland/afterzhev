@@ -23,7 +23,7 @@
 .include "logic_shared.asm"
 
 sector_start_1_update:
-    player_distance_imm 164, 40
+    player_distance_imm 157, 93
     cpi r25, 12
     brlo _ss1u_end
     try_start_conversation what_happened
@@ -1006,7 +1006,77 @@ sector_final_castle_init:
     ret
 
 sector_final_battle_init:
+    ldi r24, low(2*_conv_final_boss1)
+    ldi r25, high(2*_conv_final_boss1)
+    call load_conversation
+    sts sector_data, r1
     ret
 
 sector_final_battle_update:
+    ldi r25, NPC_ZHEV
+    call find_npc
+    tst r20
+    breq _sfbu_test_zhev_defeated
+_sfbu_check_second_phase:
+    lds r25, sector_data
+    tst r25
+    brne _sfbu_end1
+    ldd r25, Y+NPC_HEALTH_OFFSET
+    cpi r25, 20
+    brsh _sfbu_end1
+    ldi r25, 1
+    sts sector_data, r25
+    ldi r25, 60
+    std Y+NPC_HEALTH_OFFSET, r25
+    ldi r25, EFFECT_POTION << 3
+    std Y+NPC_EFFECT_OFFSET, r25
+    movw ZL, YL
+    adiw ZL, NPC_MEMSIZE
+    ldi r25, NPC_ZHEV2
+    std Z+NPC_IDX_OFFSET, r25
+    ldd r25, Y+NPC_ANIM_OFFSET
+    std Z+NPC_ANIM_OFFSET, r25
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r25
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L, r1
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r1
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L, r1
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r1
+    ldd r25, Y+NPC_HEALTH_OFFSET
+    std Z+NPC_HEALTH_OFFSET, r25
+    ldd r25, Y+NPC_EFFECT_OFFSET
+    std Z+NPC_EFFECT_OFFSET, r25
+_sfbu_end1:
+    ret
+_sfbu_test_zhev_defeated:
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_CORPSE
+    brne _sfbu_end2
+    adiw YL, NPC_MEMSIZE
+    ldd r25, Y+NPC_IDX_OFFSET
+    cpi r25, NPC_CORPSE
+    breq _sfbu_test_letter_taken
+    ldi r25, NPC_CORPSE
+    std Y+NPC_IDX_OFFSET, r25
+    ldi r25, EFFECT_DAMAGE << 3
+    std Y+NPC_EFFECT_OFFSET, r25
+_sfbu_test_letter_taken:
+    ldi YL, low(player_inventory)
+    ldi YH, high(player_inventory)
+    ldi r24, PLAYER_INVENTORY_SIZE
+_sfbu_loop:
+    ld r25, Y+
+    cpi r25, ITEM_letter
+    brne _sfbu_next
+    ldi r25, GAME_OVER_WIN
+    call load_gameover
+    ret
+_sfbu_next:
+    dec r24
+    brne _sfbu_loop
+_sfbu_end2:
     ret
