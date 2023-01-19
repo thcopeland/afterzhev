@@ -556,9 +556,11 @@ _irg_render_selected_item_description:
     elpm r24, Z+
     elpm r25, Z+
     ldi r21, 22
-    ; special case for inventory book
+    ; special case for tutorial books
     cpi r16, ITEM_inventory_book-1
-    brne _irg_render_description
+    brlo _irg_render_description
+    cpi r16, ITEM_war_book
+    brsh _irg_render_description
     ldi r21, 28
 _irg_render_description:
     movw ZL, r24

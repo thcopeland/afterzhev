@@ -711,13 +711,23 @@ add_distant_npc:
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
     ldi r20, SECTOR_DYNAMIC_NPC_COUNT
-_adn_npc_iter:
+_adn_npc_iter: ; search for an empty slot
     ld r21, Y
     tst r21
     breq _adn_slot_found
     adiw YL, NPC_MEMSIZE
     dec r20
     brne _adn_npc_iter
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r20, SECTOR_DYNAMIC_NPC_COUNT
+_adn_npc_iter2: ; search for a corpse
+    ld r21, Y
+    cpi r21, NPC_CORPSE
+    breq _adn_slot_found
+    adiw YL, NPC_MEMSIZE
+    dec r20
+    brne _adn_npc_iter2
     rjmp _adn_end
 _adn_slot_found:
     call load_npc

@@ -92,7 +92,9 @@ item_table:
     DECL_ITEM blessed_sword,        (2<<6)|(1<<3)|ITEM_WIELDABLE,      340,     0,  5,  0,  0,      (6<<4)
     DECL_ITEM white_fox_eyes,       ITEM_WEARABLE,                       0,     0,  0,  0,  0,      0
     DECL_ITEM iron_breastplate_cloak, ITEM_WEARABLE,                   600,     2,  0, -10, 0,      8
-    DECL_ITEM inventory_book,       ITEM_USABLE,                         0,     0,  0,  0,  0,      1
+    DECL_ITEM inventory_book,       ITEM_USABLE,                        20,     0,  0,  0,  0,      1
+    DECL_ITEM manners_book,         ITEM_USABLE,                        20,     0,  0,  0,  0,      1
+    DECL_ITEM war_book,             ITEM_USABLE,                        20,     0,  0,  0,  0,      1
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                  1,     0, -5,  0,  0,      0
     DECL_ITEM health_potion,        (0<<3)|ITEM_USABLE,                100,     0, 40,  0,  0,      0
@@ -164,8 +166,13 @@ _item_str_wooden_bow_name:          .db "Wooden bow", 0, 0
 _item_str_wooden_bow_desc:          .db "An old but sturdy wooden bow.", 0
 _item_str_guard_hat_name:           .db "Guard", 39, "s hat", 0
 _item_str_guard_hat_desc:           .db "Worn only by members of", 10, "the Town Guard, and", 10, "shameless murderers.", 0, 0
+; TODO figure out a good mapping
 _item_str_inventory_book_name:      .db "Book of Inventory", 0
 _item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <B> to use a potion.", 10, "Press <select> to drop.", 0
+_item_str_manners_book_name:        .db "Book of Civility", 0, 0
+_item_str_manners_book_desc:        .db "Press <B> to interact.", 10, "Press <B> and <select> to buy", 10, "and sell from a shopkeeper.", 0, 0
+_item_str_war_book_name:            .db "Book of War", 0
+_item_str_war_book_desc:            .db "Press <A> to attack.", 10, "Press <B> to dash.", 0
 _item_str_raw_meat_name:            .db "Raw meat", 0, 0
 _item_str_raw_meat_desc:            .db "Probably safe to eat.", 0
 _item_str_rotten_meat_name:         .db "Rotten meat", 0

@@ -28,7 +28,10 @@ _init_zero_iter:
     sti player_character, CHARACTER_HALFLING
     sti player_weapon, ITEM_iron_staff ;ITEM_steel_sword
     sti player_armor, ITEM_mithril_armor; ITEM_leather_armor
-    sti player_inventory, ITEM_health_potion
+    sti player_inventory, ITEM_inventory_book
+    sti player_inventory+1, ITEM_war_book
+    sti player_inventory+2, ITEM_manners_book
+    ; sti player_inventory, ITEM_health_potion
     ; sti player_inventory+1, ITEM_whiskey
     ; sti player_inventory+2, ITEM_pass
     ; sti player_inventory+3, ITEM_journal
@@ -78,7 +81,7 @@ _init_zero_iter:
     sti player_position_x, 132
     sti player_position_y, 100
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_FINAL_6
+    .equ INITIAL_SECTOR = SECTOR_CITY_FIELDS_1 ; FINAL_6
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

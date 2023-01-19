@@ -424,9 +424,11 @@ _srg_selection_description:
     elpm r25, Z+
     adiw ZL, ITEM_STATS_OFFSET-ITEM_DESC_PTR_OFFSET-2
     ldi r21, 22
-    ; special case for inventory book
+    ; special case for tutorial books
     cpi r16, ITEM_inventory_book-1
-    brne _srg_render_description
+    brlo _srg_render_description
+    cpi r16, ITEM_war_book
+    brsh _srg_render_description
     ldi r21, 28
 _srg_render_description:
     movw ZL, r24
