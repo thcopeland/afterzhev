@@ -59,7 +59,8 @@ _conv_END_CONVERSATION:         .dw 0 ; placeholder
 DECL_CONVERSATION what_happened
 _conv_what_happened:            DECL_LINE what_happened, 0, PLAYER, what_happened2
 _conv_what_happened2:           DECL_LINE what_happened2, 0, PLAYER, what_happened3
-_conv_what_happened3:           DECL_LINE what_happened3, 0, PLAYER, END_CONVERSATION
+_conv_what_happened3:           DECL_LINE what_happened3, 0, PLAYER, what_happened4
+_conv_what_happened4:           DECL_LINE what_happened4, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION pickup_tutorial
 _conv_pickup_tutorial:          DECL_LINE pickup_tutorial, 0, PLAYER, pickup_tutorial2
 _conv_pickup_tutorial2:         DECL_LINE pickup_tutorial2, 0, PLAYER, END_CONVERSATION
@@ -272,14 +273,18 @@ _conv_rob_bank9:                DECL_LINE rob_bank9, NPC_THIEF_QUESTGIVER, dodgy
 _conv_thieves_warning:          DECL_LINE thieves_warning, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
 _conv_bridge_broken:            DECL_LINE bridge_broken, NPC_BRIDGE_BROKEN, citizen, bridge_broken2
 _conv_bridge_broken2:           DECL_LINE bridge_broken2, NPC_BRIDGE_BROKEN, citizen, END_CONVERSATION
-_conv_final_boss1:              DECL_LINE final_boss1, NPC_ZHEV, baron_zhev, final_boss2
+DECL_CONVERSATION baron_haldir
+_conv_baron_haldir1:            DECL_LINE baron_haldir1, 0, PLAYER, baron_haldir2
+_conv_baron_haldir2:            DECL_LINE baron_haldir2, NPC_BARON_HALDIR, baron_haldir, baron_haldir3
+_conv_baron_haldir3:            DECL_LINE baron_haldir3, 0, PLAYER, baron_haldir4
+_conv_baron_haldir4:            DECL_LINE baron_haldir4, NPC_BARON_HALDIR, baron_haldir, END_CONVERSATION
+_conv_final_boss1:              DECL_LINE final_boss1, NPC_ZHEV, zhev, final_boss2
 _conv_final_boss2:              DECL_LINE final_boss2, 0, PLAYER, final_boss3
-_conv_final_boss3:              DECL_LINE final_boss3, NPC_ZHEV, baron_zhev, final_boss4
-_conv_final_boss4:              DECL_LINE final_boss4, 0, PLAYER, final_boss5
-_conv_final_boss5:              DECL_LINE final_boss5, NPC_ZHEV, baron_zhev, final_boss6
-_conv_final_boss6:              DECL_LINE final_boss6, NPC_ZHEV, baron_zhev, final_boss7
-_conv_final_boss7:              DECL_LINE final_boss7, 0, PLAYER, final_boss8
-_conv_final_boss8:              DECL_LINE final_boss8, NPC_ZHEV, baron_zhev, END_CONVERSATION
+_conv_final_boss3:              DECL_LINE final_boss3, NPC_ZHEV, zhev, final_boss4
+_conv_final_boss4:              DECL_LINE final_boss4, NPC_ZHEV, zhev, final_boss5
+_conv_final_boss5:              DECL_LINE final_boss5, NPC_ZHEV, zhev, final_boss6
+_conv_final_boss6:              DECL_LINE final_boss6, 0, PLAYER, final_boss7
+_conv_final_boss7:              DECL_LINE final_boss7, NPC_ZHEV, zhev, END_CONVERSATION
 
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
@@ -303,11 +308,13 @@ _conv_speaker_bard_str:         .db "Bard", 0, 0
 _conv_speaker_citizen_str:      .db "Citizen", 0
 _conv_speaker_bank_guard_str:   .db "Bank guard", 0, 0
 _conv_speaker_dodgy_fellow_str: .db "Dodgy citizen", 0
-_conv_speaker_baron_zhev_str:   .db "Baron Zhev", 0, 0
+_conv_speaker_baron_haldir_str: .db "Baron Haldir", 0, 0
+_conv_speaker_zhev_str:         .db "Zhev", 0, 0
 _conv_speaker_empty_str:        .db 0, 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
-_conv_what_happened2_str:       .db "How long have I been asleep?", 10, 10, "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
-_conv_what_happened3_str:       .db "It must have been stolen. No... I", 10, "am an envoy of the queen! I have to get it back at any cost.", 0, 0
+_conv_what_happened2_str:       .db "Hey, where", 39, "s Zhev? Funny...", 0
+_conv_what_happened3_str:       .db "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
+_conv_what_happened4_str:       .db "It must have been stolen. Did", 10, "Zhev...? I have to get it back at", 10, "any cost.", 0
 _conv_pickup_tutorial_str:      .db "Press <select> to pick up items.", 0, 0
 _conv_pickup_tutorial2_str:     .db "Press <start> to view inventory.", 0, 0
 _conv_battle_tutorial_halfling_str:.db "Hey you! Yeah you, shorty! No", 10, "passing without paying!", 0
@@ -324,8 +331,8 @@ _conv_loot_tutorial_str:        .db "I think he got the point.", 0
 _conv_loot_tutorial2_str:       .db 10, 10, 10, 10, 10, 10, "Press <select> to loot corpses.", 0
 _conv_bandit_plead_str:         .db "I yield! Spare me, adventurer!", 0, 0
 _conv_bandit_plead2_str:        .db "Then tell me quickly: did you", 10, "steal my letter?", 0, 0
-_conv_bandit_plead3_str:        .db "Uh... it weren", 39, "t I, adventurer!", 10, "The others took it, but the big", 10, "boss", 39, "s men have it now.", 0
-_conv_bandit_plead4_str:        .db "Big boss?", 0
+_conv_bandit_plead3_str:        .db "What? No, adventurer! We did seesome short feller running past,maybe he was taking it to the big boss?", 0, 0
+_conv_bandit_plead4_str:        .db "Zhev! So who is the big boss?", 0
 _conv_bandit_plead5_str:        .db "His gang have a house in the woodeast of the town. Please,", 10, "adventurer, we didn", 39, "t harm you!", 0, 0
 _conv_bandit_plead7_str:        .db "Ha! That letter means my life,", 10, "you will pay dearly!", 0
 _conv_bandit_plead8_str:        .db "I spare you. But you must stop", 10, "robbing travelers.", 0
@@ -400,9 +407,9 @@ _conv_foxes_didnt_do_this_str:  .db "Foxes didn", 39, "t do this...", 0
 _conv_bandit_speech_str:        .db "You", 39, "ll pay for this, adventurer.", 0, 0
 _conv_bandit_speech2_str:       .db "Where is my letter?", 0
 _conv_bandit_speech3_str:       .db "Haw haw... come and see.", 0, 0
-_conv_find_pass_str:            .db "What", 39, "s this? ... A pass for HighwayGuard blockades, sealed by", 10, "Baron Zhev?", 0
+_conv_find_pass_str:            .db "What", 39, "s this? ... A pass for HighwayGuard blockades, sealed by", 10, "Baron Haldir?", 0
 _conv_find_pass2_str:           .db "Looks like the letter isn", 39, "t here.", 0
-_conv_find_pass3_str:           .db "How is Zhev involved in this?", 10, "Perhaps I should travel to Dor", 10, "Haldir and find out.", 0
+_conv_find_pass3_str:           .db "What did Zhev do with it? And how is the baron involved in this? I", 10, "should travel to Dor Haldir...", 0
 _conv_highway_guard_str:        .db "No further, adventurer! None", 10, "may pass without a pass.", 0
 _conv_highway_guard2_str:       .db "You again? What do you want? Theroad is closed!", 0
 _conv_highway_guard4_str:       .db "Ask for details", 0
@@ -432,13 +439,13 @@ _conv_poet6_str:                .db "Oh, would you?", 0, 0
 _conv_poet7_str:                .db "Come back to hear my songs,", 10, "adventurer? Well, it", 39, "s too late.You", 39, "ve already had your chance.", 0
 _conv_haldir1_str:              .db "Welcome to Haldir, adventurer.", 10, "We", 39, "re glad to have a warrior suchas yourself among us. But don", 39, "t", 10, "cause any trouble.", 0, 0
 _conv_haldir2_c1_str:           .db "Ask about Dor Haldir", 0, 0
-_conv_haldir2_c2_str:           .db "Ask about Baron Zhev", 0, 0
+_conv_haldir2_c2_str:           .db "Ask about Baron Haldir", 0, 0
 _conv_haldir2_c3_str:           .db "Romance", 0
 _conv_haldir2_c4_str:           .db "Leave", 0
-_conv_haldir3_str:              .db "How fares Haldir?", 0
-_conv_haldir4_str:              .db "We stand strong, but strange", 10, "things have been sighted nearby,especially at night.", 0
+_conv_haldir3_str:              .db "How fares Dor Haldir?", 0
+_conv_haldir4_str:              .db "The city stands strong, but", 10, "strange things have been sightednearby,especially at night.", 0
 _conv_haldir4_2_str:            .db "The citizens are fearful, and", 10, "many have left the city. Take", 10, "care, adventurer.", 0
-_conv_haldir5_str:              .db "I have business with Baron Zhev. Where does he live?", 0, 0
+_conv_haldir5_str:              .db "I have business with Baron", 10, "Haldir. Where can I find him?", 0, 0
 _conv_haldir6_str:              .db "The baron has a tower east of", 10, "Haldir. Though I warn you,", 10, "adventurer, you might find your welcome somewhat less than", 10, "expected.", 0
 _conv_haldir7_str:              .db "Say, have you been working out?", 0
 _conv_haldir8_str:              .db ". . .", 0
@@ -478,11 +485,14 @@ _conv_bank_warning_str:         .db "Stay yourself, adventurer!", 10, "Bank", 39
 _conv_thieves_warning_str:      .db "Hey you! Quit snooping or else!", 0
 _conv_bridge_broken_str:        .db "Yep... bridge", 39, "s out. Can", 39, "t say as", 10, "how it happened, but a lot of", 10, "strange stuff", 39, "s been happening.", 0
 _conv_bridge_broken2_str:       .db "Course, there have always been other ways. Tunnels, hidden", 10, "paths, that sort of thing.", 0
-_conv_final_boss1_str:          .db "So you", 39, "ve come, envoy.", 0, 0
-_conv_final_boss2_str:          .db "Zhev! Give me the letter!", 0
-_conv_final_boss3_str:          .db "Do you know what the letter", 10, "holds, envoy?", 0
-_conv_final_boss4_str:          .db "Of course not.", 0, 0
-_conv_final_boss5_str:          .db "I thought, surely some great", 10, "secret or subtle plan. Somethingto give me an edge... After all,", 10, "why else send such an envoy?", 0, 0
-_conv_final_boss6_str:          .db "No matter. But now, envoy, you", 10, "must choose. Join me, or die", 10, "serving your thankless queen.", 0
-_conv_final_boss7_str:          .db "Never!", 0, 0
-_conv_final_boss8_str:          .db "Ha! I", 39, "m going to enjoy this...", 0, 0
+_conv_baron_haldir1_str:        .db "Baron Haldir?!", 0, 0
+_conv_baron_haldir2_str:        .db "Still here, heh, heh... that", 10, "blasted Zhev betrayed me! Kill", 10, "him, won", 39, "t you, envoy?", 0, 0
+_conv_baron_haldir3_str:        .db "What have you done, traitor?", 0, 0
+_conv_baron_haldir4_str:        .db "Ugh... leave me.", 0, 0
+_conv_final_boss1_str:          .db "Well well! The loyal envoy at", 10, "last!", 0
+_conv_final_boss2_str:          .db "Zhev, you traitor! Did the baron put you up to this?", 0, 0
+_conv_final_boss3_str:          .db "His plan, yes... though I", 39, "ve made some improvements, did you", 10, "notice? Heh heh.", 0
+_conv_final_boss4_str:          .db "He thought the letter held somegreat secret or subtle plan.", 10, "Something to give him an edge...", 10, "the fool.", 0, 0
+_conv_final_boss5_str:          .db "No matter. But now you choose. I can tell you", 39, "ve become powerfulsince we parted. Will you join me,or die serving your thankless", 10, "queen?", 0, 0
+_conv_final_boss6_str:          .db "Never! Give me the letter!", 0, 0
+_conv_final_boss7_str:          .db "Ha! I", 39, "m going to enjoy this... I", 10, "have learned much during my", 10, "travels.", 0

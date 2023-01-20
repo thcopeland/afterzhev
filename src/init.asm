@@ -51,7 +51,7 @@ _init_zero_iter:
     sti player_stats, 8
     sti player_stats+1, 8
     sti player_stats+2, 100
-    sti player_stats+3, 100
+    sti player_stats+3, 30
     call calculate_player_stats
     stiw player_gold, 0
     sti player_health, 64
@@ -78,10 +78,10 @@ _init_zero_iter:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    sti player_position_x, 132
-    sti player_position_y, 100
+    ; sti player_position_x, 132
+    ; sti player_position_y, 80
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_CITY_FIELDS_1 ; FINAL_6
+    .equ INITIAL_SECTOR = SECTOR_CITY_2; SECTOR_START_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector
