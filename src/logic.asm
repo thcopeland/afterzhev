@@ -1013,6 +1013,20 @@ sector_final_battle_init:
     ret
 
 sector_final_battle_update:
+    lds r25, clock
+    andi r25, 0x1f
+    brne _sfbu_check
+    ldi YL, low(sector_npcs)
+    ldi YH, high(sector_npcs)
+    ldi r25, 2
+_sfbu_loop1:
+    ldd r24, Y+NPC_HEALTH_OFFSET
+    inc r24
+    std Y+NPC_HEALTH_OFFSET, r24
+    adiw YL, NPC_MEMSIZE
+    dec r25
+    brne _sfbu_loop1
+_sfbu_check:
     ldi r25, NPC_ZHEV
     call find_npc
     tst r20
