@@ -148,9 +148,11 @@ _fc_fade_green_%:
     clr @1
 _fc_fade_blue_%:
     lsl @3
-    lsl @3
+    sub @2, @3
+    brlo _fc_clear_blue_%
     sub @2, @3
     brsh _fc_combine_channels_%
+_fc_clear_blue_%:
     clr @2
 _fc_combine_channels_%:
     andi @2, 0xc0
@@ -173,9 +175,13 @@ _fc_fade_green_%:
     brsh _fc_fade_blue_%
     clr @1
 _fc_fade_blue_%:
-    subi @2, low(@3 << 5)
-    brsh _fc_combine_channels_%
-    clr @2
+    .if (@3 << 5) > 255
+        clr @2
+    .else
+        subi @2, low(@3 << 5)
+        brsh _fc_combine_channels_%
+        clr @2
+    .endif
 _fc_combine_channels_%:
     andi @2, 0xc0
     or @0, @1

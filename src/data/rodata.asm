@@ -1,5 +1,5 @@
 ; All fixed data lives here, such as sprites, music, and text. This is stored in
-; flash, so cannot be (more than a few thousand times, at least) changed at runtime.
+; flash, so cannot be changed (more than a few thousand times, anyway) at runtime.
 
 ; Partition 1 (0x00000-x07ffff): code, font, items, classes
     .cseg
@@ -23,5 +23,6 @@
     .include "item_sprites.asm"
     .include "other_sprites.asm"
 
-; Partion 4 (words 0x18000-0x7ffff): sounds
+; Partion 4 (words 0x18000-0x7ffff): images, sounds
     .org 0x18000
+    .include "images.asm"

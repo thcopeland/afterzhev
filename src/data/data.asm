@@ -76,8 +76,8 @@ inventory_selection:
 shop_selection:
 selected_choice:
 upgrade_selection:
-npc_move_flags:
-gameover_state:     .byte 1
+npc_move_flags:     .byte 1
+gameover_state:
 npc_move_flags2:    .byte 1
 
 current_shop_index: .byte 1

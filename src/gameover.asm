@@ -57,18 +57,27 @@ _ghc_end:
 ; Register Usage
 ;   r24-r25     calculations
 gameover_render_game:
-    lds r25, mode_clock
-    cpi r25, 30
-    brsh _grg_check_win
-    rjmp gameover_lightning
-    rjmp _grg_end
-_grg_check_win:
     lds r25, gameover_state
     cpi r25, GAME_OVER_WIN
     brne _grg_check_death
+_grg_win:
+    lds r25, mode_clock
+    cpi r25, 30
+    brsh _grg_render_win
+    call render_game
+    call update_active_effects
+    call update_savepoint_animation
+    call update_player
+    call update_npcs
+_grg_render_win:
     rcall gameover_render_win
     rjmp _grg_end
 _grg_check_death:
+    lds r25, mode_clock
+    cpi r25, 30
+    brsh  _grg_render_dead
+    rjmp gameover_lightning
+_grg_render_dead:
     rcall gameover_render_dead
 _grg_end:
 _grg_return:
@@ -76,6 +85,7 @@ _grg_return:
 
 .equ GAMEOVER_UI_HEADER_TEXT_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FONT_DISPLAY_HEIGHT)/2 + (DISPLAY_WIDTH-FONT_DISPLAY_WIDTH*8)/2
 .equ GAMEOVER_UI_DEATH_MESSAGE_MARGIN = DISPLAY_WIDTH*44 + 4
+.equ GAMEOVER_UI_RESTART_MESSAGE_MARGIN = DISPLAY_WIDTH*57 + 30
 
 gameover_render_dead:
     ldi XL, low(framebuffer)
@@ -105,6 +115,72 @@ gameover_render_dead:
     ret
 
 gameover_render_win:
+    ldi ZL, byte3(2*win_screen)
+    out RAMPZ, ZL
+    ldi ZL, low(2*win_screen)
+    ldi ZH, high(2*win_screen)
+    lds r25, mode_clock
+    cpi r25, 15
+    brsh _grw_fade_screen
+    sts lightning_clock, r1
+    ret
+_grw_fade_screen:
+    cpi r25, 42
+    brsh _grw_hold_screen
+    lds r25, lightning_clock
+    cpi r25, 61
+    brsh _grw_hold_screen
+    ldi YL, low(framebuffer)
+    ldi YH, high(framebuffer)
+    lds r25, lightning_clock
+    inc r25
+    sts lightning_clock, r25
+    ldi r20, 60
+    sub r20, r25
+    add YL, r20
+    adc YH, r1
+    ldi r20, 32
+    mov r24, r25
+    lsr r24
+    sub r20, r24
+    ldi r21, DISPLAY_WIDTH
+    mul r20, r21
+    add YL, r0
+    adc YH, r1
+    clr r1
+    ldi r22, 60
+    sub r22, r25
+    mov r23, r25
+    lsl r23
+    lsr r25
+    ldi r24, 32
+    sub r24, r25
+    lsl r25
+    call render_partial_screen
+    ret
+_grw_hold_screen:
+    call render_full_screen
+    sts lightning_clock, r1
+    ldi YL, low(framebuffer+GAMEOVER_UI_RESTART_MESSAGE_MARGIN)
+    ldi YH, high(framebuffer+GAMEOVER_UI_RESTART_MESSAGE_MARGIN)
+    ldi ZL, byte3(2*ui_str_press_any_button2)
+    out RAMPZ, ZL
+    ldi r21, 20
+    lds r24, mode_clock
+    subi r24, 80
+    brsh _grw_hold_text
+    ldi r24, 0
+_grw_hold_text:
+    ldi r23, 0
+    ldi ZL, low(2*ui_str_press_any_button2)
+    ldi ZH, high(2*ui_str_press_any_button2)
+    call puts_n
+    lds r25, mode_clock
+    cpi r25, 120
+    brlo _grw_hold_end
+    ldi r25, 120
+    sts mode_clock, r25
+_grw_hold_end:
     ret
 
 ; Fade in some text and hold it.

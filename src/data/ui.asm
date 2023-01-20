@@ -52,5 +52,5 @@ ui_str_intellect_abbr:  .db "Int", 0
 ui_str_buy_label:   .db "Buy", 10, "for", 0
 ui_str_sell_label:  .db "Sell", 10, " for", 0
 ui_str_you_died:    .db "YOU  DIED", 0
-ui_str_you_win: .db "YOU  WIN", 0, 0
 ui_str_press_any_button:.db 10, 10, "Press any button to start over.", 0
+ui_str_press_any_button2:.db "Press any button", 0, 0

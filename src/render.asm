@@ -1670,3 +1670,67 @@ render_item_with_underbar:
     ldi r25, 1
     rcall render_rect
     ret
+
+; Render an entire screen.
+;
+;   r24-r25        calculations
+;   Y (r28:r29)     framebuffer pointer
+;   Z (r30:r31)     screen pointer (parm)
+render_full_screen:
+    ldi r24, low(DISPLAY_WIDTH*DISPLAY_HEIGHT-4)
+    ldi r25, high(DISPLAY_WIDTH*DISPLAY_HEIGHT-4)
+    ldi YL, low(framebuffer)
+    ldi YH, high(framebuffer)
+_rfs_loop:
+    elpm r0, Z+
+    st Y+, r0
+    elpm r0, Z+
+    st Y+, r0
+    elpm r0, Z+
+    st Y+, r0
+    elpm r0, Z+
+    st Y+, r0
+    sbiw r24, 4
+    brsh _rfs_loop
+    ret
+
+; Render a partial screen (used for slide-in-out animations).
+;
+; Register Usage
+;   r21             calculations
+;   r22, r23        min x, width (params)
+;   r24, r25        min y, height (params)
+;   Y (r28:r29)     framebuffer pointer (parm)
+;   Z (r30:r31)     screen pointer (parm)
+render_partial_screen:
+    add ZL, r22
+    adc ZH, r1
+    ldi r22, DISPLAY_WIDTH
+    mul r22, r24
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    subi r25, 1
+    brlo _rps_end
+_rps_col_loop:
+    mov r21, r23
+    subi r21, 1
+    brlo _rps_next_col
+_rps_row_loop:
+    elpm r0, Z+
+    st Y+, r0
+    subi r21, 1
+    brsh _rps_row_loop
+_rps_next_col:
+    sub YL, r23
+    sbc YH, r1
+    subi YL, low(-DISPLAY_WIDTH)
+    sbci YH, high(-DISPLAY_WIDTH)
+    sub ZL, r23
+    sbc ZH, r1
+    subi ZL, low(-DISPLAY_WIDTH)
+    sbci ZH, high(-DISPLAY_WIDTH)
+    subi r25, 1
+    brsh _rps_col_loop
+_rps_end:
+    ret
