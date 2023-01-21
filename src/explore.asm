@@ -229,36 +229,6 @@ _rg_render_npcs_iter:
     adc ZH, r1
     clr r1
     lpm r18, Z+
-_rg_render_static_npc: ; TODO redundant with changes to render_character?
-    cpi r18, 128
-    brlo _rg_render_dynamic_npc
-    andi r18, low(~128)
-    ldi ZL, byte3(2*static_character_sprite_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*static_character_sprite_table)
-    ldi ZH, high(2*static_character_sprite_table)
-    ldi r19, CHARACTER_SPRITE_MEMSIZE
-    mul r18, r19
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    ldi r22, CHARACTER_SPRITE_WIDTH
-    ldi r23, CHARACTER_SPRITE_HEIGHT
-    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
-    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    call render_sprite
-    ldd r22, Y+NPC_EFFECT_OFFSET
-    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
-    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    call render_effect_animation
-_rg_render_npc_health:
-    rcall render_npc_health_bar
-_rg_render_npcs_next:
-    adiw YL, NPC_MEMSIZE
-    dec r16
-    brne _rg_render_npcs_iter
-    rjmp _rg_render_player
-_rg_render_dynamic_npc:
     sts character_render+CHARACTER_SPRITE_OFFSET, r18
     lpm r18, Z+
     sts character_render+CHARACTER_WEAPON_OFFSET, r18
@@ -285,7 +255,11 @@ _rg_render_dynamic_npc:
     ldi YH, high(character_render)
     call render_character
     movw YL, r14
-    rjmp _rg_render_npc_health
+    rcall render_npc_health_bar
+_rg_render_npcs_next:
+    adiw YL, NPC_MEMSIZE
+    dec r16
+    brne _rg_render_npcs_iter
 _rg_render_player:
     lds r25, player_health
     cpi r25, 0
