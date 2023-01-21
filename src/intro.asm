@@ -21,14 +21,14 @@ _iug_end:
     jmp _loop_reenter
 
 intro_handle_controls:
-    lds r24, prev_controller_values
     lds r25, controller_values
-    com r24
-    and r24, r25
+    tst r25
     breq _inhc_end
     lds r25, mode_clock
-    subi r25, low(-30)
-    brcc _inhc_end
+    subi r25, low(-2)
+    brcs _inhc_save_clock
+    ldi r25, 255
+_inhc_save_clock:
     sts mode_clock, r25
 _inhc_end:
     ret
@@ -47,8 +47,8 @@ intro_render:
     call render_full_screen
     ldi r21, 29
     ldi r23, 0x6e
-    ldi r24, 20
-    ldi r25, 52
+    ldi r24, 25
+    ldi r25, 57
     ldi YL, low(framebuffer+INTRO_1_MARGIN)
     ldi YH, high(framebuffer+INTRO_1_MARGIN)
     ldi ZL, byte3(2*intro_str_1)
@@ -57,32 +57,32 @@ intro_render:
     ldi ZH, high(2*intro_str_1)
     call fade_text_inverse
     ldi r23, 0x6e
-    ldi r24, 64
-    ldi r25, 96
+    ldi r24, 69
+    ldi r25, 101
     ldi YL, low(framebuffer+INTRO_2_MARGIN)
     ldi YH, high(framebuffer+INTRO_2_MARGIN)
     ldi ZL, low(2*intro_str_2)
     ldi ZH, high(2*intro_str_2)
     call fade_text_inverse
     ldi r23, 0x6e
-    ldi r24, 108
-    ldi r25, 140
+    ldi r24, 113
+    ldi r25, 145
     ldi YL, low(framebuffer+INTRO_3_MARGIN)
     ldi YH, high(framebuffer+INTRO_3_MARGIN)
     ldi ZL, low(2*intro_str_3)
     ldi ZH, high(2*intro_str_3)
     call fade_text_inverse
     ldi r23, 0x6e
-    ldi r24, 152
-    ldi r25, 184
+    ldi r24, 157
+    ldi r25, 189
     ldi YL, low(framebuffer+INTRO_4_MARGIN)
     ldi YH, high(framebuffer+INTRO_4_MARGIN)
     ldi ZL, low(2*intro_str_4)
     ldi ZH, high(2*intro_str_4)
     call fade_text_inverse
     ldi r23, 0x6e
-    ldi r24, 196
-    ldi r25, 228
+    ldi r24, 201
+    ldi r25, 233
     ldi YL, low(framebuffer+INTRO_5_MARGIN)
     ldi YH, high(framebuffer+INTRO_5_MARGIN)
     ldi ZL, low(2*intro_str_5)
