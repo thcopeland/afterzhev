@@ -19,15 +19,11 @@ _gug_end:
 ;   r24     calculations
 ;   r25     game status (param)
 load_gameover:
-    lds r24, game_mode
-    cpi r24, MODE_GAMEOVER
-    breq _lg_end
     sts gameover_state, r25
     ldi r25, MODE_GAMEOVER
     sts game_mode, r25
     sts mode_clock, r1
     sts lightning_clock, r1
-_lg_end:
     ret
 
 .equ GAMEOVER_TIMING_FADE_END = (DISPLAY_HEIGHT<<1) + 60
@@ -46,9 +42,7 @@ gameover_handle_controls:
     lds r25, mode_clock
     cpi r25, 65
     brlo _ghc_end
-    call restore_from_savepoint
-    tst r25
-    brne _ghc_end ; TODO restart
+    call load_resume
 _ghc_end:
     ret
 

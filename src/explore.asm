@@ -50,6 +50,10 @@ explore_update_game:
     call player_resolve_effect_damage
     rcall update_savepoint
 
+    lds r25, game_mode
+    cpi r25, MODE_EXPLORE
+    brne _eup_end
+
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     lds ZL, current_sector
@@ -1249,7 +1253,9 @@ _rfs_check_magic:
     in r23, EEDR
     adiw r24, 1
     cpi r23, SAVEPOINT_MAGIC
-    brne _rfs_end
+    breq _rfs_load_used
+    ldi r25, 1
+    rjmp _rfs_end
 _rfs_load_used:
     out EEARH, r25
     out EEARL, r24
