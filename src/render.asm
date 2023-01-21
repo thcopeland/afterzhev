@@ -1734,3 +1734,84 @@ _rps_next_col:
     brsh _rps_col_loop
 _rps_end:
     ret
+
+; Fade in some text, hold it, then fade it out.
+;
+; Register Usage
+;   r20             calculations
+;   r21             printing width (param)
+;   r22             calculations
+;   r23             color (param)
+;   r24             fade in time (param)
+;   r25             fade out time (param)
+;   Y (r28:r29)     framebuffer pointer (param)
+;   Z (r30:r31)     text pointer (param)
+fade_text:
+    lds r20, mode_clock
+_ft_fade_in:
+    mov r22, r24
+    subi r22, 7
+    cp r20, r22
+    brlo _ft_end
+    cp r20, r24
+    brsh _ft_fade_out
+    sub r24, r20
+    fade_color r23, r20, r22, r24
+    rjmp _ft_render
+_ft_fade_out:
+    cp r20, r25
+    brlo _ft_render
+    mov r22, r25
+    subi r22, low(-8)
+    cp r20, r22
+    brsh _ft_end
+    sub r20, r25
+    fade_color r23, r25, r22, r20
+_ft_render:
+    call puts
+_ft_end:
+    ret
+
+
+; Fade out some text, hold it, then fade in out. This allows us to fade black
+; text onto any background.
+;
+; Register Usage
+;   r20             calculations
+;   r21             printing width (param)
+;   r22             calculations
+;   r23             color (param)
+;   r24             fade out time (param)
+;   r25             fade in time (param)
+;   Y (r28:r29)     framebuffer pointer (param)
+;   Z (r30:r31)     text pointer (param)
+fade_text_inverse:
+    lds r20, mode_clock
+_fti_fade_out:
+    mov r22, r24
+    subi r22, 7
+    cp r20, r22
+    brlo _fti_end
+    cp r20, r24
+    brsh _fti_hold
+    sub r20, r24
+    subi r20, low(-8)
+    fade_color r23, r24, r22, r20
+    rjmp _fti_render
+_fti_hold:
+    cp r20, r25
+    brsh _fti_fade_in
+    clr r23
+    rjmp _fti_render
+_fti_fade_in:
+    mov r22, r25
+    subi r22, low(-8)
+    cp r20, r22
+    brsh _fti_end
+    sub r25, r20
+    subi r25, low(-8)
+    fade_color r23, r20, r22, r25
+_fti_render:
+    call puts
+_fti_end:
+    ret
