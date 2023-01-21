@@ -58,7 +58,11 @@ ui_str_start:       .db "Start", 0
 ui_str_resume:      .db "Resume", 0, 0
 ui_str_help:        .db "Help", 0, 0
 ui_str_about:       .db "About", 0
-
+ui_str_choose_class:.db "Choose your class:", 0, 0
+ui_str_choose_character:.db "Choose your character:", 0, 0
+ui_str_man:         .db "Man", 0
+ui_str_woman:       .db "Woman", 0
+ui_str_halfling:    .db "Halfling", 0, 0
 intro_str_1:        .db "   The queen", 39, "s envoys are a", 10, "particularly glorious corps.", 0, 0
 intro_str_2:        .db "Famously, they have never", 10, "failed to deliver a letter.", 0
 intro_str_3:        .db "  A few weeks ago, two envoys", 10, "departed with a special letter.", 0

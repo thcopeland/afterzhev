@@ -884,10 +884,26 @@ _rc_render_weapon_below:
     rcall render_sprite
 _rc_render_character:
     ldd r22, Y+CHARACTER_SPRITE_OFFSET
+    sbrs r22, 7
+    rjmp _rc_dynamic_character
+_rc_static_character:
+    andi r22, 0x7f
+    ldi ZL, byte3(2*static_character_sprite_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*static_character_sprite_table)
+    ldi ZH, high(2*static_character_sprite_table)
+    ldi r23, CHARACTER_SPRITE_MEMSIZE
+    mul r22, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    rjmp _rc_do_render_character
+_rc_dynamic_character:
     ldd r23, Y+CHARACTER_DIRECTION_OFFSET
     ldd r24, Y+CHARACTER_ACTION_OFFSET
     ldd r25, Y+CHARACTER_FRAME_OFFSET
     call determine_character_sprite
+_rc_do_render_character:
     ldi r22, CHARACTER_SPRITE_WIDTH
     ldi r23, CHARACTER_SPRITE_HEIGHT
     movw r24, r16
@@ -955,10 +971,26 @@ _rc_end:
 ;   Z (r30:r21)     flash memory pointer, temporary pointer
 render_character_icon:
     ldd r22, Y+CHARACTER_SPRITE_OFFSET
+    sbrs r22, 7
+    rjmp _rci_dynamic_character
+_rci_static_character:
+    andi r22, 0x7f
+    ldi ZL, byte3(2*static_character_sprite_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*static_character_sprite_table)
+    ldi ZH, high(2*static_character_sprite_table)
+    ldi r23, CHARACTER_SPRITE_MEMSIZE
+    mul r22, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    rjmp _rci_render_character
+_rci_dynamic_character:
     ldi r23, DIRECTION_DOWN
     ldi r24, ACTION_IDLE
     clr r25
     call determine_character_sprite
+_rci_render_character:
     ldi r21, CHARACTER_SPRITE_WIDTH
     clr r22
     ldi r23, CHARACTER_SPRITE_HEIGHT

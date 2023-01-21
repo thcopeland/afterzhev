@@ -16,10 +16,10 @@ _sug_main:
 _sug_end:
     jmp _loop_reenter
 
-.equ TITLE_START_MARGIN = 39 + DISPLAY_WIDTH*50
-.equ TITLE_RESUME_MARGIN = 65 + DISPLAY_WIDTH*50
-.equ TITLE_HELP_MARGIN = TITLE_START_MARGIN + DISPLAY_WIDTH*8 + 2
-.equ TITLE_ABOUT_MARGIN = TITLE_RESUME_MARGIN + DISPLAY_WIDTH*8 + 2
+.equ TITLE_START_MARGIN = 40 + DISPLAY_WIDTH*50
+.equ TITLE_RESUME_MARGIN = 66 + DISPLAY_WIDTH*50
+.equ TITLE_HELP_MARGIN = TITLE_START_MARGIN + DISPLAY_WIDTH*8
+.equ TITLE_ABOUT_MARGIN = TITLE_RESUME_MARGIN + DISPLAY_WIDTH*8
 
 start_render_screen:
     ldi YL, low(framebuffer)
@@ -127,8 +127,10 @@ _sthc_check_keys:
     subi r25, 1
     sbrc r20, CONTROLS_RIGHT
     subi r25, low(-1)
-    andi r25, 0x03
+    cpi r25, 4
+    brsh _sthc_check_submit
     sts start_selection, r25
+_sthc_check_submit:
     andi r20, exp2(CONTROLS_SPECIAL1)|exp2(CONTROLS_SPECIAL2)|exp2(CONTROLS_SPECIAL3)|exp2(CONTROLS_SPECIAL4)
     breq _sthc_end
     ldi r25, 1
@@ -154,7 +156,7 @@ _sc_check_help:
     rcall start_about
     ret
 _sc_fallback_start:
-    call load_intro
+    call load_character_selection
     ret
 
 start_resume:

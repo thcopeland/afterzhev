@@ -229,7 +229,7 @@ _rg_render_npcs_iter:
     adc ZH, r1
     clr r1
     lpm r18, Z+
-_rg_render_static_npc:
+_rg_render_static_npc: ; TODO redundant with changes to render_character?
     cpi r18, 128
     brlo _rg_render_dynamic_npc
     andi r18, low(~128)
