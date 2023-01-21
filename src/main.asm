@@ -154,8 +154,16 @@ _loop_upgrade:
     jmp upgrade_update_game
 _loop_gameover:
     cpi r18, MODE_GAMEOVER
-    brne _loop_reenter
+    brne _loop_start
     jmp gameover_update_game
+_loop_start:
+    cpi r18, MODE_START
+    brne _loop_intro
+    jmp start_update_game
+_loop_intro:
+    cpi r18, MODE_INTRO
+    brne _loop_reenter
+    jmp intro_update_game
 
 _loop_reenter:
 
@@ -188,6 +196,8 @@ _loop_end:
 .include "conversation.asm"
 .include "upgrade.asm"
 .include "gameover.asm"
+.include "start.asm"
+.include "intro.asm"
 .include "logic.asm"
 .include "rodata.asm"
 .include "data.asm"

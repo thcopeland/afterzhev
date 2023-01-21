@@ -9,6 +9,7 @@
     .include "conversations.asm"
     .include "npcs.asm"
     .include "classes.asm"
+    .include "fade.asm" ; requires special alignment, must be last
 
 ; Partition 2 (words 0x08000-0x0ffff): tiles and maps
     .org 0x08000

@@ -56,7 +56,7 @@ _init_zero_iter:
     stiw player_gold, 0
     sti player_health, 64
     stiw player_xp, 0
-    sti game_mode, MODE_EXPLORE
+    sti game_mode, MODE_START;MODE_EXPLORE
     sti inventory_selection, 0
     stiw preplaced_item_presence, 0xffff
     sti preplaced_item_presence+2, 0xff
@@ -81,7 +81,7 @@ _init_zero_iter:
     ; sti player_position_x, 132
     ; sti player_position_y, 80
     call reset_camera
-    .equ INITIAL_SECTOR = SECTOR_FINAL_8; SECTOR_START_1
+    .equ INITIAL_SECTOR = SECTOR_FINAL_6; SECTOR_START_1
     ldi ZL, low(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table+INITIAL_SECTOR*SECTOR_MEMSIZE)
     call load_sector

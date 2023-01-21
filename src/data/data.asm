@@ -72,6 +72,7 @@ savepoint_progress: .byte 1
 
 active_effects:     .byte ACTIVE_EFFECT_MEMSIZE*ACTIVE_EFFECT_COUNT
 
+start_selection:
 inventory_selection:
 shop_selection:
 selected_choice:

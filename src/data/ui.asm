@@ -54,3 +54,13 @@ ui_str_sell_label:  .db "Sell", 10, " for", 0
 ui_str_you_died:    .db "YOU  DIED", 0
 ui_str_press_any_button:.db 10, 10, "Press any button to start over.", 0
 ui_str_press_any_button2:.db "Press any button", 0, 0
+ui_str_start:       .db "Start", 0
+ui_str_resume:      .db "Resume", 0, 0
+ui_str_help:        .db "Help", 0, 0
+ui_str_about:       .db "About", 0
+
+intro_str_1:        .db "   The queen", 39, "s envoys are a", 10, "particularly glorious corps.", 0, 0
+intro_str_2:        .db "Famously, they have never", 10, "failed to deliver a letter.", 0
+intro_str_3:        .db "  A few weeks ago, two envoys", 10, "departed with a special letter.", 0
+intro_str_4:        .db " One an experienced envoy, the", 10, "other an apprentice named Zhev.", 0, 0
+intro_str_5:        .db "They traveled fast, stopping", 10, "     only to eat and sleep.", 0, 0
