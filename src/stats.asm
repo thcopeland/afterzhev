@@ -233,40 +233,21 @@ _cmh_stat:
     ret
 
 ; Calculate the player's acceleration.
-;   acceleration = 5 + dexterity/2 + 2*armor boost
+;   acceleration = 3 + max(dexterity*0.375, 0)
 ;
 ; Register Usage
 ;   r20             acceleration
 ;   r21             calculations
-;   Z (r30:r31)     flash pointer
 calculate_acceleration:
-    lds r20, player_armor
-    dec r20
-    brpl _ca_armor
+    lds r20, player_augmented_stats+STATS_DEXTERITY_OFFSET
+    asr r20
+    mov r21, r20
+    asr r21
+    asr r21
+    sub r20, r21
+    sbrc r20, 7
     clr r20
-    rjmp _ca_stat
-_ca_armor:
-    ldi ZL, byte3(2*item_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
-    ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
-    ldi r21, ITEM_MEMSIZE
-    mul r20, r21
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    elpm r20, Z
-    swap r20
-    lsr r20
-    andi r20, 0x06
-_ca_stat:
-    lds r21, player_augmented_stats+STATS_DEXTERITY_OFFSET
-    asr r21
-    asr r21
-    sbrc r21, 7
-    clr r21
-    add r20, r21
-    subi r20, low(-5)
+    subi r20, low(-3)
     ret
 
 ; Calculate the acceration applied to an enemy when colliding with the player.
@@ -314,4 +295,51 @@ calculate_dash_cooldown:
     mov r0, r25
     lsl r25
     add r25, r0
+    ret
+
+; Reset the player's stats based on the
+;
+; Register Usage
+;   r22-r25     calculations
+;   Y (r28:r29) memory pointer
+init_player_stats:
+    ldi YL, low(player_effects)
+    ldi YH, high(player_effects)
+    ldi r24, PLAYER_EFFECT_COUNT
+_ips_loop:
+    std Y+PLAYER_EFFECT_IDX_OFFSET, r1
+    adiw YL, PLAYER_EFFECT_COUNT
+    dec r24
+    brne _ips_loop
+_ips_check_class:
+    lds r25, player_class
+_ips_paladin:
+    cpi r25, CLASS_PALADIN
+    brne _ips_rogue
+    ldi r22, 10
+    ldi r23, 10
+    ldi r24, 5
+    ldi r25, 3
+_ips_rogue:
+    cpi r25, CLASS_ROGUE
+    brne _ips_mage
+    ldi r22, 5
+    ldi r23, 6
+    ldi r24, 12
+    ldi r25, 10
+_ips_mage:
+    cpi r25, CLASS_MAGE
+    brne _ips_save_stats
+    ldi r22, 5
+    ldi r23, 7
+    ldi r24, 10
+    ldi r25, 12
+_ips_save_stats:
+    sts player_stats + STATS_STRENGTH_OFFSET, r22
+    sts player_stats + STATS_VITALITY_OFFSET, r23
+    sts player_stats + STATS_DEXTERITY_OFFSET, r24
+    sts player_stats + STATS_INTELLECT_OFFSET, r25
+    rcall update_player_stat_effects
+    rcall calculate_max_health
+    sts player_health, r25
     ret

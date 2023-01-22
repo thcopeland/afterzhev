@@ -16,6 +16,7 @@ intro_update_game:
     sts mode_clock, r25
     cpi r25, 254
     brlo _iug_end
+    call init_game_state
     ldi r25, MODE_EXPLORE
     sts game_mode, r25
 _iug_end:

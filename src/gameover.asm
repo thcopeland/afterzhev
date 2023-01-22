@@ -42,7 +42,19 @@ gameover_handle_controls:
     lds r25, mode_clock
     cpi r25, 65
     brlo _ghc_end
-    call load_resume
+    lds r25, gameover_state
+    cpi r25, GAME_OVER_WIN
+    brne _ghc_dead
+_ghc_win:
+    call restart_game
+    rjmp _ghc_end
+_ghc_dead:
+    call restore_from_savepoint
+    tst r25
+    breq _ghc_end
+    ldi r25, MODE_EXPLORE
+    sts game_mode, r25
+    call init_game_state
 _ghc_end:
     ret
 

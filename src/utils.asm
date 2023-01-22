@@ -210,6 +210,18 @@ _db_2_%:
 _db_3_%:
 .endm
 
+; Set a small section of memory to a fixed value. Not really efficient.
+.macro memset ; base addr, value, size
+    ldi YL, low(@0)
+    ldi YH, high(@0)
+    ldi r24, @1
+    ldi r25, @2
+_cm_%:
+    st Y+, r24
+    dec r25
+    brne _cm_%
+.endm
+
 ; rapidly write 12 pixels to the given port
 ; clobbers r0
 .macro write_12_pixels ; port, X|Y|Z

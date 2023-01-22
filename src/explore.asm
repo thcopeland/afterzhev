@@ -1,3 +1,48 @@
+init_game_state:
+    ldi r24, 151
+    ldi r25, 87
+    sts player_position_x, r24
+    sts player_position_y, r25
+    sts player_subpixel_x, r1
+    sts player_subpixel_y, r1
+    call reset_camera
+    sts player_velocity_x, r1
+    sts player_velocity_y, r1
+    sts player_weapon, r1
+    sts player_armor, r1
+    memset player_inventory, 0, PLAYER_INVENTORY_SIZE
+    memset global_data, 0, GLOBAL_DATA_MEMSIZE
+    memset sector_data, 0, SECTOR_DATA_MEMSIZE
+    memset npc_presence, 0xff, (TOTAL_NPC_COUNT >> 3)
+    memset conversation_over, 0xff, (TOTAL_CONVERSATION_COUNT >> 3)
+    memset preplaced_item_presence, 0xff, (TOTAL_PREPLACED_ITEM_COUNT >> 3)
+    memset following_npcs, 0, FOLLOWING_NPC_COUNT
+    ldi r23, ITEM_inventory_book
+    ldi r24, ITEM_war_book
+    ldi r25, ITEM_manners_book
+    sts player_inventory, r23
+    sts player_inventory+1, r24
+    sts player_inventory+2, r25
+    call init_player_stats
+    sts player_action, r1
+    ldi r25, DIRECTION_DOWN
+    sts player_direction, r25
+    sts player_effect, r1
+    sts player_gold, r1
+    sts player_gold+1, r1
+    sts player_xp, r1
+    sts player_xp+1, r1
+    sts savepoint_used, r1
+    sts mode_clock, r1
+    sts current_shop_index, r1
+    sts savepoint_data, r1
+    ldi ZL, byte3(2*sector_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*sector_table + SECTOR_START_1*SECTOR_MEMSIZE)
+    ldi ZH, high(2*sector_table + SECTOR_START_1*SECTOR_MEMSIZE)
+    call load_sector
+    ret
+
 explore_update_game:
     rcall update_savepoint
     call update_player_stat_effects
