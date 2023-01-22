@@ -14,7 +14,8 @@ intro_update_game:
     lds r25, mode_clock
     subi r25, low(-1)
     sts mode_clock, r25
-    brcs _iug_end
+    cpi r25, 254
+    brlo _iug_end
     ldi r25, MODE_EXPLORE
     sts game_mode, r25
 _iug_end:
@@ -26,65 +27,68 @@ intro_handle_controls:
     breq _inhc_end
     lds r25, mode_clock
     subi r25, low(-2)
-    brcs _inhc_save_clock
-    ldi r25, 255
+    cpi r25, 254
+    brlo _inhc_save_clock
+    ldi r25, 244
 _inhc_save_clock:
     sts mode_clock, r25
 _inhc_end:
     ret
 
-.equ INTRO_1_MARGIN = 10 + DISPLAY_WIDTH*6
-.equ INTRO_2_MARGIN = 12 + DISPLAY_WIDTH*16
-.equ INTRO_3_MARGIN = 6 + DISPLAY_WIDTH*26
-.equ INTRO_4_MARGIN = 5 + DISPLAY_WIDTH*36
-.equ INTRO_5_MARGIN = 8 + DISPLAY_WIDTH*46
+.equ INTRO_TEXT_MARGIN = 5 + DISPLAY_WIDTH*52
 
 intro_render:
-    ldi ZL, byte3(2*parchment_screen)
+    lds r25, mode_clock
+    cpi r25, 244
+    brlo _ir_main
+    call screen_fade_out
+    ret
+_ir_main:
+    ldi ZL, byte3(2*intro_screen)
     out RAMPZ, ZL
-    ldi ZL, low(2*parchment_screen)
-    ldi ZH, high(2*parchment_screen)
+    ldi ZL, low(2*intro_screen)
+    ldi ZH, high(2*intro_screen)
     call render_full_screen
     ldi r21, 29
     ldi r23, 0x6e
-    ldi r24, 25
-    ldi r25, 57
-    ldi YL, low(framebuffer+INTRO_1_MARGIN)
-    ldi YH, high(framebuffer+INTRO_1_MARGIN)
+    ldi r24, 20
+    ldi r25, 52
+    ldi YL, low(framebuffer+INTRO_TEXT_MARGIN)
+    ldi YH, high(framebuffer+INTRO_TEXT_MARGIN)
     ldi ZL, byte3(2*intro_str_1)
     out RAMPZ, ZL
     ldi ZL, low(2*intro_str_1)
     ldi ZH, high(2*intro_str_1)
     call fade_text_inverse
     ldi r23, 0x6e
-    ldi r24, 69
-    ldi r25, 101
-    ldi YL, low(framebuffer+INTRO_2_MARGIN)
-    ldi YH, high(framebuffer+INTRO_2_MARGIN)
+    ldi r24, 68
+    ldi r25, 100
+    ldi YL, low(framebuffer+INTRO_TEXT_MARGIN)
+    ldi YH, high(framebuffer+INTRO_TEXT_MARGIN)
     ldi ZL, low(2*intro_str_2)
     ldi ZH, high(2*intro_str_2)
     call fade_text_inverse
     ldi r23, 0x6e
-    ldi r24, 113
-    ldi r25, 145
-    ldi YL, low(framebuffer+INTRO_3_MARGIN)
-    ldi YH, high(framebuffer+INTRO_3_MARGIN)
+    ldi r24, 116
+    ldi r25, 148
+    ldi YL, low(framebuffer+INTRO_TEXT_MARGIN)
+    ldi YH, high(framebuffer+INTRO_TEXT_MARGIN)
     ldi ZL, low(2*intro_str_3)
     ldi ZH, high(2*intro_str_3)
     call fade_text_inverse
     ldi r23, 0x6e
-    ldi r24, 157
-    ldi r25, 189
-    ldi YL, low(framebuffer+INTRO_4_MARGIN)
-    ldi YH, high(framebuffer+INTRO_4_MARGIN)
+    ldi r24, 164
+    ldi r25, 196
+    ldi YL, low(framebuffer+INTRO_TEXT_MARGIN)
+    ldi YH, high(framebuffer+INTRO_TEXT_MARGIN)
     ldi ZL, low(2*intro_str_4)
     ldi ZH, high(2*intro_str_4)
     call fade_text_inverse
     ldi r23, 0x6e
-    ldi r24, 201
-    ldi r25, 233
-    ldi YL, low(framebuffer+INTRO_5_MARGIN)
-    ldi YH, high(framebuffer+INTRO_5_MARGIN)
+    ldi r24, 212
+    ldi r25, 244
+    ldi YL, low(framebuffer+INTRO_TEXT_MARGIN)
+    ldi YH, high(framebuffer+INTRO_TEXT_MARGIN)
     ldi ZL, low(2*intro_str_5)
     ldi ZH, high(2*intro_str_5)
     call fade_text_inverse
