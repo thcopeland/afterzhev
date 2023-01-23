@@ -17,5 +17,6 @@ _clear_memory_loop:
     ldi r25, 1
     sts seed, r25
     sts seed+1, r1
+    sts start_selection, r1
     call restart_game
     rjmp main

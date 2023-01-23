@@ -63,9 +63,10 @@ ui_str_choose_character:.db "Choose your character:", 0, 0
 ui_str_man:         .db "Man", 0
 ui_str_woman:       .db "Woman", 0
 ui_str_halfling:    .db "Halfling", 0, 0
-ui_str_no_save:     .db "No saved game found in EEPROM.", 10, "Press any button to restart.", 0
+ui_str_no_save:     .db "No saved game found in EEPROM.", 10, "Press any button to exit.", 0, 0
 intro_str_1:        .db "The queen", 39, "s envoys are a", 10, "particularly glorious corps.", 0
 intro_str_2:        .db "Famously, they have never", 10, "failed to deliver a letter.", 0
 intro_str_3:        .db "A few weeks ago, two envoys", 10, "departed with a special letter.", 0
 intro_str_4:        .db "One an experienced envoy, the", 10, "other an apprentice named Zhev.", 0
 intro_str_5:        .db "They traveled fast, stopping", 10, "only to eat and sleep.", 0
+about_str:          .db "AfterZhev is a game by Tom", 10, "Copeland, made from late", 10, "2021 to early 2023.", 10, 10, "Visit thcopeland.com for the", 10, "juicy details.", 10, 10, "Released under", 10, "the MIT license.", 0

@@ -44,8 +44,8 @@ _rr_check_status:
     tst r25
     breq _rr_end
 _rr_no_resume:
-    ldi YL, low(framebuffer + 2 + 2*DISPLAY_WIDTH)
-    ldi YH, high(framebuffer + 2 + 2*DISPLAY_WIDTH)
+    ldi YL, low(framebuffer + 4 + 3*DISPLAY_WIDTH)
+    ldi YH, high(framebuffer + 4 + 3*DISPLAY_WIDTH)
     ldi r21, 29
     ldi r23, 0xff
     ldi ZL, byte3(2*ui_str_no_save)

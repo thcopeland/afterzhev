@@ -17,6 +17,7 @@ init_game_state:
     memset conversation_over, 0xff, (TOTAL_CONVERSATION_COUNT >> 3)
     memset preplaced_item_presence, 0xff, (TOTAL_PREPLACED_ITEM_COUNT >> 3)
     memset following_npcs, 0, FOLLOWING_NPC_COUNT
+    memset shop_inventory, 0, SHOP_INVENTORY_SIZE
     ldi r23, ITEM_inventory_book
     ldi r24, ITEM_war_book
     ldi r25, ITEM_manners_book
@@ -34,7 +35,8 @@ init_game_state:
     sts player_xp+1, r1
     sts savepoint_used, r1
     sts mode_clock, r1
-    sts current_shop_index, r1
+    ldi r25, NO_SHOP
+    sts current_shop_index, r25
     sts savepoint_data, r1
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL

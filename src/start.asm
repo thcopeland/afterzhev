@@ -2,7 +2,9 @@ restart_game:
     ldi r25, MODE_START
     sts game_mode, r25
     sts mode_clock, r1
-    sts start_selection, r1
+    lds r25, start_selection
+    andi r25, 0x03
+    sts start_selection, r25
     ret
 
 start_update_game:
@@ -160,14 +162,11 @@ _sc_check_about:
 _sc_check_help:
     cpi r25, 3
     brne _sc_fallback_start
-    rcall start_about
+    call load_about
     ret
 _sc_fallback_start:
     call load_character_selection
     ret
 
 start_help:
-    ret
-
-start_about:
     ret

@@ -46,6 +46,7 @@ gameover_handle_controls:
     cpi r25, GAME_OVER_WIN
     brne _ghc_dead
 _ghc_win:
+    sts start_selection, r1
     call restart_game
     rjmp _ghc_end
 _ghc_dead:
