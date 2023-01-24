@@ -6,11 +6,8 @@
 ;   r1          zero
 clear_sector_data:
     sts sector_data, r1
-    sts sector_data+1, r1
-    sts sector_data+2, r1
-    sts sector_data+3, r1
-.if SECTOR_DATA_MEMSIZE != 4
-    .error "clear_sector_data clears only 4 bytes of sector, adjust as necessary"
+.if SECTOR_DATA_MEMSIZE != 1
+    .error "clear_sector_data clears only 1 bytes of sector data, adjust as necessary"
 .endif
     ret
 

@@ -58,8 +58,6 @@ savedmem_end:
 
 savepoint_used:     .byte SAVEPOINT_COUNT>>3
 
-sector_loose_items: .byte SECTOR_DYNAMIC_ITEM_MEMSIZE*SECTOR_DYNAMIC_ITEM_COUNT
-
 sector_npcs:        .byte NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT
 
 following_spawn_x:  .byte 1
@@ -70,7 +68,12 @@ following_npcs:     .byte FOLLOWING_NPC_COUNT
 savepoint_data:     .byte 1 ; [status:2][index:3][frame:3]
 savepoint_progress: .byte 1
 
+sector_loose_items: .byte SECTOR_DYNAMIC_ITEM_MEMSIZE*SECTOR_DYNAMIC_ITEM_COUNT
+
 active_effects:     .byte ACTIVE_EFFECT_MEMSIZE*ACTIVE_EFFECT_COUNT
+
+current_shop_index: .byte 1
+shop_inventory:     .byte SHOP_INVENTORY_SIZE
 
 start_selection:
 inventory_selection:
@@ -80,9 +83,6 @@ upgrade_selection:
 npc_move_flags:     .byte 1
 gameover_state:
 npc_move_flags2:    .byte 1
-
-current_shop_index: .byte 1
-shop_inventory:     .byte SHOP_INVENTORY_SIZE
 
 lightning_clock:
 conversation_frame: .byte 2

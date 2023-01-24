@@ -1327,6 +1327,7 @@ _rfs_load_sector: ; load any sector-specific stuff that was not saved
     lds ZL, current_sector
     lds ZH, current_sector+1
     rcall load_sector
+    sts current_shop_index, r1
     clr r25
 _rfs_end:
     ret
