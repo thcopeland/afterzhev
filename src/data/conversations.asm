@@ -65,8 +65,8 @@ DECL_CONVERSATION pickup_tutorial
 _conv_pickup_tutorial:          DECL_LINE pickup_tutorial, 0, PLAYER, pickup_tutorial2
 _conv_pickup_tutorial2:         DECL_LINE pickup_tutorial2, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION battle_tutorial
-_conv_battle_tutorial_halfling: DECL_LINE battle_tutorial_halfling, NPC_BATTLE_TUTORIAL, ruffian, battle_tutorial2
-_conv_battle_tutorial_generic:  DECL_LINE battle_tutorial, NPC_BATTLE_TUTORIAL, ruffian, battle_tutorial2
+_conv_battle_tutorial_halfling: DECL_LINE battle_tutorial_halfling, NPC_BANDIT_0, ruffian, battle_tutorial2
+_conv_battle_tutorial_generic:  DECL_LINE battle_tutorial, NPC_BANDIT_0, ruffian, battle_tutorial2
 _conv_battle_tutorial2:         DECL_BRANCH 3
                                 DECL_CHOICE plead, battle_tutorial3
                                 DECL_CHOICE threaten, battle_tutorial4
@@ -74,7 +74,7 @@ _conv_battle_tutorial2:         DECL_BRANCH 3
 _conv_battle_tutorial3:         DECL_LINE battle_tutorial3, 0, PLAYER, battle_tutorial6
 _conv_battle_tutorial4:         DECL_LINE battle_tutorial4, 0, PLAYER, battle_tutorial6
 _conv_battle_tutorial5:         DECL_LINE battle_tutorial5, 0, PLAYER, battle_tutorial6
-_conv_battle_tutorial6:         DECL_LINE battle_tutorial6, NPC_BATTLE_TUTORIAL, ruffian, battle_tutorial7
+_conv_battle_tutorial6:         DECL_LINE battle_tutorial6, NPC_BANDIT_0, ruffian, battle_tutorial7
 _conv_battle_tutorial7:         DECL_LINE battle_tutorial7, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION loot_tutorial
 _conv_loot_tutorial:            DECL_LINE loot_tutorial, 0, PLAYER, loot_tutorial2

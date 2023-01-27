@@ -323,17 +323,17 @@ _ips_paladin:
 _ips_rogue:
     cpi r25, CLASS_ROGUE
     brne _ips_mage
-    ldi r22, 5
+    ldi r22, 6
     ldi r23, 6
     ldi r24, 12
     ldi r25, 10
 _ips_mage:
     cpi r25, CLASS_MAGE
     brne _ips_save_stats
-    ldi r22, 5
+    ldi r22, 6
     ldi r23, 7
-    ldi r24, 10
-    ldi r25, 12
+    ldi r24, 8
+    ldi r25, 15
 _ips_save_stats:
     sts player_stats + STATS_STRENGTH_OFFSET, r22
     sts player_stats + STATS_VITALITY_OFFSET, r23

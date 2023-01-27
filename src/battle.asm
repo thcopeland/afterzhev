@@ -109,6 +109,7 @@ _prmd_fallback:
 _prmd_calculate_defense:
     clr r1
     add r26, r0
+    lsr r26
     lds r22, player_armor
     dec r22
     brmi _prmd_apply_damage
@@ -125,7 +126,7 @@ _prmd_calculate_defense:
     andi r25, 0x0f
     sub r26, r25
     brsh _prmd_apply_damage
-    ldi r26, 1
+    ldi r26, 2
 _prmd_apply_damage:
     inc r26
     lds r24, player_health
@@ -234,6 +235,7 @@ _pred_fallback:
 _pred_calculate_defense:
     clr r1
     add r25, r0
+    lsr r25
     lds r23, player_armor
     dec r23
     brmi _pred_damage
@@ -250,7 +252,7 @@ _pred_calculate_defense:
     andi r24, 0x0f
     sub r25, r24
     brsh _pred_damage
-    ldi r25, 1
+    ldi r25, 2
 _pred_damage:
     inc r25
     lds r24, player_health
@@ -369,6 +371,7 @@ _nrmd_strength_damage:
     lds r24, player_augmented_stats+STATS_STRENGTH_OFFSET
     asr r24
     add r25, r24
+    asr r25
     elpm r24, Z
     cpi r24, NPC_ENEMY
     breq _nrmd_enemy_defense
@@ -532,17 +535,18 @@ _nrrd_check_weapon:
     cpi r22, ITEM_RANGED
     brne _nrrd_calculate_defense
     lds r24, player_augmented_stats+STATS_INTELLECT_OFFSET
-    lsr r24
+    asr r24
     andi r23, RANGED_MAGICAL
     brne _nrrd_apply_additional
 _nrrd_non_magical_ranged:
     lds r23, player_augmented_stats+STATS_STRENGTH_OFFSET
-    lsr r23
+    asr r23
     add r24, r23
-    lsr r24
+    asr r24
 _nrrd_apply_additional:
     add r25, r24
 _nrrd_calculate_defense:
+    asr r25
     mov r0, ZL
     mov r23, ZH
     ldi ZL, byte3(2*npc_table)

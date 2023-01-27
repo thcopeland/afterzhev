@@ -79,7 +79,7 @@ _tsc_end_%:
 .endm
 
 ; Add an NPC to the sector, if there's an available slot and the NPC has not been
-; killed.
+; killed. r25 is cleared on success.
 ;
 ; Register Usage
 ;   r20-r21         calculations
@@ -113,6 +113,7 @@ _an_npc_iter:
     rjmp _an_end
 _an_slot_found:
     call load_npc
+    clr r25
 _an_end:
     ret
 

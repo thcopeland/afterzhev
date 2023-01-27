@@ -131,8 +131,8 @@ _ste1u_interact:
     try_start_conversation interact_tutorial
 _ste1u_check_quest:
     lds r25, global_data + QUEST_KIDNAPPED
-    cpi r25, 4
-    brne _ste1u_end
+    cpi r25, 5
+    brsh _ste1u_end
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
     ldi r24, SECTOR_DYNAMIC_NPC_COUNT
@@ -359,6 +359,7 @@ sector_town_tavern_2_choice:
     ret
 
 sector_town_fields_init:
+    sts npc_move_flags2, r1
     lds r25, global_data+QUEST_BANDITS
     andi r25, 0x3
 _stfi_test_left_confrontation:
@@ -374,31 +375,39 @@ _stfi_test_left_confrontation:
 _stfi_test_right_confrontation:
     cpi r25, 2
     brne _stfi_end
+_stfi_add_unmasked:
     ldi r25, NPC_UNDERCOVER_BANDIT_UNMASKED
     call add_npc
+    tst r25
+    brne _stfi_add_goon_1
     ldi r24, 193
     ldi r25, 109
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
     ldi r25, DIRECTION_RIGHT
     std Y+NPC_ANIM_OFFSET, r25
+_stfi_add_goon_1:
     ldi r25, NPC_UNDERCOVER_GOON1
     call add_npc
+    tst r25
+    brne _stfi_add_goon_2
     ldi r24, 183
     ldi r25, 118
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
     ldi r25, DIRECTION_RIGHT
     std Y+NPC_ANIM_OFFSET, r25
+_stfi_add_goon_2:
     ldi r25, NPC_UNDERCOVER_GOON2
     call add_npc
+    tst r25
+    brne _stfi_end
     ldi r24, 185
     ldi r25, 100
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
     ldi r25, DIRECTION_RIGHT
     std Y+NPC_ANIM_OFFSET, r25
-    rjmp _stfi_end
 _stfi_end:
     ret
 
@@ -456,6 +465,8 @@ _stfp2_end:
     ret
 
 sector_town_forest_path_4_update:
+    ldi r25, 1
+    sts npc_move_flags2, r25
     lds r25, player_position_y
     cpi r25, 120
     brlo _stfp4_end
@@ -471,6 +482,8 @@ sector_town_forest_path_4_update:
     call add_npc
     ldi r25, NPC_AMBUSHER
     call add_npc
+    tst r25
+    brne _stfp4_end
     ldi r25, 59
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r25
 _stfp4_end:

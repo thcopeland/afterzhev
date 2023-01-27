@@ -1064,9 +1064,8 @@ _pa_test_high_level_intellect:
     brlo _pa_end
 _pa_attack:
     mov r21, r20
-    lsl r21
-    andi r21, 0x70
-    subi r21, -((ATTACK_FRAME_DURATION_MASK+1)*WEAPON_ATTACK_FRAMES)
+    andi r21, 0x38
+    subi r21, -((ATTACK_FRAME_DURATION_MASK+1)*(ATTACK_DAMAGE_FRAME+1))
     sts player_attack_cooldown, r21
     ldi r21, ACTION_ATTACK
     sts player_action, r21

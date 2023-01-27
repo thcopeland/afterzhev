@@ -54,48 +54,48 @@
 .equ RANGED_MAGICAL = (1 << 3)
 
 item_table:
-    DECL_ITEM wood_stick,           (1<<6)|(2<<3)|ITEM_WIELDABLE,        3,     0,  0,  0,  0,      (1<<4)
-    DECL_ITEM feathered_hat,        ITEM_WEARABLE,                      10,     0,  0,  1,  0,      1
-    DECL_ITEM bloody_sword,         (1<<6)|(1<<3)|ITEM_WIELDABLE,       30,     0, -1,  0,  0,      (3<<4)
-    DECL_ITEM green_hood,           ITEM_WEARABLE,                      10,     0,  0,  0,  2,      1
-    DECL_ITEM leather_armor,        ITEM_WEARABLE,                      75,     1,  0, -1,  0,      3
-    DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,              0,      0,  0,  0,  0,      0
-    DECL_ITEM invisible_staff,      (2<<6)|ITEM_RANGED,                 0,      0,  0,  0,  0,      (4<<4)|EFFECT_MISSILE
-    DECL_ITEM steel_sword,          (1<<6)|ITEM_WIELDABLE,              40,     0,  0,  0,  0,      (5<<4)
-    DECL_ITEM wooden_bow,           (2<<6)|(1<<3)|ITEM_RANGED,          30,     0,  0,  0,  0,      (3<<4)|EFFECT_ARROW
+    DECL_ITEM wood_stick,           (1<<6)|(4<<3)|ITEM_WIELDABLE,        5,     0,  0,  0,  0,      (1<<4)
+    DECL_ITEM feathered_hat,        ITEM_WEARABLE,                      25,     0,  1,  1,  0,      1
+    DECL_ITEM bloody_sword,         (1<<6)|(4<<3)|ITEM_WIELDABLE,       50,     0, -2,  0,  0,      (3<<4)
+    DECL_ITEM green_hood,           ITEM_WEARABLE,                      25,     0,  0,  0,  3,      1
+    DECL_ITEM leather_armor,        ITEM_WEARABLE,                      80,     1,  0, -1,  0,      3
+    DECL_ITEM invisible_weapon,     (1<<6)|ITEM_WIELDABLE,               0,     0,  0,  0,  0,      0
+    DECL_ITEM invisible_staff,      (2<<6)|ITEM_RANGED,                  0,     0,  0,  0,  0,      (4<<4)|EFFECT_MISSILE
+    DECL_ITEM steel_sword,          (1<<6)|(2<<3)|ITEM_WIELDABLE,      100,     0,  0,  0,  0,      (3<<4)
+    DECL_ITEM wooden_bow,           (2<<6)|(4<<3)|ITEM_RANGED,          50,     0,  0,  2,  0,      (3<<4)|EFFECT_ARROW
     DECL_ITEM guard_hat,            ITEM_WEARABLE,                      30,     0,  0, -2,  0,      2
-    DECL_ITEM beard,                ITEM_WEARABLE,                      0,      0,  0,  0,  0,      0
-    DECL_ITEM club,                 (1<<6)|(2<<3)|ITEM_WIELDABLE,       10,     0,  0,  0,  0,      (3<<4)
-    DECL_ITEM glass_dagger,         ITEM_WIELDABLE,                     60,     0,  0,  3,  0,      (2<<4)
-    DECL_ITEM glass_shard,          ITEM_WIELDABLE,                     10,     0,  0,  1,  0,      (1<<4)
-    DECL_ITEM great_bow,            (3<<6)|(2<<3)|RANGED_HIGH_LEVEL|ITEM_RANGED, 200,  0,  0,  0,  0,      (6<<4)|EFFECT_ARROW
-    DECL_ITEM green_cloak,          ITEM_WEARABLE,                      20,     0,  0,  0,  0,      2
-    DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      20,     0,  0,  0,  0,      2
-    DECL_ITEM purple_hood,          ITEM_WEARABLE,                      30,     0,  0,  0,  0,      0
-    DECL_ITEM hammer,               (2<<3)|ITEM_WIELDABLE,              40,     0,  0,  0,  0,      (2<<4)
-    DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     2,  0, -10, 0,      8
-    DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                     350,     1,  0, -6,  0,      6
-    DECL_ITEM iron_helmet,          ITEM_WEARABLE,                     200,     1,  0, -4,  0,      2
-    DECL_ITEM iron_staff,           (2<<6)|RANGED_MAGICAL|ITEM_RANGED,                 50,     0, -2,  0,  0,      (3<<4)|EFFECT_FIREBALL
-    DECL_ITEM wood_staff,           (2<<6)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     120,     0,  1,  0,  0,      (4<<4)|EFFECT_FIREBALL
-    DECL_ITEM ivory_wand,           (2<<6)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     300,     0,  0,  0,  0,      (5<<4)|EFFECT_FIREBALL
-    DECL_ITEM mithril_armor,        ITEM_WEARABLE,                    2000,     0,  5,  0,  0,      12
-    DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                    1400,     0,  3,  0,  0,      8
-    DECL_ITEM mithril_cap,          ITEM_WEARABLE,                     600,     0,  1,  0,  0,      3
-    DECL_ITEM mithril_dagger,       ITEM_WIELDABLE,                    300,     0,  2,  0,  0,      (3<<4)
-    DECL_ITEM mithril_spike,        ITEM_WIELDABLE,                    200,     0,  0,  0,  0,      (2<<4)
-    DECL_ITEM spear,                (2<<6)|(2<<3)|ITEM_WIELDABLE,      150,     0,  0, -2,  0,      (6<<4)
-    DECL_ITEM wooden_shield,        ITEM_WEARABLE,                      10,     0,  0,  0,  0,      0
-    DECL_ITEM axe,                  (2<<6)|ITEM_WIELDABLE,              30,     1,  0,  0,  0,      (3<<4)
-    DECL_ITEM angel_of_death,       (2<<6)|(4<<3)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,     5000,     0,  0,  0,  0,      (15<<4)|EFFECT_FIREBALL
-    DECL_ITEM glass_staff,          (2<<6)|(2<<3)|RANGED_HIGH_LEVEL|RANGED_MAGICAL|ITEM_RANGED,      300,     0,  2,  0,  0,      (8<<4)|EFFECT_MISSILE
-    DECL_ITEM blessed_sword,        (2<<6)|(1<<3)|ITEM_WIELDABLE,      340,     0,  5,  0,  0,      (6<<4)
+    DECL_ITEM beard,                ITEM_WEARABLE,                       0,     0,  0,  0,  0,      0
+    DECL_ITEM club,                 (1<<6)|(4<<3)|ITEM_WIELDABLE,       10,     0,  0,  0,  0,      (3<<4)
+    DECL_ITEM glass_dagger,         ITEM_WIELDABLE,                     80,     0,  0,  4,  0,      (2<<4)
+    DECL_ITEM glass_shard,          ITEM_WIELDABLE,                     20,     0,  0,  0,  0,      (1<<4)
+    DECL_ITEM great_bow,            (3<<6)|(4<<3)|ITEM_RANGED,         200,     0,  0,  0,  0,      (6<<4)|EFFECT_ARROW
+    DECL_ITEM green_cloak,          ITEM_WEARABLE,                      40,     0,  0,  0,  0,      2
+    DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      40,     0,  0,  0,  0,      2
+    DECL_ITEM purple_hood,          ITEM_WEARABLE,                      25,     0,  0,  0,  3,      1
+    DECL_ITEM hammer,               (7<<3)|ITEM_WIELDABLE,              50,     0,  0,  0,  0,      (5<<4)
+    DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     3,  0, -8, 0,       8
+    DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                     350,     2,  0, -6,  0,      5
+    DECL_ITEM iron_helmet,          ITEM_WEARABLE,                     200,     2,  0, -3,  0,      3
+    DECL_ITEM iron_staff,           (2<<6)|(3<<3)|RANGED_MAGICAL|ITEM_RANGED, 150,     0, -6,  0,  0,      (5<<4)|EFFECT_FIREBALL
+    DECL_ITEM wood_staff,           (2<<6)|RANGED_MAGICAL|ITEM_RANGED,  80,     0,  1,  0,  0,      (2<<4)|EFFECT_FIREBALL
+    DECL_ITEM ivory_wand,           (2<<6)|(4<<3)|RANGED_MAGICAL|ITEM_RANGED,300,     0,  0,  0,  0,      (7<<4)|EFFECT_FIREBALL
+    DECL_ITEM mithril_armor,        ITEM_WEARABLE,                    2000,     0,  5,  3,  0,      10
+    DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                    1400,     0,  3,  2,  0,      8
+    DECL_ITEM mithril_cap,          ITEM_WEARABLE,                     600,     0,  1,  1,  0,      3
+    DECL_ITEM mithril_dagger,       ITEM_WIELDABLE,                    300,     0,  4,  4,  0,      (3<<4)
+    DECL_ITEM mithril_spike,        ITEM_WIELDABLE,                    200,     0,  4,  0,  0,      (1<<4)
+    DECL_ITEM spear,                (2<<6)|(5<<3)|ITEM_WIELDABLE,      150,     2,  0, -2,  0,      (8<<4)
+    DECL_ITEM wooden_shield,        ITEM_WEARABLE,                      20,     0,  0,  0,  0,      0
+    DECL_ITEM axe,                  (1<<6)|(2<<3)|ITEM_WIELDABLE,              30,     1,  0,  0,  0,      (3<<4)
+    DECL_ITEM angel_of_death,       (2<<6)|(4<<3)|RANGED_MAGICAL|ITEM_RANGED,     5000,     0,  0,  0,  0,      (15<<4)|EFFECT_FIREBALL
+    DECL_ITEM glass_staff,          (2<<6)|(1<<3)|RANGED_MAGICAL|ITEM_RANGED,      300,     0,  2,  0,  0,      (6<<4)|EFFECT_MISSILE
+    DECL_ITEM blessed_sword,        (2<<6)|(1<<3)|ITEM_WIELDABLE,      340,     4,  4,  0,  0,      (6<<4)
     DECL_ITEM white_fox_eyes,       ITEM_WEARABLE,                       0,     0,  0,  0,  0,      0
     DECL_ITEM iron_breastplate_cloak, ITEM_WEARABLE,                   600,     2,  0, -10, 0,      8
     DECL_ITEM inventory_book,       ITEM_USABLE,                        20,     0,  0,  0,  0,      1
     DECL_ITEM manners_book,         ITEM_USABLE,                        20,     0,  0,  0,  0,      1
     DECL_ITEM war_book,             ITEM_USABLE,                        20,     0,  0,  0,  0,      1
-    DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0,  8,  0,  0,      0
+    DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0, 10,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                  1,     0, -5,  0,  0,      0
     DECL_ITEM health_potion,        (0<<3)|ITEM_USABLE,                100,     0, 40,  0,  0,      0
     DECL_ITEM beer,                 (3<<3)|ITEM_USABLE,                  5,     5,  5,  0, -5,      0
@@ -103,13 +103,13 @@ item_table:
     DECL_ITEM whiskey,              (1<<3)|ITEM_USABLE,                 20,    10,  5, -5,  0,      0
     DECL_ITEM journal,              ITEM_USABLE,                        10,     0,  0,  0,  0,      1
     DECL_ITEM pass,                 ITEM_USABLE,                       100,     0,  0,  0,  0,      1
-    DECL_ITEM curse_of_ullimar,     USABLE_ETERNAL|ITEM_USABLE,         20,   -10,  0,-10,-10,      0
+    DECL_ITEM curse_of_ullimar,     (7<<3)|ITEM_USABLE,                 20,   -20,-10,  0,-10,      0
     DECL_ITEM large_health_potion,  (1<<3)|ITEM_USABLE,                150,     0, 45,  0,  0,      0
-    DECL_ITEM mint_tonic,           (3<<3)|ITEM_USABLE,                 50,     0,  0,  0, 20,      0
-    DECL_ITEM mint_leaves,          (3<<3)|ITEM_USABLE,                 20,     0,  0,  0, 10,      0
-    DECL_ITEM bismuth_subsalicylate,(3<<3)|ITEM_USABLE,                 10,     0,  2,  0,  0,      0
-    DECL_ITEM strength_potion,      (3<<3)|ITEM_USABLE,                 50,    20,  0,  0,  0,      0
-    DECL_ITEM speed_potion,         (3<<3)|ITEM_USABLE,                 60,     0,  0, 30,  0,      0
+    DECL_ITEM mint_tonic,           (3<<3)|ITEM_USABLE,                 50,     0,  0,  0, 15,      0
+    DECL_ITEM mint_leaves,          (3<<3)|ITEM_USABLE,                 20,     0,  0,  0,  7,      0
+    DECL_ITEM bismuth_subsalicylate,(1<<3)|ITEM_USABLE,                 10,     0,  2,  0,  0,      0
+    DECL_ITEM strength_potion,      (3<<3)|ITEM_USABLE,                 50,    10,  0,  0,  0,      0
+    DECL_ITEM speed_potion,         (1<<3)|ITEM_USABLE,                 60,     0,  0, 30,  0,      0
     DECL_ITEM gold_chalice,         ITEM_USABLE,                       200,     0,  0,  0,  0,      1
     DECL_ITEM gold_bar,             ITEM_USABLE,                       150,     0,  0,  0,  0,      1
     DECL_ITEM small_chest,          ITEM_USABLE,                        10,     0,  0,  0,  0,      1
@@ -117,13 +117,16 @@ item_table:
 
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
-DECL_LOOSE_ITEM foxes_feathered_hat
 DECL_LOOSE_ITEM tavern_guest_gold
+DECL_LOOSE_ITEM town_lost_potion
 DECL_LOOSE_ITEM lost_journal
 DECL_LOOSE_ITEM abandoned_armor
 DECL_LOOSE_ITEM abandoned_gold_1
 DECL_LOOSE_ITEM abandoned_gold_2
 DECL_LOOSE_ITEM bandit_pass
+DECL_LOOSE_ITEM bandit_helmet
+DECL_LOOSE_ITEM woods_mithril_spike
+DECL_LOOSE_ITEM woods_mithril_dagger
 DECL_LOOSE_ITEM mine_glass_staff
 DECL_LOOSE_ITEM mine_glass_dagger_1
 DECL_LOOSE_ITEM mine_glass_dagger_2

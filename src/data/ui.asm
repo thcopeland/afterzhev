@@ -69,4 +69,4 @@ intro_str_2:        .db "Famously, they have never", 10, "failed to deliver a le
 intro_str_3:        .db "A few weeks ago, two envoys", 10, "departed with a special letter.", 0
 intro_str_4:        .db "One an experienced envoy, the", 10, "other an apprentice named Zhev.", 0
 intro_str_5:        .db "They traveled fast, stopping", 10, "only to eat and sleep.", 0
-about_str:          .db "AfterZhev is a game by Tom", 10, "Copeland, made from late", 10, "2021 to early 2023.", 10, 10, "Visit thcopeland.com for the", 10, "juicy details.", 10, 10, "Released under", 10, "the MIT license.", 0
+about_str:          .db "AfterZhev is a game by Tom", 10, "Copeland, made from late", 10, "2021 to early 2023.", 10, 10, "Visit thcopeland.com for the", 10, "full story.", 10, 10, "Released under", 10, "the MIT license.", 0, 0
