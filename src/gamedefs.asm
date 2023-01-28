@@ -51,7 +51,7 @@
 
 .equ LEVEL_1_XP = 30
 .equ LEVEL_2_XP = 500
-.equ LEVEL_3_XP = 2000
+.equ LEVEL_3_XP = 1700
 
 .equ UPGRADE_1_POINTS = 6
 .equ UPGRADE_2_POINTS = 6

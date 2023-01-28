@@ -50,12 +50,21 @@ _ghc_win:
     call restart_game
     rjmp _ghc_end
 _ghc_dead:
+    sbrs r24, CONTROLS_SPECIAL1
+    rjmp  _ghc_restart
+_ghc_retry:
     call restore_from_savepoint
     tst r25
     breq _ghc_end
     ldi r25, MODE_EXPLORE
     sts game_mode, r25
     call init_game_state
+    rjmp _ghc_end
+_ghc_restart:
+    sbrs r24, CONTROLS_SPECIAL2
+    rjmp _ghc_end
+    sts start_selection, r1
+    call restart_game
 _ghc_end:
     ret
 
@@ -91,7 +100,7 @@ _grg_return:
     rjmp _gug_return
 
 .equ GAMEOVER_UI_HEADER_TEXT_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FONT_DISPLAY_HEIGHT)/2 + (DISPLAY_WIDTH-FONT_DISPLAY_WIDTH*8)/2
-.equ GAMEOVER_UI_DEATH_MESSAGE_MARGIN = DISPLAY_WIDTH*44 + 4
+.equ GAMEOVER_UI_DEATH_MESSAGE_MARGIN = DISPLAY_WIDTH*50 + 21
 .equ GAMEOVER_UI_RESTART_MESSAGE_MARGIN = DISPLAY_WIDTH*57 + 30
 
 gameover_render_dead:
@@ -116,8 +125,14 @@ gameover_render_dead:
     ldi r25, 70
     ldi YL, low(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
     ldi YH, high(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN)
-    ldi ZL, low(2*ui_str_press_any_button)
-    ldi ZH, high(2*ui_str_press_any_button)
+    ldi ZL, low(2*ui_str_death_retry)
+    ldi ZH, high(2*ui_str_death_retry)
+    rcall gameover_text
+    ldi r25, 80
+    ldi YL, low(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN+7*DISPLAY_WIDTH)
+    ldi YH, high(framebuffer+GAMEOVER_UI_DEATH_MESSAGE_MARGIN+7*DISPLAY_WIDTH)
+    ldi ZL, low(2*ui_str_death_restart)
+    ldi ZH, high(2*ui_str_death_restart)
     rcall gameover_text
     ret
 
@@ -170,7 +185,7 @@ _grw_hold_screen:
     sts lightning_clock, r1
     ldi YL, low(framebuffer+GAMEOVER_UI_RESTART_MESSAGE_MARGIN)
     ldi YH, high(framebuffer+GAMEOVER_UI_RESTART_MESSAGE_MARGIN)
-    ldi ZL, byte3(2*ui_str_press_any_button2)
+    ldi ZL, byte3(2*ui_str_press_any_button)
     out RAMPZ, ZL
     ldi r21, 20
     lds r24, mode_clock
@@ -179,8 +194,8 @@ _grw_hold_screen:
     ldi r24, 0
 _grw_hold_text:
     ldi r23, 0
-    ldi ZL, low(2*ui_str_press_any_button2)
-    ldi ZH, high(2*ui_str_press_any_button2)
+    ldi ZL, low(2*ui_str_press_any_button)
+    ldi ZH, high(2*ui_str_press_any_button)
     call puts_n
     lds r25, mode_clock
     cpi r25, 120
