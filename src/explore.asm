@@ -48,6 +48,7 @@ init_game_state:
 explore_update_game:
     rcall update_savepoint
     call update_player_stat_effects
+    rcall sort_npcs
     rcall render_game
     rcall handle_controls
     rcall update_active_effects
@@ -266,16 +267,67 @@ _rg_render_npcs:
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
     ldi r16, SECTOR_DYNAMIC_NPC_COUNT
+    clr r17
 _rg_render_npcs_iter:
-    ldd r17, Y+NPC_IDX_OFFSET
-    cpi r17, NPC_CORPSE
+    cpi r16, 1
+    breq _rg_render_player
+    ldd r20, Y+NPC_IDX_OFFSET
+    cpi r20, NPC_CORPSE
+    breq _rg_render_npcs_next_trampoline
+    dec r20
+    brpl _rg_player_layer_check
+_rg_render_npcs_next_trampoline:
+    rjmp _rg_render_npcs_next
+_rg_player_layer_check:
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    lds r25, player_position_y
+    cp r24, r25
+    brlo _rg_render_npc
+_rg_render_player:
+    tst r17
+    brne _rg_render_npc
+    ldi r17, 1
+    sts subroutine_tmp, YL
+    sts subroutine_tmp+1, YH
+    lds r25, player_health
+    cpi r25, 0
+    breq _render_player_corpse
+    lds r24, player_position_x
+    lds r25, player_position_y
+    ldi YL, low(player_character)
+    ldi YH, high(player_character)
+    call render_character
+    rjmp _rg_restore_npc_ctx
+_render_player_corpse:
+    ldi ZL, byte3(2*static_character_sprite_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*(static_character_sprite_table+NPC_CORPSE_SPRITE*CHARACTER_SPRITE_MEMSIZE))
+    ldi ZH, high(2*(static_character_sprite_table+NPC_CORPSE_SPRITE*CHARACTER_SPRITE_MEMSIZE))
+    ldi r22, CHARACTER_SPRITE_WIDTH
+    ldi r23, CHARACTER_SPRITE_HEIGHT
+    lds r24, player_position_x
+    lds r25, player_position_y
+    call render_sprite
+    lds r22, player_effect
+    lds r24, player_position_x
+    lds r25, player_position_y
+    call render_effect_animation
+_rg_restore_npc_ctx:
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    lds YL, subroutine_tmp
+    lds YH, subroutine_tmp+1
+_rg_render_npc:
+    ldd r20, Y+NPC_IDX_OFFSET
+    cpi r20, NPC_CORPSE
+    mov r21, r20
     breq _rg_render_npcs_next
-    dec r17
+    dec r20
     brmi _rg_render_npcs_next
     ldi ZL, low(2*npc_table+NPC_TABLE_CHARACTER_OFFSET)
     ldi ZH, high(2*npc_table+NPC_TABLE_CHARACTER_OFFSET)
-    ldi r18, NPC_TABLE_ENTRY_MEMSIZE
-    mul r17, r18
+    ldi r21, NPC_TABLE_ENTRY_MEMSIZE
+    mul r20, r21
     add ZL, r0
     adc ZH, r1
     clr r1
@@ -310,31 +362,8 @@ _rg_render_npcs_iter:
 _rg_render_npcs_next:
     adiw YL, NPC_MEMSIZE
     dec r16
-    brne _rg_render_npcs_iter
-_rg_render_player:
-    lds r25, player_health
-    cpi r25, 0
-    breq _render_player_corpse
-    lds r24, player_position_x
-    lds r25, player_position_y
-    ldi YL, low(player_character)
-    ldi YH, high(player_character)
-    call render_character
-    rjmp _rg_render_active_effects
-_render_player_corpse:
-    ldi ZL, byte3(2*static_character_sprite_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*(static_character_sprite_table+NPC_CORPSE_SPRITE*CHARACTER_SPRITE_MEMSIZE))
-    ldi ZH, high(2*(static_character_sprite_table+NPC_CORPSE_SPRITE*CHARACTER_SPRITE_MEMSIZE))
-    ldi r22, CHARACTER_SPRITE_WIDTH
-    ldi r23, CHARACTER_SPRITE_HEIGHT
-    lds r24, player_position_x
-    lds r25, player_position_y
-    call render_sprite
-    lds r22, player_effect
-    lds r24, player_position_x
-    lds r25, player_position_y
-    call render_effect_animation
+    breq _rg_render_active_effects
+    rjmp _rg_render_npcs_iter
 _rg_render_active_effects:
     ldi YL, low(active_effects)
     ldi YH, high(active_effects)
@@ -1995,6 +2024,99 @@ _un_next:
     cpc YH, r25
     brlo _un_loop
 _un_end:
+    ret
+
+; Sort NPCs by ascending y position with insertion sort. Empty slots are skipped.
+;
+; Register Usage
+;   r18-r27         calculations
+;   Y (r28:r29)     NPC pointer
+;   Z (r30:r31)     NPC pointer
+.if NPC_MEMSIZE != 10
+    .error "sort_npcs assumes NPC_MEMSIZE == 10, adjust as necessary"
+.endif
+sort_npcs:
+    ldi YL, low(sector_npcs+NPC_MEMSIZE)
+    ldi YH, high(sector_npcs+NPC_MEMSIZE)
+    ldi r20, SECTOR_DYNAMIC_NPC_COUNT-1
+_sn_scan_loop:
+    ldd r22, Y+NPC_IDX_OFFSET
+    tst r22
+    brne _sn_read_npc
+    rjmp _sn_scan_next
+_sn_read_npc:
+    ldd r23, Y+NPC_ANIM_OFFSET
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L
+    ldd r0, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+    sts subroutine_tmp, r0
+    ldd r26, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    ldd r27, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L
+    ldd r0, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+    sts subroutine_tmp+1, r0
+    ldd r0, Y+NPC_HEALTH_OFFSET
+    sts subroutine_tmp+2, r0
+    ldd r0, Y+NPC_EFFECT_OFFSET
+    sts subroutine_tmp+3, r0
+_sn_insert_setup:
+    ldi r21, SECTOR_DYNAMIC_NPC_COUNT
+    sub r21, r20
+    movw ZL, YL
+    sbiw ZL, NPC_MEMSIZE
+_sn_insert_loop:
+    ldd r18, Z+NPC_IDX_OFFSET
+    tst r18
+    breq _sn_insert_next
+    cpi r18, NPC_CORPSE
+    breq _sn_insert_next
+    ldd r18, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    cp r26, r18
+    brsh _sn_scan_next
+_sn_swap:
+    ldd r0, Z+NPC_IDX_OFFSET
+	std Z+NPC_MEMSIZE+NPC_IDX_OFFSET, r0
+    ldd r0, Z+NPC_ANIM_OFFSET
+	std Z+NPC_MEMSIZE+NPC_ANIM_OFFSET, r0
+    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+	std Z+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r0
+    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L
+	std Z+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L, r0
+    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX
+	std Z+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r0
+    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+	std Z+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r0
+    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L
+	std Z+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L, r0
+    ldd r0, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY
+	std Z+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r0
+    ldd r0, Z+NPC_HEALTH_OFFSET
+	std Z+NPC_MEMSIZE+NPC_HEALTH_OFFSET, r0
+    ldd r0, Z+NPC_EFFECT_OFFSET
+	std Z+NPC_MEMSIZE+NPC_EFFECT_OFFSET, r0
+    std Z+NPC_IDX_OFFSET, r22
+    std Z+NPC_ANIM_OFFSET, r23
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L, r25
+    lds r0, subroutine_tmp
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DX, r0
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r26
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_L, r27
+    lds r0, subroutine_tmp+1
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_DY, r0
+    lds r0, subroutine_tmp+2
+    std Z+NPC_HEALTH_OFFSET, r0
+    lds r0, subroutine_tmp+3
+    std Z+NPC_EFFECT_OFFSET, r0
+_sn_insert_next:
+    sbiw ZL, NPC_MEMSIZE
+    dec r21
+    brne  _sn_insert_loop
+_sn_scan_next:
+    adiw YL, NPC_MEMSIZE
+    dec r20
+    breq _sn_end
+    rjmp _sn_scan_loop
+_sn_end:
     ret
 
 ; Add nearby moving NPCs as followers.

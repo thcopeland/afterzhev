@@ -30,15 +30,21 @@ _clear_memory_loop:
     ; ldi r25, ITEM_glass_staff
     ; sts player_inventory, r25
     ;
-    ; ldi r25, ITEM_leather_armor
-    ; sts player_armor, r25
+    ldi r25, 60
+    sts player_stats+STATS_VITALITY_OFFSET, r25
+
+    ldi r25, ITEM_leather_armor
+    sts player_armor, r25
+
+    ldi r25, ITEM_angel_of_death
+    sts player_weapon, r25
     ;
     ; ldi r25, 70
     ; sts player_position_y, r25
     ;
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    .equ SECTOR = SECTOR_FINAL_6
+    .equ SECTOR = sector_deep_forest_5
     ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     call load_sector

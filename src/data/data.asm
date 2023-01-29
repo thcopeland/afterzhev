@@ -90,5 +90,5 @@ conversation_frame: .byte 2
 conversation_chars:
 upgrade_points:     .byte 1
 
-character_render:   .byte CHARACTER_MEMSIZE-7
-subroutine_tmp:     .byte 7
+character_render:   .byte CHARACTER_MEMSIZE-4
+subroutine_tmp:     .byte 4

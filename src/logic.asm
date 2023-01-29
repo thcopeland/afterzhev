@@ -73,7 +73,11 @@ _ss2u_end:
     ret
 
 sector_start_fight_update:
-    lds r25, sector_npcs+NPC_MEMSIZE+NPC_HEALTH_OFFSET
+    ldi r25, NPC_BANDIT_2
+    call find_npc
+    tst r20
+    breq _ssfu_end
+    ldd r25, Y+NPC_HEALTH_OFFSET
     cpi r25, 6
     brsh _ssfu_end
     try_start_conversation bandit_plead
@@ -81,25 +85,28 @@ _ssfu_end:
     ret
 
 sector_start_fight_choice:
+    push r20
+    push r21
     lds r25, selected_choice
     cpi r25, 1
     brne _ssfc_end
+    ldi r25, NPC_BANDIT_2
+    call find_npc
+    tst r20
+    breq _ssfc_end
     ldi r25, NPC_BANDIT_2_REFORMED
-    sts sector_npcs+NPC_MEMSIZE+NPC_IDX_OFFSET, r25
-    ldi r25, ITEM_bloody_sword
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+0, r25
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+1, r1
-    lds r25, sector_npcs+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
-    subi r25, low(-2)
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+2, r25
-    lds r25, sector_npcs+NPC_MEMSIZE+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    std Y+NPC_IDX_OFFSET, r25
+    std Y+NPC_EFFECT_OFFSET, r1
+    ldi r23, ITEM_bloody_sword
+    ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    subi r24, low(-2)
+    ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     subi r25, low(-10)
-    sts sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*5+3, r25
+    call drop_item
     lds r25, npc_presence+((NPC_BANDIT_2-1)>>3)
     andi r25, ~(1<<((NPC_BANDIT_2-1)&7))
     sts npc_presence+((NPC_BANDIT_2-1)>>3), r25
     sts player_effect, r1
-    sts sector_npcs+NPC_MEMSIZE+NPC_EFFECT_OFFSET, r1
     ldi r25, ACTION_IDLE
     sts player_action, r25
     lds r24, player_xp
@@ -108,6 +115,8 @@ sector_start_fight_choice:
     sts player_xp, r24
     sts player_xp+1, r25
 _ssfc_end:
+    pop r21
+    pop r20
     ret
 
 sector_start_pretown_1_update:
@@ -258,10 +267,19 @@ _sspfu_end:
     ret
 
 sector_start_post_fight_conversation:
+    push r24
+    push r25
     ldi r20, 4
     sts global_data + QUEST_KIDNAPPED, r20
+    ldi r25, NPC_KIDNAPPED
+    call find_npc
+    tst r20
+    breq _sspfc_end
     ldi r20, NPC_KIDNAPPED_FOLLOWING
-    sts sector_npcs+NPC_IDX_OFFSET, r20
+    std Y+NPC_IDX_OFFSET, r20
+_sspfc_end:
+    pop r25
+    pop r24
     ret
 
 sector_town_tavern_1_update:
@@ -273,20 +291,21 @@ _stt1u_end:
     ret
 
 sector_town_tavern_2_update:
-    lds r25, sector_npcs+NPC_IDX_OFFSET
-    cpi r25, NPC_ANNOYED_GUEST
-    brne _stt2u_end
+    ldi r25, NPC_ANNOYED_GUEST
+    call find_npc
+    tst r20
+    breq _stt2u_end
     lds r25, sector_loose_items+SECTOR_ITEM_IDX_OFFSET
     cpi r25, 128|50
     breq _stt2u_end
     lds r25, npc_presence+((NPC_ROBBED_GUEST-1)>>3)
     andi r25, 1<<((NPC_ROBBED_GUEST-1)&7)
     brne _stt2u_add_robbed
-    sts sector_npcs+NPC_IDX_OFFSET, r1
+    std Y+NPC_IDX_OFFSET, r1
     rjmp _stt2u_end
 _stt2u_add_robbed:
     ldi r25, NPC_ROBBED_GUEST
-    sts sector_npcs+NPC_IDX_OFFSET, r25
+    std Y+NPC_IDX_OFFSET, r25
     try_start_conversation robbed_guest
     rjmp _stt2u_end
 _stt2u_end:
@@ -912,6 +931,8 @@ _scrdu_attack:
     sts npc_move_flags2, r25
     ldi r25, NPC_THIEF_QUESTGIVER
     call find_npc
+    tst r20
+    breq _scrdu_end
     ldi r25, NPC_THIEF_QUESTGIVER_ANGRY
     cpse r25, r1
     std Y+NPC_IDX_OFFSET, r25
@@ -1027,7 +1048,7 @@ sector_final_battle_init:
 
 sector_final_battle_update:
     lds r25, clock
-    andi r25, 0x1f
+    andi r25, 0x3f
     brne _sfbu_check
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)
