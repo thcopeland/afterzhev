@@ -2026,7 +2026,8 @@ _un_next:
 _un_end:
     ret
 
-; Sort NPCs by ascending y position with insertion sort. Empty slots are skipped.
+; Sort NPCs by ascending y position with insertion sort. Empty slots are moved
+; to the end.
 ;
 ; Register Usage
 ;   r18-r27         calculations
@@ -2041,10 +2042,6 @@ sort_npcs:
     ldi r20, SECTOR_DYNAMIC_NPC_COUNT-1
 _sn_scan_loop:
     ldd r22, Y+NPC_IDX_OFFSET
-    tst r22
-    brne _sn_read_npc
-    rjmp _sn_scan_next
-_sn_read_npc:
     ldd r23, Y+NPC_ANIM_OFFSET
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_L
@@ -2058,6 +2055,9 @@ _sn_read_npc:
     sts subroutine_tmp+2, r0
     ldd r0, Y+NPC_EFFECT_OFFSET
     sts subroutine_tmp+3, r0
+    tst r22
+    brne _sn_insert_setup
+    ldi r26, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT
 _sn_insert_setup:
     ldi r21, SECTOR_DYNAMIC_NPC_COUNT
     sub r21, r20
@@ -2066,9 +2066,10 @@ _sn_insert_setup:
 _sn_insert_loop:
     ldd r18, Z+NPC_IDX_OFFSET
     tst r18
-    breq _sn_insert_next
-    cpi r18, NPC_CORPSE
-    breq _sn_insert_next
+    brne _sn_compare
+    ldi r18, SECTOR_HEIGHT*TILE_HEIGHT-CHARACTER_SPRITE_HEIGHT
+    std Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r18
+_sn_compare:
     ldd r18, Z+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     cp r26, r18
     brsh _sn_scan_next
