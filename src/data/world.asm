@@ -356,7 +356,7 @@ sector_table:
 .db 1, 184, 125, 0
 .db 156, 160, 50, 95
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.db FEATURE_INVISIBLE, 184, 127, FEATURE_INVISIBLE, 82, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_UP|SECTOR_FLAG_FOLLOW_LEFT
 .dw sector_town_entrance_1_update, NO_HANDLER, NO_HANDLER, sector_town_entrance_1_conversation, sector_town_entrance_1_choice
 
