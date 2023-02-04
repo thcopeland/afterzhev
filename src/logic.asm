@@ -725,6 +725,22 @@ _sf2u_talk:
 _sf2u_end:
     ret
 
+sector_city_shop_1_choice:
+    lds r25, selected_choice
+    cpi r25, 0
+    brne _scs1c_end
+    lds r24, player_gold
+    lds r25, player_gold+1
+    sbiw r24, 10
+    brsh _scs1c_save_gold
+    clr r24
+    clr r25
+_scs1c_save_gold:
+    sts player_gold, r24
+    sts player_gold+1, r25
+_scs1c_end:
+    ret
+
 sector_city_4_init:
     lds r25, global_data+QUEST_HALDIR
     andi r25, 0x0f

@@ -234,8 +234,7 @@ _conv_bard2:                    DECL_BRANCH 2
                                 DECL_CHOICE refuse, END_CONVERSATION
 _conv_bard3:                    DECL_LINE bard3, NPC_BARD, bard, bard4
 _conv_bard4:                    DECL_LINE bard4, NPC_BARD, bard, bard5
-_conv_bard5:                    DECL_LINE bard5, NPC_BARD, bard, bard6
-_conv_bard6:                    DECL_LINE bard6, NPC_BARD, bard, bard2
+_conv_bard5:                    DECL_LINE bard5, NPC_BARD, bard, bard2
 _conv_no_message:               DECL_LINE no_message, NPC_HALDIR_GUARD_2, haldir_guard, END_CONVERSATION
 _conv_somethings_wrong:         DECL_LINE somethings_wrong, NPC_CITIZEN_1, citizen, END_CONVERSATION
 _conv_might_leave:              DECL_LINE might_leave, NPC_CITIZEN_2, citizen, END_CONVERSATION
@@ -412,7 +411,7 @@ _conv_find_pass2_str:           .db "Looks like the letter isn", 39, "t here.", 
 _conv_find_pass3_str:           .db "What did Zhev do with it? And how is the baron involved in this? I", 10, "should travel to Dor Haldir...", 0
 _conv_highway_guard_str:        .db "No further, adventurer! None", 10, "may pass without a pass.", 0
 _conv_highway_guard2_str:       .db "You again? What do you want? Theroad is closed!", 0
-_conv_highway_guard4_str:       .db "Ask for details", 0
+_conv_highway_guard4_str:       .db "Question guards", 0
 _conv_highway_guard5_str:       .db "Push forward", 0, 0
 _conv_highway_guard6_str:       .db "Show your pass", 0, 0
 _conv_highway_guard7_str:       .db "Apologize", 0
@@ -451,9 +450,8 @@ _conv_haldir7_str:              .db "Say, have you been working out?", 0
 _conv_haldir8_str:              .db ". . .", 0
 _conv_bard1_str:                .db "Well met, adventurer! I am a", 10, "bard, singer of songs and bearerof tales. Shall I sing for you?", 0, 0
 _conv_bard3_str:                .db "I wrote this song myself.", 0
-_conv_bard4_str:                .db "In Reginold, the land of gold", 10, "A place now grim and gloomy", 10, "Dwell the dreaded Grim Machol", 10, "Oh Gilmatich! Oh Gilma guey!", 0, 0
-_conv_bard5_str:                .db "But still I see, though dimly now(and only in my head)", 10, "The Machol ships upon the tide", 10, "And how they left us all for", 10, "    dead.", 0, 0
-_conv_bard6_str:                .db "Shall I sing it again?", 0, 0
+_conv_bard4_str:                .db "I see you there, a stranger fair", "    With purse and gold within", 10, "Before you stands a poet bare", 10, "    Will you give some to him?", 10, "Wo-o-o, yeah!", 0
+_conv_bard5_str:                .db "Shall I sing it again?", 0, 0
 _conv_no_message_str:           .db "There", 39, "s been no word from the", 10, "baron for two weeks... I fear", 10, "something", 39, "s amiss.", 0, 0
 _conv_somethings_wrong_str:     .db "Guards in the streets... windows", 10, "shuttered during the day... can", 10, "you feel it? Something", 39, "s coming.", 0
 _conv_might_leave_str:          .db "It", 39, "s so quiet... another group", 10, "left last night. Maybe I", 39, "ll be in the next.", 0, 0
@@ -467,8 +465,8 @@ _conv_kill_thieves2_str:        .db "But listen. Rumor has it a gang ofthieves h
 _conv_kill_thieves3_str:        .db "Find them and clean them out,", 10, "and we", 39, "ll make it worth your", 10, "time. What do you say?", 0
 _conv_kill_thieves5_str:        .db "Offer", 39, "s still open. Come back if", 10, "you change your mind.", 0, 0
 _conv_kill_thieves6_str:        .db "What do you say, adventurer?", 0, 0
-_conv_kill_thieves7_str:        .db "Ask for more information", 0, 0
-_conv_kill_thieves8_str:        .db "Why do you need me to do this?", 0, 0
+_conv_kill_thieves7_str:        .db "Question guard", 0, 0
+_conv_kill_thieves8_str:        .db "Why don", 39, "t you guards handle it?", 0
 _conv_kill_thieves9_str:        .db "The baron hasn", 39, "t given orders.", 10, "We", 39, "ve been waiting for weeks, butwithout them, we can", 39, "t take", 10, "action. But you don", 39, "t need them.", 10, "So what do you say?", 0, 0
 _conv_kill_thieves10_str:       .db "Great. Good luck, adventurer.", 0
 _conv_kill_thieves11_str:       .db "Come back when you", 39, "ve finished", 10, "the job.", 0
@@ -483,7 +481,7 @@ _conv_rob_bank8_str:            .db "Come back when you have it.", 0
 _conv_rob_bank9_str:            .db "Many thanks for your help,", 10, "adventurer. Here", 39, "s the promised", 10, "reward, heh heh...", 0
 _conv_bank_warning_str:         .db "Stay yourself, adventurer!", 10, "Bank", 39, "s closed. Just turn around and leave.", 0
 _conv_thieves_warning_str:      .db "Hey you! Quit snooping or else!", 0
-_conv_bridge_broken_str:        .db "Yep... bridge", 39, "s out. Can", 39, "t say as", 10, "how it happened, but a lot of", 10, "strange stuff", 39, "s been happening.", 0
+_conv_bridge_broken_str:        .db "Yep... bridge", 39, "s out. Can", 39, "t say as", 10, "how it happened, but a lot of", 10, "strange stuff", 39, "s been going on.", 0, 0
 _conv_bridge_broken2_str:       .db "Course, there have always been other ways. Tunnels, hidden", 10, "paths, that sort of thing.", 0
 _conv_baron_haldir1_str:        .db "Baron Haldir?!", 0, 0
 _conv_baron_haldir2_str:        .db "Still here, heh, heh... that", 10, "blasted Zhev betrayed me! Kill", 10, "him, won", 39, "t you, envoy?", 0, 0
