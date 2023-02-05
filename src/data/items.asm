@@ -240,7 +240,7 @@ _item_str_spear_desc:				.db "When wielded with skill, adevastating weapon.", 0
 _item_str_wooden_shield_name:		.db "Wooden shield", 0
 _item_str_wooden_shield_desc:		.db "Not particularly elegantbut useful in a pinch.", 0, 0
 _item_str_pass_name:	           	.db "Pass", 0, 0
-_item_str_pass_desc:	           	.db "The bearer may pass the", 10, "Highway Guard. Sealed withBaron Zhev", 39, "s stamp.", 0
+_item_str_pass_desc:	           	.db "The bearer may pass the", 10, "Highway Guard. Sealed withBaron Haldir", 39, "s stamp.", 0
 _item_str_axe_name:                 .db "Iron axe", 0, 0
 _item_str_axe_desc:                 .db "Can chop trees and peopleequally well.", 0, 0
 _item_str_angel_of_death_name:      .db "Angel of death", 0, 0
