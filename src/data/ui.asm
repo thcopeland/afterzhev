@@ -52,12 +52,17 @@ ui_str_intellect_abbr:  .db "Int", 0
 ui_str_buy_label:   .db "Buy", 10, "for", 0
 ui_str_sell_label:  .db "Sell", 10, " for", 0
 ui_str_you_died:    .db "YOU  DIED", 0
+.if TARGETING_MCU
 ui_str_death_retry: .db "Press <A> to try again", 0, 0
 ui_str_death_restart:.db " or <B> to start over.", 0, 0
+.else
+ui_str_death_retry: .db "Press <A> to try again", 0, 0
+ui_str_death_restart:.db " or <S> to start over.", 0, 0
+.endif
 ui_str_press_any_button:.db "Press any button", 0, 0
 ui_str_start:       .db "Start", 0
 ui_str_resume:      .db "Resume", 0, 0
-ui_str_help:        .db "Help", 0, 0
+ui_str_help:        .db "Controls", 0, 0
 ui_str_about:       .db "About", 0
 ui_str_choose_class:.db "Choose your class:", 0, 0
 ui_str_choose_character:.db "Choose your character:", 0, 0
@@ -71,3 +76,19 @@ intro_str_3:        .db "A few weeks ago, two envoys", 10, "departed with a spec
 intro_str_4:        .db "One an experienced envoy, the", 10, "other an apprentice named Zhev.", 0
 intro_str_5:        .db "They traveled far and fast,", 10, "stopping only to eat and rest.", 0, 0
 about_str:          .db "AfterZhev is a game by Tom", 10, "Copeland, made from late", 10, "2021 to early 2023.", 10, 10, "Visit thcopeland.com for the", 10, "full story.", 10, 10, "Released under", 10, "the MIT license.", 0, 0
+.if TARGETING_MCU
+tutorial_move_str:  .db "Use the D-pad to", 10, "move around. To", 10, "dash, press start.", 0
+tutorial_pickup_str:.db "Press <A> to pick", 10, "up items.", 10, 10, "They will aid you inyour travels.", 0, 0
+tutorial_shop_str:  .db "Press <A> to visit", 10, "a shop.", 10, 10, "Press <B> to buy", 10, "and start to sell.", 10, 10, "Then press select to leave.", 0, 0
+tutorial_inventory_str: .db "Press select to", 10, "see the inventory.", 10, 10, "Press <A> to equip,<B> to consume,", 10, "and start to drop.", 10, 10, "Then press select", 10, "to exit.", 0
+tutorial_fight_str: .db "After equipping", 10, "a weapon, press <B> to attack.", 10, 10, "Use start to", 10, "dash forward.", 0, 0
+.else
+tutorial_move_str:  .db "Use the arrow keysto move around.", 10, 10, "Press <D> to dash.", 0
+tutorial_pickup_str:.db "Press <A> to pick", 10, "up items.", 10, 10, "They will aid you inyour travels.", 0, 0
+tutorial_shop_str:  .db "Press <A> to visit", 10, "a shop.", 10, 10, "Press <S> to buy", 10, "and <D> to sell.", 10, 10, "Then press <F> to", 10, "leave.", 0
+tutorial_inventory_str: .db "Press <F> to open", 10, "your inventory.", 10, 10, "Press <A> to equip,<S> to consume,", 10, "and <D> to drop.", 10, 10, "Then press <F> to", 10, "exit.", 0
+tutorial_fight_str: .db "After equipping", 10, "a weapon, press <S> to attack.", 10, 10, "Use <D> to dash.", 0, 0
+.endif
+tutorial_talk_str:  .db "Press <A> to", 10, "interact.", 0, 0
+tutorial_next_str:  .db "Press <A> to", 10, "continue through", 10, "the open door.", 0, 0
+tutorial_save_str:  .db "Press <A>", 10, "to save", 10, "your", 10, "progress.", 0, 0

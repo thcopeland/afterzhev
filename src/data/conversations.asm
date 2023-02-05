@@ -56,14 +56,12 @@
 
 conversation_table:
 _conv_END_CONVERSATION:         .dw 0 ; placeholder
+_conv_tutorial_go_git_em:       DECL_LINE go_git_em, NPC_TUTORIAL_TALK, farmer, END_CONVERSATION
 DECL_CONVERSATION what_happened
 _conv_what_happened:            DECL_LINE what_happened, 0, PLAYER, what_happened2
 _conv_what_happened2:           DECL_LINE what_happened2, 0, PLAYER, what_happened3
 _conv_what_happened3:           DECL_LINE what_happened3, 0, PLAYER, what_happened4
 _conv_what_happened4:           DECL_LINE what_happened4, 0, PLAYER, END_CONVERSATION
-DECL_CONVERSATION pickup_tutorial
-_conv_pickup_tutorial:          DECL_LINE pickup_tutorial, 0, PLAYER, pickup_tutorial2
-_conv_pickup_tutorial2:         DECL_LINE pickup_tutorial2, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION battle_tutorial
 _conv_battle_tutorial_halfling: DECL_LINE battle_tutorial_halfling, NPC_BANDIT_0, ruffian, battle_tutorial2
 _conv_battle_tutorial_generic:  DECL_LINE battle_tutorial, NPC_BANDIT_0, ruffian, battle_tutorial2
@@ -74,11 +72,9 @@ _conv_battle_tutorial2:         DECL_BRANCH 3
 _conv_battle_tutorial3:         DECL_LINE battle_tutorial3, 0, PLAYER, battle_tutorial6
 _conv_battle_tutorial4:         DECL_LINE battle_tutorial4, 0, PLAYER, battle_tutorial6
 _conv_battle_tutorial5:         DECL_LINE battle_tutorial5, 0, PLAYER, battle_tutorial6
-_conv_battle_tutorial6:         DECL_LINE battle_tutorial6, NPC_BANDIT_0, ruffian, battle_tutorial7
-_conv_battle_tutorial7:         DECL_LINE battle_tutorial7, 0, PLAYER, END_CONVERSATION
+_conv_battle_tutorial6:         DECL_LINE battle_tutorial6, NPC_BANDIT_0, ruffian, END_CONVERSATION
 DECL_CONVERSATION loot_tutorial
-_conv_loot_tutorial:            DECL_LINE loot_tutorial, 0, PLAYER, loot_tutorial2
-_conv_loot_tutorial2:           DECL_LINE loot_tutorial2, 0, PLAYER, END_CONVERSATION
+_conv_loot_tutorial:            DECL_LINE loot_tutorial, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION bandit_plead
 _conv_bandit_plead:             DECL_LINE bandit_plead, NPC_BANDIT_2, bandit, bandit_plead2
 _conv_bandit_plead2:            DECL_LINE bandit_plead2, 0, PLAYER, bandit_plead3
@@ -91,13 +87,9 @@ _conv_bandit_plead6:            DECL_BRANCH 2
 _conv_bandit_plead7:            DECL_LINE bandit_plead7, 0, PLAYER, END_CONVERSATION
 _conv_bandit_plead8:            DECL_LINE bandit_plead8, 0, PLAYER, bandit_plead9
 _conv_bandit_plead9:            DECL_LINE bandit_plead9, NPC_BANDIT_2, bandit, END_CONVERSATION
-DECL_CONVERSATION interact_tutorial
-_conv_interact_tutorial:        DECL_LINE interact_tutorial, 0, PLAYER, END_CONVERSATION
 DECL_CONVERSATION drunks_warning
 _conv_drunks_warning:           DECL_LINE drunks_warning, NPC_DRUNK, drunk, drunks_warning2
 _conv_drunks_warning2:          DECL_LINE drunks_warning2, NPC_DRUNK, drunk, END_CONVERSATION
-DECL_CONVERSATION save_tutorial
-_conv_save_tutorial:            DECL_LINE save_tutorial, 0, PLAYER, END_CONVERSATION
 _conv_kidnapped:                DECL_LINE kidnapped, NPC_GRIEVING_FATHER, grieving_father, kidnapped2
 _conv_kidnapped2:               DECL_BRANCH 3
                                 DECL_CHOICE kidnapped3, kidnapped4
@@ -138,8 +130,7 @@ _conv_welcome13:                DECL_LINE welcome13, 0, PLAYER, welcome14
 _conv_welcome14:                DECL_LINE welcome14, NPC_WELCOME, farmer, welcome3
 _conv_tavern_sign:              DECL_LINE tavern_sign, NPC_TAVERN_SIGN, empty, END_CONVERSATION
 DECL_CONVERSATION bartender
-_conv_bartender:                DECL_LINE bartender, NPC_BARTENDER, bartender, bartender2
-_conv_bartender2:               DECL_LINE bartender2, 0, PLAYER, END_CONVERSATION
+_conv_bartender:                DECL_LINE bartender, NPC_BARTENDER, bartender, END_CONVERSATION
 DECL_CONVERSATION drunk_hiccup
 _conv_drunk_hiccup:             DECL_LINE drunk_hiccup, NPC_DRUNK2, drunk, drunk_hiccup2
 _conv_drunk_hiccup2:            DECL_LINE drunk_hiccup2, NPC_DRUNK2, drunk, drunk_hiccup3
@@ -310,24 +301,21 @@ _conv_speaker_dodgy_fellow_str: .db "Dodgy citizen", 0
 _conv_speaker_baron_haldir_str: .db "Baron Haldir", 0, 0
 _conv_speaker_zhev_str:         .db "Zhev", 0, 0
 _conv_speaker_empty_str:        .db 0, 0
-_conv_what_happened_str:        .db "Ugh...  what happened?", 10, 10, 10, 10, 10, 10, "          Press <A> to continue", 0
+_conv_go_git_em_str:            .db "Go git ", 39, "em, adventurer!", 0
+_conv_what_happened_str:        .db "Ugh...  what happened?", 0, 0
 _conv_what_happened2_str:       .db "Hey, where", 39, "s Zhev? Funny...", 0
 _conv_what_happened3_str:       .db "By Jove! Where are my weapons?", 10, "Where", 39, "s the letter?" , 0, 0
 _conv_what_happened4_str:       .db "It must have been stolen. Did", 10, "Zhev...? I have to get it back at", 10, "any cost.", 0
-_conv_pickup_tutorial_str:      .db "Press <select> to pick up items.", 0, 0
-_conv_pickup_tutorial2_str:     .db "Press <start> to view inventory.", 0, 0
 _conv_battle_tutorial_halfling_str:.db "Hey you! Yeah you, shorty! No", 10, "passing without paying!", 0
 _conv_battle_tutorial_str:      .db "Hey you! Yeah you, ugly! No", 10, "passing without paying!", 0
 _conv_battle_tutorial3_str:     .db "I swear, I don", 39, "t have anything.", 0
 _conv_battle_tutorial4_str:     .db "Begone, scoundrel. I am an", 10, "envoy of the queen, dare not", 10, "hinder me.", 0, 0
 _conv_battle_tutorial5_str:     .db "Come on, then! Killing bandits is my favorite sport!", 0, 0
 _conv_battle_tutorial6_str:     .db "Heh, heh. I", 39, "m gonna enjoy this.", 0
-_conv_battle_tutorial7_str:     .db 10, 10, 10, 10, 10, "  Press <A> to defend yourself", 10, "      and <B> to dash.", 0, 0
 _conv_threaten_str:             .db "Threaten", 0, 0
 _conv_plead_str:                .db "Plead", 0
 _conv_bluff_str:                .db "Bluff", 0
 _conv_loot_tutorial_str:        .db "I think he got the point.", 0
-_conv_loot_tutorial2_str:       .db 10, 10, 10, 10, 10, 10, "Press <select> to loot corpses.", 0
 _conv_bandit_plead_str:         .db "I yield! Spare me, adventurer!", 0, 0
 _conv_bandit_plead2_str:        .db "Then tell me quickly: did you", 10, "steal my letter?", 0, 0
 _conv_bandit_plead3_str:        .db "What? No, adventurer! We did seesome short feller running past,maybe he was taking it to the big boss?", 0, 0
@@ -338,10 +326,8 @@ _conv_bandit_plead8_str:        .db "I spare you. But you must stop", 10, "robbi
 _conv_bandit_plead9_str:        .db "I swear it! I give you my sword asproof.", 0, 0
 _conv_punish_str:               .db "Punish", 0, 0
 _conv_spare_str:                .db "Spare", 0
-_conv_interact_tutorial_str:    .db 10, 10, 10, 10, 10, 10, "    Press <select> to interact.", 0
 _conv_drunks_warning_str:       .db "Say, ya just come outta them", 10, "woods?", 0
 _conv_drunks_warning2_str:      .db "Be careful! There", 39, "s bandits", 10, "about, doncha know!", 0
-_conv_save_tutorial_str:        .db 10, 10, 10, 10, 10, 10, "Press <select> to save progress", 0
 _conv_kidnapped_str:            .db "Please help, adventurer! My", 10, "poor boy has been kidnapped by", 10, "the foxes!", 0
 _conv_kidnapped3_str:           .db "Ask about the foxes", 0
 _conv_kidnapped4_str:           .db "Foxes?", 0, 0
@@ -376,7 +362,6 @@ _conv_welcome13_str:            .db "Whyever not?", 0, 0
 _conv_welcome14_str:            .db "The Guard won", 39, "t say. But as an", 10, "adventurer, you may be able to", 10, "get more out of them.", 0
 _conv_tavern_sign_str:          .db "The Bristling Boar: Tavern & Inn", 10, 10, 10, 10, 10, 10, "        A Licensed Victualler", 0
 _conv_bartender_str:            .db "What ho, adventurer! Can I", 10, "interest you in a drink or two?", 0, 0
-_conv_bartender2_str:           .db 10, 10, 10, 10, 10, "  Press <A> to buy items", 10, "      and <B> to sell.", 0, 0
 _conv_drunk_hiccup_str:         .db "H-hey you! You ain", 39, "t from these", 10, "parts, huh?", 0
 _conv_drunk_hiccup2_str:        .db "Ha... you look like one of them", 10, "envoys.", 0
 _conv_drunk_hiccup3_str:        .db "Yeah... Ah useta be like you...", 10, "watch out, they", 39, "ll throw y-you", 10, "away too.", 0, 0

@@ -174,8 +174,12 @@ _loop_resume:
     jmp resume_update_game
 _loop_about:
     cpi r18, MODE_ABOUT
-    brne _loop_reenter
+    brne _loop_help
     jmp about_update
+_loop_help:
+    cpi r18, MODE_HELP
+    brne _loop_reenter
+    jmp help_update
 
 _loop_reenter:
 
@@ -213,6 +217,7 @@ _loop_end:
 .include "intro.asm"
 .include "resume.asm"
 .include "about.asm"
+.include "tutorial.asm"
 .include "logic.asm"
 .include "rodata.asm"
 .include "data.asm"

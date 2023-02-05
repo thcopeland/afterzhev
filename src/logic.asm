@@ -22,6 +22,104 @@
 
 .include "logic_shared.asm"
 
+tutorial_update:
+    lds r24, prev_controller_values
+    lds r25, controller_values
+    com r24
+    and r25, r24
+    sbrs r25, CONTROLS_SPECIAL1
+    rjmp _tu_instructions
+    player_distance_imm 205, 160
+    cpi r25, 12
+    brsh _tu_instructions
+_tu_exit:
+    call load_help
+    ret
+_tu_instructions:
+    ldi r23, 0x00
+    lds r24, player_position_x
+    lds r25, player_position_y
+    ldi ZL, byte3(2*ui_string_table)
+    out RAMPZ, ZL
+    cpi r24, 100
+    brlo _tu_left
+    rjmp _tu_right
+_tu_left:
+    ldi r21, 16
+_tu_left_move:
+    cpi r25, 140
+    brlo _tu_left_pickup
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*16+50)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*16+50)
+    ldi ZL, low(2*tutorial_move_str)
+    ldi ZH, high(2*tutorial_move_str)
+    call puts
+    ret
+_tu_left_pickup:
+    cpi r25, 120
+    brlo _tu_left_shop
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*16+50)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*16+50)
+    ldi ZL, low(2*tutorial_pickup_str)
+    ldi ZH, high(2*tutorial_pickup_str)
+    call puts
+    ret
+_tu_left_shop:
+    cpi r25, 80
+    brlo _tu_left_inventory
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*6+50)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*6+50)
+    ldi ZL, low(2*tutorial_shop_str)
+    ldi ZH, high(2*tutorial_shop_str)
+    call puts
+    ret
+_tu_left_inventory:
+    cpi r25, 50
+    brlo _tu_left_next
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*4+50)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*4+50)
+    ldi ZL, low(2*tutorial_inventory_str)
+    ldi ZH, high(2*tutorial_inventory_str)
+    call puts
+    ret
+_tu_left_next:
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*24+55)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*24+55)
+    ldi ZL, low(2*tutorial_next_str)
+    ldi ZH, high(2*tutorial_next_str)
+    call puts
+    ret
+_tu_right:
+    ldi r21, 14
+_tu_right_talk:
+    cpi r25, 70
+    brsh _tu_right_fight
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*24+8)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*24+8)
+    ldi ZL, low(2*tutorial_talk_str)
+    ldi ZH, high(2*tutorial_talk_str)
+    call puts
+    ret
+_tu_right_fight:
+    cpi r25, 96
+    brsh _tu_right_save
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*12+5)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*12+5)
+    ldi ZL, low(2*tutorial_fight_str)
+    ldi ZH, high(2*tutorial_fight_str)
+    call puts
+    ret
+_tu_right_save:
+    cpi r25, 140
+    brlo _tu_right_end
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*20+4)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*20+4)
+    ldi ZL, low(2*tutorial_save_str)
+    ldi ZH, high(2*tutorial_save_str)
+    call puts
+_tu_right_end:
+    ret
+
 sector_start_1_update:
     player_distance_imm 157, 93
     cpi r25, 12
@@ -32,10 +130,6 @@ _ss1u_end:
 
 sector_start_2_update:
     sts npc_move_flags2, r1
-    player_distance_imm 134, 128
-    cpi r25, 18
-    brsh _ss2u_test_ruffian
-    try_start_conversation pickup_tutorial
 _ss2u_test_ruffian:
     lds r25, player_position_x
     cpi r25, 160
@@ -104,7 +198,7 @@ sector_start_fight_choice:
     subi r25, low(-10)
     call drop_item
     lds r25, npc_presence+((NPC_BANDIT_2-1)>>3)
-    andi r25, ~(1<<((NPC_BANDIT_2-1)&7))
+    andi r25, low(~(1<<((NPC_BANDIT_2-1)&7)))
     sts npc_presence+((NPC_BANDIT_2-1)>>3), r25
     sts player_effect, r1
     ldi r25, ACTION_IDLE
@@ -119,47 +213,21 @@ _ssfc_end:
     pop r20
     ret
 
-sector_start_pretown_1_update:
-    player_distance_imm 170, 32
-    cpi r25, 12
-    brsh _ssp1u_end
-    try_start_conversation interact_tutorial
-_ssp1u_end:
-    ret
-
 sector_town_entrance_1_update:
-    player_distance_imm 184, 130
-    cpi r25, 16
-    brsh _ste1u_interact
-    try_start_conversation save_tutorial
-    rjmp  _ste1u_check_quest
-_ste1u_interact:
-    player_distance_imm 86, 134
-    cpi r25, 16
-    brsh _ste1u_check_quest
-    try_start_conversation interact_tutorial
-_ste1u_check_quest:
     lds r25, global_data + QUEST_KIDNAPPED
     cpi r25, 5
     brsh _ste1u_end
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-    ldi r24, SECTOR_DYNAMIC_NPC_COUNT
-_ste1u_npc_iter:
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_KIDNAPPED_FOLLOWING
-    breq _ste1u_check_position
-    adiw YL, NPC_MEMSIZE
-    dec r24
-    brne _ste1u_npc_iter
-    rjmp _ste1u_end
+    ldi r25, NPC_KIDNAPPED_FOLLOWING
+    call find_npc
+    tst r20
+    breq _ste1u_end
 _ste1u_check_position:
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
     ldi r24, 86
     ldi r25, 134
     distance_between r24, r25, r22, r23
-    cpi r25, 20
+    cpi r25, 10
     brsh _ste1u_end
     ldi r25, NPC_KIDNAPPED
     std Y+NPC_IDX_OFFSET, r25
@@ -477,10 +545,44 @@ sector_town_forest_path_2_init:
     andi r25, 0xfc
     ori r25, 1
     sts global_data+QUEST_BANDITS, r25
+    ldi r25, NPC_CORPSE
+    call add_npc
+    ldi r24, 202
+    ldi r25, 12
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    ldi r25, NPC_CORPSE
+    call add_npc
+    ldi r24, 210
+    ldi r25, 13
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    ldi r25, NPC_CORPSE
+    call add_npc
+    ldi r24, 206
+    ldi r25, 16
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
     lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3)
-    andi r25, ~exp2((NPC_UNDERCOVER_BANDIT-1)&0x07)
+    andi r25, low(~exp2((NPC_UNDERCOVER_BANDIT-1)&0x07))
     sts npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3), r25
 _stfp2_end:
+    ret
+
+sector_town_forest_path_2_update:
+    lds r24, prev_controller_values
+    com r24
+    lds r25, controller_values
+    and r25, r24
+    sbrs r25, CONTROLS_SPECIAL1
+    rjmp _stfp2u_end
+    player_distance_imm 215, 21
+    cpi r25, 16
+    brsh _stfp2u_end
+    ldi r24, low(2*_conv_foxes_didnt_do_this)
+    ldi r25, high(2*_conv_foxes_didnt_do_this)
+    call load_conversation
+_stfp2u_end:
     ret
 
 sector_town_forest_path_4_update:
@@ -518,7 +620,7 @@ sector_town_forest_path_5_init:
     ori r25, 2
     sts global_data+QUEST_BANDITS, r25
     lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3)
-    andi r25, ~exp2((NPC_UNDERCOVER_BANDIT-1)&0x07)
+    andi r25, low(~exp2((NPC_UNDERCOVER_BANDIT-1)&0x07))
     sts npc_presence+((NPC_UNDERCOVER_BANDIT-1)>>3), r25
 _stfp5_end:
     ret

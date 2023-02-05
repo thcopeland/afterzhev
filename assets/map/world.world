@@ -545,6 +545,13 @@
             "width": 240,
             "x": 480,
             "y": -180
+        },
+        {
+            "fileName": "tutorial.tmx",
+            "height": 180,
+            "width": 240,
+            "x": 240,
+            "y": -180
         }
     ],
     "onlyShowAdjacentMaps": false,

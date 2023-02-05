@@ -212,7 +212,7 @@ private
     up ||= sector
     left ||= sector
 
-    file << "; Sector #{sector[:label]} \"#{sector[:name]}\"\n"
+    file << "; Sector \"#{sector[:name]}\"\n"
 
     sector[:tiles].each_slice(sector_width/tileset.tile_width).with_index do |tiles, y|
       file << (y.zero? ? ".db " : "    ")                         \

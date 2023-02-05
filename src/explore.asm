@@ -38,6 +38,7 @@ init_game_state:
     ldi r25, NO_SHOP
     sts current_shop_index, r25
     sts savepoint_data, r1
+    sts savepoint_used, r1
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     ldi ZL, low(2*sector_table + SECTOR_START_1*SECTOR_MEMSIZE)

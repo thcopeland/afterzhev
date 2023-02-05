@@ -109,7 +109,6 @@ _prmd_fallback:
 _prmd_calculate_defense:
     clr r1
     add r26, r0
-    lsr r26
     lds r22, player_armor
     dec r22
     brmi _prmd_apply_damage
@@ -235,7 +234,6 @@ _pred_fallback:
 _pred_calculate_defense:
     clr r1
     add r25, r0
-    lsr r25
     lds r23, player_armor
     dec r23
     brmi _pred_damage
@@ -371,7 +369,6 @@ _nrmd_strength_damage:
     lds r24, player_augmented_stats+STATS_STRENGTH_OFFSET
     asr r24
     add r25, r24
-    asr r25
     elpm r24, Z
     cpi r24, NPC_ENEMY
     breq _nrmd_enemy_defense
@@ -546,7 +543,6 @@ _nrrd_non_magical_ranged:
 _nrrd_apply_additional:
     add r25, r24
 _nrrd_calculate_defense:
-    asr r25
     mov r0, ZL
     mov r23, ZH
     ldi ZL, byte3(2*npc_table)

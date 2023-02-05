@@ -88,7 +88,7 @@ item_table:
     DECL_ITEM wooden_shield,        ITEM_WEARABLE,                      20,     0,  0,  0,  0,      0
     DECL_ITEM axe,                  (1<<6)|(2<<3)|ITEM_WIELDABLE,              30,     1,  0,  0,  0,      (3<<4)
     DECL_ITEM angel_of_death,       (2<<6)|(4<<3)|RANGED_MAGICAL|ITEM_RANGED,     5000,     0,  0,  0,  0,      (15<<4)|EFFECT_FIREBALL
-    DECL_ITEM glass_staff,          (2<<6)|(1<<3)|RANGED_MAGICAL|ITEM_RANGED,      300,     0,  2,  0,  0,      (6<<4)|EFFECT_MISSILE
+    DECL_ITEM glass_staff,          (2<<6)|(2<<3)|RANGED_MAGICAL|ITEM_RANGED,      300,     0,  2,  0,  0,      (6<<4)|EFFECT_MISSILE
     DECL_ITEM blessed_sword,        (2<<6)|(1<<3)|ITEM_WIELDABLE,      340,     4,  4,  0,  0,      (6<<4)
     DECL_ITEM white_fox_eyes,       ITEM_WEARABLE,                       0,     0,  0,  0,  0,      0
     DECL_ITEM iron_breastplate_cloak, ITEM_WEARABLE,                   600,     2,  0, -10, 0,      8
@@ -169,13 +169,18 @@ _item_str_wooden_bow_name:          .db "Wooden bow", 0, 0
 _item_str_wooden_bow_desc:          .db "An old but sturdy wooden bow.", 0
 _item_str_guard_hat_name:           .db "Guard", 39, "s hat", 0
 _item_str_guard_hat_desc:           .db "Worn only by members of", 10, "the Town Guard, and", 10, "shameless murderers.", 0, 0
-; TODO figure out a good mapping
 _item_str_inventory_book_name:      .db "Book of Inventory", 0
-_item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <B> to use a potion.", 10, "Press <select> to drop.", 0
 _item_str_manners_book_name:        .db "Book of Civility", 0, 0
-_item_str_manners_book_desc:        .db "Press <B> to interact.", 10, "Press <B> and <select> to buy", 10, "and sell from a shopkeeper.", 0, 0
 _item_str_war_book_name:            .db "Book of War", 0
-_item_str_war_book_desc:            .db "Press <A> to attack.", 10, "Press <B> to dash.", 0
+.if TARGETING_MCU
+_item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <B> to use a potion.", 10, "Press start to drop items.", 0, 0
+_item_str_manners_book_desc:        .db "Press <A> to interact.", 10, "Press <B> and start to buy", 10, "and sell from a shopkeeper.", 0
+_item_str_war_book_desc:            .db "Press <B> to attack.", 10, "Press start to dash.", 0
+.else
+_item_str_inventory_book_desc:      .db "Press <A> to equip or unequip.", 10, "Press <S> to use a potion.", 10, "Press <D> to drop items.", 0, 0
+_item_str_manners_book_desc:        .db "Press <A> to interact.", 10, "Press <S> and <D> to buy", 10, "and sell from a shopkeeper.", 0
+_item_str_war_book_desc:            .db "Press <S> to attack.", 10, "Press <D> to dash.", 0
+.endif
 _item_str_raw_meat_name:            .db "Raw meat", 0, 0
 _item_str_raw_meat_desc:            .db "Probably safe to eat.", 0
 _item_str_rotten_meat_name:         .db "Rotten meat", 0

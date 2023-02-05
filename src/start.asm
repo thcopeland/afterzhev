@@ -25,10 +25,10 @@ _sug_main:
 _sug_end:
     jmp _loop_reenter
 
-.equ TITLE_START_MARGIN = 40 + DISPLAY_WIDTH*50
-.equ TITLE_RESUME_MARGIN = 66 + DISPLAY_WIDTH*50
-.equ TITLE_HELP_MARGIN = TITLE_START_MARGIN + DISPLAY_WIDTH*8
-.equ TITLE_ABOUT_MARGIN = TITLE_RESUME_MARGIN + DISPLAY_WIDTH*8
+.equ TITLE_START_MARGIN = 40 + DISPLAY_WIDTH*51
+.equ TITLE_RESUME_MARGIN = 66 + DISPLAY_WIDTH*51
+.equ TITLE_HELP_MARGIN = TITLE_START_MARGIN + DISPLAY_WIDTH*8 - 3
+.equ TITLE_ABOUT_MARGIN = TITLE_RESUME_MARGIN + DISPLAY_WIDTH*8 + 10
 
 start_render_screen:
     ldi YL, low(framebuffer)
@@ -157,7 +157,7 @@ _sc_check_resume:
 _sc_check_about:
     cpi r25, 2
     brne _sc_check_help
-    rcall start_help
+    call load_tutorial
     ret
 _sc_check_help:
     cpi r25, 3
@@ -166,7 +166,4 @@ _sc_check_help:
     ret
 _sc_fallback_start:
     call load_character_selection
-    ret
-
-start_help:
     ret

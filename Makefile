@@ -3,7 +3,7 @@ BIN            = bin
 SIM            = sim
 DATA           = $(SRC)/data
 MCU_TARGET     = atmega2560 # NOTE: simulate assumes 2560-like model
-DEFS           = -D DEV -D __$(MCU_TARGET)
+DEFS           = -D DEV -D __$(MCU_TARGET) -D TARGET=$(TARGET)
 AS             = avra
 OBJDUMP        = avr-objdump
 SLIMAVR        = $(SIM)/slimavr-0.1.4

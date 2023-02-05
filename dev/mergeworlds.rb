@@ -22,7 +22,7 @@ def merge_worlds(fname_base, fname_branch)
                 f << base_lines[i]
             elsif base_lines[i] == branch_lines[j]
                 f << base_lines[i]
-            elsif base_lines[i].match(/^; Sector \d+ (\".+\")/)&.values_at(1) == branch_lines[j].match(/^; Sector \d+ (\".+\")/)&.values_at(1)
+            elsif base_lines[i].match(/^; Sector \d+ (\".+\")/)&.values_at(1) == branch_lines[j].match(/^; Sector (\".+\")/)&.values_at(1)
                 f << branch_lines[j]
             else
                 raise "mismatch on lines #{i+1} and #{j+1}: '#{base_lines[i].strip}' vs '#{branch_lines[j].strip}'"
