@@ -158,6 +158,7 @@ void window_key_callback(GLFWwindow* window, int key, int scancode, int action, 
             set_control_bit(4, action == GLFW_RELEASE);
             break;
         case GLFW_KEY_A:
+        case GLFW_KEY_ENTER:
             set_control_bit(3, action == GLFW_RELEASE);
             break;
         case GLFW_KEY_S:
