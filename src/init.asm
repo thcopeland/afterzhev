@@ -36,7 +36,7 @@ _clear_memory_loop:
     ; ldi r25, ITEM_leather_armor
     ; sts player_armor, r25
     ;
-    ; ldi r25, 50
+    ; ldi r25, 80
     ; sts player_position_x, r25
     ; ldi r25, 90
     ; sts player_position_y, r25
@@ -44,7 +44,7 @@ _clear_memory_loop:
     ;
     ; ldi ZL, byte3(2*sector_table)
     ; out RAMPZ, ZL
-    ; .equ SECTOR = sector_town_tavern_1
+    ; .equ SECTOR = SECTOR_TOWN_DEN
     ; ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ; ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ; call load_sector

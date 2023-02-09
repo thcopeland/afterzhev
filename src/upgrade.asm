@@ -49,6 +49,8 @@ _luin_level_up:
     sts player_augmented_stats+STATS_DEXTERITY_OFFSET, r1
     sts player_augmented_stats+STATS_VITALITY_OFFSET, r1
     sts player_augmented_stats+STATS_INTELLECT_OFFSET, r1
+    lds r25, game_mode
+    sts sector_data, r25
     ldi r25, MODE_UPGRADE
     sts game_mode, r25
     ldi r25, EFFECT_UPGRADE<<3
@@ -63,6 +65,7 @@ _luin_end:
 ; Register Usage
 ;   r18-r19         controller
 ;   r21-r21         calculations
+;   Z (r30:r31)     memory pointer
 upgrade_handle_controls:
     lds r18, prev_controller_values
     lds r19, controller_values
@@ -146,7 +149,7 @@ _uhc_other:
     lds r21, player_stats+STATS_INTELLECT_OFFSET
     add r20, r21
     sts player_stats+STATS_INTELLECT_OFFSET, r20
-    ldi r20, MODE_EXPLORE
+    lds r20, sector_data
     sts game_mode, r20
     call calculate_player_stats
     call calculate_max_health

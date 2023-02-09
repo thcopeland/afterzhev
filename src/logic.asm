@@ -721,6 +721,7 @@ _ssp2u_end:
     ret
 
 sector_start_pretown_2_choice:
+    sts player_action, r1
     lds r25, selected_choice
 _ssp2c_pass:
     cpi r25, 2
