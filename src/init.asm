@@ -24,10 +24,13 @@ _clear_memory_loop:
     ; ldi r25, MODE_EXPLORE
     ; sts game_mode, r25
     ;
-    ; ldi r25, ITEM_wood_staff
+    ; ldi r25, ITEM_steel_sword
     ; sts player_weapon, r25
     ;
-    ; ldi r25, ITEM_glass_staff
+    ; ldi r25, ITEM_wood_staff
+    ; sts player_inventory+1, r25
+    ;
+    ; ldi r25, ITEM_strength_potion
     ; sts player_inventory, r25
     ;
     ; ldi r25, 60
@@ -44,7 +47,7 @@ _clear_memory_loop:
     ;
     ; ldi ZL, byte3(2*sector_table)
     ; out RAMPZ, ZL
-    ; .equ SECTOR = SECTOR_TOWN_DEN
+    ; .equ SECTOR = SECTOR_TOWN_FIELDS
     ; ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ; ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ; call load_sector

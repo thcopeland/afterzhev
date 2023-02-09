@@ -77,7 +77,7 @@ item_table:
     DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                     350,     2,  0, -6,  0,      5
     DECL_ITEM iron_helmet,          ITEM_WEARABLE,                     200,     2,  0, -3,  0,      3
     DECL_ITEM iron_staff,           (2<<6)|(3<<3)|RANGED_MAGICAL|ITEM_RANGED, 150,     0, -6,  0,  0,      (5<<4)|EFFECT_FIREBALL
-    DECL_ITEM wood_staff,           (2<<6)|RANGED_MAGICAL|ITEM_RANGED,  80,     0,  1,  0,  0,      (2<<4)|EFFECT_FIREBALL
+    DECL_ITEM wood_staff,           (2<<6)|(2<<3)|RANGED_MAGICAL|ITEM_RANGED,  80,     0,  1,  0,  0,      (2<<4)|EFFECT_FIREBALL
     DECL_ITEM ivory_wand,           (2<<6)|(4<<3)|RANGED_MAGICAL|ITEM_RANGED,300,     0,  0,  0,  0,      (7<<4)|EFFECT_FIREBALL
     DECL_ITEM mithril_armor,        ITEM_WEARABLE,                    2000,     0,  5,  3,  0,      10
     DECL_ITEM mithril_breastplate,  ITEM_WEARABLE,                    1400,     0,  3,  2,  0,      8

@@ -50,11 +50,11 @@
 .equ CLASS_MAGE = 2
 
 .equ LEVEL_1_XP = 30
-.equ LEVEL_2_XP = 500
+.equ LEVEL_2_XP = 450
 .equ LEVEL_3_XP = 1700
 
 .equ UPGRADE_1_POINTS = 6
-.equ UPGRADE_2_POINTS = 6
+.equ UPGRADE_2_POINTS = 7
 .equ UPGRADE_3_POINTS = 8
 
 .equ CHARACTER_MAN = 0

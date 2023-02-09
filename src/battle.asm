@@ -509,8 +509,8 @@ _nrrd_additional_damage:
     clr r1
     add r25, r0
 _nrrd_check_weapon:
-    lds r22, player_weapon
-    dec r22
+    lds r23, player_weapon
+    dec r23
     brmi _nrrd_calculate_defense
     push ZL
     push ZH
@@ -519,17 +519,17 @@ _nrrd_check_weapon:
     ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
     ldi ZH, high(2*item_table+ITEM_FLAGS_OFFSET)
     ldi r24, ITEM_MEMSIZE
-    mul r22, r24
+    mul r23, r24
     add ZL, r0
     adc ZH, r1
     clr r1
-    elpm r22, Z
+    elpm r24, Z
     adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
     elpm r23, Z
     pop ZH
     pop ZL
-    andi r22, 0x03
-    cpi r22, ITEM_RANGED
+    andi r24, 0x03
+    cpi r24, ITEM_RANGED
     brne _nrrd_calculate_defense
     lds r24, player_augmented_stats+STATS_INTELLECT_OFFSET
     asr r24

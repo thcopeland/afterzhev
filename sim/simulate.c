@@ -109,7 +109,7 @@ void run_to_sync(void) {
             sync_hold = 1; // synchronize to framerate
             break;
         } else if (avr->status == CPU_STATUS_CRASHED) {
-            fprintf(stderr, "CPU crashed (%d)\n", avr->error);
+            fprintf(stderr, "CPU crashed (%d) at 0x%05x\n", avr->error, avr->pc);
             exit(0);
         }
     }
