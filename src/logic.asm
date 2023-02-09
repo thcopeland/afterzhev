@@ -172,7 +172,7 @@ sector_start_fight_update:
     tst r20
     breq _ssfu_end
     ldd r25, Y+NPC_HEALTH_OFFSET
-    cpi r25, 6
+    cpi r25, 8
     brsh _ssfu_end
     try_start_conversation bandit_plead
 _ssfu_end:
@@ -227,7 +227,7 @@ _ste1u_check_position:
     ldi r24, 86
     ldi r25, 134
     distance_between r24, r25, r22, r23
-    cpi r25, 10
+    cpi r25, 12
     brsh _ste1u_end
     ldi r25, NPC_KIDNAPPED
     std Y+NPC_IDX_OFFSET, r25

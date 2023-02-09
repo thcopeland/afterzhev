@@ -18,7 +18,7 @@
 .endm
 
 shop_table:
-    DECL_SHOP tutorial, 5, 0x28 ; 1.25x+5
+    DECL_SHOP tutorial, 5, 0x20 ; 1x+5
     DECL_SHOP_ITEMS ITEM_bloody_sword, ITEM_beer, ITEM_croissant, NO_ITEM, NO_ITEM, NO_ITEM, NO_ITEM, NO_ITEM
 
     DECL_SHOP bartender, 5, 0x28 ; 1.25x+5

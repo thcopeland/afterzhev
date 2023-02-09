@@ -24,6 +24,9 @@ init_game_state:
     sts player_inventory, r23
     sts player_inventory+1, r24
     sts player_inventory+2, r25
+    lds r25, player_class
+    andi r25, 0x0f ; reset player level
+    sts player_class, r25
     call init_player_stats
     sts player_action, r1
     ldi r25, DIRECTION_DOWN

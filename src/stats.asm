@@ -297,12 +297,16 @@ calculate_dash_cooldown:
     add r25, r0
     ret
 
-; Reset the player's stats based on the
+; Reset the player's stats based on the player's class.
 ;
 ; Register Usage
 ;   r22-r25     calculations
 ;   Y (r28:r29) memory pointer
 init_player_stats:
+    sts player_augmented_stats+STATS_STRENGTH_OFFSET, r1
+    sts player_augmented_stats+STATS_VITALITY_OFFSET, r1
+    sts player_augmented_stats+STATS_DEXTERITY_OFFSET, r1
+    sts player_augmented_stats+STATS_INTELLECT_OFFSET, r1
     ldi YL, low(player_effects)
     ldi YH, high(player_effects)
     ldi r24, PLAYER_EFFECT_COUNT
@@ -326,14 +330,14 @@ _ips_rogue:
     ldi r22, 6
     ldi r23, 6
     ldi r24, 12
-    ldi r25, 10
+    ldi r25, 8
 _ips_mage:
     cpi r25, CLASS_MAGE
     brne _ips_save_stats
-    ldi r22, 6
-    ldi r23, 7
-    ldi r24, 8
-    ldi r25, 15
+    ldi r22, 4
+    ldi r23, 6
+    ldi r24, 7
+    ldi r25, 13
 _ips_save_stats:
     sts player_stats + STATS_STRENGTH_OFFSET, r22
     sts player_stats + STATS_VITALITY_OFFSET, r23

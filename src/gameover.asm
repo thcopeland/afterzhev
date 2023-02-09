@@ -2,6 +2,9 @@ gameover_update_game:
     rjmp gameover_render_game
 _gug_return:
     rcall gameover_handle_controls
+    lds r25, game_mode
+    cpi r25, MODE_GAMEOVER
+    brne _gug_end
     lds r25, clock
     andi r25, 0x3
     brne _gug_end
