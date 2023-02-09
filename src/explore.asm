@@ -1653,6 +1653,8 @@ _csb_end:
 load_sector:
     push YL
     push YH
+    ldi r18, byte3(2*sector_table)
+    out RAMPZ, r18
     sts current_sector, ZL
     sts current_sector+1, ZH
     sts following_timer, r1
