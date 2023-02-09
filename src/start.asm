@@ -27,8 +27,8 @@ _sug_end:
 
 .equ TITLE_START_MARGIN = 40 + DISPLAY_WIDTH*51
 .equ TITLE_RESUME_MARGIN = 66 + DISPLAY_WIDTH*51
-.equ TITLE_HELP_MARGIN = TITLE_START_MARGIN + DISPLAY_WIDTH*8 - 3
-.equ TITLE_ABOUT_MARGIN = TITLE_RESUME_MARGIN + DISPLAY_WIDTH*8 + 10
+.equ TITLE_HELP_MARGIN = TITLE_START_MARGIN + DISPLAY_WIDTH*8 - 4
+.equ TITLE_ABOUT_MARGIN = TITLE_RESUME_MARGIN + DISPLAY_WIDTH*8 + 8
 
 start_render_screen:
     ldi YL, low(framebuffer)
@@ -42,6 +42,10 @@ _srs_start_option:
     ldi YL, low(framebuffer + TITLE_START_MARGIN)
     ldi YH, high(framebuffer + TITLE_START_MARGIN)
     ldi r21, 20
+    ldi r23, 0x04
+    ldi r24, 0
+    lds r25, start_selection
+    cpse r25, r24
     clr r23
     ldi ZL, byte3(2*ui_str_start)
     out RAMPZ, ZL
@@ -51,6 +55,10 @@ _srs_start_option:
 _srs_resume_option:
     ldi YL, low(framebuffer + TITLE_RESUME_MARGIN)
     ldi YH, high(framebuffer + TITLE_RESUME_MARGIN)
+    ldi r23, 0x04
+    ldi r24, 1
+    lds r25, start_selection
+    cpse r25, r24
     clr r23
     ldi ZL, low(2*ui_str_resume)
     ldi ZH, high(2*ui_str_resume)
@@ -58,41 +66,25 @@ _srs_resume_option:
 _srs_help_option:
     ldi YL, low(framebuffer + TITLE_HELP_MARGIN)
     ldi YH, high(framebuffer + TITLE_HELP_MARGIN)
+    ldi r23, 0x04
+    ldi r24, 2
+    lds r25, start_selection
+    cpse r25, r24
+    clr r23
     ldi ZL, low(2*ui_str_help)
     ldi ZH, high(2*ui_str_help)
     call puts
 _srs_about_option:
     ldi YL, low(framebuffer + TITLE_ABOUT_MARGIN)
     ldi YH, high(framebuffer + TITLE_ABOUT_MARGIN)
+    ldi r23, 0x04
+    ldi r24, 3
+    lds r25, start_selection
+    cpse r25, r24
+    clr r23
     ldi ZL, low(2*ui_str_about)
     ldi ZH, high(2*ui_str_about)
     call puts
-_srs_determine_selected:
-    lds r25, start_selection
-    ldi XL, low(framebuffer + TITLE_START_MARGIN)
-    ldi XH, high(framebuffer + TITLE_START_MARGIN)
-_srs_check_resume:
-    cpi r25, 1
-    brne _srs_check_help
-    ldi XL, low(framebuffer + TITLE_RESUME_MARGIN)
-    ldi XH, high(framebuffer + TITLE_RESUME_MARGIN)
-    rjmp _srs_render_selected
-_srs_check_help:
-    cpi r25, 2
-    brne _srs_check_about
-    ldi XL, low(framebuffer + TITLE_HELP_MARGIN)
-    ldi XH, high(framebuffer + TITLE_HELP_MARGIN)
-    rjmp _srs_render_selected
-_srs_check_about:
-    cpi r25, 3
-    brne _srs_render_selected
-    ldi XL, low(framebuffer + TITLE_ABOUT_MARGIN)
-    ldi XH, high(framebuffer + TITLE_ABOUT_MARGIN)
-_srs_render_selected:
-    subi XL, low(4*FONT_DISPLAY_WIDTH/3)
-    sbci XH, high(4*FONT_DISPLAY_WIDTH/3)
-    ldi r22, 128
-    call putc
     ret
 
 screen_fade_out:
