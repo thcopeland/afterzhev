@@ -43,10 +43,10 @@
     .endif
 .endm
 
-.set __LOSE_ITEM_IDX = 1
+.set __LOOSE_ITEM_IDX = 1
 .macro DECL_LOOSE_ITEM ; name
-    .equ LOOSE_ITEM_@0 = __LOSE_ITEM_IDX
-    .set __LOSE_ITEM_IDX = __LOSE_ITEM_IDX+1
+    .equ LOOSE_ITEM_@0 = __LOOSE_ITEM_IDX
+    .set __LOOSE_ITEM_IDX = __LOOSE_ITEM_IDX+1
 .endm
 
 .equ USABLE_ETERNAL = (1 << 2)
@@ -139,6 +139,8 @@ DECL_LOOSE_ITEM bank_gold_chalice_1
 DECL_LOOSE_ITEM bank_mithril_breastplate
 DECL_LOOSE_ITEM bank_chest
 DECL_LOOSE_ITEM bank_beer
+
+.message "Unallocated preplaced items: ", low(TOTAL_PREPLACED_ITEM_COUNT - __LOOSE_ITEM_IDX + 1)
 
 item_string_table:
 _item_str_wood_stick_name:          .db "Tree branch", 0

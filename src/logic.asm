@@ -502,6 +502,13 @@ sector_town_fields_update:
     sts npc_move_flags2, r1
     ldi r25, 3
     call release_if_damaged
+    lds r25, npc_move_flags2
+    tst r25
+    breq _stfu_main
+    lds r25, conversation_over + ((CONVERSATION_bandit_reveal_ID-1)>>3)
+    andi r25, low(~exp2((CONVERSATION_bandit_reveal_ID-1)&0x07))
+    sts conversation_over + ((CONVERSATION_bandit_reveal_ID-1)>>3), r25
+_stfu_main:
     lds r25, npc_presence+((NPC_UNDERCOVER_BANDIT_UNMASKED-1)>>3)
     andi r25, exp2((NPC_UNDERCOVER_BANDIT_UNMASKED-1)&0x07)
     brne _stfu_test_left_confrontation

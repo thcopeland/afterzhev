@@ -92,3 +92,6 @@ upgrade_points:     .byte 1
 
 character_render:   .byte CHARACTER_MEMSIZE-4
 subroutine_tmp:     .byte 4
+end_game_allocs:
+
+.message "Unallocated memory: ", RAMEND - end_game_allocs, " (about 0x16 needed for stack)"

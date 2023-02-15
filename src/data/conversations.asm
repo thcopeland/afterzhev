@@ -276,6 +276,8 @@ _conv_final_boss5:              DECL_LINE final_boss5, NPC_ZHEV, zhev, final_bos
 _conv_final_boss6:              DECL_LINE final_boss6, 0, PLAYER, final_boss7
 _conv_final_boss7:              DECL_LINE final_boss7, NPC_ZHEV, zhev, END_CONVERSATION
 
+.message "Unallocated conversation ids: ", low(TOTAL_CONVERSATION_COUNT - __CONVERSATION_IDX + 1)
+
 conversation_string_table:
 _conv_speaker_PLAYER_str:       ; placeholder
 _conv_speaker_ruffian_str:      .db "Ruffian", 0
