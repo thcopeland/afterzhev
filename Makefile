@@ -7,7 +7,8 @@ DEFS           = -D DEV -D __$(MCU_TARGET) -D TARGET=$(TARGET)
 AS             = avra
 OBJDUMP        = avr-objdump
 SLIMAVR        = $(SIM)/slimavr-0.1.4
-EMCC_FLAGS     = -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 --preload-file $(BIN)/main.hex
+CFLAGS         = $(shell pkg-config --cflags --libs sdl2) -O2 -Wall -Wextra
+EMCC_FLAGS     = -sUSE_SDL=2 --preload-file $(BIN)/main.hex
 
 all: $(BIN)/main.hex $(BIN)/main.lst
 
@@ -25,11 +26,11 @@ sim: $(BIN)/main.hex $(BIN)/simulate
 
 $(BIN)/simulate: $(SIM)/simulate.c
 	make -C $(SLIMAVR)
-	$(CC) $< $(SLIMAVR)/libslimavr.a -O2 -o $@ -lGLEW -lglfw -lGL -lpthread
+	$(CC) $< $(SLIMAVR)/libslimavr.a -o $@ $(CFLAGS)
 
 wasm: clean all
 	CC=emcc AR=emar make -C $(SLIMAVR)
-	emcc $(EMCC_FLAGS) -O2 $(SLIMAVR)/libslimavr.a $(SIM)/simulate.c -o $(BIN)/simulate-fast.html -lGLEW -lglfw -lGL
+	emcc $(CFLAGS) $(EMCC_FLAGS) $(SLIMAVR)/libslimavr.a $(SIM)/simulate.c -o $(BIN)/simulate-fast.html
 	make -C $(SLIMAVR) clean
 
 clean:
