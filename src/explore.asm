@@ -36,12 +36,12 @@ init_game_state:
     sts player_gold+1, r1
     sts player_xp, r1
     sts player_xp+1, r1
-    sts savepoint_used, r1
     sts mode_clock, r1
     ldi r25, NO_SHOP
     sts current_shop_index, r25
     sts savepoint_data, r1
     sts savepoint_used, r1
+    sts savepoint_progress, r1
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
     ldi ZL, low(2*sector_table + SECTOR_START_1*SECTOR_MEMSIZE)
@@ -1340,7 +1340,7 @@ _rfs_load_used:
     out EEARL, r24
     sbi EECR, EERE
     in r23, EEDR
-    sts savepoint_progress, r23
+    sts savepoint_used, r23
     adiw r24, 1
     ldi ZL, low(savedmem_start)
     ldi ZH, high(savedmem_start)
@@ -1355,6 +1355,8 @@ _rfs_check:
     adiw r24, 1
     dec r22
     brne _rfs_iter
+    sts savepoint_data, r1
+    sts savepoint_progress, r1
 _rfs_clear_following:
     ldi ZL, low(following_npcs)
     ldi ZH, high(following_npcs)

@@ -109,23 +109,25 @@ int main(int argc, char **argv) {
     }
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        fprintf(stderr, "unable to initialize SDL\n");
+        fprintf(stderr, "unable to initialize SDL: %s\n", SDL_GetError());
         return 1;
     }
 
-    SDL_Window *window = SDL_CreateWindow("AfterZhev", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, GAME_DISPLAY_WIDTH*SCALE, GAME_DISPLAY_HEIGHT*SCALE, SDL_WINDOW_RESIZABLE|SDL_WINDOW_SHOWN);
+    SDL_Window *window = SDL_CreateWindow("AfterZhev", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, GAME_DISPLAY_WIDTH*SCALE, GAME_DISPLAY_HEIGHT*SCALE, SDL_WINDOW_RESIZABLE|SDL_WINDOW_HIDDEN);
     if (!window) {
-        fprintf(stderr, "unable to create SDL window\n");
+        fprintf(stderr, "unable to create SDL window: %s\n", SDL_GetError());
         return 1;
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!renderer) {
-        fprintf(stderr, "unable to create SDL renderer\n");
+        fprintf(stderr, "unable to create SDL renderer: %s\n", SDL_GetError());
         return 1;
     }
 
+    SDL_ShowWindow(window);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, 0);
+
     // it'd be nice to use the SDL_PIXELFORMAT_RGB332 format, but the bits are in opposite order
     framebuffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_STREAMING, GAME_DISPLAY_WIDTH, GAME_DISPLAY_HEIGHT);
     if (!framebuffer) {
