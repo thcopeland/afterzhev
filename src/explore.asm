@@ -1355,6 +1355,14 @@ _rfs_check:
     adiw r24, 1
     dec r22
     brne _rfs_iter
+_rfs_clear_following:
+    ldi ZL, low(following_npcs)
+    ldi ZH, high(following_npcs)
+    ldi r25, FOLLOWING_NPC_COUNT
+_rfs_clear_following_iter:
+    st Z+, r1
+    dec r25
+    brne _rfs_clear_following_iter
 _rfs_load_sector: ; load any sector-specific stuff that was not saved
     lds ZL, current_sector
     lds ZH, current_sector+1

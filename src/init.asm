@@ -34,12 +34,13 @@ _clear_memory_loop:
     ; sts player_inventory, r25
     ;
     ; ldi r25, 60
+    ; sts player_stats+STATS_DEXTERITY_OFFSET, r25
     ; sts player_stats+STATS_VITALITY_OFFSET, r25
     ;
     ; ldi r25, ITEM_leather_armor
     ; sts player_armor, r25
     ;
-    ; ldi r25, 80
+    ; ldi r25, 60
     ; sts player_position_x, r25
     ; ldi r25, 90
     ; sts player_position_y, r25
@@ -47,7 +48,7 @@ _clear_memory_loop:
     ;
     ; ldi ZL, byte3(2*sector_table)
     ; out RAMPZ, ZL
-    ; .equ SECTOR = SECTOR_TOWN_FIELDS
+    ; .equ SECTOR = SECTOR_CITY_BANK_1
     ; ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ; ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ; call load_sector

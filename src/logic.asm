@@ -224,10 +224,10 @@ sector_town_entrance_1_update:
 _ste1u_check_position:
     ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
-    ldi r24, 86
-    ldi r25, 134
+    ldi r24, 81
+    ldi r25, 133
     distance_between r24, r25, r22, r23
-    cpi r25, 12
+    cpi r25, 14
     brsh _ste1u_end
     ldi r25, NPC_KIDNAPPED
     std Y+NPC_IDX_OFFSET, r25
