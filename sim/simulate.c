@@ -15,6 +15,8 @@
 
 struct avr *avr;
 int stayin_alive = 1;
+uint64_t last_counter = 0;
+SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Texture *framebuffer;
 
@@ -33,6 +35,18 @@ void run_to_sync(void) {
     }
 }
 
+void fps_delay(void) {
+    const uint64_t expected_frametime = 1000/60;
+    uint64_t counter = SDL_GetPerformanceCounter();
+    uint64_t frametime = 1000 * (counter - last_counter) / SDL_GetPerformanceFrequency();
+    last_counter = counter;
+
+    // a bit loose, but prevents crazy FPS and vsync should pick up the slack
+    if (frametime < expected_frametime-1) {
+        SDL_Delay(expected_frametime-frametime-1);
+    }
+}
+
 void set_control_bit(int bit, int val) {
     if (val) avr->mem[0x26] |= (1 << bit);
     else avr->mem[0x26] &= ~(1 << bit);
@@ -43,9 +57,6 @@ void handle_events(void) {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
             switch (event.key.keysym.sym) {
-                case SDLK_ESCAPE:
-                    stayin_alive = 0;
-                    break;
                 case SDLK_UP:
                     set_control_bit(7, event.type == SDL_KEYUP);
                     break;
@@ -79,11 +90,13 @@ void handle_events(void) {
 }
 
 void loop(void) {
+    fps_delay();
     handle_events();
     run_to_sync();
 
     uint8_t *pixels;
     int pitch;
+    SDL_RenderClear(renderer);
     SDL_LockTexture(framebuffer, NULL, (void**)(&pixels), &pitch);
     for (int i = 0; i < GAME_DISPLAY_WIDTH*GAME_DISPLAY_HEIGHT; i++) {
         uint8_t val = avr->ram[i] & avr->mem[0x21];
@@ -113,13 +126,13 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    SDL_Window *window = SDL_CreateWindow("AfterZhev", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, GAME_DISPLAY_WIDTH*SCALE, GAME_DISPLAY_HEIGHT*SCALE, SDL_WINDOW_RESIZABLE|SDL_WINDOW_HIDDEN);
+    window = SDL_CreateWindow("AfterZhev", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, GAME_DISPLAY_WIDTH*SCALE, GAME_DISPLAY_HEIGHT*SCALE, SDL_WINDOW_RESIZABLE|SDL_WINDOW_HIDDEN);
     if (!window) {
         fprintf(stderr, "unable to create SDL window: %s\n", SDL_GetError());
         return 1;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
     if (!renderer) {
         fprintf(stderr, "unable to create SDL renderer: %s\n", SDL_GetError());
         return 1;
@@ -128,19 +141,16 @@ int main(int argc, char **argv) {
     SDL_ShowWindow(window);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, 0);
 
-    // it'd be nice to use the SDL_PIXELFORMAT_RGB332 format, but the bits are in opposite order
     framebuffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_STREAMING, GAME_DISPLAY_WIDTH, GAME_DISPLAY_HEIGHT);
     if (!framebuffer) {
-        fprintf(stderr, "unable to create framebuffer\n");
+        fprintf(stderr, "unable to create framebuffer: %s\n", SDL_GetError());
         return 1;
     }
 
 #ifdef EMSCRIPTEN
     emscripten_set_main_loop(&loop, 0, 1);
 #else
-    while (stayin_alive) {
-        loop();
-    }
+    while (stayin_alive) loop();
 #endif
 
     SDL_DestroyTexture(framebuffer);
