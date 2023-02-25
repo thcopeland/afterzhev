@@ -462,7 +462,7 @@ _rg_calc_attack_cooldown:
     elpm r22, Z
     lsl r22
     andi r22, 0x70
-    subi r22, -((ATTACK_FRAME_DURATION_MASK+1)*WEAPON_ATTACK_FRAMES)
+    subi r22, -((ATTACK_FRAME_DURATION_MASK+1)*(ATTACK_DAMAGE_FRAME+1))
     clr r23
     lds r24, player_attack_cooldown
     ldi r25, EXPLORE_UI_COOLDOWN_BAR_LENGTH
@@ -1063,7 +1063,7 @@ _pd_end:
     ret
 
 ; Begin an attack.
-;   cooldown = 2*weapon_cooldown + (ATTACK_FRAME_DURATION_MASK+1)*WEAPON_ATTACK_FRAMES
+;   cooldown = 2*weapon_cooldown + (ATTACK_FRAME_DURATION_MASK+1)*(ATTACK_DAMAGE_FRAME+1)
 ;
 ; Register Usage
 ;   r20-r25         calculations
