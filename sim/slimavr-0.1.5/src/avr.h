@@ -1,5 +1,5 @@
-#ifndef AVR_H
-#define AVR_H
+#ifndef SLIMAVR_AVR_H
+#define SLIMAVR_AVR_H
 
 #include <stdint.h>
 #include "model.h"
@@ -7,19 +7,19 @@
 #include "flash.h"
 
 enum avr_error {
-    CPU_INVALID_INSTRUCTION,
-    CPU_UNSUPPORTED_INSTRUCTION,
-    CPU_INVALID_RAM_ADDRESS,
-    CPU_INVALID_ROM_ADDRESS,
-    CPU_INVALID_STACK_ACCESS
+    AVR_INVALID_INSTRUCTION,
+    AVR_UNSUPPORTED_INSTRUCTION,
+    AVR_INVALID_RAM_ADDRESS,
+    AVR_INVALID_ROM_ADDRESS,
+    AVR_INVALID_STACK_ACCESS
 };
 
 enum avr_status {
-    CPU_STATUS_NORMAL,
-    CPU_STATUS_CRASHED,
-    CPU_STATUS_COMPLETING,
-    CPU_STATUS_INTERRUPTING,
-    CPU_STATUS_IDLE
+    MCU_STATUS_NORMAL,
+    MCU_STATUS_CRASHED,
+    MCU_STATUS_COMPLETING,
+    MCU_STATUS_INTERRUPTING,
+    MCU_STATUS_IDLE
 };
 
 enum avr_pending_type {
@@ -32,6 +32,13 @@ struct avr_pending_inst {
     uint32_t dst;
     enum avr_pending_type type;
 };
+
+#define avr_panic(avr, err) ({                                                  \
+    avr->error = err;                                                           \
+    avr->status = MCU_STATUS_CRASHED;                                           \
+})
+
+struct avr_tracedata;
 
 struct avr {
     struct avr_model model;     // processor model
@@ -56,12 +63,13 @@ struct avr {
     struct avr_pending_inst pending_inst;
     struct avr_eeprom_state eeprom_data;
     struct avr_flash_state flash_data;
+    struct avr_tracedata *trace;
 };
 
 /*
  * Allocate and initialize a new avr instance of the given model.
  */
-struct avr *avr_init(struct avr_model model);
+struct avr *avr_new(struct avr_model model);
 
 /*
  * Free an avr instance.
@@ -69,17 +77,21 @@ struct avr *avr_init(struct avr_model model);
 void avr_free(struct avr *avr);
 
 /*
+ * Dump the contents of the register file and recent instructions. If fname is
+ * null, writes to stdout.
+ */
+int avr_dump(struct avr *avr, const char *fname);
+
+/*
  * Step a single cycle.
  */
 void avr_step(struct avr *avr);
-
 
 /*
  * Read an IO register's value. This can be used for basic communication, but
  * if you need more control, you should access avr->reg or avr->mem directly.
  */
 uint8_t avr_io_read(struct avr *avr, uint16_t reg);
-
 
 /*
  * Write to an IO register. This can be used for basic communication, but

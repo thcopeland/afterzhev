@@ -1,7 +1,7 @@
 SRC             = src
 OBJ             = obj
-DEFS            = # add -DDEBUG for instruction listing
-CFLAGS          = -O2 -fno-inline-small-functions -finline-functions -finline -flto -Wall -Wextra
+DEFS            = -DDEBUG=0 # debug level
+CFLAGS          = -O2 -finline-functions -finline -flto -Wall -Wextra
 
 src_models      = $(wildcard $(SRC)/models/*.c)
 src_models_o    = $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(src_models))

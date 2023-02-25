@@ -3,10 +3,12 @@
 #include <string.h>
 #include "model.h"
 #include "dispatch.h"
+#include "decode.h"
 #include "interrupt.h"
 #include "opt.h"
 #include "avr.h"
 #include "utils.h"
+#include "trace.h"
 
 static void alloc_avr_memory(struct avr *avr) {
     // In order to simplify and speed up data accesses, all data segments (register
@@ -63,12 +65,12 @@ static void alloc_avr_memory(struct avr *avr) {
     }
 }
 
-struct avr *avr_init(struct avr_model model) {
+struct avr *avr_new(struct avr_model model) {
     check_compatibility();
     struct avr *avr = malloc(sizeof(*avr));
     if (avr) {
         avr->error = 0;
-        avr->status = CPU_STATUS_NORMAL;
+        avr->status = MCU_STATUS_NORMAL;
         avr->progress = 0;
         avr->model = model;
         avr->pc = 0;
@@ -76,16 +78,22 @@ struct avr *avr_init(struct avr_model model) {
         avr->insts = 0;
         avr->pending_inst.type = AVR_PENDING_NONE;
 
-        alloc_avr_memory(avr);
-
-        if (avr->mem == NULL) {
+        avr->trace = avr_trace_new();
+        if (avr->trace == NULL) {
             free(avr);
-            avr = NULL;
-        } else {
-            uint16_t sp = model.ramstart+model.ramsize - 1;
-            avr->reg[model.reg_stack+1] = sp >> 8;
-            avr->reg[model.reg_stack] = sp & 0xff;
+            return NULL;
         }
+
+        alloc_avr_memory(avr);
+        if (avr->mem == NULL) {
+            avr_trace_free(avr->trace);
+            free(avr);
+            return NULL;
+        }
+
+        uint16_t sp = model.ramstart+model.ramsize - 1;
+        avr->reg[model.reg_stack+1] = sp >> 8;
+        avr->reg[model.reg_stack] = sp & 0xff;
     }
     return avr;
 }
@@ -93,6 +101,7 @@ struct avr *avr_init(struct avr_model model) {
 void avr_free(struct avr *avr) {
     if (avr) {
         avr_free_flash_state(&avr->flash_data);
+        avr_trace_free(avr->trace);
         free(avr->mem);
         free(avr->timer_data);
         free(avr);
@@ -110,12 +119,20 @@ static inline void avr_update(struct avr *avr) {
 }
 
 static inline void avr_exec(struct avr *avr) {
-    uint8_t inst_l = avr->rom[avr->pc],
-            inst_h = avr->rom[avr->pc+1];
+    uint16_t inst = (avr->rom[avr->pc+1] << 8) | avr->rom[avr->pc];
 
-    avr->insts++;
     LOG("%x:\t", avr->pc);
-    avr_dispatch(avr, inst_l, inst_h);
+#ifdef SLIMAVR_DEBUG_HISTORY
+    uint16_t inst2 = (avr->rom[avr->pc+3] << 8) | avr->rom[avr->pc+2];
+#ifdef SLIMAVR_DEBUG_LOG
+    char inst_str[32];
+    avr_decode(inst_str, sizeof(inst_str), inst, inst2);
+    LOG("%s\n", inst_str);
+#endif
+    avr_trace_enq(avr->trace, avr->pc, inst, inst2);
+#endif
+    avr->insts++;
+    avr_dispatch(avr, inst);
 }
 
 static inline void avr_resolve_pending(struct avr *avr) {
@@ -137,32 +154,32 @@ static inline void avr_resolve_pending(struct avr *avr) {
 
 void avr_step(struct avr *avr) {
     switch (avr->status) {
-        case CPU_STATUS_NORMAL:
+        case MCU_STATUS_NORMAL:
             avr_exec(avr);
             break;
 
-        case CPU_STATUS_COMPLETING:
+        case MCU_STATUS_COMPLETING:
             LOG("*** continuing last instruction (%d) ***\n", avr->progress);
             avr->progress--;
             if (avr->progress <= 0) {
                 avr_resolve_pending(avr);
-                avr->status = CPU_STATUS_NORMAL;
+                avr->status = MCU_STATUS_NORMAL;
             }
             break;
 
-        case CPU_STATUS_INTERRUPTING:
+        case MCU_STATUS_INTERRUPTING:
             LOG("*** responding to interrupt (%d) ***\n", avr->progress);
             avr->progress--;
             if (avr->progress <= 0) {
-                avr->status = CPU_STATUS_NORMAL;
+                avr->status = MCU_STATUS_NORMAL;
             }
             break;
 
-        case CPU_STATUS_IDLE:
+        case MCU_STATUS_IDLE:
             LOG("*** sleeping ***\n");
             break;
 
-        case CPU_STATUS_CRASHED:
+        case MCU_STATUS_CRASHED:
             return;
     }
 

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "SDL.h"
-#include "slimavr-0.1.4/slimavr.h"
+#include "slimavr-0.1.5/slimavr.h"
 #include "minimal_model.h"
 
 #ifdef EMSCRIPTEN
@@ -28,8 +28,8 @@ void run_to_sync(void) {
 
         if ((0x80 & avr->mem[0x25]) ^ sync) {
             break;
-        } else if (avr->status == CPU_STATUS_CRASHED) {
-            fprintf(stderr, "CPU crashed (%d) at 0x%05x\n", avr->error, avr->pc);
+        } else if (avr->status == MCU_STATUS_CRASHED) {
+            avr_dump(avr, NULL);
             exit(0);
         }
     }
@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
     (void) argv;
 
     // using a stripped-down ATmega 2560 for emulation for performance
-    avr = avr_init(AFTERZHEV_MINIMAL_MODEL);
+    avr = avr_new(AFTERZHEV_MINIMAL_MODEL);
     avr->mem[0x26] = 0xff;
 
     if (avr_load_ihex(avr, "bin/main.hex") != 0) {

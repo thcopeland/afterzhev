@@ -1,4 +1,4 @@
-#include "slimavr-0.1.4/slimavr.h"
+#include "slimavr-0.1.5/slimavr.h"
 // Identical to the ATmega2560, except that it only has timers 1 and 3. For this
 // to work, timer registers have been swapped a bit (1 -> 0, 3->1, 0->3).
 

@@ -6,7 +6,7 @@ MCU_TARGET     = atmega2560 # NOTE: simulate assumes 2560-like model
 DEFS           = -D DEV -D __$(MCU_TARGET) -D TARGET=$(TARGET)
 AS             = avra
 OBJDUMP        = avr-objdump
-SLIMAVR        = $(SIM)/slimavr-0.1.4
+SLIMAVR        = $(SIM)/slimavr-0.1.5
 CFLAGS         = $(shell pkg-config --cflags --libs sdl2) -O2 -Wall -Wextra
 EMCC_FLAGS     = -sUSE_SDL=2 --preload-file $(BIN)/main.hex
 
