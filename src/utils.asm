@@ -189,7 +189,7 @@ _fc_combine_channels_%:
 .endm
 
 .macro DEBUG ; reg
-    .dw 0xffe0 | (@0 & 0x1f)
+    .dw 0x03e0 | (@0 & 0x1f)
 .endm
 
 ; Calculate the manhattan distance from the player to the given coordinates.

@@ -1455,6 +1455,8 @@ _up_dash_right:
     ldi r20, 127
     sts player_velocity_x, r20
 _up_dash_move_again:
+    ldi YL, low(player_position_data)
+    ldi YH, high(player_position_data)
     call move_character
     call move_character
 _up_ranged_attack:
