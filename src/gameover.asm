@@ -47,11 +47,7 @@ gameover_handle_controls:
     brlo _ghc_end
     lds r25, gameover_state
     cpi r25, GAME_OVER_WIN
-    brne _ghc_dead
-_glasgow_haskell_compiler_win:
-    sts start_selection, r1
-    call restart_game
-    rjmp _ghc_end
+    breq _ghc_end
 _ghc_dead:
     sbrs r24, CONTROLS_SPECIAL1
     rjmp  _ghc_restart
@@ -112,7 +108,7 @@ _grg_end:
 _grg_return:
     rjmp _gug_return
 
-.equ GAMEOVER_UI_HEADER_TEXT_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FONT_DISPLAY_HEIGHT)/2 + (DISPLAY_WIDTH-FONT_DISPLAY_WIDTH*8)/2
+.equ GAMEOVER_UI_HEADER_TEXT_MARGIN = DISPLAY_WIDTH*(DISPLAY_HEIGHT-FONT_DISPLAY_HEIGHT)/2 + 33
 .equ GAMEOVER_UI_DEATH_MESSAGE_MARGIN = DISPLAY_WIDTH*50 + 21
 .equ GAMEOVER_UI_RESTART_MESSAGE_MARGIN = DISPLAY_WIDTH*57 + 30
 
@@ -196,26 +192,13 @@ _grw_fade_screen:
 _grw_hold_screen:
     call render_full_screen
     sts lightning_clock, r1
-    ldi YL, low(framebuffer+GAMEOVER_UI_RESTART_MESSAGE_MARGIN)
-    ldi YH, high(framebuffer+GAMEOVER_UI_RESTART_MESSAGE_MARGIN)
-    ldi ZL, byte3(2*ui_str_press_any_button)
-    out RAMPZ, ZL
     ldi r21, 20
     lds r24, mode_clock
-    subi r24, 80
-    brsh _grw_hold_text
-    ldi r24, 0
-_grw_hold_text:
-    ldi r23, 0
-    ldi ZL, low(2*ui_str_press_any_button)
-    ldi ZH, high(2*ui_str_press_any_button)
-    call puts_n
-    lds r25, mode_clock
-    cpi r25, 120
-    brlo _grw_hold_end
-    ldi r25, 120
-    sts mode_clock, r25
-_grw_hold_end:
+    cpi r24, 80
+    brlo _grw_end
+_grw_credits:
+    call load_credits
+_grw_end:
     ret
 
 ; Fade in some text and hold it.

@@ -51,7 +51,7 @@ ui_str_dexterity_abbr:  .db "Dex", 0
 ui_str_intellect_abbr:  .db "Int", 0
 ui_str_buy_label:   .db "Buy", 10, "for", 0
 ui_str_sell_label:  .db "Sell", 10, " for", 0
-ui_str_you_died:    .db "YOU  DIED", 0
+ui_str_you_died:    .db "A noble effort.", 0
 .if TARGETING_MCU
 ui_str_death_retry: .db "Press <A> to try again", 0, 0
 ui_str_death_restart:.db " or <B> to start over.", 0, 0
@@ -59,7 +59,17 @@ ui_str_death_restart:.db " or <B> to start over.", 0, 0
 ui_str_death_retry: .db "Press <A> to try again", 0, 0
 ui_str_death_restart:.db " or <S> to start over.", 0, 0
 .endif
-ui_str_press_any_button:.db "Press any button", 0, 0
+ui_credits_congrats:.db "Nobly fought, envoy.", 0, 0
+ui_credits_1:       .db "Game by", 0
+ui_credits_2:       .db "Tom Copeland", 0, 0
+ui_credits_3:       .db "Art by", 0, 0
+ui_credits_4:       .db "Tom Copeland", 0, 0
+ui_credits_5:       .db "Font by", 0
+ui_credits_6:       .db "Brian Swetland", 0, 0
+ui_credits_7:       .db "and others", 0, 0
+ui_credits_8:       .db "Tiny font by", 0, 0
+ui_credits_9:       .db "Matthew Welch", 0,
+ui_credits_10:      .db "Thanks for playing!", 0
 ui_str_start:       .db "Start", 0
 ui_str_resume:      .db "Resume", 0, 0
 ui_str_help:        .db "Controls", 0, 0

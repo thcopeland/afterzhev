@@ -178,8 +178,12 @@ _loop_about:
     jmp about_update
 _loop_help:
     cpi r18, MODE_HELP
-    brne _loop_reenter
+    brne _loop_credits
     jmp help_update
+_loop_credits:
+    cpi r18, MODE_CREDITS
+    brne _loop_reenter
+    jmp credits_update
 
 _loop_reenter:
 
@@ -212,6 +216,7 @@ _loop_end:
 .include "conversation.asm"
 .include "upgrade.asm"
 .include "gameover.asm"
+.include "credits.asm"
 .include "start.asm"
 .include "character_selection.asm"
 .include "intro.asm"
