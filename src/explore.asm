@@ -917,6 +917,12 @@ _hmb_check_savepoint:
     brsh _hmb_check_portals
     cpi r25, SAVEPOINT_DISTANCE
     brsh _hmb_check_portals
+    call calculate_max_health
+    sts player_health, r25
+    ldi r25, EFFECT_HEALING << 3
+    sts player_effect, r25
+    sts player_velocity_x, r1
+    sts player_velocity_y, r1
     lds r25, savepoint_data
     mov r24, r25
     andi r25, 0xc0
@@ -1371,6 +1377,11 @@ _rfs_load_sector: ; load any sector-specific stuff that was not saved
     rcall load_sector
     sts current_shop_index, r1
     clr r25
+_rfs_clear_player_pos:
+    sts player_velocity_x, r1
+    sts player_velocity_y, r1
+    sts player_action, r1
+    sts player_effect, r1
 _rfs_end:
     ret
 
