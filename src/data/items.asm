@@ -67,7 +67,6 @@ item_table:
     DECL_ITEM beard,                ITEM_WEARABLE,                       0,     0,  0,  0,  0,      0
     DECL_ITEM club,                 (1<<6)|(4<<3)|ITEM_WIELDABLE,       10,     0,  0,  0,  0,      (3<<4)
     DECL_ITEM glass_dagger,         ITEM_WIELDABLE,                     80,     0,  0,  4,  0,      (2<<4)
-    DECL_ITEM glass_shard,          ITEM_WIELDABLE,                     20,     0,  0,  0,  0,      (1<<4)
     DECL_ITEM great_bow,            (3<<6)|(4<<3)|ITEM_RANGED,         200,     0,  0,  0,  0,      (6<<4)|EFFECT_ARROW
     DECL_ITEM green_cloak,          ITEM_WEARABLE,                      40,     0,  0,  0,  0,      2
     DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      40,     0,  0,  0,  0,      2
@@ -110,6 +109,7 @@ item_table:
     DECL_ITEM bismuth_subsalicylate,(1<<3)|ITEM_USABLE,                 10,     0,  2,  0,  0,      0
     DECL_ITEM strength_potion,      (3<<3)|ITEM_USABLE,                 50,    10,  0,  0,  0,      0
     DECL_ITEM speed_potion,         (1<<3)|ITEM_USABLE,                 60,     0,  0, 30,  0,      0
+    DECL_ITEM glass_shard,          ITEM_USABLE,                        20,     0,  0,  0,  0,      1
     DECL_ITEM gold_chalice,         ITEM_USABLE,                       200,     0,  0,  0,  0,      1
     DECL_ITEM gold_bar,             ITEM_USABLE,                       150,     0,  0,  0,  0,      1
     DECL_ITEM small_chest,          ITEM_USABLE,                        10,     0,  0,  0,  0,      1

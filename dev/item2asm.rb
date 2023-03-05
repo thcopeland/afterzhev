@@ -92,7 +92,7 @@ end
 
 fname = nil
 type = :weapon
-name = "item"
+name = nil
 
 if ARGV.empty?
     usage_msg
@@ -127,6 +127,15 @@ end
 if fname.nil?
     puts "item2asm.rb: must provide an input file"
     exit 1
+end
+
+if name.nil?
+    m = fname.match(/item_(.+)_sprites.png/)
+    if m.nil?
+        name = "item"
+    else
+        name = m[1]
+    end
 end
 
 extract_item_sprites(fname, type, name)

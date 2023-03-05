@@ -224,9 +224,9 @@ _ws_end:
     pop YL
     ret
 
-; Render any rectangular section of a sprite flipped across the vertical axis.
-; The final result is the same as mirroring the original sprite, then rendering
-; it with write_sprite.
+; Render any rectangular section of a sprite flipped horizontally (across the
+; vertical axis). The final result is the same as mirroring the original sprite,
+; then rendering it with write_sprite.
 ;
 ; Register Usage
 ;   r21             sprite width (param), delta sprite pointer
@@ -235,9 +235,9 @@ _ws_end:
 ;   r24             slice min x (param), reused for jump low
 ;   r25             slice width (param), reused for jump high
 ;   X (r26:r27)     framebuffer pointer (param)
-;   Y (r28:r29)     working framebuffer pointer (it'd be more natural to use X, but the std instruction supports only Y and Z)
+;   Y (r28:r29)     working framebuffer pointer
 ;   Z (r30:r31)     sprite pointer (param)
-write_sprite_vflipped:
+write_sprite_flip_x:
     push YL
     push YH
     mul r21, r22
@@ -256,12 +256,12 @@ write_sprite_vflipped:
     add r24, r25
     add r24, r25
     clr r25
-    subi r24, low(-_wsvf_loop)
-    sbci r25, high(-_wsvf_loop)
+    subi r24, low(-_wsfx_loop)
+    sbci r25, high(-_wsfx_loop)
     inc r23
     ldi r22, TRANSPARENT
     rjmp _ws_loop_check
-_wsvf_loop:
+_wsfx_loop:
     elpm r0, Z+
     cpse r0, r22
     std Y+11, r0
@@ -302,23 +302,26 @@ _wsvf_loop:
     adc ZH, r1
     subi YL, low(-DISPLAY_WIDTH)
     sbci YH, high(-DISPLAY_WIDTH)
-_wsvf_loop_check:
+_wsfx_loop_check:
     dec r23
-    breq _wsvf_end
+    breq _wsfx_end
     push r24
     push r25
 .if PC_SIZE == 3
     push r1
 .endif
     ret
-_wsvf_end:
+_wsfx_end:
     pop YH
     pop YL
     ret
 
-; Render any rectangular section of a sprite flipped across the horizontal axis.
-; The final result is the same as flipping the original sprite, then rendering
-; it with write_sprite.
+; Render any rectangular section of a sprite flipped vertically (across the
+; horizontal axis). The final result is the same as flipping the original sprite,
+; then rendering it with write_sprite.
+;
+; NOTE: The sprite pointer should point to the address following the last pixel
+; in the sprite.
 ;
 ; Register Usage
 ;   r21             sprite width (param), delta sprite pointer
@@ -327,13 +330,17 @@ _wsvf_end:
 ;   r24             slice min x (param), reused for jump low
 ;   r25             slice width (param), reused for jump high
 ;   X (r26:r27)     framebuffer pointer (param)
-;   Y (r28:r29)     working framebuffer pointer (it'd be more natural to use X, but the std instruction supports only Y and Z)
+;   Y (r28:r29)     working framebuffer pointer
 ;   Z (r30:r31)     sprite pointer (param)
-write_sprite_hflipped:
+write_sprite_flip_y:
     push YL
     push YH
     add ZL, r24
     adc ZH, r1
+    add r22, r23
+    mul r21, r22
+    sub ZL, r0
+    sbc ZH, r1
     ldi r24, DISPLAY_WIDTH
     mul r23, r24
     add XL, r0
@@ -347,16 +354,16 @@ write_sprite_hflipped:
     movw YL, XL
     sub YL, r24
     sbc YH, r1
-    mov r25, r24 ; multiply r24 by 3
+    mov r25, r24
     add r24, r25
     add r24, r25
     clr r25
-    subi r24, low(-_wshf_loop)
-    sbci r25, high(-_wshf_loop)
+    subi r24, low(-_wsfy_loop)
+    sbci r25, high(-_wsfy_loop)
     inc r23
     ldi r22, TRANSPARENT
     rjmp _ws_loop_check
-_wshf_loop:
+_wsfy_loop:
     elpm r0, Z+
     cpse r0, r22
     st Y, r0
@@ -397,16 +404,114 @@ _wshf_loop:
     adc ZH, r1
     subi YL, low(DISPLAY_WIDTH)
     sbci YH, high(DISPLAY_WIDTH)
-_wshf_loop_check:
+_wsfy_loop_check:
     dec r23
-    breq _wshf_end
+    breq _wsfy_end
     push r24
     push r25
 .if PC_SIZE == 3
     push r1
 .endif
     ret
-_wshf_end:
+_wsfy_end:
+    pop YH
+    pop YL
+    ret
+
+; Render any rectangular section of a sprite flipped across the horizontal and
+; vertical axes (same as rotation by 180 degrees). The final result is the same
+; as rotating the original sprite, then rendering it with write_sprite.
+;
+; NOTE: The sprite pointer should point to the address following the last pixel
+; in the sprite.
+;
+; Register Usage
+;   r21             sprite width (param), delta sprite pointer
+;   r22             slice min y (param), reused to hold transparency value
+;   r23             slice height (param)
+;   r24             slice min x (param), reused for jump low
+;   r25             slice width (param), reused for jump high
+;   X (r26:r27)     framebuffer pointer (param)
+;   Y (r28:r29)     working framebuffer pointer
+;   Z (r30:r31)     sprite pointer (param)
+write_sprite_flip_xy:
+    push YL
+    push YH
+    add r22, r23
+    mul r21, r22
+    sub ZL, r0
+    sbc ZH, r1
+    ldi r24, DISPLAY_WIDTH
+    mul r23, r24
+    add XL, r0
+    adc XH, r1
+    clr r1
+    subi XL, low(DISPLAY_WIDTH)
+    sbci XH, high(DISPLAY_WIDTH)
+    sub r21, r25
+    ldi r24, TILE_WIDTH
+    sub r24, r25
+    movw YL, XL
+    mov r25, r24
+    add r24, r25
+    add r24, r25
+    clr r25
+    subi r24, low(-_wsfxy_loop)
+    sbci r25, high(-_wsfxy_loop)
+    inc r23
+    ldi r22, TRANSPARENT
+    rjmp _ws_loop_check
+_wsfxy_loop:
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+11, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+10, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+9, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+8, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+7, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+6, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+5, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+4, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+3, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+2, r0
+    elpm r0, Z+
+    cpse r0, r22
+    std Y+1, r0
+    elpm r0, Z+
+    cpse r0, r22
+    st Y, r0
+    add ZL, r21
+    adc ZH, r1
+    subi YL, low(DISPLAY_WIDTH)
+    sbci YH, high(DISPLAY_WIDTH)
+_wsfxy_loop_check:
+    dec r23
+    breq _wsfxy_end
+    push r24
+    push r25
+.if PC_SIZE == 3
+    push r1
+.endif
+    ret
+_wsfxy_end:
     pop YH
     pop YL
     ret
@@ -728,8 +833,8 @@ _rs_write_inner_tile:
 ; edges.
 ;
 ; If the width is negative, the sprite is flipped horizontally. If the height
-; is negative, the sprite is flipped vertically. If both or neither are negative,
-; the sprite is rendered as usual.
+; is negative, the sprite is flipped vertically. If neither are negative, the
+; sprite is rendered as usual.
 ;
 ; Register Usage
 ;   r18-r21         camera position, calculations
@@ -740,18 +845,20 @@ _rs_write_inner_tile:
 render_sprite:
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
-_rs_check_hflipped:
-    clr r20
-    cpi r23, 128
-    brlo _rs_check_vflipped
-    neg r23
-    ori r20, 0x01
-_rs_check_vflipped:
+    mov r20, r23 ; save height, necessary for y and xy flips
+    lsl r20
+    lsl r20
+_rs_check_flip_x:
     cpi r22, 128
-    brlo _rs_write_flipped
+    brlo _rs_check_flip_y
+    ori r20, 0x01
     neg r22
+_rs_check_flip_y:
+    cpi r23, 128
+    brlo _rs_save_flipped
     ori r20, 0x02
-_rs_write_flipped:
+    neg r23
+_rs_save_flipped:
     push r20
 _rs_calc_vertical_offset:
     lds r20, camera_position_y
@@ -819,21 +926,34 @@ _rs_bottom_cut:
     sub r23, r19
 _rs_write_sprite:
     pop r20
-_rs_write_sprite_hflipped:
-    cpi r20, 1
-    brne _rs_write_sprite_vflipped
-    rcall write_sprite_hflipped
-    ret
-_rs_write_sprite_vflipped:
-    cpi r20, 2
-    brne _rs_write_sprite_unflipped
-    rcall write_sprite_vflipped
-    ret
+    mov r19, r20
+    andi r20, 0x03
+    brne _rs_write_sprite_flip_x
 _rs_write_sprite_unflipped:
     rcall write_sprite
     ret
 _rs_end:
     pop r20
+    ret
+_rs_write_sprite_flip_x:
+    cpi r20, 1
+    brne _rs_write_sprite_flip_y
+    rcall write_sprite_flip_x
+    ret
+_rs_write_sprite_flip_y:
+    asr r19
+    asr r19
+    neg r19
+    mul r19, r21
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    cpi r20, 2
+    brne _rs_write_sprite_flip_xy
+    rcall write_sprite_flip_y
+    ret
+_rs_write_sprite_flip_xy:
+    rcall write_sprite_flip_xy
     ret
 
 ; Render a character, taking camera position, animations, and weapons into account.
@@ -880,7 +1000,15 @@ _rc_render_weapon_below:
     elpm r22, Z+
     elpm r23, Z+
     sub r24, r22
-    neg r22 ; flip horizontally
+_rc_weapon_below_flip_x:
+    neg r22
+_rc_weapon_below_flip_y:
+    ldd r18, Y+CHARACTER_DIRECTION_OFFSET
+    cpi r18, DIRECTION_UP
+    brne _rc_do_render_weapon_below
+    neg r23
+    subi r25, 2
+_rc_do_render_weapon_below:
     rcall render_sprite
 _rc_render_character:
     ldd r22, Y+CHARACTER_SPRITE_OFFSET
