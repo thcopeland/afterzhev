@@ -1,25 +1,4 @@
 # Game Engine
-* Opening/loading screen
-* Prologue screens (maybe 2560/2561 only?)
-* Help screen
-* About screen
-
-# Story
-* Ask someone talented to make prologue screens
-
-# Art
-- Design map
-- Grass
-- Trees
-- Dirt/Sand
-- Water
-- Mine
-- Fields
-- Houses
-- Interiors
-- Random scenery
-- Halfling, Paladin, Mage
-- Wolves
-- Ghouls
+* Sound
+* Balance potions
 * Items
-- Tile map

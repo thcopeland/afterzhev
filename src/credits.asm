@@ -90,8 +90,8 @@ credits_render:
     ldi ZH, high(2*ui_credits_6)
     ldi r25, 110
     rcall scrolling_text
-    ldi YL, low(framebuffer+41)
-    ldi YH, high(framebuffer+41)
+    ldi YL, low(framebuffer+36)
+    ldi YH, high(framebuffer+36)
     ldi ZL, low(2*ui_credits_7)
     ldi ZH, high(2*ui_credits_7)
     ldi r25, 120

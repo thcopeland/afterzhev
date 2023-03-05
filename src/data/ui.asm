@@ -66,7 +66,7 @@ ui_credits_3:       .db "Art by", 0, 0
 ui_credits_4:       .db "Tom Copeland", 0, 0
 ui_credits_5:       .db "Font by", 0
 ui_credits_6:       .db "Brian Swetland", 0, 0
-ui_credits_7:       .db "and others", 0, 0
+ui_credits_7:       .db "Robey Pointer", 0
 ui_credits_8:       .db "Tiny font by", 0, 0
 ui_credits_9:       .db "Matthew Welch", 0,
 ui_credits_10:      .db "Thanks for playing!", 0
