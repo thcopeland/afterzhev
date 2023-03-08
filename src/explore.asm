@@ -917,18 +917,18 @@ _hmb_check_savepoint:
     brsh _hmb_check_portals
     cpi r25, SAVEPOINT_DISTANCE
     brsh _hmb_check_portals
-    call calculate_max_health
-    sts player_health, r25
-    ldi r25, EFFECT_HEALING << 3
-    sts player_effect, r25
-    sts player_velocity_x, r1
-    sts player_velocity_y, r1
     lds r25, savepoint_data
     mov r24, r25
     andi r25, 0xc0
     brne _hmb_check_portals
     ori r24, 0x40
     sts savepoint_data, r24
+    call calculate_max_health
+    sts player_health, r25
+    ldi r25, EFFECT_HEALING << 3
+    sts player_effect, r25
+    sts player_velocity_x, r1
+    sts player_velocity_y, r1
     rjmp _hmb_end
 _hmb_check_portals:
     lds r20, player_position_x
