@@ -140,6 +140,9 @@ _prmd_die:
     rjmp _prmd_end
 _prmd_push:
     mov r22, r26
+    lsl r22
+    lsl r22
+    adnvi r22, 20
     ldd r24, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
     lds r25, player_position_x
     cp r24, r25
@@ -393,6 +396,8 @@ _nrmd_apply_damage:
 _nrmd_push:
     mov r23, r25
     lsl r23
+    lsl r23
+    adnvi r23, 20
     mov r22, r23
     lds r24, player_position_x
     ldd r25, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H

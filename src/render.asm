@@ -132,6 +132,64 @@ _wpt_loop_chk:
 _wpt_end:
     ret
 
+; Quickly render an entire 12x12 sprite to the screen, taking transparency into
+; account. This functionality is technically redundant, but improves performance.
+;
+; Register Usage
+;   r22-r23         preserve Y
+;   r24-r25         calculations
+;   X (r26:r27)     framebuffer pointer (param)
+;   Y (r28:r29)     working framebuffer pointer (param)
+;   Z (r30:r31)     sprite pointer (param)
+write_12x12_sprite:
+    movw r22, YL
+    movw YL, XL
+    ldi r24, TRANSPARENT
+    ldi r25, 12
+_r12x12s_iter:
+    elpm r0, Z+
+    cpse r0, r24
+    st Y, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+1, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+2, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+3, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+4, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+5, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+6, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+7, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+8, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+9, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+10, r0
+    elpm r0, Z+
+    cpse r0, r24
+    std Y+11, r0
+    subi YL, low(-DISPLAY_WIDTH)
+    sbci YH, high(-DISPLAY_WIDTH)
+    dec r25
+    brne _r12x12s_iter
+    movw YL, r22
+    ret
+
 ; Render any rectangular section of a sprite, taking transparency into account.
 ; This subroutine uses the same indirect jump trick as write_partial_tile.
 ; Both the X and Y register pairs are preserved.
@@ -845,6 +903,32 @@ _rs_write_inner_tile:
 render_sprite:
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
+_rs_fast_path:
+    cpi r22, 12
+    cpc r23, r22
+    brne _rs_main
+    lds r18, camera_position_x
+    mov r20, r24
+    sub r20, r18
+    brlo _rs_main
+    cpi r20, DISPLAY_WIDTH-12
+    brsh _rs_main
+    lds r18, camera_position_y
+    mov r21, r25
+    sub r21, r18
+    brlo _rs_main
+    cpi r21, DISPLAY_HEIGHT-12
+    brsh _rs_main
+    add XL, r20
+    adc XH, r1
+    ldi r20, DISPLAY_WIDTH
+    mul r20, r21
+    add XL, r0
+    adc XH, r1
+    clr r1
+    rcall write_12x12_sprite
+    ret
+_rs_main:
     mov r20, r23 ; save height, necessary for y and xy flips
     lsl r20
     lsl r20
