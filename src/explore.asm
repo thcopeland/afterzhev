@@ -49,6 +49,52 @@ init_game_state:
     call load_sector
     ret
 
+; Switch to explore mode. Also pre-render as much of the toolbar as possible,
+; since much of it never changes.
+;
+; Register Usage
+;   r22-r25         calculations
+;   X (r26:r27)     framebuffer pointer
+;   X (r30:r31)     flash pointer
+load_explore:
+    ldi r25, MODE_EXPLORE
+    sts game_mode, r25
+_le_prerender_bar:
+    ldi XL, low(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
+    ldi XH, high(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
+    ldi r22, INVENTORY_UI_HEADER_COLOR
+    ldi r24, DISPLAY_WIDTH
+    ldi r25, FOOTER_HEIGHT
+    call render_rect
+_le_player_health:
+    ldi XL, low(framebuffer+EXPLORE_UI_HEALTH_ICON_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_HEALTH_ICON_MARGIN)
+    ldi r24, 5
+    ldi r25, 4
+    ldi ZL, byte3(2*ui_small_heart_icon)
+    out RAMPZ, ZL
+    ldi ZL, low(2*ui_small_heart_icon)
+    ldi ZH, high(2*ui_small_heart_icon)
+    call render_element
+_le_player_gold:
+    ldi XL, low(framebuffer+EXPLORE_UI_GOLD_ICON_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_GOLD_ICON_MARGIN)
+    ldi r24, 3
+    ldi r25, 4
+    ldi ZL, low(2*ui_small_coin_icon)
+    ldi ZH, high(2*ui_small_coin_icon)
+    call render_element
+_le_player_xp:
+    ldi XL, low(framebuffer+EXPLORE_UI_XP_ICON_MARGIN)
+    ldi XH, high(framebuffer+EXPLORE_UI_XP_ICON_MARGIN)
+    ldi r23, 0x82
+    ldi r22, 'P'
+    call putc_small
+    sbiw XL, FONT_DISPLAY_WIDTH
+    ldi r22, 'X'
+    call putc_small
+    ret
+
 explore_update_game:
     rcall update_savepoint
     call update_player_stat_effects
@@ -388,23 +434,76 @@ _rg_active_effect_iter_next:
     adiw YL, ACTIVE_EFFECT_MEMSIZE
     dec r16
     brne _rg_active_effect_iter
-_rg_footer_background:
-    ldi XL, low(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
-    ldi XH, high(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT))
-    ldi r22, INVENTORY_UI_HEADER_COLOR
-    ldi r24, DISPLAY_WIDTH
-    ldi r25, FOOTER_HEIGHT
-    call render_rect
+_rg_clear_footer_transient:
+    ldi r20, INVENTORY_UI_HEADER_COLOR
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+3)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+3)
+    lds r25, clock
+    sbrc r25, 0
+    adiw YL, 1
+    ldi r21, 4
+_rg_cft_loop:
+    st Y, r20
+    std Y+2, r20
+    std Y+4, r20
+    std Y+6, r20
+    std Y+8, r20
+    std Y+10, r20
+    std Y+12, r20
+    std Y+14, r20
+    adiw YL, 27
+    st Y, r20
+    std Y+2, r20
+    std Y+4, r20
+    std Y+6, r20
+    std Y+8, r20
+    std Y+10, r20
+    std Y+12, r20
+    std Y+14, r20
+    std Y+16, r20
+    std Y+18, r20
+    adiw YL, 31
+    st Y, r20
+    std Y+2, r20
+    std Y+4, r20
+    std Y+6, r20
+    std Y+8, r20
+    std Y+10, r20
+    std Y+12, r20
+    std Y+14, r20
+    std Y+16, r20
+    std Y+18, r20
+    adiw YL, 42
+    st Y, r20
+    std Y+2, r20
+    std Y+4, r20
+    std Y+6, r20
+    std Y+8, r20
+    std Y+10, r20
+    std Y+12, r20
+    subi YL, low(-20)
+    sbci YH, high(-20)
+    dec r21
+    brne _rg_cft_loop
+    subi YL, low(DISPLAY_WIDTH*5-100)
+    sbci YH, high(DISPLAY_WIDTH*5-100)
+    st Y, r20
+    std Y+2, r20
+    std Y+4, r20
+    std Y+6, r20
+    std Y+8, r20
+    std Y+10, r20
+    std Y+12, r20
+    subi YL, low(-DISPLAY_WIDTH*5)
+    sbci YH, high(-DISPLAY_WIDTH*5)
+    st Y, r20
+    std Y+2, r20
+    std Y+4, r20
+    std Y+6, r20
+    std Y+8, r20
+    std Y+10, r20
+    std Y+12, r20
 _rg_player_health:
-    ldi XL, low(framebuffer+EXPLORE_UI_HEALTH_ICON_MARGIN)
-    ldi XH, high(framebuffer+EXPLORE_UI_HEALTH_ICON_MARGIN)
-    ldi r24, 5
-    ldi r25, 4
-    ldi ZL, byte3(2*ui_small_heart_icon)
-    out RAMPZ, ZL
-    ldi ZL, low(2*ui_small_heart_icon)
-    ldi ZH, high(2*ui_small_heart_icon)
-    call render_element
     ldi XL, low(framebuffer+EXPLORE_UI_HEALTH_MARGIN)
     ldi XH, high(framebuffer+EXPLORE_UI_HEALTH_MARGIN)
     call calculate_max_health
@@ -417,29 +516,12 @@ _rg_player_health:
     lds r21, player_health
     call putb_small
 _rg_player_gold:
-    ldi XL, low(framebuffer+EXPLORE_UI_GOLD_ICON_MARGIN)
-    ldi XH, high(framebuffer+EXPLORE_UI_GOLD_ICON_MARGIN)
-    ldi r24, 3
-    ldi r25, 4
-    ldi ZL, byte3(2*ui_small_coin_icon)
-    out RAMPZ, ZL
-    ldi ZL, low(2*ui_small_coin_icon)
-    ldi ZH, high(2*ui_small_coin_icon)
-    call render_element
     ldi XL, low(framebuffer+EXPLORE_UI_GOLD_MARGIN)
     ldi XH, high(framebuffer+EXPLORE_UI_GOLD_MARGIN)
     lds r18, player_gold
     lds r19, player_gold+1
     call putw_small
 _rg_player_xp:
-    ldi XL, low(framebuffer+EXPLORE_UI_XP_ICON_MARGIN)
-    ldi XH, high(framebuffer+EXPLORE_UI_XP_ICON_MARGIN)
-    ldi r23, 0x82
-    ldi r22, 'P'
-    call putc_small
-    sbiw XL, FONT_DISPLAY_WIDTH
-    ldi r22, 'X'
-    call putc_small
     ldi XL, low(framebuffer+EXPLORE_UI_XP_MARGIN)
     ldi XH, high(framebuffer+EXPLORE_UI_XP_MARGIN)
     lds r18, player_xp
@@ -547,7 +629,7 @@ _rg_effects:
 _rg_effects_iter:
     mov r25, r20
     movw YL, XL
-    rcall render_effect_progress
+    call render_effect_progress
     movw XL, YL
     sbiw XL, EXPLORE_UI_EFFECTS_SEPARATION
     inc r20
@@ -563,6 +645,12 @@ _rg_effects_iter:
 ;   Y (r28:r29)     enemy pointer (param)
 ;   Z (r30:r31)     enemy flash pointer
 render_npc_health_bar:
+    lds r0, camera_position_y
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    sub r23, r0
+    brlo _rnhb_end_early
+    cpi r23, DISPLAY_HEIGHT-FOOTER_HEIGHT+3
+    brsh _rnhb_end_early
     ldi ZL, byte3(2*npc_table)
     out RAMPZ, ZL
     ldi ZL, low(2*npc_table)
@@ -582,7 +670,8 @@ render_npc_health_bar:
     ; force health to expected bounds. this probably should be done upon
     ; replacement/load, but it's very convenient here
     std Y+NPC_HEALTH_OFFSET, r25
-    rjmp _rnhb_end
+_rnhb_end_early:
+    ret
 _rnhb_calculate_bar:
     ldi r20, NPC_HEALTH_BAR_LENGTH
     ldi r21, NPC_HEALTH_BAR_LENGTH

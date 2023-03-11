@@ -65,9 +65,8 @@ _ghc_normal_retry:
     call restore_from_savepoint
     tst r25
     breq _ghc_end
-    ldi r25, MODE_EXPLORE
-    sts game_mode, r25
     call init_game_state
+    call load_explore
     rjmp _ghc_end
 _ghc_restart:
     sbrs r24, CONTROLS_SPECIAL2

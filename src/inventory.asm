@@ -77,10 +77,8 @@ _ihc_button3:
     sbrc r22, CONTROLS_SPECIAL3
     rcall inventory_drop_item
 _ihc_button4:
-    sbrs r22, CONTROLS_SPECIAL4
-    rjmp _ihc_end
-    ldi r22, MODE_EXPLORE
-    sts game_mode, r22
+    sbrc r22, CONTROLS_SPECIAL4
+    call load_explore
 _ihc_end:
     ret
 

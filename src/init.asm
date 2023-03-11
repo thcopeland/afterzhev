@@ -21,8 +21,7 @@ _clear_memory_loop:
     call restart_game
 
     call init_game_state
-    ldi r25, MODE_EXPLORE
-    sts game_mode, r25
+    call load_explore
 
     ldi r25, ITEM_axe
     sts player_weapon, r25
@@ -32,6 +31,9 @@ _clear_memory_loop:
 
     ldi r25, ITEM_strength_potion
     sts player_inventory, r25
+
+    ldi r25, ITEM_strength_potion
+    sts player_inventory+2, r25
 
     ldi r25, 20
     sts player_stats+STATS_DEXTERITY_OFFSET, r25

@@ -907,17 +907,17 @@ _rs_fast_path:
     cpi r22, 12
     cpc r23, r22
     brne _rs_main
+    lds r18, camera_position_y
+    mov r21, r25
+    sub r21, r18
+    brlo _rs_main
+    cpi r21, DISPLAY_HEIGHT-FOOTER_HEIGHT-12
+    brsh _rs_main
     lds r18, camera_position_x
     mov r20, r24
     sub r20, r18
     brlo _rs_main
     cpi r20, DISPLAY_WIDTH-12
-    brsh _rs_main
-    lds r18, camera_position_y
-    mov r21, r25
-    sub r21, r18
-    brlo _rs_main
-    cpi r21, DISPLAY_HEIGHT-12
     brsh _rs_main
     add XL, r20
     adc XH, r1

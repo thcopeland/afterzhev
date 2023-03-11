@@ -7,8 +7,7 @@ load_help:
 
 load_tutorial:
     call init_game_state
-    ldi r25, MODE_EXPLORE
-    sts game_mode, r25
+    call load_explore
     ldi r25, CLASS_PALADIN
     sts player_class, r25
     ldi r25, CHARACTER_MAN

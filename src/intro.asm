@@ -17,8 +17,7 @@ intro_update_game:
     cpi r25, 254
     brlo _iug_end
     call init_game_state
-    ldi r25, MODE_EXPLORE
-    sts game_mode, r25
+    call load_explore
 _iug_end:
     jmp _loop_reenter
 

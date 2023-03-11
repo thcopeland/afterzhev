@@ -151,6 +151,10 @@ _uhc_other:
     sts player_stats+STATS_INTELLECT_OFFSET, r20
     lds r20, sector_data
     sts game_mode, r20
+    cpi r20, MODE_EXPLORE
+    brne _uhc_refresh_stats
+    call load_explore
+_uhc_refresh_stats:
     call calculate_player_stats
     call calculate_max_health
     sts player_health, r25

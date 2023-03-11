@@ -107,10 +107,8 @@ _shc_button3:
     sbrc r19, CONTROLS_SPECIAL3
     rcall shop_sell_selected
 _shc_button4:
-    sbrs r18, CONTROLS_SPECIAL4
-    rjmp _shc_end
-    ldi r22, MODE_EXPLORE
-    sts game_mode, r22
+    sbrc r18, CONTROLS_SPECIAL4
+    call load_explore
 _shc_end:
     ret
 

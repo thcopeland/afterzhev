@@ -114,8 +114,7 @@ load_conversation:
     cpiw r24, r25, 2*_conv_END_CONVERSATION, r20
     brne _lc_load_conversation
 _lc_clear_conversation:
-    ldi r20, MODE_EXPLORE
-    sts game_mode, r20
+    call load_explore
     ret
 _lc_load_conversation:
     sts conversation_frame, r24
