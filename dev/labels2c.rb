@@ -8,7 +8,7 @@ File.open("tmp.asm", "w") do |f|
     end
 end
 
-out_stdout, out_stderr, status = Open3.capture3("avra -D DEV -D __atmega2560 -D TARGET=0 -I src -I src/data -o /dev/null -e /dev/null -d /dev/null tmp.asm")
+out_stdout, out_stderr, status = Open3.capture3("avra -D DEV -D TARGET=0 -I src -I src/data -o /dev/null -e /dev/null -d /dev/null tmp.asm")
 lines = out_stderr.lines.select {|line| line =~ /^tmp.asm/}
 symbols = lines.map do |line|
     label, addr = line.match(/^.+: ([a-z0-9A-Z_]+)(0x[a-f0-9A-F]+)/)[1..3]

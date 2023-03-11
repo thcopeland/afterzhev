@@ -19,7 +19,3 @@
 .equ VSYNC_FRONT_PORCH = (HSYNC_PERIOD/VSYNC_PRESCALER*VGA_VFRONT_PORCH_LINES)
 .equ VSYNC_SYNC_WIDTH = (HSYNC_PERIOD/VSYNC_PRESCALER*VGA_VSYNC_WIDTH_LINES)
 .equ VSYNC_BACK_PORCH = (HSYNC_PERIOD/VSYNC_PRESCALER*VGA_VBACK_PORCH_LINES)
-
-; if the rows are vertically offset (the screen appears split horizontally),
-; change this by a hundred or so. (probably unnecessary)
-.equ VIRT_ADJUST = 0

@@ -43,7 +43,7 @@ main:
 
     ; synchronize timers
     stiw TCNT1L, (HSYNC_PERIOD - 1)
-    stiw TCNT3L, (VSYNC_PERIOD - VSYNC_SYNC_WIDTH - 1 - 20*VIRT_ADJUST)
+    stiw TCNT3L, (VSYNC_PERIOD - VSYNC_SYNC_WIDTH - 1)
 
     ; release timers
     out GTCCR, r1

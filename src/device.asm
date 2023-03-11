@@ -1,11 +1,5 @@
-.nolist
-.if defined(__atmega2560) || defined(__atmega2561)
-    .include "m2560def.inc"
-    .equ PC_SIZE = 3
-.else
-    .error "Device not supported. Supported devices for AfterZhev are ATmega2560/2561."
-    .exit
-.endif
+.include "m2560def.inc"
+.equ PC_SIZE = 3
 
 .if !defined(TARGET)
     .message "Target not specified, assuming MCU. Set TARGET to 0 (PC) or 1 (MCU)"
@@ -19,5 +13,3 @@
 .endif
 
 .equ TARGETING_PC = !(!TARGETING_MCU)
-
-.list

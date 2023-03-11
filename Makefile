@@ -2,8 +2,7 @@ SRC            = src
 BIN            = bin
 SIM            = sim
 DATA           = $(SRC)/data
-MCU_TARGET     = atmega2560 # NOTE: simulate assumes 2560-like model
-DEFS           = -D DEV -D __$(MCU_TARGET) -D TARGET=$(TARGET)
+DEFS           = -D DEV -D TARGET=$(TARGET)
 AS             = avra
 OBJDUMP        = avr-objdump
 SLIMAVR        = $(SIM)/slimavr-0.1.5
@@ -19,7 +18,7 @@ $(BIN)/%.lst: $(BIN)/%.hex
 	$(OBJDUMP) -m avr51 -D $< > $@
 
 upload: all
-	avrdude -p $(MCU_TARGET) -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:$(BIN)/main.hex:i
+	avrdude -p atmega2560 -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:$(BIN)/main.hex:i
 
 sim: $(BIN)/main.hex $(BIN)/simulate
 	./$(BIN)/simulate
