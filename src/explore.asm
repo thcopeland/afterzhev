@@ -514,6 +514,7 @@ _rg_player_health:
     subi XL, low(FONT_DISPLAY_WIDTH)
     sbci XH, high(FONT_DISPLAY_WIDTH)
     lds r21, player_health
+    clr r23
     call putb_small
 _rg_player_gold:
     ldi XL, low(framebuffer+EXPLORE_UI_GOLD_MARGIN)
@@ -1465,12 +1466,13 @@ _rfs_load_sector: ; load any sector-specific stuff that was not saved
     lds ZH, current_sector+1
     rcall load_sector
     sts current_shop_index, r1
-    clr r25
+    call load_explore
 _rfs_clear_player_pos:
     sts player_velocity_x, r1
     sts player_velocity_y, r1
     sts player_action, r1
     sts player_effect, r1
+    clr r25
 _rfs_end:
     ret
 
