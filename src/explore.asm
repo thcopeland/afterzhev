@@ -139,6 +139,12 @@ explore_update_game:
     ; ldi XH, high(framebuffer + 30 + 8*DISPLAY_WIDTH)
     ; call putb
 
+;     ldi r24, low(50000)
+;     ldi r25, high(50000)
+; _delay:
+;     sbiw r24, 1
+;     brsh _delay
+
     lds r25, game_mode
     cpi r25, MODE_EXPLORE
     brne _eup_end

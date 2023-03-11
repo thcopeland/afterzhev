@@ -44,13 +44,13 @@ _clear_memory_loop:
 
     ldi r25, 120
     sts player_position_x, r25
-    ldi r25, 120
+    ldi r25, 80
     sts player_position_y, r25
     call reset_camera
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    .equ SECTOR = SECTOR_CITY_2
+    .equ SECTOR = sector_city_robbers_den
     ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     call load_sector
