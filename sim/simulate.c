@@ -24,11 +24,13 @@ int min_idle = 100000;
 int avg_idle = 0;
 int min_avg_idle = 100000;
 int frame_count = 0;
+int frame_time = 0;
 
 long profiled[1<<15];
 
 char *labels[] = {"init", "main", "isr_loop", "rand", "divmodb", "divmodw", "read_controls", "determine_character_sprite", "determine_weapon_sprite", "determine_armor_sprite", "move_character", "update_character_animation", "biased_character_distance", "character_striking_distance", "player_resolve_melee_damage", "player_resolve_effect_damage", "npc_resolve_melee_damage", "npc_resolve_ranged_damage", "resolve_enemy_death", "add_distant_npc", "write_entire_tile", "write_partial_tile", "write_12x12_sprite", "write_sprite", "write_sprite_flip_x", "write_sprite_flip_y", "write_sprite_flip_xy", "render_sector", "render_sprite", "render_character", "render_character_icon", "render_effect_animation", "render_item_icon", "putc", "putc_small", "putb", "putb_small", "putw", "putw_small", "puts", "puts_n", "render_element", "render_rect", "render_effect_progress", "render_item_with_underbar", "render_full_screen", "render_partial_screen", "fade_text", "fade_text_inverse", "calculate_player_stats", "update_player_stat_effects", "update_player_health", "calculate_max_health", "calculate_acceleration", "calculate_push_acceleration", "calculate_push_resistance", "calculate_dash_cooldown", "init_player_stats", "estimated_effect_ranges", "npc_move", "npc_update", "enemy_sector_bounds", "enemy_personal_space", "enemy_fighting_space", "corpse_update", "init_game_state", "load_explore", "explore_update_game", "render_game", "render_npc_health_bar", "handle_controls", "handle_main_button", "reset_camera", "player_dash", "player_attack", "update_active_effects", "update_savepoint_animation", "update_savepoint", "restore_from_savepoint", "add_active_effect", "update_player", "check_sector_bounds", "load_sector", "load_npc", "move_camera", "update_followers", "update_npcs", "sort_npcs", "add_nearby_followers", "inventory_update_game", "load_inventory", "inventory_handle_controls", "inventory_equip_item", "inventory_use_item", "inventory_drop_item", "inventory_render_game", "render_item_stat", "shop_update_game", "load_shop", "shop_handle_controls", "shop_buy_selected", "shop_sell_selected", "shop_render_game", "shop_determine_selection", "calculate_buy_price", "calculate_sell_price", "shop_most_valuable", "conversation_update_game", "conversation_handle_controls", "load_conversation", "conversation_render_game", "upgrade_update_game", "load_upgrade_if_necessary", "upgrade_handle_controls", "upgrade_render_game", "render_stat_selector", "render_stat_progress", "gameover_update_game", "load_gameover", "gameover_handle_controls", "gameover_render_game", "gameover_render_dead", "gameover_render_win", "gameover_text", "gfs_lightning", "gameover_lightning", "credits_update", "load_credits", "credits_handle_controls", "credits_render", "scrolling_text", "puts_outlined", "restart_game", "start_update_game", "start_render_screen", "screen_fade_out", "start_handle_controls", "start_change", "load_character_selection", "character_selection_update", "character_selection_controls", "character_selection_render", "load_intro", "intro_update_game", "intro_handle_controls", "intro_render", "load_resume", "resume_update_game", "resume_try_load_save", "resume_handle_controls", "resume_render", "load_about", "about_update", "about_handle_controls", "about_render", "render_logo", "load_help", "load_tutorial", "help_update", "clear_sector_data", "add_npc", "add_npc_direct", "find_npc", "release_if_damaged", "spawn_distant_npcs", "drop_item", "tutorial_update", "sector_start_1_update", "sector_start_2_update", "sector_start_fight_update", "sector_start_fight_choice", "sector_town_entrance_1_update", "sector_town_entrance_1_conversation", "sector_town_entrance_1_choice", "sector_town_wolves_update", "sector_start_post_fight_update", "sector_start_post_fight_conversation", "sector_town_tavern_1_update", "sector_town_tavern_2_update", "sector_town_tavern_2_conversation", "sector_town_tavern_2_choice", "sector_town_fields_init", "sector_town_fields_update", "sector_town_forest_path_2_init", "sector_town_forest_path_2_update", "sector_town_forest_path_4_update", "sector_town_forest_path_5_init", "sector_town_den_2_init", "sector_town_den_2_update", "sector_start_pretown_2_update", "sector_start_pretown_2_choice", "sector_river_hidden_house_choice", "sector_deep_forest_update", "sector_deep_forest_init", "sector_underground_update", "sector_fields_update", "sector_fields_init", "sector_final_2_update", "sector_city_shop_1_choice", "sector_city_4_init", "sector_city_4_conversation", "sector_city_4_choice", "sector_city_bank_1_update", "sector_city_bank_2_init", "sector_city_bank_3_update", "sector_city_bank_4_update", "sector_city_robbers_den_update", "sector_city_robbers_den_conversation", "sector_city_robbers_den_choice", "sector_city_robbers_den_2_init", "sector_final_castle_init", "sector_final_battle_init", "sector_final_battle_update"};
-int addrs[] = {72, 194, 326, 1042, 1082, 1114, 1158, 1208, 1250, 1308, 1358, 2022, 2244, 2286, 2334, 2678, 2858, 3156, 3434, 3646, 3780, 3862, 3978, 4070, 4214, 4358, 4516, 4666, 5202, 5448, 5660, 5828, 5984, 6022, 6126, 6206, 6244, 6282, 6364, 6446, 6528, 6626, 6656, 6686, 6884, 6900, 6930, 6984, 7112, 7248, 7574, 7676, 7734, 7800, 7822, 7836, 7856, 7878, 7974, 7982, 8926, 9172, 9214, 9314, 9418, 9464, 9714, 9792, 9874, 10836, 10998, 11164, 11766, 11832, 11868, 11946, 12070, 12114, 12296, 12410, 12474, 12752, 12958, 13330, 13442, 13532, 13610, 13686, 13850, 13988, 13996, 14016, 14140, 14320, 14440, 14502, 15204, 15248, 15256, 15330, 15448, 15510, 15568, 16120, 16192, 16290, 16314, 16462, 16484, 16666, 16712, 17094, 17102, 17234, 17470, 17668, 17694, 17780, 17816, 17836, 17926, 17980, 18044, 18164, 18230, 18240, 18350, 18382, 18394, 18420, 18572, 18600, 18834, 18856, 18888, 19008, 19054, 19106, 19146, 19170, 19178, 19260, 19720, 19732, 19770, 19796, 19920, 19932, 19942, 19964, 19984, 20028, 20036, 20044, 20064, 20106, 20140, 20156, 20242, 20276, 20282, 20348, 20374, 20394, 20450, 20508, 20538, 20754, 20812, 20994, 21038, 21124, 21198, 21296, 21324, 21348, 21372, 21402, 21460, 21524, 21638, 21650, 21756, 21920, 21994, 22050, 22108, 22140, 22168, 22220, 22406, 22460, 22476, 22490, 22524, 22538, 22552, 22560, 22608, 22642, 22668, 22778, 22816, 22898, 22918, 23002, 23010, 23116, 23218, 23250, 23270, 23278, 23292};
+int addrs[] = {72, 194, 326, 1042, 1082, 1114, 1158, 1208, 1250, 1308, 1358, 2022, 2244, 2286, 2334, 2678, 2858, 3156, 3434, 3646, 3780, 3862, 3978, 4070, 4214, 4358, 4516, 4666, 5202, 5448, 5660, 5828, 5984, 6022, 6126, 6206, 6244, 6282, 6364, 6446, 6528, 6626, 6656, 6686, 6884, 6900, 6930, 6984, 7112, 7248, 7574, 7676, 7734, 7800, 7822, 7836, 7856, 7878, 7974, 7982, 8926, 9172, 9214, 9314, 9418, 9464, 9714, 9792, 9874, 10852, 11014, 11180, 11782, 11848, 11884, 11962, 12086, 12130, 12312, 12430, 12494, 12772, 12978, 13350, 13462, 13552, 13630, 13706, 13870, 14008, 14016, 14036, 14160, 14340, 14460, 14522, 15224, 15268, 15276, 15350, 15468, 15530, 15588, 16140, 16212, 16310, 16334, 16482, 16504, 16686, 16732, 17114, 17122, 17254, 17490, 17688, 17714, 17800, 17836, 17856, 17946, 18000, 18064, 18184, 18250, 18260, 18370, 18402, 18414, 18440, 18592, 18620, 18854, 18876, 18908, 19028, 19074, 19126, 19166, 19190, 19198, 19280, 19740, 19752, 19790, 19816, 19940, 19952, 19962, 19984, 20004, 20048, 20056, 20064, 20084, 20126, 20160, 20176, 20262, 20296, 20302, 20368, 20394, 20414, 20470, 20528, 20558, 20774, 20832, 21014, 21058, 21144, 21218, 21316, 21344, 21368, 21392, 21422, 21480, 21544, 21658, 21670, 21776, 21940, 22014, 22070, 22128, 22160, 22188, 22240, 22426, 22480, 22496, 22510, 22544, 22558, 22572, 22580, 22628, 22662, 22688, 22798, 22836, 22918, 22938, 23022, 23030, 23136, 23238, 23270, 23290, 23298, 23312};
+
 void run_to_sync(void) {
     uint16_t idle = 0;
     while (1) {
@@ -37,6 +39,7 @@ void run_to_sync(void) {
         profiled[avr->pc/2]++;
         avr_step(avr);
         profiled[avr->pc/2]++;
+        frame_time += 2;
 
         if (avr->status == MCU_STATUS_IDLE) {
             idle+=2;
@@ -54,16 +57,18 @@ void run_to_sync(void) {
         min_idle = idle;
         printf("idle %d (avg %d)\n", idle, avg_idle);
     }
-
-    if (idle > 50000) {
-        // printf("missed frame! %d\n", idle);
-    } else {
-        avg_idle = (avg_idle * 19 + idle) / 20;
-        if (avg_idle < min_avg_idle && (avg_idle > 0 || avr->insts > 10000)) {
-            min_avg_idle = avg_idle;
-            printf("avr idle min %d\n", min_avg_idle);
-        }
-    }
+    //
+    // if (idle > 50000) {
+    //     // printf("missed frame! %d\n", idle);
+    // } else {
+    //     avg_idle = (avg_idle * 19 + idle) / 20;
+    //     if (avg_idle < min_avg_idle && (avg_idle > 0 || avr->insts > 10000)) {
+    //         min_avg_idle = avg_idle;
+    //         printf("avr idle min %d\n", min_avg_idle);
+    //     }
+    // }
+    printf("%d/%d\n", frame_time, idle);
+    frame_time = 0;
 }
 
 void fps_delay(void) {
@@ -120,7 +125,7 @@ void handle_events(void) {
                 long count = 0;
                 for (long j = addrs[i]; j < addrs[i+1]; j++) count += profiled[j/2];
                 float val = (float) 1000*count/avr->clock;
-                if (val > 0.01) {
+                if (val > 0.1) {
                     if (val > 1) printf("\x1b[1m");
                     printf("0x%06x %-30s: %8.3f\x1b[0m (%ld cycles/frame)\n", addrs[i], labels[i], val, count/frame_count);
                 }

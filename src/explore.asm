@@ -219,15 +219,22 @@ _rg_features_iter:
     brmi _rg_features_next
     movw YL, ZL
     ; assume the same 64kb partition as sector data
-    ldi ZL, low(2*feature_sprites)
-    ldi ZH, high(2*feature_sprites)
-    ldi r21, FEATURE_SPRITE_MEMSIZE
+    ldi ZL, low(2*feature_table)
+    ldi ZH, high(2*feature_table)
+    ldi r21, 6
     mul r20, r21
     add ZL, r0
     adc ZH, r1
     clr r1
-    ldi r22, FEATURE_SPRITE_WIDTH
-    ldi r23, FEATURE_SPRITE_HEIGHT
+    elpm r20, Z+
+    add r24, r20
+    elpm r20, Z+
+    add r25, r20
+    elpm r22, Z+
+    elpm r23, Z+
+    elpm r20, Z+
+    elpm r21, Z
+    movw ZL, r20
     call render_sprite
     movw ZL, YL
 _rg_features_next:
