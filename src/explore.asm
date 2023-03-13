@@ -515,13 +515,13 @@ _rg_player_health:
     ldi XH, high(framebuffer+EXPLORE_UI_HEALTH_MARGIN)
     call calculate_max_health
     mov r21, r25
+    clr r23
     call putb_small
     ldi r22, '/'
     call putc_small
     subi XL, low(FONT_DISPLAY_WIDTH)
     sbci XH, high(FONT_DISPLAY_WIDTH)
     lds r21, player_health
-    clr r23
     call putb_small
 _rg_player_gold:
     ldi XL, low(framebuffer+EXPLORE_UI_GOLD_MARGIN)

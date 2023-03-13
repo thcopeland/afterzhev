@@ -114,13 +114,14 @@ _iei_nonempty_selected:
     elpm r19, Z
     andi r19, 3
     cpi r19, ITEM_USABLE
-    breq _iei_end
+    breq _iei_end_trampoline
 _iei_equip_weapon:
     cpi r19, ITEM_WEARABLE
     breq _iei_equip_armor
     lds r19, player_weapon
     sts player_weapon, r18
     st X, r19
+_iei_end_trampoline:
     rjmp _iei_end
 _iei_equip_armor:
     lds r19, player_armor
@@ -150,19 +151,85 @@ _iei_check_mithril_breastplate:
     rjmp _iei_do_equip_armor
 _iei_check_mithril_cap:
     cpi r18, ITEM_mithril_cap
-    brne _iei_check_cloak
+    brne _iei_check_cloak_size
     cpi r19, ITEM_mithril_breastplate
-    brne _iei_check_cloak
+    brne _iei_check_cloak_size
     clr r19
     ldi r18, ITEM_mithril_armor
     rjmp _iei_do_equip_armor
-_iei_check_cloak:
-    cpi r18, ITEM_green_cloak
-    brne _iei_do_equip_armor
+_iei_check_cloak_size:
     lds r20, player_character
     cpi r20, CHARACTER_HALFLING
+    brne _iei_check_green_cloak
+    cpi r18, ITEM_green_cloak
+    brne _iei_check_cloak_size_purple
+    ldi r18, ITEM_green_cloak_small
+    rjmp _iei_check_green_cloak
+_iei_check_cloak_size_purple:
+    cpi r18, ITEM_purple_cloak
+    brne _iei_check_green_cloak
+    ldi r18, ITEM_purple_cloak_small
+    rjmp _iei_check_purple_cloak_small
+_iei_check_green_cloak:
+    cpi r18, ITEM_green_cloak
+    brne _iei_check_green_cloak_small
+    cpi r19, ITEM_green_hood
+    brne _iei_check_green_cloak_small
+    ldi r18, ITEM_full_green_cloak
+    clr r19
+    rjmp _iei_do_equip_armor
+_iei_check_green_cloak_small:
+    cpi r18, ITEM_green_cloak_small
+    brne _iei_check_green_hood_1
+    cpi r19, ITEM_green_hood
+    brne _iei_check_green_hood_1
+    ldi r18, ITEM_full_green_cloak_small
+    clr r19
+    rjmp _iei_do_equip_armor
+_iei_check_green_hood_1:
+    cpi r18, ITEM_green_hood
+    brne _iei_check_purple_cloak
+    cpi r19, ITEM_green_cloak
+    brne _iei_check_green_hood_2
+    ldi r18, ITEM_full_green_cloak
+    clr r19
+    rjmp _iei_do_equip_armor
+_iei_check_green_hood_2:
+    cpi r19, ITEM_green_cloak_small
     brne _iei_do_equip_armor
-    ldi r18, ITEM_GREEN_cloak_small
+    ldi r18, ITEM_full_green_cloak_small
+    clr r19
+    rjmp _iei_do_equip_armor
+_iei_check_purple_cloak:
+    cpi r18, ITEM_purple_cloak
+    brne _iei_check_purple_cloak_small
+    cpi r19, ITEM_purple_hood
+    brne _iei_check_purple_cloak_small
+    ldi r18, ITEM_full_purple_cloak
+    clr r19
+    rjmp _iei_do_equip_armor
+_iei_check_purple_cloak_small:
+    cpi r18, ITEM_purple_cloak_small
+    brne _iei_check_purple_hood_1
+    cpi r19, ITEM_purple_hood
+    brne _iei_check_purple_hood_1
+    ldi r18, ITEM_full_purple_cloak_small
+    clr r19
+    rjmp _iei_do_equip_armor
+_iei_check_purple_hood_1:
+    cpi r18, ITEM_purple_hood
+    brne _iei_do_equip_armor
+    cpi r19, ITEM_purple_cloak
+    brne _iei_check_purple_hood_2
+    ldi r18, ITEM_full_purple_cloak
+    clr r19
+    rjmp _iei_do_equip_armor
+_iei_check_purple_hood_2:
+    cpi r19, ITEM_purple_cloak_small
+    brne _iei_do_equip_armor
+    ldi r18, ITEM_full_purple_cloak_small
+    clr r19
+    rjmp _iei_do_equip_armor
 _iei_do_equip_armor:
     sts player_armor, r18
     st X, r19

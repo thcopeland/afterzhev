@@ -70,7 +70,13 @@ item_table:
     DECL_ITEM great_bow,            (3<<6)|(4<<3)|ITEM_RANGED,         200,     0,  0,  0,  0,      (6<<4)|EFFECT_ARROW
     DECL_ITEM green_cloak,          ITEM_WEARABLE,                      40,     0,  0,  0,  0,      2
     DECL_ITEM green_cloak_small,    ITEM_WEARABLE,                      40,     0,  0,  0,  0,      2
-    DECL_ITEM purple_hood,          ITEM_WEARABLE,                      25,     0,  0,  0,  3,      1
+    DECL_ITEM full_green_cloak,     ITEM_WEARABLE,                      70,     0,  0,  2,  4,      4
+    DECL_ITEM full_green_cloak_small,ITEM_WEARABLE,                     70,     0,  0,  2,  4,      4
+    DECL_ITEM purple_cloak,         ITEM_WEARABLE,                      60,     0,  0,  0,  2,      2
+    DECL_ITEM purple_cloak_small,   ITEM_WEARABLE,                      60,     0,  0,  0,  2,      2
+    DECL_ITEM full_purple_cloak,    ITEM_WEARABLE,                     100,     0,  0,  2,  6,      3
+    DECL_ITEM full_purple_cloak_small,ITEM_WEARABLE,                   100,     0,  0,  2,  6,      3
+    DECL_ITEM purple_hood,          ITEM_WEARABLE,                      30,     0,  0,  0,  4,      1
     DECL_ITEM hammer,               (7<<3)|ITEM_WIELDABLE,              50,     0,  0,  0,  0,      (5<<4)
     DECL_ITEM iron_armor,           ITEM_WEARABLE,                     500,     3,  0, -8, 0,       8
     DECL_ITEM iron_breastplate,     ITEM_WEARABLE,                     350,     2,  0, -6,  0,      5
@@ -211,6 +217,18 @@ _item_str_green_cloak_small_name:
 _item_str_green_cloak_name:			.db "Woodsman", 39, "s cloak", 0, 0
 _item_str_green_cloak_small_desc:
 _item_str_green_cloak_desc:			.db "Useful on a cold day.", 0
+_item_str_full_green_cloak_small_name:
+_item_str_full_green_cloak_name:	.db "Woodsman", 39, "s garb", 0
+_item_str_full_green_cloak_small_desc:
+_item_str_full_green_cloak_desc:	.db "Provides superb cover", 10, "from the elements.", 0, 0
+_item_str_purple_cloak_small_name:
+_item_str_purple_cloak_name:		.db "Splendid cloak", 0, 0
+_item_str_purple_cloak_small_desc:
+_item_str_purple_cloak_desc:		.db "An elegant garment,", 10, "popular among nobility", 10, "and physicians.", 0, 0
+_item_str_full_purple_cloak_small_name:
+_item_str_full_purple_cloak_name:	.db "Enchanter", 39, "s garb", 0, 0
+_item_str_full_purple_cloak_small_desc:
+_item_str_full_purple_cloak_desc:	.db "Lends an air of mystery", 10, "and wealth.", 0
 _item_str_purple_hood_name:			.db "Purple hood", 0
 _item_str_purple_hood_desc:			.db "Elegant and expensive.", 0, 0
 _item_str_hammer_name:				.db "Hammer", 0, 0
