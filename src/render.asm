@@ -1,3 +1,8 @@
+.equ TILE_SOLID_GREEN = 39
+.equ TILE_SOLID_BLACK = 73
+.equ TILE_SOLID_BROWN = 185
+.equ TILE_WOOD_FLOOR = 197
+
 ; Write an entire tile or a horizontal slice of a tile to a framebuffer. This is
 ; slightly faster but less flexible than write_partial_tile.
 ;
@@ -9,6 +14,25 @@
 ;   X (r26:r27)     framebuffer pointer (param)
 ;   Z (r30:r31)     tile pointer
 write_entire_tile:
+    cpi r23, TILE_SOLID_GREEN
+    brlo _wet_main
+    brne _wet_check_solid_2
+    ldi r23, 0x58
+    rjmp write_solid_tile
+_wet_check_solid_2:
+    cpi r23, TILE_SOLID_BLACK
+    brne _wet_check_solid_3
+    ldi r23, 0x00
+    rjmp write_solid_tile
+_wet_check_solid_3:
+    cpi r23, TILE_SOLID_BROWN
+    brne _wet_check_wood
+    ldi r23, 0x0a
+    rjmp write_solid_tile
+_wet_check_wood:
+    cpi r23, TILE_WOOD_FLOOR
+    breq write_wood_tile
+_wet_main:
     ldi r20, TILE_MEMSIZE
     mul r23, r20
     movw ZL, r0
@@ -51,6 +75,82 @@ _wet_loop:
 _wet_loop_chk:
     dec r22
     brne _wet_loop
+    ret
+
+; Write an entire monochromatic tile or a horizontal slice of a tile to the
+; framebuffer.
+;
+; Register Usage
+;   r22             slice height (param)
+;   r23             color (param)
+;   X (r26:r27)     framebuffer pointer (param)
+write_solid_tile:
+    inc r22
+    rjmp _wst_loop_chk
+_wst_loop:
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    subi XL, low(-(DISPLAY_WIDTH - TILE_WIDTH))
+    sbci XH, high(-(DISPLAY_WIDTH - TILE_WIDTH))
+_wst_loop_chk:
+    dec r22
+    brne _wst_loop
+    ret
+
+; Write an entire monochromatic tile or a horizontal slice of a tile to the
+; framebuffer.
+;
+; Register Usage
+;   r21             slice min y (param)
+;   r22             slice height (param)
+;   r23             calculations
+;   X (r26:r27)     framebuffer pointer (param)
+write_wood_tile:
+    inc r22
+    rjmp _wwt_loop_chk
+_wwt_loop:
+    andi r21, 3
+_wwt_light_brown:
+    cpi r21, 0
+    brne _wwt_mid_brown
+    ldi r23, 0x1d
+    rjmp _wwt_write
+_wwt_mid_brown:
+    cpi r21, 3
+    brsh _wwt_dark_brown
+    ldi r23, 0x14
+    rjmp _wwt_write
+_wwt_dark_brown:
+    ldi r23, 0x0a
+_wwt_write:
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    st X+, r23
+    subi XL, low(-(DISPLAY_WIDTH - TILE_WIDTH))
+    sbci XH, high(-(DISPLAY_WIDTH - TILE_WIDTH))
+    inc r21
+_wwt_loop_chk:
+    dec r22
+    brne _wwt_loop
     ret
 
 ; Render any rectangular section of a tile.
