@@ -442,13 +442,13 @@ _rg_active_effect_iter_next:
     dec r16
     brne _rg_active_effect_iter
 _rg_clear_footer_transient:
-    ldi r20, INVENTORY_UI_HEADER_COLOR
     ldi YL, low(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+3)
     ldi YH, high(framebuffer+DISPLAY_WIDTH*(DISPLAY_HEIGHT-FOOTER_HEIGHT+1)+3)
     lds r25, clock
     sbrc r25, 0
     adiw YL, 1
     ldi r21, 4
+    ldi r20, INVENTORY_UI_HEADER_COLOR
 _rg_cft_loop:
     st Y, r20
     std Y+2, r20

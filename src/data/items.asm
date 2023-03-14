@@ -103,18 +103,18 @@ item_table:
     DECL_ITEM raw_meat,             (3<<3)|ITEM_USABLE,                 20,     0, 10,  0,  0,      0
     DECL_ITEM rotten_meat,          (1<<3)|ITEM_USABLE,                  1,     0, -5,  0,  0,      0
     DECL_ITEM health_potion,        (0<<3)|ITEM_USABLE,                100,     0, 40,  0,  0,      0
-    DECL_ITEM beer,                 (3<<3)|ITEM_USABLE,                  5,     5,  5,  0, -3,      0
+    DECL_ITEM beer,                 (3<<3)|ITEM_USABLE,                  5,     3,  3,  0, -3,      0
     DECL_ITEM croissant,            (3<<3)|ITEM_USABLE,                 10,     0, 10,  0,  0,      0
-    DECL_ITEM whiskey,              (1<<3)|ITEM_USABLE,                 20,     7,  3, -3,  0,      0
+    DECL_ITEM whiskey,              (1<<3)|ITEM_USABLE,                 20,     5,  3, -3,  0,      0
     DECL_ITEM journal,              ITEM_USABLE,                        10,     0,  0,  0,  0,      1
     DECL_ITEM pass,                 ITEM_USABLE,                       100,     0,  0,  0,  0,      1
     DECL_ITEM curse_of_ullimar,     (7<<3)|ITEM_USABLE,                 20,   -20,-10,  0,-10,      0
     DECL_ITEM large_health_potion,  (1<<3)|ITEM_USABLE,                150,     0, 45,  0,  0,      0
-    DECL_ITEM mint_tonic,           (3<<3)|ITEM_USABLE,                 50,     0,  0,  0, 10,      0
-    DECL_ITEM mint_leaves,          (3<<3)|ITEM_USABLE,                 20,     0,  0,  0,  6,      0
+    DECL_ITEM mint_tonic,           (3<<3)|ITEM_USABLE,                 50,     0,  0,  0,  7,      0
+    DECL_ITEM mint_leaves,          (3<<3)|ITEM_USABLE,                 20,     0,  0,  0,  5,      0
     DECL_ITEM bismuth_subsalicylate,(1<<3)|ITEM_USABLE,                 10,     0,  2,  0,  0,      0
-    DECL_ITEM strength_potion,      (3<<3)|ITEM_USABLE,                 50,    10,  0,  0,  0,      0
-    DECL_ITEM speed_potion,         (1<<3)|ITEM_USABLE,                 60,     0,  0, 20,  0,      0
+    DECL_ITEM strength_potion,      (3<<3)|ITEM_USABLE,                 50,     7,  0,  0,  0,      0
+    DECL_ITEM speed_potion,         (1<<3)|ITEM_USABLE,                 60,     0,  0, 15,  0,      0
     DECL_ITEM glass_shard,          ITEM_USABLE,                        20,     0,  0,  0,  0,      1
     DECL_ITEM gold_chalice,         ITEM_USABLE,                       200,     0,  0,  0,  0,      1
     DECL_ITEM gold_bar,             ITEM_USABLE,                       150,     0,  0,  0,  0,      1
@@ -134,8 +134,8 @@ DECL_LOOSE_ITEM bandit_helmet
 DECL_LOOSE_ITEM woods_mithril_spike
 DECL_LOOSE_ITEM woods_mithril_dagger
 DECL_LOOSE_ITEM mine_glass_staff
-DECL_LOOSE_ITEM mine_glass_dagger_1
-DECL_LOOSE_ITEM mine_glass_dagger_2
+DECL_LOOSE_ITEM mine_glass_dagger
+DECL_LOOSE_ITEM mine_gold
 DECL_LOOSE_ITEM house_cloak
 DECL_LOOSE_ITEM house_potion
 DECL_LOOSE_ITEM bank_gold_bar_1

@@ -15,6 +15,7 @@ start_update_game:
     cpi r25, 16
     brlo _sug_fading
     rcall start_change
+    rjmp _sug_end
 _sug_fading:
     sts mode_clock, r25
     rcall screen_fade_out

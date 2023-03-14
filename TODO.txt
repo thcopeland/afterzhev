@@ -4,4 +4,4 @@
 * Sound
 * NES controller
 - Balance potions
-* Items
+- Items

@@ -175,7 +175,7 @@ sector_table:
 .db 224, 141, 146, 33
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_BUSH, 132, 48, FEATURE_BUSH, 156, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw SECTOR_FLAG_FOLLOW_RIGHT
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "town_section_entrance_2"
@@ -201,7 +201,7 @@ sector_table:
 .db 225, 91, 79, 89
 .db 120, 96, SECTOR_TOWN_TAVERN_1, 60, 132, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 136, 94, FEATURE_WINDOW, 174, 94, FEATURE_SHUTTERS, 156, 74, FEATURE_SHUTTERS, 39, 131, FEATURE_WINDOW, 20, 112, 0, 0, 0
-.dw SECTOR_FLAG_FOLLOW_RIGHT|SECTOR_FLAG_FOLLOW_LEFT|SECTOR_FLAG_FOLLOW_PORTAL
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "town_section_2"
@@ -227,7 +227,7 @@ sector_table:
 .db 152, 157, 186, 27
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 64, 118, FEATURE_SHUTTERS, 64, 100, FEATURE_SHUTTERS, 44, 100, FEATURE_SHUTTERS, 124, 66, FEATURE_SHUTTERS, 140, 66, FEATURE_SHUTTERS, 160, 90
-.dw SECTOR_FLAG_FOLLOW_RIGHT|SECTOR_FLAG_FOLLOW_LEFT
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "town_section_fields"
@@ -357,7 +357,7 @@ sector_table:
 .db 156, 160, 50, 95
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw SECTOR_FLAG_FOLLOW_UP|SECTOR_FLAG_FOLLOW_LEFT
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw sector_town_entrance_1_update, NO_HANDLER, NO_HANDLER, sector_town_entrance_1_conversation, sector_town_entrance_1_choice
 
 ; Sector "town_section_forest_path_4"
@@ -513,7 +513,7 @@ sector_table:
 .db 156, 132, 81, 52
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "start_section_1"
@@ -565,7 +565,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw SECTOR_FLAG_FOLLOW_DOWN
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw sector_start_pretown_2_update, clear_sector_data, NO_HANDLER, NO_HANDLER, sector_start_pretown_2_choice
 
 ; Sector "deep_forest_section_4"
@@ -721,7 +721,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "deep_forest_section_2"
@@ -1756,7 +1756,7 @@ sector_table:
     073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073
 .db SECTOR_UNDERGROUND_1, SECTOR_UNDERGROUND_2, SECTOR_MINE_2, SECTOR_UNDERGROUND_1
 .db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-.db ITEM_glass_dagger, LOOSE_ITEM_mine_glass_dagger_1, 195, 95, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+.db 128|40, LOOSE_ITEM_mine_gold, 195, 95, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 206, 142, 222, 25
 .db 44, 12, SECTOR_MINE_ENTRANCE_HOUSE, 60, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -1808,7 +1808,7 @@ sector_table:
     073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073
 .db SECTOR_UNDERGROUND_4, SECTOR_UNDERGROUND_4, SECTOR_UNDERGROUND_4, SECTOR_UNDERGROUND_2
 .db NPC_GHOUL_2, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-.db ITEM_glass_dagger, LOOSE_ITEM_mine_glass_dagger_2, 124, 108, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+.db ITEM_glass_dagger, LOOSE_ITEM_mine_glass_dagger, 124, 108, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 23, 70, 113, 105
 .db 174, 14, SECTOR_MINE_EXIT_HOUSE, 120, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
