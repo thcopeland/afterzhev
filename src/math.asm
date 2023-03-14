@@ -136,36 +136,243 @@ _dmb_3:
     sec
     rjmp _dmb_1
 
-; Divide a 16-bit unsigned value by another 16-bit unsigned value. Based on Atmel
-; App Note AVR200.
+; Divide a 16-bit unsigned value by another 16-bit unsigned value, unrolled for
+; speed. Based on Atmel App Note AVR200.
 ;
 ; Register Usage
-;   r0-r2       used, r1 set zero
+;   r0-r1       used, r1 set zero
 ;   r22:r23     divisor/remainder (param)
 ;   r24:r25     divident/quotient (param)
 divmodw:
-    mov r0, r22
-    mov r2, r23
-    ldi r23, 17
-    mov r1, r23
+    movw r0, r22
     clr r22
     sub r23, r23
 _dmw_1:
     rol r24
     rol r25
-    dec r1
-    brne _dmw_2
-    ret
-_dmw_2:
     rol r22
     rol r23
     sub r22, r0
-    sbc r23, r2
-    brcc _dmw_3
+    sbc r23, r1
+    brcc _dmw_1x
     add r22, r0
-    adc r23, r2
+    adc r23, r1
     clc
-    rjmp _dmw_1
-_dmw_3:
+    rjmp _dmw_2
+_dmw_1x:
     sec
-    rjmp _dmw_1
+_dmw_2:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_2x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_3
+_dmw_2x:
+    sec
+_dmw_3:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_3x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_4
+_dmw_3x:
+    sec
+_dmw_4:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_4x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_5
+_dmw_4x:
+    sec
+_dmw_5:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_5x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_6
+_dmw_5x:
+    sec
+_dmw_6:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_6x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_7
+_dmw_6x:
+    sec
+_dmw_7:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_7x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_8
+_dmw_7x:
+    sec
+_dmw_8:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_8x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_9
+_dmw_8x:
+    sec
+_dmw_9:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_9x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_10
+_dmw_9x:
+    sec
+_dmw_10:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_10x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_11
+_dmw_10x:
+    sec
+_dmw_11:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_11x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_12
+_dmw_11x:
+    sec
+_dmw_12:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_12x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_13
+_dmw_12x:
+    sec
+_dmw_13:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_13x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_14
+_dmw_13x:
+    sec
+_dmw_14:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_14x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_15
+_dmw_14x:
+    sec
+_dmw_15:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_15x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_16
+_dmw_15x:
+    sec
+_dmw_16:
+    rol r24
+    rol r25
+    rol r22
+    rol r23
+    sub r22, r0
+    sbc r23, r1
+    brcc _dmw_16x
+    add r22, r0
+    adc r23, r1
+    clc
+    rjmp _dmw_17
+_dmw_16x:
+    sec
+_dmw_17:
+    rol r24
+    rol r25
+    clr r1
+    ret

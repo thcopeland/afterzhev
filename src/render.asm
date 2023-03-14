@@ -1,5 +1,6 @@
 .equ TILE_SOLID_GREEN = 39
 .equ TILE_SOLID_BLACK = 73
+.equ TILE_SOLID_BEIGE = 175
 .equ TILE_SOLID_BROWN = 185
 .equ TILE_WOOD_FLOOR = 197
 
@@ -26,8 +27,13 @@ _wet_check_solid_2:
     rjmp write_solid_tile
 _wet_check_solid_3:
     cpi r23, TILE_SOLID_BROWN
-    brne _wet_check_wood
+    brne _wet_check_solid_4
     ldi r23, 0x0a
+    rjmp write_solid_tile
+_wet_check_solid_4:
+    cpi r23, TILE_SOLID_BEIGE
+    brne _wet_check_wood
+    ldi r23, 0x65
     rjmp write_solid_tile
 _wet_check_wood:
     cpi r23, TILE_WOOD_FLOOR

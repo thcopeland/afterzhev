@@ -210,7 +210,7 @@ _rg_features_iter:
     elpm r24, Z+
     elpm r25, Z+
     dec r20
-    brmi _rg_features_next
+    brmi _rg_savepoint
     movw YL, ZL
     ; assume the same 64kb partition as sector data
     ldi ZL, low(2*feature_table)
@@ -537,6 +537,9 @@ _rg_player_xp:
     clr r23
     call putw_small
 _rg_calc_attack_cooldown:
+    lds r25, clock
+    sbrc r25, 0
+    rjmp _rg_calc_dash_cooldown
     ldi ZL, byte3(2*item_table)
     out RAMPZ, ZL
     ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
@@ -591,6 +594,9 @@ _rg_attack_cooldown_iter2:
     dec r24
     brne _rg_attack_cooldown_iter2
 _rg_calc_dash_cooldown:
+    lds r25, clock
+    sbrs r25, 0
+    rjmp _rg_effects
     call calculate_dash_cooldown
     mov r22, r25
     clr r23
@@ -633,16 +639,15 @@ _rg_dash_cooldown_iter2:
 _rg_effects:
     ldi XL, low(framebuffer+EXPLORE_UI_EFFECTS_MARGIN)
     ldi XH, high(framebuffer+EXPLORE_UI_EFFECTS_MARGIN)
-    clr r20
-_rg_effects_iter:
-    mov r25, r20
-    movw YL, XL
+    clr r25
     call render_effect_progress
-    movw XL, YL
-    sbiw XL, EXPLORE_UI_EFFECTS_SEPARATION
-    inc r20
-    cpi r20, PLAYER_EFFECT_COUNT
-    brne _rg_effects_iter
+    ldi XL, low(framebuffer+EXPLORE_UI_EFFECTS_MARGIN-EXPLORE_UI_EFFECTS_SEPARATION)
+    ldi XH, high(framebuffer+EXPLORE_UI_EFFECTS_MARGIN-EXPLORE_UI_EFFECTS_SEPARATION)
+    ldi r25, 1
+    call render_effect_progress
+    .if PLAYER_EFFECT_COUNT != 2
+        .error "render_game assumes 2 player effects, update to match PLAYER_EFFECT_COUNT"
+    .endif
     ret
 
 ; Render a health bar above an NPC.
