@@ -23,7 +23,7 @@ _clear_memory_loop:
     call init_game_state
     call load_explore
 
-    ldi r25, ITEM_steel_sword
+    ldi r25, ITEM_iron_staff
     sts player_weapon, r25
 
     ldi r25, ITEM_full_green_cloak

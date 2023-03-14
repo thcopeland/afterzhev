@@ -1372,11 +1372,8 @@ _rci_end:
 ; Render an effect animation. This is used for several things, including blood
 ; splashes, fire, healing.
 ;
-; NOTE: The calculations are messy because different effects have different
-;   numbers of frames and because some effects don't have a rotated variant.
-;
 ; Register Usage
-;   r21             calculations
+;   r20-r21         calculations
 ;   r22             effect data, [direction:2][effect:3][frame:3] (param)
 ;   r23             calculations
 ;   r24, r25        effect location (param)
@@ -1393,76 +1390,66 @@ _rce_effect_props:
     mov r21, r22
     andi r21, 0xc0
     andi r22, 0x7
-    ldi ZL, byte3(2*effect_damage_sprites)
+    ldi ZL, byte3(2*effect_sprite_table)
     out RAMPZ, ZL
     ; At this point, r21 - direction, r22 - frame, r23 - effect
-_rce_effect_damage:
-    cpi r23, EFFECT_DAMAGE
-    brne _rce_effect_healing
-    ldi ZL, low(2*effect_damage_sprites)
-    ldi ZH, high(2*effect_damage_sprites)
-    rjmp _rce_render_effect_sprite
+    ldi ZL, low(2*effect_sprite_table-16)
+    ldi ZH, high(2*effect_sprite_table-16)
+    ldi r20, 16
+    mul r20, r23
+    add ZL, r0
+    adc ZH, r1
+    clr r1
 _rce_effect_healing:
     cpi r23, EFFECT_HEALING
     brne _rce_effect_potion
-    ldi ZL, low(2*effect_healing_sprites)
-    ldi ZH, high(2*effect_healing_sprites)
     subi r22, EFFECT_HEALING_DELAY
-    brsh _rce_render_effect_sprite
+    brsh _rce_determine_sprite
     rjmp _rce_end
 _rce_effect_potion:
     cpi r23, EFFECT_POTION
     brne _rce_effect_upgrade
-    ldi ZL, low(2*effect_potion_sprites)
-    ldi ZH, high(2*effect_potion_sprites)
     subi r22, EFFECT_POTION_DELAY
-    brsh _rce_render_effect_sprite
+    brsh _rce_determine_sprite
     rjmp _rce_end
 _rce_effect_upgrade:
     cpi r23, EFFECT_UPGRADE
-    brne _rce_effect_arrow
-    ldi ZL, low(2*effect_upgrade_sprites)
-    ldi ZH, high(2*effect_upgrade_sprites)
+    brne _rce_effect_alternating
     subi r22, EFFECT_UPGRADE_DELAY
-    brsh _rce_render_effect_sprite
+    brsh _rce_determine_sprite
     rjmp _rce_end
-_rce_effect_arrow:
-    cpi r23, EFFECT_ARROW
-    brne _rce_effect_fireball
-    ldi ZL, low(2*effect_arrow_sprites)
-    ldi ZH, high(2*effect_arrow_sprites)
-    sbrc r21, 6
-    inc r22
-    rjmp _rce_render_effect_sprite
-_rce_effect_fireball:
+_rce_effect_alternating:
     cpi r23, EFFECT_FIREBALL
-    brne _rce_effect_missile
-    ldi ZL, low(2*effect_fireball_sprites)
-    ldi ZH, high(2*effect_fireball_sprites)
+    brlo _rce_effect_orientable
     andi r22, 1
+_rce_effect_orientable:
+    cpi r23, EFFECT_ARROW
+    brne _rce_effect_orientable_2
     sbrc r21, 6
-    subi r22, low(-2)
-_rce_effect_missile:
-    cpi r23, EFFECT_MISSILE
-    brne _rce_render_effect_sprite
-    ldi ZL, low(2*effect_missile_sprites)
-    ldi ZH, high(2*effect_missile_sprites)
-    mov r23, r22
-    clr r22
-    cpi r23, EFFECT_MISSILE_DURATION-1
-    brlo _rce_effect_missile_orientation
     inc r22
-_rce_effect_missile_orientation:
+    rjmp _rce_determine_sprite
+_rce_effect_orientable_2:
+    cpi r23, EFFECT_FIREBALL
+    brlo _rce_determine_sprite
     sbrc r21, 6
     subi r22, low(-2)
-_rce_render_effect_sprite:
-    ldi r23, EFFECT_SPRITE_MEMSIZE
-    mul r22, r23
-    add ZL, r0
+_rce_determine_sprite:
+    mov r23, r20
+    lsl r22
+    add ZL, r22
     adc ZH, r1
-    clr r1
-    ldi r22, EFFECT_SPRITE_WIDTH
-    ldi r23, EFFECT_SPRITE_HEIGHT
+    elpm r22, Z+
+    elpm r23, Z
+    movw ZL, r22
+    elpm r22, Z+
+    elpm r23, Z+
+    add r24, r22
+    add r25, r23
+    elpm r22, Z+
+    elpm r23, Z+
+_rce_effect_flip:
+    cpi r20, EFFECT_ARROW
+    brlo _rce_render_sprite
 _rce_check_up:
     cpi r21, DIRECTION_UP<<6
     brne _rce_check_left

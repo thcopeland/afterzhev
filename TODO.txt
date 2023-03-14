@@ -1,5 +1,5 @@
 # Game Engine
-* Optimize effect sprites
+- Optimize effect sprites
 - Special case single color tiles
 * Sound
 * NES controller

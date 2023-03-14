@@ -22,6 +22,7 @@
     .org 0x10000
     .include "character_sprites.asm"
     .include "item_sprites.asm"
+    .include "effect_sprites.asm"
     .include "other_sprites.asm"
 
 ; Partion 4 (words 0x18000-0x7ffff): images, sounds
