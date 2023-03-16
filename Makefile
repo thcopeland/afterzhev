@@ -35,3 +35,16 @@ wasm: clean all
 clean:
 	make -C $(SLIMAVR) clean
 	rm -rf $(BIN)/* $(SIM)/simulate
+
+sound: sound.hex
+	avrdude -p atmega2560 -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:sound.hex:i
+
+sound.hex: sound.asm
+	$(AS) -o $@ -e /dev/null -d /dev/null $<
+
+simsound: simsound.c sound.hex .FORCE
+	make -C $(SLIMAVR)
+	$(CC) $< $(SLIMAVR)/libslimavr.a -o $@ $(CFLAGS)
+	./simsound
+
+.FORCE:
