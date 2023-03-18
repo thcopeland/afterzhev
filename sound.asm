@@ -7,7 +7,7 @@
 .dseg
 
 .equ SAMPLE_PERIOD = 512*8   ; 3906 Hz
-.equ SAMPLE_BUFFER_SIZE = 13
+.equ AUDIO_BUFFER_SIZE = 13
 
 framebuffer: .byte DISPLAY_WIDTH * DISPLAY_HEIGHT
 clock: .byte 2
@@ -19,9 +19,9 @@ channel2_phase:     .byte 1
 channel2_dphase:    .byte 1
 channel2_volume:    .byte 1
 channel2_wave:      .byte 1 ; [waveform:2][duration:6]
-sound_state:        .byte 1 ; can share subroutine_tmp
-sound_noise:        .byte 1
-sound_buffer:       .byte SAMPLE_BUFFER_SIZE
+audio_state:        .byte 1 ; can share subroutine_tmp
+audio_noise:        .byte 1
+audio_buffer:       .byte AUDIO_BUFFER_SIZE
 
 ; Registers
 ; r0                tmp
@@ -59,11 +59,11 @@ init:
     out GPIOR1, r25 ; stores the video framebuffer offset (high)
     out GPIOR2, r1  ; video frame status
 
-    sts sound_state, r1
-    ldi r24, low(sound_buffer)
-    ldi r25, high(sound_buffer)
+    sts audio_state, r1
+    ldi r24, low(audio_buffer)
+    ldi r25, high(audio_buffer)
     movw r4, r24
-    ldi r25, SAMPLE_BUFFER_SIZE
+    ldi r25, AUDIO_BUFFER_SIZE
     mov r6, r25
 
     ldi XL, low(framebuffer)
@@ -92,8 +92,8 @@ main:
     ldi r18, (1 << TSM) | (1 << PSRASY) | (1 << PSRSYNC)
     out GTCCR, r18
 
-    ; ctc w/ OCRA, 32 prescaling, interrupt at OCMA
-    ldi r25, 4096/32-1
+    ; ctc w/ OCRA, 64 prescaling, interrupt at OCMA
+    ldi r25, SAMPLE_PERIOD/64-1
     out OCR0A, r25
     ldi r25, 1 << OCIE0A
     sts TIMSK0, r25
@@ -103,15 +103,15 @@ main:
     out TCCR0B, r25
 
     sts channel1_phase, r1
-    ldi r25, 60
+    ldi r25, 255/60
     sts channel1_dphase, r25
-    ldi r25, 128
+    ldi r25, 255
     sts channel1_volume, r25
     ldi r25, 2<<6
     sts channel1_wave, r25
 
     ldi r25, 1
-    sts sound_noise, r25
+    sts audio_noise, r25
 
     ; HSYNC
     ; initialize timer 1 to fast PWM (pin PB6)
@@ -185,16 +185,16 @@ _loop_active_screen:
     ldi r16, DISPLAY_VERTICAL_STRETCH-1
 _loop_generate_audio:
     out GPIOR2, r16
-    lds r20, sound_state
+    lds r20, audio_state
     inc r20
     andi r20, 7
-    sts sound_state, r20
+    sts audio_state, r20
     breq _loop_generate_audio_reset_buffer
     cpi r20, 2
     brsh _loop_generate_audio_sample
     rjmp _loop_end
 _loop_generate_audio_reset_buffer:
-    rcall reset_sound_buffer
+    rcall reset_audio_buffer
     rjmp _loop_end
 _loop_generate_audio_sample:
     rcall generate_audio_sample
@@ -206,8 +206,9 @@ _loop_work:
     ori r16, 0x80
     out GPIOR2, r16
     ; force audio to synchronize with frame (TODO: unnecessary?)
-    ldi r25, 4096/32-7
+    ldi r25, 25+16
     out TCNT0, r25
+    sts audio_state, r1
     ; At this point, we've rendered a complete image to the screen, and there's a
     ; fairly long gap (~99,300 cycles) where we fill the framebuffer and update
     ; the game. This corresponds to the VGA vertical front porch and sync pulse,
@@ -228,73 +229,12 @@ _loop_work:
     sts TIMSK1, r1
     sei
 
-    rcall reset_sound_buffer
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
+    rcall refill_audio_buffer
+    rcall long_wait
+    rcall refill_audio_buffer
+    rcall long_wait
+    rcall refill_audio_buffer
 
-    call long_wait
-
-    rcall reset_sound_buffer
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-
-    call long_wait
-
-    rcall reset_sound_buffer
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-    rcall generate_audio_sample
-
-;     call reset_sound_buffer
-;     ldi ZL, low(sound_buffer)
-;     ldi ZH, high(sound_buffer)
-;     ldi r18, SAMPLE_BUFFER_SIZE
-;     sub r18, r6
-; _asdf:
-;     rcall generate_audio_sample2
-;     dec r18
-;     brne _asdf
-;
-;     call long_wait
-;
-;     call reset_sound_buffer
-;     ldi ZL, low(sound_buffer)
-;     ldi ZH, high(sound_buffer)
-;     ldi r18, SAMPLE_BUFFER_SIZE
-;     sub r18, r6
-; _asdf2:
-;     rcall generate_audio_sample2
-;     dec r18
-;     brne _asdf2
-;
-;     call long_wait
-;
-;     call reset_sound_buffer
-;     ldi ZL, low(sound_buffer)
-;     ldi ZH, high(sound_buffer)
-;     ldi r18, SAMPLE_BUFFER_SIZE
-;     sub r18, r6
-; _asdf3:
-;     rcall generate_audio_sample2
-;     dec r18
-;     brne _asdf3
 _loop_reenter:
     cli
 
@@ -316,29 +256,29 @@ _loop_end:
     rjmp _main_stall
 
 long_wait: ; 50k cycles or so
-    ldi r24, low(1700)
-    ldi r25, high(1700)
+    ldi r24, low(11800)
+    ldi r25, high(11800)
 _lw_loop:
     sbiw r24, 1
     brne _lw_loop
     ret
 
 ; Move all samples to the beginning of the audio buffer, so the rest can be
-; completely filled. SAMPLE_BUFFER_SIZE bytes will copied every time, which will
+; completely filled. AUDIO_BUFFER_SIZE bytes will copied every time, which will
 ; probably read past the end of the audio buffer, because performance.
 ;
 ; Register Usage
 ; r25       calculations
 ; XL, ZL    audio ponters
-reset_sound_buffer:
-    ldi ZL, low(sound_buffer)
-    ldi ZH, high(sound_buffer)
+reset_audio_buffer:
+    ldi ZL, low(audio_buffer)
+    ldi ZH, high(audio_buffer)
     in r25, SREG
     cli
     movw XL, r4
     movw r4, ZL
-.if SAMPLE_BUFFER_SIZE != 13
-    .error "reset_sound_buffer assumes buffer size of 13, update to match"
+.if AUDIO_BUFFER_SIZE != 13
+    .error "reset_audio_buffer assumes buffer size of 13, update to match"
 .endif
     ld r0, X+
     st Z+, r0
@@ -376,17 +316,17 @@ reset_sound_buffer:
 ;  r20-r27      calculations
 ;  r25          generated sample
 generate_audio_sample:
-    ldi r20, low(sound_buffer+SAMPLE_BUFFER_SIZE-1)
-    ldi r21, high(sound_buffer+SAMPLE_BUFFER_SIZE-1)
+    ldi r20, low(audio_buffer+AUDIO_BUFFER_SIZE-1)
+    ldi r21, high(audio_buffer+AUDIO_BUFFER_SIZE-1)
     movw ZL, r4
     add ZL, r6
     adc ZH, r1
     cp r20, ZL
     cpc r21, ZH
-    brsh _gas_channel_1
+    brsh generate_audio_sample2
     ret
-generate_audio_sample2: ; Must pass valid buffer pointer in Z.
-    lds r24, sound_noise
+generate_audio_sample2:
+    lds r24, audio_noise
 _gas_channel_1:
     lds r20, channel1_volume
     lds r21, channel1_phase
@@ -487,9 +427,24 @@ _gas_mix_channels:
     brcc _gas_write_sample
     ldi r25, 0xff
 _gas_write_sample:
-    sts sound_noise, r24
+    sts audio_noise, r24
     st Z+, r25
     inc r6
+    ret
+
+refill_audio_buffer:
+    rcall reset_audio_buffer
+    ldi ZL, low(audio_buffer)
+    ldi ZH, high(audio_buffer)
+    mov r20, r6
+    add ZL, r20
+    adc ZH, r1
+    ldi r18, AUDIO_BUFFER_SIZE
+    sub r18, r20
+_rsb_loop:
+    rcall generate_audio_sample
+    dec r18
+    brne _rsb_loop
     ret
 
 test_image:

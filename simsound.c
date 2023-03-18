@@ -35,13 +35,20 @@ void run_to_sync(void) {
         } else {
             offset += 1;
 
-            if (offset > 10 && offset < 419 && scanline < 370) {
+            if (offset > 10 && offset < 419 && scanline > 31 && scanline < 362) {
                 uint8_t val = avr->mem[0x22] & avr->mem[0x21];
                 buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255*(val&7)/7;
                 buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] = 255*((val>>3)&7)/7;
                 buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] = 255*((val>>5)&6)/7;
+            } else if (scanline > 31 && scanline < 362) {
+                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += avr->mem[0x28];
+                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += avr->mem[0x28];
+                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += avr->mem[0x28];
             } else {
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] += avr->mem[0x28];
+                uint8_t val = avr->pc >> 5;
+                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += val;
+                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += val;
+                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += val;
             }
         }
 
@@ -62,8 +69,6 @@ void run_to_sync(void) {
             exit(0);
         }
     }
-
-    // usleep(1000000);
 }
 
 void fps_delay(void) {
