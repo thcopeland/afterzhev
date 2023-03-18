@@ -7,10 +7,11 @@
 #define GAME_DISPLAY_WIDTH 600
 #define GAME_DISPLAY_HEIGHT 600
 
-int scanline = 0;
-int offset = 0;
+#define SAMPLING_RATE 44100
+#define AUDIO_BUFFER_SIZE 2048
 
-uint8_t buffer[3*GAME_DISPLAY_WIDTH*GAME_DISPLAY_HEIGHT];
+uint8_t video_buffer[3*GAME_DISPLAY_WIDTH*GAME_DISPLAY_HEIGHT];
+uint8_t audio_buffer[AUDIO_BUFFER_SIZE];
 
 struct avr *avr;
 int stayin_alive = 1;
@@ -18,8 +19,22 @@ uint64_t last_counter = 0;
 SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Texture *framebuffer;
+SDL_AudioDeviceID audio_device;
+int smoothed_queued_audio = AUDIO_BUFFER_SIZE;
 
 void run_to_sync(void) {
+    static int scanline = 0;
+    static int offset = 0;
+
+    int sampling_period = 293; // 16000000/SAMPLING_RATE;
+    int queued_audio = SDL_GetQueuedAudioSize(audio_device);
+    smoothed_queued_audio = (smoothed_queued_audio - SAMPLING_RATE/60)/2 + queued_audio/2;
+    int drop_audio = smoothed_queued_audio > 8*AUDIO_BUFFER_SIZE;
+    int samples = 0;
+    uint8_t sample, last_sample = 0;
+
+    printf("%d %d\n", queued_audio, smoothed_queued_audio);
+
     while (1) {
         uint8_t sync = avr->mem[0x25] & 0x80;
         int hsync = avr->mem[0x25] & 0x40;
@@ -28,8 +43,14 @@ void run_to_sync(void) {
         int hsync2 = avr->mem[0x25] & 0x40;
         int vsync2 = avr->mem[0x2e] & 0x10;
 
+        if (!drop_audio && (avr->clock % sampling_period) == 0) {
+            uint8_t sample = avr->mem[0x28]; //  2*((uint16_t) avr->mem[0x28])/3 + last_sample/3;
+            audio_buffer[samples++] = sample;
+            last_sample = sample;
+        }
+
         if (hsync2 == 0 && hsync != hsync2) {
-            buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255;
+            video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255;
             offset = 0;
             scanline += 1;
         } else {
@@ -37,26 +58,26 @@ void run_to_sync(void) {
 
             if (offset > 10 && offset < 419 && scanline > 31 && scanline < 362) {
                 uint8_t val = avr->mem[0x22] & avr->mem[0x21];
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255*(val&7)/7;
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] = 255*((val>>3)&7)/7;
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] = 255*((val>>5)&6)/7;
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255*(val&7)/7;
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] = 255*((val>>3)&7)/7;
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] = 255*((val>>5)&6)/7;
             } else if (scanline > 31 && scanline < 362) {
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += avr->mem[0x28];
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += avr->mem[0x28];
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += avr->mem[0x28];
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += avr->mem[0x28];
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += avr->mem[0x28];
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += avr->mem[0x28];
             } else {
                 uint8_t val = avr->pc >> 5;
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += val;
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += val;
-                buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += val;
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += val;
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += val;
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += val;
             }
         }
 
-        buffer[3*(GAME_DISPLAY_HEIGHT-2)*GAME_DISPLAY_WIDTH + avr->reg[6]*3+1] = 255;
+        video_buffer[3*(GAME_DISPLAY_HEIGHT-2)*GAME_DISPLAY_WIDTH + avr->reg[6]*3+1] = 255;
 
         if (vsync2 == 0 && vsync != vsync2) {
             for (int i = 0; i < GAME_DISPLAY_WIDTH; i++) {
-                buffer[scanline*3*GAME_DISPLAY_WIDTH+3*i] = 255;
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH+3*i] = 255;
             }
             scanline = 0;
             offset = 0;
@@ -69,6 +90,8 @@ void run_to_sync(void) {
             exit(0);
         }
     }
+
+    SDL_QueueAudio(audio_device, audio_buffer, sizeof(*audio_buffer)*samples);
 }
 
 void fps_delay(void) {
@@ -134,8 +157,8 @@ void loop(void) {
     int pitch;
     SDL_RenderClear(renderer);
     SDL_LockTexture(framebuffer, NULL, (void**)(&pixels), &pitch);
-    memcpy(pixels, buffer, sizeof(buffer));
-    memset(buffer, 0, sizeof(buffer));
+    memcpy(pixels, video_buffer, sizeof(video_buffer));
+    memset(video_buffer, 0, sizeof(video_buffer));
     SDL_UnlockTexture(framebuffer);
     SDL_RenderCopy(renderer, framebuffer, NULL, NULL);
     SDL_RenderPresent(renderer);
@@ -152,7 +175,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0) {
         fprintf(stderr, "unable to initialize SDL: %s\n", SDL_GetError());
         return 1;
     }
@@ -178,11 +201,25 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    while (stayin_alive) loop();
+    SDL_AudioSpec out_spec, in_spec = {
+        .freq = SAMPLING_RATE,
+        .format = AUDIO_U8, // NOTE! if audio isn't working, try changing this to AUDIO_F32, AUDIO_U16, or something
+        .channels = 1,
+        .samples = AUDIO_BUFFER_SIZE,
+        .callback = NULL
+    };
+
+    audio_device = SDL_OpenAudioDevice(NULL, 0, &in_spec, &out_spec, 0);
+    SDL_PauseAudioDevice(audio_device, 0);
+
+    while (stayin_alive) {
+        loop();
+    }
 
     SDL_DestroyTexture(framebuffer);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_CloseAudioDevice(audio_device);
     SDL_Quit();
     return 0;
 }

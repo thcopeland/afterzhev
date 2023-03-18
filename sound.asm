@@ -103,11 +103,11 @@ main:
     out TCCR0B, r25
 
     sts channel1_phase, r1
-    ldi r25, 255/60
-    sts channel1_dphase, r25
-    ldi r25, 255
+    ldi r25, 50
+    sts channel1_dphase, r25 ; really only usable 8 - 80
+    ldi r25, 128
     sts channel1_volume, r25
-    ldi r25, 2<<6
+    ldi r25, 0<<6
     sts channel1_wave, r25
 
     ldi r25, 1
