@@ -11,7 +11,7 @@
 #define AUDIO_BUFFER_SIZE 2048
 
 uint8_t video_buffer[3*GAME_DISPLAY_WIDTH*GAME_DISPLAY_HEIGHT];
-uint8_t audio_buffer[AUDIO_BUFFER_SIZE];
+int16_t audio_buffer[AUDIO_BUFFER_SIZE];
 
 struct avr *avr;
 int stayin_alive = 1;
@@ -20,20 +20,15 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Texture *framebuffer;
 SDL_AudioDeviceID audio_device;
-int smoothed_queued_audio = AUDIO_BUFFER_SIZE;
 
 void run_to_sync(void) {
     static int scanline = 0;
     static int offset = 0;
 
-    int sampling_period = 293; // 16000000/SAMPLING_RATE;
-    int queued_audio = SDL_GetQueuedAudioSize(audio_device);
-    smoothed_queued_audio = (smoothed_queued_audio - SAMPLING_RATE/60)/2 + queued_audio/2;
-    int drop_audio = smoothed_queued_audio > 8*AUDIO_BUFFER_SIZE;
+    int drop_frame = SDL_GetQueuedAudioSize(audio_device) > 8*AUDIO_BUFFER_SIZE;
+    int sampling_period = 283; // faster than 16000000/SAMPLING_RATE;
     int samples = 0;
-    uint8_t sample, last_sample = 0;
-
-    printf("%d %d\n", queued_audio, smoothed_queued_audio);
+    int16_t sample, last_sample = 0;
 
     while (1) {
         uint8_t sync = avr->mem[0x25] & 0x80;
@@ -43,8 +38,9 @@ void run_to_sync(void) {
         int hsync2 = avr->mem[0x25] & 0x40;
         int vsync2 = avr->mem[0x2e] & 0x10;
 
-        if (!drop_audio && (avr->clock % sampling_period) == 0) {
-            uint8_t sample = avr->mem[0x28]; //  2*((uint16_t) avr->mem[0x28])/3 + last_sample/3;
+        if (!drop_frame && (avr->clock % sampling_period) == 0) {
+            sample = (int16_t) (avr->mem[0x28]<<8) - (128<<8);
+            sample = sample/2 + last_sample/2;
             audio_buffer[samples++] = sample;
             last_sample = sample;
         }
@@ -203,7 +199,7 @@ int main(int argc, char **argv) {
 
     SDL_AudioSpec out_spec, in_spec = {
         .freq = SAMPLING_RATE,
-        .format = AUDIO_U8, // NOTE! if audio isn't working, try changing this to AUDIO_F32, AUDIO_U16, or something
+        .format = AUDIO_S16,
         .channels = 1,
         .samples = AUDIO_BUFFER_SIZE,
         .callback = NULL

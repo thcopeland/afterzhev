@@ -6,7 +6,8 @@
 
 .dseg
 
-.equ SAMPLE_PERIOD = 512*8   ; 3906 Hz
+; could probably get up to 6500 Hz, but I don't think it's worth it
+.equ SAMPLE_PERIOD = 512*8   ; 3900 Hz
 .equ AUDIO_BUFFER_SIZE = 13
 
 framebuffer: .byte DISPLAY_WIDTH * DISPLAY_HEIGHT
@@ -103,11 +104,11 @@ main:
     out TCCR0B, r25
 
     sts channel1_phase, r1
-    ldi r25, 50
-    sts channel1_dphase, r25 ; really only usable 8 - 80
+    ldi r25, 10
+    sts channel1_dphase, r25
     ldi r25, 128
     sts channel1_volume, r25
-    ldi r25, 0<<6
+    ldi r25, 1<<6
     sts channel1_wave, r25
 
     ldi r25, 1
