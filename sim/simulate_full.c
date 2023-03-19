@@ -2,13 +2,25 @@
 #include <stdio.h>
 #include <string.h>
 #include "SDL.h"
-#include "sim/slimavr-0.1.5/slimavr.h"
+#include "slimavr-0.1.5/slimavr.h"
 
 #define GAME_DISPLAY_WIDTH 600
 #define GAME_DISPLAY_HEIGHT 600
 
 #define SAMPLING_RATE 44100
 #define AUDIO_BUFFER_SIZE 2048
+#define SAMPLING_CYCLES 283
+
+#define HSYNC_PORT 0x25
+#define HSYNC_PIN 6
+#define VSYNC_PORT 0x2e
+#define VSYNC_PIN 4
+#define SYNC_PORT 0x25
+#define SYNC_PIN 7
+#define VIDEO_PORT 0x22
+#define VIDEO_MASK 0x21
+
+#define AUDIO_PORT 0x28
 
 uint8_t video_buffer[3*GAME_DISPLAY_WIDTH*GAME_DISPLAY_HEIGHT];
 int16_t audio_buffer[AUDIO_BUFFER_SIZE];
@@ -26,20 +38,19 @@ void run_to_sync(void) {
     static int offset = 0;
 
     int drop_frame = SDL_GetQueuedAudioSize(audio_device) > 8*AUDIO_BUFFER_SIZE;
-    int sampling_period = 283; // faster than 16000000/SAMPLING_RATE;
     int samples = 0;
     int16_t sample, last_sample = 0;
 
     while (1) {
-        uint8_t sync = avr->mem[0x25] & 0x80;
-        int hsync = avr->mem[0x25] & 0x40;
-        int vsync = avr->mem[0x2e] & 0x10;
+        uint8_t sync = avr->mem[SYNC_PORT] & (1<<SYNC_PIN);
+        int hsync = avr->mem[HSYNC_PORT] & (1<<HSYNC_PIN);
+        int vsync = avr->mem[VSYNC_PORT] & (1<<VSYNC_PIN);
         avr_step(avr);
-        int hsync2 = avr->mem[0x25] & 0x40;
-        int vsync2 = avr->mem[0x2e] & 0x10;
+        int hsync2 = avr->mem[HSYNC_PORT] & (1<<HSYNC_PIN);
+        int vsync2 = avr->mem[VSYNC_PORT] & (1<<VSYNC_PIN);
 
-        if (!drop_frame && (avr->clock % sampling_period) == 0) {
-            sample = (int16_t) (avr->mem[0x28]<<8) - (128<<8);
+        if (!drop_frame && (avr->clock % SAMPLING_CYCLES) == 0) {
+            sample = avr->mem[AUDIO_PORT] << 6;
             sample = sample/2 + last_sample/2;
             audio_buffer[samples++] = sample;
             last_sample = sample;
@@ -53,14 +64,14 @@ void run_to_sync(void) {
             offset += 1;
 
             if (offset > 10 && offset < 419 && scanline > 31 && scanline < 362) {
-                uint8_t val = avr->mem[0x22] & avr->mem[0x21];
+                uint8_t val = avr->mem[VIDEO_PORT] & avr->mem[VIDEO_MASK];
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255*(val&7)/7;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] = 255*((val>>3)&7)/7;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] = 255*((val>>5)&6)/7;
             } else if (scanline > 31 && scanline < 362) {
-                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += avr->mem[0x28];
-                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += avr->mem[0x28];
-                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += avr->mem[0x28];
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += avr->mem[AUDIO_PORT];
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += avr->mem[AUDIO_PORT];
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += avr->mem[AUDIO_PORT];
             } else {
                 uint8_t val = avr->pc >> 5;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += val;
@@ -79,7 +90,7 @@ void run_to_sync(void) {
             offset = 0;
         }
 
-        if ((0x80 & avr->mem[0x25]) ^ sync) {
+        if ((avr->mem[SYNC_PORT] & (1 << SYNC_PIN)) ^ sync) {
             break;
         } else if (avr->status == MCU_STATUS_CRASHED) {
             avr_dump(avr, NULL);
@@ -167,7 +178,7 @@ int main(int argc, char **argv) {
     avr = avr_new(AVR_MODEL_ATMEGA2560);
     avr->mem[0x26] = 0xff;
 
-    if (avr_load_ihex(avr, "sound.hex") != 0) {
+    if (avr_load_ihex(avr, "bin/main.hex") != 0) {
         exit(1);
     }
 

@@ -99,13 +99,16 @@ explore_update_game:
     rcall update_savepoint
     call update_player_stat_effects
     rcall sort_npcs
+    call refill_audio_buffer
     rcall render_game
+    call refill_audio_buffer
     rcall handle_controls
     rcall update_active_effects
     rcall update_savepoint_animation
     rcall update_player
     rcall move_camera
     rcall update_followers
+    call refill_audio_buffer
 
     ; lds r21, player_position_x
     ; ldi r23, 0x07

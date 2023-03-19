@@ -20,10 +20,17 @@ $(BIN)/%.lst: $(BIN)/%.hex
 upload: all
 	avrdude -p atmega2560 -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:$(BIN)/main.hex:i
 
-sim: $(BIN)/main.hex $(BIN)/simulate
+sim: $(BIN)/main.hex $(BIN)/simulate .FORCE
 	./$(BIN)/simulate
 
 $(BIN)/simulate: $(SIM)/simulate.c
+	make -C $(SLIMAVR)
+	$(CC) $< $(SLIMAVR)/libslimavr.a -o $@ $(CFLAGS)
+
+debug: $(BIN)/main.hex $(BIN)/simulate-full .FORCE
+	./$(BIN)/simulate-full
+
+$(BIN)/simulate-full: $(SIM)/simulate_full.c
 	make -C $(SLIMAVR)
 	$(CC) $< $(SLIMAVR)/libslimavr.a -o $@ $(CFLAGS)
 
@@ -34,17 +41,6 @@ wasm: clean all
 
 clean:
 	make -C $(SLIMAVR) clean
-	rm -rf $(BIN)/* $(SIM)/simulate
-
-sound: sound.hex
-	avrdude -p atmega2560 -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:sound.hex:i
-
-sound.hex: sound.asm
-	$(AS) -o $@ -e /dev/null -d /dev/null $<
-
-simsound: simsound.c sound.hex .FORCE
-	make -C $(SLIMAVR)
-	$(CC) $< $(SLIMAVR)/libslimavr.a -o $@ $(CFLAGS)
-	./simsound
+	rm -rf $(BIN)/*
 
 .FORCE:

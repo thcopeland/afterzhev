@@ -5,82 +5,113 @@
 .include "gamedefs.asm"
 
 .cseg
-    .org 0x0000
+.org 0x0000
     jmp init
-    .org OC1Aaddr
-    jmp isr_loop
+.org OC1Aaddr
+    jmp loop
+.org OC0Aaddr
+    movw r8, ZL
+    movw ZL, r4
+    ld r7, Z+
+    out PORTC, r7
+    movw r4, ZL
+    dec r6
+    movw ZL, r8
+    reti
 
 .include "init.asm"
 
 main:
-    ldi r18, 0xFF
-    ldi r19, 0x00
-    out DDRA, r18   ; VGA image output
-    out DDRB, r18   ; PB6 is VGA HSYNC
-    out DDRE, r18   ; PE4 is VGA VSYNC
-    out DDRC, r19   ; controls
-    out PORTC, r18  ; pull-up
+    ser r25
+    out DDRA, r25   ; VGA image output
+    out DDRB, r25   ; PB6 is VGA HSYNC
+    out DDRE, r25   ; PE4 is VGA VSYNC
+    out DDRC, r25   ; audio output
 
-    ; init timers
-    ; halt all timers
-    ldi r18, (1 << TSM) | (1 << PSRASY) | (1 << PSRSYNC)
-    out GTCCR, r18
+    ; Audio: CTC w/ OCRA and 64 prescaling
+    ldi r25, AUDIO_SAMPLING_PERIOD/64-1
+    out OCR0A, r25
+    ldi r25, 1 << OCIE0A
+    sts TIMSK0, r25
+    ldi r24, (1<<WGM01)
+    ldi r25, (1<<CS01)|(1<<CS00)
+    out TCCR0A, r24
+    out TCCR0B, r25
 
-    ; HSYNC
-    ; initialize timer 1 to fast PWM (pin PB6)
-    sti TCCR1A, (1 << WGM10) | (1 << WGM11) | (1 << COM1B1) | (1 << COM1B0)
-    sti TCCR1B, (1 << WGM12) | (1 << WGM13) | (1 << CS10)
-    stiw OCR1AL, (HSYNC_PERIOD - 1)
-    stiw OCR1BL, (HSYNC_PERIOD - HSYNC_SYNC_WIDTH - 1)
-    sti TIMSK1, (1 << OCIE1A)
+    ; HSYNC: fast PWM on pin PB6
+    ldi r24, low(HSYNC_PERIOD - 1)
+    ldi r25, high(HSYNC_PERIOD - 1)
+    sts OCR1AH, r25
+    sts OCR1AL, r24
+    ldi r24, low(HSYNC_PERIOD - HSYNC_SYNC_WIDTH - 1)
+    ldi r25, high(HSYNC_PERIOD - HSYNC_SYNC_WIDTH - 1)
+    sts OCR1BH, r25
+    sts OCR1BL, r24
+    ldi r25, 1 << OCIE1A
+    sts TIMSK1, r25
+    ldi r24, (1 << WGM10) | (1 << WGM11) | (1 << COM1B1) | (1 << COM1B0)
+    ldi r25, (1 << WGM12) | (1 << WGM13) | (1 << CS10)
+    sts TCCR1A, r24
+    sts TCCR1B, r25
 
-    ; VSYNC
-    ; initialize timer 3 to fast PWM (pin PE4)
-    sti TCCR3A, (1 << WGM30) | (1 << WGM31) | (1 << COM3B1) | (1 << COM3B0)
-    sti TCCR3B, (1 << WGM32) | (1 << WGM33) | (1 << CS32)
-    stiw OCR3AL, (VSYNC_PERIOD - 1)
-    stiw OCR3BL, (VSYNC_PERIOD - VSYNC_SYNC_WIDTH - 1)
+    ; VSYNC: fast PWM on pin PE4
+    ldi r24, low(VSYNC_PERIOD - 1)
+    ldi r25, high(VSYNC_PERIOD - 1)
+    sts OCR3AH, r25
+    sts OCR3AL, r24
+    ldi r24, low(VSYNC_PERIOD - VSYNC_SYNC_WIDTH - 1)
+    ldi r25, high(VSYNC_PERIOD - VSYNC_SYNC_WIDTH - 1)
+    sts OCR3BH, r25
+    sts OCR3BL, r24
+    ldi r24, (1 << WGM30) | (1 << WGM31) | (1 << COM3B1) | (1 << COM3B0)
+    ldi r25, (1 << WGM32) | (1 << WGM33) | (1 << CS32)
+    sts TCCR3A, r24
+    sts TCCR3B, r25
 
-    ; synchronize timers
-    stiw TCNT1L, (HSYNC_PERIOD - 1)
-    stiw TCNT3L, (VSYNC_PERIOD - VSYNC_SYNC_WIDTH - 1)
-
-    ; release timers
-    out GTCCR, r1
-    sei
+    ldi r24, low(HSYNC_PERIOD - 1)
+    ldi r25, high(HSYNC_PERIOD - 1)
+    sts TCNT1H, r25
+    sts TCNT1L, r24
+    ldi r24, low(VSYNC_PERIOD - VSYNC_SYNC_WIDTH - 1)
+    ldi r25, high(VSYNC_PERIOD - VSYNC_SYNC_WIDTH - 1)
+    sts TCNT3H, r25
+    sts TCNT3L, r24
 
     ; enable IDLE sleep mode for reliable interrupt timing
-    ldi r18, (1 << SE)
-    out SMCR, r18
+    ldi r25, (1 << SE)
+    out SMCR, r25
+
+    sei
 _main_stall:
     sleep
     rjmp _main_stall
 
-isr_loop:
+loop:
     ; drop stack frame to save a few bytes
-    pop r18
-    pop r18
-    .if PC_SIZE == 3
-    pop r18
-    .endif
+    pop r25
+    pop r25
+.if PC_SIZE == 3
+    pop r25
+.endif
 
-    ; normally, ISRs should be as short as possible and preserve CPU state. Since
-    ; everything is done within this ISR, however, that's unnecessary.
-    lds r18, TCNT3L
-    lds r19, TCNT3H
-    cpiw r18, r19, DISPLAY_CLK_TOP, r20
+    lds r24, TCNT3L
+    lds r25, TCNT3H
+    ldi r23, high(DISPLAY_CLK_TOP)
+    cpi r24, low(DISPLAY_CLK_TOP)
+    cpc r25, r23
     brpl _loop_active_test2
-    rjmp _loop_work
+    rjmp _loop_game
 _loop_active_test2:
-    cpiw r18, r19, DISPLAY_CLK_BOTTOM, r20
-    brlo _loop_active_screen
-    rjmp _loop_work
-_loop_active_screen:
-    ; output a single row from the framebuffer as quickly as reasonably possible.
+    ldi r23, high(DISPLAY_CLK_BOTTOM)
+    cpi r24, low(DISPLAY_CLK_BOTTOM)
+    cpc r25, r23
+    brlo _loop_video
+    rjmp _loop_game
+_loop_video:
     in XL, GPIOR0
     in XH, GPIOR1
-    in r16, GPIOR2
-    andi r16, 0x7f
+    in r20, GPIOR2
+    andi r20, 0x7f
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
@@ -92,33 +123,45 @@ _loop_active_screen:
     write_12_pixels PORTA, X
     write_12_pixels PORTA, X
     nop
-    dec r16
+    dec r20
     out PORTA, r1
-    brpl _loop_quick_work
+    brpl _loop_audio
     out GPIOR0, XL
     out GPIOR1, XH
-    ldi r16, DISPLAY_VERTICAL_STRETCH-1
-_loop_quick_work:
-    out GPIOR2, r16
-    ; After writing a row to the screen, there's a brief period (~75 cycles) where
-    ; we can do other work (this corresponds to the VGA front porch and sync pulse).
+    ldi r20, DISPLAY_VERTICAL_STRETCH-1
+_loop_audio:
+    out GPIOR2, r20
+    lds r25, audio_state
+    inc r25
+    andi r25, 7
+    sts audio_state, r25
+    breq _loop_audio_reset_buffer
+    cpi r25, 2
+    brsh _loop_audio_generate_sample
     rjmp _loop_end
-_loop_work:
-    in r16, GPIOR2
-    sbrc r16, 7
+_loop_audio_reset_buffer:
+    rcall reset_audio_buffer
+    rjmp _loop_end
+_loop_audio_generate_sample:
+    rcall generate_audio_sample
+    rjmp _loop_end
+_loop_game:
+    in r20, GPIOR2
+    sbrc r20, 7
     rjmp _loop_reset_render_state
-    ori r16, 0x80
-    out GPIOR2, r16
-    ; At this point, we've rendered a complete image to the screen, and there's a
-    ; fairly long gap (~99,300 cycles) where we fill the framebuffer and update
-    ; the game. This corresponds to the VGA vertical front porch and sync pulse,
-    ; in addition to the time we save with any blank rows (the latter is the most
-    ; significant).
-    ; heartbeat, used for syncing with the emulator
-    in r0, PORTB
-    ldi r16, 0x80
-    eor r0, r16
-    out PORTB, r0
+    sbr r20, 0x80
+    out GPIOR2, r20
+_loop_reset_audio_state:
+    ldi r25, 41 ; synchronize to frame
+    out TCNT0, r25
+_loop_heartbeat: ; used to synch with emulator
+    in r25, PORTB
+    ldi r24, 0x80
+    eor r25, r24
+    out PORTB, r25
+
+    ; At this point, there are around 100,000 cycles in which to render and
+    ; update the entire game.
 
     call rand
     clr r1
@@ -129,79 +172,83 @@ _loop_work:
     sts clock, r24
     sts clock+1, r25
 
+.if TARGETING_MCU ; the emulator pokes memory directly
     call read_controls
+.endif
 
-    lds r18, game_mode
+    lds r25, game_mode
 _loop_explore:
-    cpi r18, MODE_EXPLORE
+    cpi r25, MODE_EXPLORE
     brne _loop_inventory
     jmp explore_update_game
 _loop_inventory:
-    cpi r18, MODE_INVENTORY
+    cpi r25, MODE_INVENTORY
     brne _loop_shop
     jmp inventory_update_game
 _loop_shop:
-    cpi r18, MODE_SHOPPING
+    cpi r25, MODE_SHOPPING
     brne _loop_conversation
     jmp shop_update_game
 _loop_conversation:
-    cpi r18, MODE_CONVERSATION
+    cpi r25, MODE_CONVERSATION
     brne _loop_upgrade
     jmp conversation_update_game
 _loop_upgrade:
-    cpi r18, MODE_UPGRADE
+    cpi r25, MODE_UPGRADE
     brne _loop_gameover
     jmp upgrade_update_game
 _loop_gameover:
-    cpi r18, MODE_GAMEOVER
+    cpi r25, MODE_GAMEOVER
     brne _loop_start
     jmp gameover_update_game
 _loop_start:
-    cpi r18, MODE_START
+    cpi r25, MODE_START
     brne _loop_character_selection
     jmp start_update_game
 _loop_character_selection:
-    cpi r18, MODE_CHARACTER
+    cpi r25, MODE_CHARACTER
     brne _loop_intro
     jmp character_selection_update
 _loop_intro:
-    cpi r18, MODE_INTRO
+    cpi r25, MODE_INTRO
     brne _loop_resume
     jmp intro_update_game
 _loop_resume:
-    cpi r18, MODE_RESUME
+    cpi r25, MODE_RESUME
     brne _loop_about
     jmp resume_update_game
 _loop_about:
-    cpi r18, MODE_ABOUT
+    cpi r25, MODE_ABOUT
     brne _loop_help
     jmp about_update
 _loop_help:
-    cpi r18, MODE_HELP
+    cpi r25, MODE_HELP
     brne _loop_credits
     jmp help_update
 _loop_credits:
-    cpi r18, MODE_CREDITS
+    cpi r25, MODE_CREDITS
     brne _loop_reenter
     jmp credits_update
 
 _loop_reenter:
+    rcall refill_audio_buffer
 
 _loop_reset_render_state:
-    in r16, GPIOR2
-    andi r16, 0x80
-    ori r16, DISPLAY_VERTICAL_STRETCH
-    out GPIOR2, r16
-    ldi r16, low(framebuffer)
-    ldi r17, high(framebuffer)
-    out GPIOR0, r16
-    out GPIOR1, r17
+    sts audio_state, r1
+    in r25, GPIOR2
+    andi r25, 0x80
+    ori r25, DISPLAY_VERTICAL_STRETCH
+    out GPIOR2, r25
+    ldi r24, low(framebuffer)
+    ldi r25, high(framebuffer)
+    out GPIOR0, r24
+    out GPIOR1, r25
     sbi TIFR1, OCF1A ; clear any pending interrupts
 _loop_end:
-    ; exit from interrupt
     sei
     rjmp _main_stall
 
+.include "audio.asm"
 .include "math.asm"
 .include "controls.asm"
 .include "animation.asm"

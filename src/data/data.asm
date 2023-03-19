@@ -2,10 +2,19 @@
 ; we're limited to 8KB (minus stack). Everything that needs to be initialized will
 ; be initialized in init.asm.
 
-    .dseg
-    .org SRAM_START
+.dseg
+.org SRAM_START
 
 framebuffer:        .byte DISPLAY_WIDTH*DISPLAY_HEIGHT
+audio_buffer:       .byte AUDIO_BUFFER_SIZE
+channel1_phase:     .byte 1
+channel1_dphase:    .byte 1 ; controls pitch
+channel1_volume:    .byte 1
+channel1_wave:      .byte 1 ; [waveform:2][duration:6]
+channel2_phase:     .byte 1
+channel2_dphase:    .byte 1
+channel2_volume:    .byte 1
+channel2_wave:      .byte 1
 
 prev_controller_values: .byte 1
 controller_values:  .byte 1
@@ -14,6 +23,7 @@ savedmem_start:
 
 clock:              .byte 2
 mode_clock:         .byte 1
+audio_noise:
 seed:               .byte 2
 
 game_mode:          .byte 1
@@ -89,6 +99,7 @@ conversation_frame: .byte 2
 conversation_chars:
 upgrade_points:     .byte 1
 
+audio_state:
 character_render:   .byte CHARACTER_MEMSIZE-4
 subroutine_tmp:     .byte 4
 end_game_allocs:

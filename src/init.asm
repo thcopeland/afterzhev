@@ -9,14 +9,32 @@ _clear_memory_loop:
     st X+, r1
     sbiw r24, 1
     brne _clear_memory_loop
+_init_video:
     ldi r24, low(framebuffer)
     ldi r25, high(framebuffer)
     out GPIOR0, r24 ; stores the video framebuffer offset (low)
     out GPIOR1, r25 ; stores the video framebuffer offset (high)
     out GPIOR2, r1  ; video frame status
+_init_audio:
+    ldi r24, low(audio_buffer)
+    ldi r25, high(audio_buffer)
+    movw r4, r24
+    ldi r25, AUDIO_BUFFER_SIZE
+    mov r6, r25
+    sts audio_state, r1
+
     ldi r25, 1
     sts seed, r25
     sts seed+1, r1
+
+    sts channel1_phase, r1
+    ldi r25, 20
+    sts channel1_dphase, r25
+    ldi r25, 32
+    sts channel1_volume, r25
+    ldi r25, 0<<6
+    sts channel1_wave, r25
+
     sts start_selection, r1
     call restart_game
 
