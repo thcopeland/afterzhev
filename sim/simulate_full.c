@@ -39,7 +39,6 @@ void run_to_sync(void) {
 
     int drop_frame = SDL_GetQueuedAudioSize(audio_device) > 8*AUDIO_BUFFER_SIZE;
     int samples = 0;
-    int16_t sample, last_sample = 0;
 
     while (1) {
         uint8_t sync = avr->mem[SYNC_PORT] & (1<<SYNC_PIN);
@@ -50,10 +49,7 @@ void run_to_sync(void) {
         int vsync2 = avr->mem[VSYNC_PORT] & (1<<VSYNC_PIN);
 
         if (!drop_frame && (avr->clock % SAMPLING_CYCLES) == 0) {
-            sample = avr->mem[AUDIO_PORT] << 6;
-            sample = sample/2 + last_sample/2;
-            audio_buffer[samples++] = sample;
-            last_sample = sample;
+            audio_buffer[samples++] = avr->mem[AUDIO_PORT] << 6;
         }
 
         if (hsync2 == 0 && hsync != hsync2) {

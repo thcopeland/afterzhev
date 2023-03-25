@@ -163,7 +163,7 @@ _loop_heartbeat: ; used to synch with emulator
     ; At this point, there are around 100,000 cycles in which to render and
     ; update the entire game.
 
-    call rand
+    rcall rand
     clr r1
 
     lds r24, clock
@@ -232,7 +232,7 @@ _loop_credits:
 
 _loop_reenter:
     rcall refill_audio_buffer
-
+    rcall update_audio_channels
 _loop_reset_render_state:
     sts audio_state, r1
     in r25, GPIOR2

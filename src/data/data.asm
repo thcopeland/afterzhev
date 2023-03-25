@@ -10,11 +10,14 @@ audio_buffer:       .byte AUDIO_BUFFER_SIZE
 channel1_phase:     .byte 1
 channel1_dphase:    .byte 1 ; controls pitch
 channel1_volume:    .byte 1
-channel1_wave:      .byte 1 ; [waveform:2][duration:6]
+channel1_wave:      .byte 1 ; [waveform:2][fade:1][duration:5]
 channel2_phase:     .byte 1
 channel2_dphase:    .byte 1
 channel2_volume:    .byte 1
 channel2_wave:      .byte 1
+
+music_track:        .byte 2
+sfx_tracks:         .byte 2
 
 prev_controller_values: .byte 1
 controller_values:  .byte 1
@@ -104,4 +107,4 @@ character_render:   .byte CHARACTER_MEMSIZE-4
 subroutine_tmp:     .byte 4
 end_game_allocs:
 
-.message "Unallocated memory: ", RAMEND - end_game_allocs, " (about 0x16 needed for stack)"
+.message "Unallocated memory: ", RAMEND - end_game_allocs, " (about 0x19 needed for stack)"

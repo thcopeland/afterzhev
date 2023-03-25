@@ -28,3 +28,5 @@
 ; Partion 4 (words 0x18000-0x7ffff): images, sounds
     .org 0x18000
     .include "images.asm"
+    .include "music.asm"
+    .include "sfx.asm"

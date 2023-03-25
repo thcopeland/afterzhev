@@ -199,3 +199,63 @@ _rsb_loop:
     dec r18
     brne _rsb_loop
     ret
+
+; Check note duration and handle fading if enabled.
+;
+; Register Usage
+;   r23         calculations
+;   r24-r25     channel info
+update_audio_channels:
+    lds r25, channel1_wave
+    lds r23, clock
+    andi r23, 0x03
+    brne _uac_channel1_fade
+    mov r24, r25
+    andi r25, 0xe0
+    andi r24, 0x1f
+    breq _uac_channel2
+    dec r24
+    brne _uac_channel1_save
+    sts channel1_volume, r1
+    sts channel1_wave, r1
+    rjmp _uac_channel2
+_uac_channel1_save:
+    or r25, r24
+    sts channel1_wave, r25
+_uac_channel1_fade:
+    sbrs r25, 5
+    rjmp _uac_channel2
+    lds r25, channel1_volume
+    subi r25, 2
+    brsh _uac_channel1_save2
+    clr r25
+_uac_channel1_save2:
+    sts channel1_volume, r25
+_uac_channel2:
+    lds r25, channel2_wave
+    lds r23, clock
+    andi r23, 0x03
+    brne _uac_channel2_fade
+    mov r24, r25
+    andi r25, 0xe0
+    andi r24, 0x1f
+    breq _uac_end
+    dec r24
+    brne _uac_channel2_save
+    sts channel2_volume, r1
+    sts channel2_wave, r1
+    rjmp _uac_end
+_uac_channel2_save:
+    or r25, r24
+    sts channel2_wave, r25
+_uac_channel2_fade:
+    sbrs r25, 5
+    rjmp _uac_end
+    lds r25, channel2_volume
+    subi r25, 2
+    brsh _uac_channel2_save2
+    clr r25
+_uac_channel2_save2:
+    sts channel2_volume, r25
+_uac_end:
+    ret

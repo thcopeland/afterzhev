@@ -32,7 +32,7 @@ _init_audio:
     sts channel1_dphase, r25
     ldi r25, 32
     sts channel1_volume, r25
-    ldi r25, 0<<6
+    ldi r25, (0<<6)|(1<<5)|31
     sts channel1_wave, r25
 
     sts start_selection, r1
