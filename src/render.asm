@@ -2037,8 +2037,8 @@ _rfs_loop:
 ;   r21             calculations
 ;   r22, r23        min x, width (params)
 ;   r24, r25        min y, height (params)
-;   Y (r28:r29)     framebuffer pointer (parm)
-;   Z (r30:r31)     screen pointer (parm)
+;   Y (r28:r29)     framebuffer pointer (param)
+;   Z (r30:r31)     screen pointer (param)
 render_partial_screen:
     add ZL, r22
     adc ZH, r1
