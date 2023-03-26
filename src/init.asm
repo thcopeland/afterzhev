@@ -19,8 +19,9 @@ _init_audio:
     ldi r24, low(audio_buffer)
     ldi r25, high(audio_buffer)
     movw r4, r24
-    ldi r25, AUDIO_BUFFER_SIZE
-    mov r6, r25
+    ldi r24, low(audio_buffer+AUDIO_BUFFER_SIZE)
+    ldi r25, high(audio_buffer+AUDIO_BUFFER_SIZE)
+    movw r6, r24
     sts audio_state, r1
 
     ldi r25, 1

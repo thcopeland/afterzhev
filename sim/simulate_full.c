@@ -56,6 +56,28 @@ void run_to_sync(void) {
             video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255;
             offset = 0;
             scanline += 1;
+
+            int i = (scanline-1)*3*GAME_DISPLAY_WIDTH + 3*(GAME_DISPLAY_WIDTH-30);
+            int audio_read_ptr = avr->reg[4] | (avr->reg[5]<<8);
+            int audio_write_ptr = avr->reg[6] | (avr->reg[7]<<8);
+            for (int addr = 0x20F0-6; addr < 0x20F0+20; addr++, i+=3) {
+                video_buffer[i] = 0;
+                video_buffer[i+1] = 0;
+                video_buffer[i+2] = 0;
+                if (addr > audio_write_ptr) {
+                    video_buffer[i] = 64;
+                } else if (addr == audio_write_ptr) {
+                    video_buffer[i] = 255;
+                } else if (addr > audio_read_ptr) {
+                    video_buffer[i] = avr->mem[addr];
+                    video_buffer[i+1] = avr->mem[addr];
+                    video_buffer[i+2] = avr->mem[addr];
+                } else if (addr == audio_read_ptr) {
+                    video_buffer[i+1] = 255;
+                } else if (addr >= 0x20F0){
+                    video_buffer[i+1] = 64;
+                }
+            }
         } else {
             offset += 1;
 
@@ -75,8 +97,6 @@ void run_to_sync(void) {
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += val;
             }
         }
-
-        video_buffer[3*(GAME_DISPLAY_HEIGHT-2)*GAME_DISPLAY_WIDTH + avr->reg[6]*3+1] = 255;
 
         if (vsync2 == 0 && vsync != vsync2) {
             for (int i = 0; i < GAME_DISPLAY_WIDTH; i++) {

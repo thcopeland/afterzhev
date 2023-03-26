@@ -1,12 +1,18 @@
-; Audio is done by mainaining a buffer containing AUDIO_BUFFER_SIZE unsigned
+; Audio is done by maintaining a buffer containing AUDIO_BUFFER_SIZE unsigned
 ; 8-bit samples. The samples are played at a constant rate by an interrupt, so
 ; the buffer MUST be refilled every 50k cycles or so.
 ;
+; Helpful Diagram
+;            played             samples                 junk
+;      |               ###########################                  |
+;      |               |                          |                 |
+; audio_buffer       r4:r5                      r6:r7    audio_buffer+AUDIO_BUFFER_SIZE
+;
 ; Audio-only Registers
 ;   r4-r5       audio buffer pointer
-;   r6          remaining samples
-;   r7-r9       tmp
-;   r10-r12     unused so far
+;   r6-r7       generated audio end pointer
+;   r8-r10      temporary
+;   r11         unused so far
 
 ; Move all samples to the beginning of the audio buffer, so the rest can be
 ; completely filled. AUDIO_BUFFER_SIZE bytes will copied every time, which will
@@ -20,6 +26,10 @@ reset_audio_buffer:
     ldi ZH, high(audio_buffer)
     in r25, SREG
     cli
+    sub r6, r4
+    sbc r7, r5
+    add r6, ZL
+    adc r7, ZH
     movw XL, r4
     movw r4, ZL
 .if AUDIO_BUFFER_SIZE != 14
@@ -63,14 +73,12 @@ reset_audio_buffer:
 ;  r20-r27      calculations
 ;  r25          generated sample
 generate_audio_sample:
-    ldi r20, low(audio_buffer+AUDIO_BUFFER_SIZE-1)
-    ldi r21, high(audio_buffer+AUDIO_BUFFER_SIZE-1)
-    movw ZL, r4
-    add ZL, r6
-    adc ZH, r1
-    cp r20, ZL
-    cpc r21, ZH
-    brsh generate_audio_sample2
+    ldi r20, low(audio_buffer+AUDIO_BUFFER_SIZE)
+    ldi r21, high(audio_buffer+AUDIO_BUFFER_SIZE)
+    movw ZL, r6
+    cp ZL, r20
+    cpc ZH, r21
+    brlo generate_audio_sample2
     ret
 generate_audio_sample2:
     lds r24, audio_noise
@@ -176,7 +184,9 @@ _gas_mix_channels:
 _gas_write_sample:
     sts audio_noise, r24
     st Z+, r25
-    inc r6
+    ldi r25, 1
+    add r6, r25
+    adc r7, r1
     ret
 
 ; Reset the audio buffer and generate samples until it's full.
@@ -187,17 +197,17 @@ _gas_write_sample:
 ;   Z (r30:r31)     audio buffer pointer
 refill_audio_buffer:
     rcall reset_audio_buffer
-    ldi ZL, low(audio_buffer)
-    ldi ZH, high(audio_buffer)
-    mov r20, r6
-    add ZL, r20
-    adc ZH, r1
-    ldi r18, AUDIO_BUFFER_SIZE
-    sub r18, r20
-_rsb_loop:
-    rcall generate_audio_sample ; TODO generate_audio_sample2, maybe even inline?
+    movw ZL, r6
+    ldi r18, low(audio_buffer+AUDIO_BUFFER_SIZE)
+    ldi r19, high(audio_buffer+AUDIO_BUFFER_SIZE)
+    sub r18, ZL
+    sbc r19, ZH
+    breq _rab_end
+_rab_loop:
+    rcall generate_audio_sample2
     dec r18
-    brne _rsb_loop
+    brne _rab_loop
+_rab_end:
     ret
 
 ; Check note duration and handle fading if enabled.

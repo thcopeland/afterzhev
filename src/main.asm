@@ -12,10 +12,9 @@
 .org OC0Aaddr
     movw r8, ZL
     movw ZL, r4
-    ld r7, Z+
-    out PORTC, r7
+    ld r10, Z+
+    out PORTC, r10
     movw r4, ZL
-    dec r6
     movw ZL, r8
     reti
 
@@ -148,7 +147,7 @@ _loop_audio_generate_sample:
 _loop_game:
     in r20, GPIOR2
     sbrc r20, 7
-    rjmp _loop_reset_render_state
+    rjmp _loop_check_audio
     sbr r20, 0x80
     out GPIOR2, r20
 _loop_reset_audio_state:
@@ -171,6 +170,9 @@ _loop_heartbeat: ; used to synch with emulator
     adiw r24, 1
     sts clock, r24
     sts clock+1, r25
+
+    sts TIMSK1, r1
+    sei
 
 .if TARGETING_MCU ; the emulator pokes memory directly
     call read_controls
@@ -229,11 +231,19 @@ _loop_credits:
     cpi r25, MODE_CREDITS
     brne _loop_reenter
     jmp credits_update
-
 _loop_reenter:
-    rcall refill_audio_buffer
     rcall update_audio_channels
+_loop_check_audio:
+    lds r24, TCNT3L
+    lds r25, TCNT3H
+    ldi r22, low(DISPLAY_CLK_TOP)
+    ldi r23, high(DISPLAY_CLK_TOP)
+    cp r24, r22
+    cpc r25, r23
+    brlo _loop_reset_render_state
+    rcall refill_audio_buffer
 _loop_reset_render_state:
+    cli
     sts audio_state, r1
     in r25, GPIOR2
     andi r25, 0x80
@@ -244,6 +254,8 @@ _loop_reset_render_state:
     out GPIOR0, r24
     out GPIOR1, r25
     sbi TIFR1, OCF1A ; clear any pending interrupts
+    ldi r25, 1 << OCIE1A
+    sts TIMSK1, r25
 _loop_end:
     sei
     rjmp _main_stall
