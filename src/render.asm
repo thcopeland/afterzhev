@@ -1,8 +1,8 @@
 .equ TILE_SOLID_GREEN = 39
 .equ TILE_SOLID_BLACK = 73
-.equ TILE_SOLID_BEIGE = 175
-.equ TILE_SOLID_BROWN = 185
-.equ TILE_WOOD_FLOOR = 197
+.equ TILE_SOLID_BEIGE = 176
+.equ TILE_SOLID_BROWN = 186
+.equ TILE_WOOD_FLOOR = 198
 
 ; Write an entire tile or a horizontal slice of a tile to a framebuffer. This is
 ; slightly faster but less flexible than write_partial_tile.
