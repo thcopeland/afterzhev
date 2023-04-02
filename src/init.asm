@@ -29,11 +29,26 @@ _init_audio:
     sts seed+1, r1
 
     sts channel1_phase, r1
-    ldi r25, 20
-    sts channel1_dphase, r25
-    ldi r25, 32
+    sts channel1_phase+1, r1
+    sts channel1_dphase, r1
+    sts channel1_dphase+1, r1
+    sts channel1_volume, r1
+    sts channel1_wave, r1
+
+    sts channel2_phase, r1
+    sts channel2_phase+1, r1
+    sts channel2_dphase, r1
+    sts channel2_dphase+1, r1
+    sts channel2_volume, r1
+    sts channel2_wave, r1
+
+    ldi r24, low(4000)
+    ldi r25, high(4000)
+    sts channel1_dphase, r24
+    sts channel1_dphase+1, r25
+    ldi r25, 128
     sts channel1_volume, r25
-    ldi r25, (0<<6)|(1<<5)|31
+    ldi r25, (1<<6)|(1<<5)|31
     sts channel1_wave, r25
 
     sts start_selection, r1

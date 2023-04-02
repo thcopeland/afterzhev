@@ -84,11 +84,8 @@ generate_audio_sample2:
     lds r24, audio_noise
 _gas_channel_1:
     lds r20, channel1_volume
-    lds r21, channel1_phase
+    lds r21, channel1_phase+1
     lds r22, channel1_wave
-    lds r23, channel1_dphase ; advance channel 1
-    add r23, r21
-    sts channel1_phase, r23
 _gas_channel_1_check_1:
     sbrc r22, 7
     rjmp _gas_channel_1_check_3
@@ -99,7 +96,7 @@ _gas_channel_1_sawtooth:
     mul r20, r21
     mov r25, r1
     clr r1
-    rjmp _gas_channel_2
+    rjmp _gas_channel_1_phase
 _gas_channel_1_noise:
     mov r23, r24
     mov r22, r24
@@ -115,28 +112,34 @@ _gas_channel_1_noise:
     mul r20, r24
     mov r25, r1
     clr r1
-    rjmp _gas_channel_2
+    rjmp _gas_channel_2 ; don't update phase for performance
 _gas_channel_1_check_3:
     sbrc r22, 6
     rjmp _gas_channel_1_square_75
 _gas_channel_1_square_50:
     clr r25
     cpi r21, 64
-    brsh _gas_channel_2
+    brsh _gas_channel_1_phase
     mov r25, r20
-    rjmp _gas_channel_2
+    rjmp _gas_channel_1_phase
 _gas_channel_1_square_75:
     clr r25
     cpi r21, 192
-    brsh _gas_channel_2
+    brsh _gas_channel_1_phase
     mov r25, r20
+_gas_channel_1_phase:
+    lds r20, channel1_phase
+    lds r21, channel1_phase+1
+    lds r22, channel1_dphase
+    lds r23, channel1_dphase+1
+    add r20, r22
+    adc r21, r23
+    sts channel1_phase, r20
+    sts channel1_phase+1, r21
 _gas_channel_2:
     lds r20, channel2_volume
-    lds r21, channel2_phase
+    lds r21, channel2_phase+1
     lds r22, channel2_wave
-    lds r23, channel2_dphase
-    add r23, r21
-    sts channel2_phase, r23
 _gas_channel_2_check_1:
     sbrc r22, 7
     rjmp _gas_channel_2_check_3
@@ -147,7 +150,7 @@ _gas_channel_2_sawtooth:
     mul r20, r21
     mov r26, r1
     clr r1
-    rjmp _gas_mix_channels
+    rjmp _gas_channel_2_phase
 _gas_channel_2_noise:
     mov r23, r24
     mov r22, r24
@@ -170,13 +173,22 @@ _gas_channel_2_check_3:
     rjmp _gas_channel_2_square_75
 _gas_channel_2_square_50:
     cpi r21, 64
-    brsh _gas_mix_channels
+    brsh _gas_channel_2_phase
     mov r26, r20
-    rjmp _gas_mix_channels
+    rjmp _gas_channel_2_phase
 _gas_channel_2_square_75:
     cpi r21, 192
-    brsh _gas_mix_channels
+    brsh _gas_channel_2_phase
     mov r26, r20
+_gas_channel_2_phase:
+    lds r20, channel2_phase
+    lds r21, channel2_phase+1
+    lds r22, channel2_dphase
+    lds r23, channel2_dphase+1
+    add r20, r22
+    adc r21, r23
+    sts channel2_phase, r20
+    sts channel2_phase+1, r21
 _gas_mix_channels:
     add r25, r26
     brcc _gas_write_sample

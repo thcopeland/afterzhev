@@ -10,6 +10,7 @@
 .org OC1Aaddr
     jmp loop
 .org OC0Aaddr
+audio:
     movw r8, ZL
     movw ZL, r4
     ld r10, Z+
