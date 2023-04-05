@@ -230,7 +230,7 @@ _rab_end:
 update_audio_channels:
     lds r25, channel1_wave
     lds r23, clock
-    andi r23, 0x03
+    andi r23, 0x01
     brne _uac_channel1_fade
     mov r24, r25
     andi r25, 0xe0
@@ -248,7 +248,7 @@ _uac_channel1_fade:
     sbrs r25, 5
     rjmp _uac_channel2
     lds r25, channel1_volume
-    subi r25, 2
+    subi r25, 1
     brsh _uac_channel1_save2
     clr r25
 _uac_channel1_save2:
@@ -256,7 +256,7 @@ _uac_channel1_save2:
 _uac_channel2:
     lds r25, channel2_wave
     lds r23, clock
-    andi r23, 0x03
+    andi r23, 0x01
     brne _uac_channel2_fade
     mov r24, r25
     andi r25, 0xe0
@@ -274,10 +274,98 @@ _uac_channel2_fade:
     sbrs r25, 5
     rjmp _uac_end
     lds r25, channel2_volume
-    subi r25, 2
+    subi r25, 1
     brsh _uac_channel2_save2
     clr r25
 _uac_channel2_save2:
     sts channel2_volume, r25
 _uac_end:
+    ret
+
+; Update sound effects and music, giving sound effects priority over channel 1.
+;
+; Register Usage
+;   r20-r25         calculations
+;   Z (r30:r31)     flash pointer
+update_all_sound:
+    lds r25, channel1_wave
+    tst r25
+    brne _uas_music
+    lds r25, sfx_track
+    tst r25
+    breq _uas_music
+    ldi ZL, byte3(2*sound_effects)
+    out RAMPZ, ZL
+    ldi ZL, low(2*sound_effects)
+    ldi ZH, high(2*sound_effects)
+    ldi r24, 4
+    mul r24, r25
+    add ZL, r0
+    adc ZH, r1
+    clr r1
+    elpm r24, Z+
+    tst r24
+    breq _uas_sfx_stop
+_uas_sfx_note:
+    sts channel1_wave, r24
+    elpm r24, Z+
+    sts channel1_volume, r24
+    elpm r24, Z+
+    sts channel1_dphase, r24
+    elpm r24, Z+
+    sts channel1_dphase+1, r24
+    inc r25
+    sts sfx_track, r25
+    rjmp _uas_music
+_uas_sfx_stop:
+    sts sfx_track, r1
+_uas_music:
+    lds r25, channel2_wave
+    tst r25
+    brne _uas_end
+    ldi ZL, byte3(2*music_tracks)
+    out RAMPZ, ZL
+    lds ZL, music_track
+    lds ZH, music_track+1
+_uas_music_check:
+    elpm r20, Z+
+    tst r20
+    brne _uas_music_channel_1
+    lds r25, seed
+    andi r25, 3
+    breq _uas_music_next
+    dec r25
+_uas_music_next:
+    lsl r25
+    inc r25
+    add ZL, r25
+    adc ZH, r1
+    elpm r24, Z+
+    elpm r25, Z+
+    sts music_track, r24
+    sts music_track+1, r25
+    rjmp _uas_end
+_uas_music_channel_1:
+    elpm r21, Z+
+    elpm r22, Z+
+    elpm r23, Z+
+    lds r25, channel1_wave
+    tst r25
+    brne _uas_music_channel_2
+    sts channel1_wave, r20
+    sts channel1_volume, r21
+    sts channel1_dphase, r22
+    sts channel1_dphase+1, r23
+_uas_music_channel_2:
+    elpm r20, Z+
+    elpm r21, Z+
+    elpm r22, Z+
+    elpm r23, Z+
+    sts channel2_wave, r20
+    sts channel2_volume, r21
+    sts channel2_dphase, r22
+    sts channel2_dphase+1, r23
+    sts music_track, ZL
+    sts music_track+1, ZH
+_uas_end:
     ret

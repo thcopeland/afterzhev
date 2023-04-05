@@ -234,6 +234,7 @@ _loop_credits:
     jmp credits_update
 _loop_reenter:
     rcall update_audio_channels
+    rcall update_all_sound
 _loop_check_audio:
     lds r24, TCNT3L
     lds r25, TCNT3H

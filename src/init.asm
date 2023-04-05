@@ -42,14 +42,14 @@ _init_audio:
     sts channel2_volume, r1
     sts channel2_wave, r1
 
-    ldi r24, low(4000)
-    ldi r25, high(4000)
-    sts channel1_dphase, r24
-    sts channel1_dphase+1, r25
-    ldi r25, 128
-    sts channel1_volume, r25
-    ldi r25, (1<<6)|(1<<5)|31
-    sts channel1_wave, r25
+    ldi r24, low(2*music_test)
+    ldi r25, high(2*music_test)
+    sts music_track, r24
+    sts music_track+1, r25
+    sts sfx_track, r1
+
+    ldi r25, (sfx_confirm-sound_effects)>>1
+    sts sfx_track, r25
 
     sts start_selection, r1
     call restart_game

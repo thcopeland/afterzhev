@@ -61,8 +61,8 @@ int dphase_table[] = {163, 173, 183, 194, 206, 218, 231, 245, 259, 275, 291, 309
 int a_harmonic_minor[] = {NOTE_A4, NOTE_B4, NOTE_C4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_Ab4};
 int a_harmonic_major[] = {NOTE_A4, NOTE_B4, NOTE_Db4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_Ab4};
 int notes[] = {24, 31, 24, 32, 39, 31, 39, 24, 28, 35, 32, 24, 32, 24, 28, 39, 24, 31, 28, 24, 28, 39, 35, 24, 35, 32, 24, 39, 28, 24, 35, 24, 28, 24, 31, 24, 26, 35, 28, 39, 24, 26, 35, 28, 31, 39, 24, 26, 35, 28, 39, 28, 35, 32, 35, 24, 35, 39, 32, 24, 35, 31, 32, 39, 32, 24, 32, 31, 24, 35, 24, 39, 24, 35, 24, 26, 24, 26, 35, 28, 31, 28, 31, 24, 35, 24, 35, 24, 32, 24, 32, 35, 28, 26, 31, 39, 24, 28, 35, 32, 28};
-// int notes2[] = { NOTE_A5, NOTE_D5, NOTE_A5, NOTE_F4 };
-int notes2[] = {NOTE_A4, NOTE_B4, NOTE_C4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_Ab4};
+int notes2[] = { NOTE_A3, NOTE_D3, NOTE_A3, NOTE_F2 };
+// int notes2[] = {NOTE_A4, NOTE_B4, NOTE_C4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_Ab4};
 
 struct channel {
     int *src;
@@ -70,6 +70,7 @@ struct channel {
     uint16_t end;
     uint16_t phase;
     uint16_t duration;
+    uint16_t beat;
 };
 
 struct channel channel1 = {
@@ -77,7 +78,8 @@ struct channel channel1 = {
     .place = 0,
     .end = sizeof(notes)/sizeof(notes[0]),
     .phase = 0,
-    .duration = 20000
+    .duration = 20000,
+    .beat = 0
 };
 
 struct channel channel2 = {
@@ -85,7 +87,8 @@ struct channel channel2 = {
     .place = 0,
     .end = sizeof(notes2)/sizeof(notes2[0]),
     .phase = 0,
-    .duration = 20000
+    .duration = 20000,
+    .beat = 0
 };
 
 SDL_AudioDeviceID audio_device;
@@ -96,14 +99,25 @@ void audio_callback(void *udata, uint8_t *buffer, int len) {
     len /= sizeof(stream[0]);
 
     for (int i = 0; i < len; i++) {
-        uint16_t note1 = channel1.src[channel1.place]-24;
-        uint16_t note2 = channel2.src[channel2.place]-12;
+        uint16_t note1 = channel1.src[channel1.place]-12;
+        uint16_t note2 = channel2.src[channel2.place];
 
         channel1.phase += dphase_table[note1];
         channel2.phase += dphase_table[note2];
 
         if (--channel1.duration == 0) {
-            channel1.duration = (rand() % 2) ? 20000 : 10000;
+            if ((channel1.beat & 3) > 1) {
+                if (rand() & 1) {
+                    channel1.duration = 20000;
+                    channel1.beat += 2;
+                } else {
+                    channel1.duration = 10000;
+                    channel1.beat += 1;
+                }
+            } else {
+                channel1.duration = 10000;
+                channel1.beat += 1;
+            }
             channel1.phase = 0;
             channel1.place = (channel1.place + 1) % channel1.end;
         }
@@ -114,7 +128,7 @@ void audio_callback(void *udata, uint8_t *buffer, int len) {
             channel2.place = (channel2.place + 1) % channel2.end;
         }
 
-        stream[i] = channel1.phase/400 + (channel2.phase > 32000 ? 16384 : 0)/2;
+        stream[i] = channel1.phase/40 + (channel2.phase > 32000 ? 16384 : 0)/20;
     }
 }
 
