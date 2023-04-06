@@ -118,7 +118,7 @@ _gas_channel_1_check_3:
     rjmp _gas_channel_1_square_75
 _gas_channel_1_square_50:
     clr r25
-    cpi r21, 64
+    cpi r21, 128
     brsh _gas_channel_1_phase
     mov r25, r20
     rjmp _gas_channel_1_phase
@@ -172,7 +172,7 @@ _gas_channel_2_check_3:
     sbrc r22, 6
     rjmp _gas_channel_2_square_75
 _gas_channel_2_square_50:
-    cpi r21, 64
+    cpi r21, 128
     brsh _gas_channel_2_phase
     mov r26, r20
     rjmp _gas_channel_2_phase
@@ -330,7 +330,7 @@ _uas_music:
 _uas_music_check:
     elpm r20, Z+
     tst r20
-    brne _uas_music_channel_1
+    brne _uas_music_channel_2
     lds r25, seed
     andi r25, 3
     breq _uas_music_next
@@ -345,19 +345,7 @@ _uas_music_next:
     sts music_track, r24
     sts music_track+1, r25
     rjmp _uas_end
-_uas_music_channel_1:
-    elpm r21, Z+
-    elpm r22, Z+
-    elpm r23, Z+
-    lds r25, channel1_wave
-    tst r25
-    brne _uas_music_channel_2
-    sts channel1_wave, r20
-    sts channel1_volume, r21
-    sts channel1_dphase, r22
-    sts channel1_dphase+1, r23
 _uas_music_channel_2:
-    elpm r20, Z+
     elpm r21, Z+
     elpm r22, Z+
     elpm r23, Z+
@@ -365,6 +353,22 @@ _uas_music_channel_2:
     sts channel2_volume, r21
     sts channel2_dphase, r22
     sts channel2_dphase+1, r23
+_uas_music_channel_1:
+    lds r25, channel1_wave
+    tst r25
+    brne _uas_advance_channel_1
+    elpm r20, Z+
+    elpm r21, Z+
+    elpm r22, Z+
+    elpm r23, Z+
+    sts channel1_wave, r20
+    sts channel1_volume, r21
+    sts channel1_dphase, r22
+    sts channel1_dphase+1, r23
+    rjmp _uas_save_channel_1
+_uas_advance_channel_1:
+    adiw ZL, 4
+_uas_save_channel_1:
     sts music_track, ZL
     sts music_track+1, ZH
 _uas_end:

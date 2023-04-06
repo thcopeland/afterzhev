@@ -34,25 +34,25 @@ music_tracks:
 music_null:
     MUSIC_END music_null, music_null, music_null
 music_test:
-    .db (2<<6)|(16), 16, low(NOTE_A3), high(NOTE_A3)
+    .db (2<<6)|(16), 16, low(NOTE_A4), high(NOTE_A4)
     .db (1<<6)|(16), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_B3), high(NOTE_B3)
+    .db (2<<6)|(16), 16, low(NOTE_B4), high(NOTE_B4)
     .db (1<<6)|(16), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_Db3), high(NOTE_Db3)
+    .db (2<<6)|(16), 16, low(NOTE_Db4), high(NOTE_Db4)
     .db (1<<6)|(16), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_D3), high(NOTE_D3)
+    .db (2<<6)|(16), 16, low(NOTE_D4), high(NOTE_D4)
     .db (1<<6)|(16), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_E3), high(NOTE_E3)
+    .db (2<<6)|(16), 16, low(NOTE_E4), high(NOTE_E4)
     .db (1<<6)|(16), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_F3), high(NOTE_F3)
+    .db (2<<6)|(16), 16, low(NOTE_F4), high(NOTE_F4)
     .db (1<<6)|(16), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_Ab3), high(NOTE_Ab3)
+    .db (2<<6)|(16), 16, low(NOTE_Ab4), high(NOTE_Ab4)
     .db (1<<6)|(16), 0, 0, 0
 
     MUSIC_END music_null, music_null, music_null
