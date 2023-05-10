@@ -94,7 +94,7 @@ _prmd_damage:
     sbiw ZL, NPC_TABLE_ENEMY_ATTACK_OFFSET
     ldi r24, 0x0f
 _prmd_attack_roll1:
-    call rand
+    movw r0, r2
     and r0, r24
     cp r0, r26
     brlo _prmd_calculate_defense
@@ -222,7 +222,7 @@ _pred_calculate_damage:
     andi r25, 0x0f
     ldi r24, 0x0f
 _pred_attack_roll1:
-    call rand
+    movw r0, r2
     and r0, r24
     cp r0, r25
     brlo _pred_calculate_defense
@@ -354,7 +354,7 @@ _nrmd_calc_damage:
     andi r25, 0x0f
     ldi r24, 0x0f
 _nrmd_attack_roll1:
-    call rand
+    movw r0, r2
     and r0, r24
     cp r0, r25
     brlo _nrmd_strength_damage
@@ -498,7 +498,7 @@ _nrrd_calculate_damage:
     brne _nrrd_calculate_defense
     ldi r24, 0x0f
 _nrrd_attack_roll1:
-    call rand
+    movw r0, r2
     and r0, r24
     cp r0, r25
     brlo _nrrd_additional_damage
@@ -603,9 +603,7 @@ resolve_enemy_death:
     rjmp _red_record_death
 _red_resolve_enemy_drops:
     adiw ZL, NPC_TABLE_ENEMY_DROPS_OFFSET
-    call rand
-    mov r25, r1
-    clr r1
+    mov r25, r2
     andi r25, 0x3
     cpi r25, NPC_TABLE_ENEMY_DROPS_COUNT
     brlo _red_determine_enemy_drop

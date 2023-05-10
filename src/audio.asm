@@ -3,8 +3,9 @@
 ; memory.
 ;
 ; Audio-only Registers
-;   r4-r5       channel 1 phase
-;   r6-r7       channel 2 phase
+;   r2:r3       noise (and source of randomness)
+;   r4:r5       channel 1 phase
+;   r6:r7       channel 2 phase
 ;   r8-r12      temporary
 
 ; Check note duration and handle fading. Four different types of effects:
@@ -13,6 +14,7 @@
 ; Register Usage
 ;   r23-r25     calculations
 update_audio_channels:
+    ; TODO channel 1 as well
     lds r24, channel2_wave
     mov r25, r24
     andi r25, 0x60

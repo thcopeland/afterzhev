@@ -213,9 +213,7 @@ spawn_distant_npcs:
     lds r20, clock
     and r20, r22
     brne _sdn_end
-    call rand
-    clr r1
-    cp r0, r23
+    cp r2, r23
     brsh _sdn_end
     ldi YL, low(sector_npcs)
     ldi YH, high(sector_npcs)

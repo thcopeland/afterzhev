@@ -776,15 +776,11 @@ sector_deep_forest_update:
     ret
 
 sector_deep_forest_init:
-    call rand
-    mov r25, r0
-    clr r1
+    mov r25, r2
     andi r25, 0x03
     subi r25, low(-NPC_DEEP_FOREST_FOX)
     call add_distant_npc
-    call rand
-    mov r25, r0
-    clr r1
+    mov r25, r3
     andi r25, 0x03
     subi r25, low(-NPC_DEEP_FOREST_FOX)
     call add_distant_npc

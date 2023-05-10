@@ -15,21 +15,14 @@ _init_video:
     out GPIOR0, r24 ; stores the video framebuffer offset (low)
     out GPIOR1, r25 ; stores the video framebuffer offset (high)
     out GPIOR2, r1  ; video frame status
+_init_audio:
     sts audio_state, r1
 
-    ldi r25, 1
-    sts seed, r25
-    sts seed+1, r1
-
-    sts channel1_phase, r1
-    sts channel1_phase+1, r1
     sts channel1_dphase, r1
     sts channel1_dphase+1, r1
     sts channel1_volume, r1
     sts channel1_wave, r1
 
-    sts channel2_phase, r1
-    sts channel2_phase+1, r1
     sts channel2_dphase, r1
     sts channel2_dphase+1, r1
     sts channel2_volume, r1
@@ -44,6 +37,12 @@ _init_video:
     ldi r25, (sfx_confirm-sound_effects)>>1
     sts sfx_track, r25
 
+_init_random:
+    ldi r25, 1
+    mov r2, r25
+    clr r23
+
+_init_game:
     sts start_selection, r1
     call restart_game
 

@@ -81,33 +81,6 @@
     sbc @5, @7
 .endm
 
-; Generate a 16-bit pseudorandom number using the xorshift generator with triple
-; 7, 9, 8.
-;
-; Register Usage
-;   r0:r1       generated number
-;   r2, r3      calculations
-rand:
-    lds r0, seed
-    lds r1, seed+1
-    ; seed ^= (seed << 7)
-    movw r2, r0
-    lsr r3
-    ror r2
-    eor r1, r2
-    clr r2
-    ror r2
-    eor r0, r2
-    ; seed ^= (seed >> 9)
-    mov r2, r1
-    lsr r2
-    eor r0, r2
-    ; seed ^= (seed << 8)
-    eor r1, r0
-    sts seed, r0
-    sts seed+1, r1
-    ret
-
 ; Divide an 8-bit unsigned value by another 8-bit unsigned value. Based on Atmel
 ; App Note AVR200, which is a really clever implementation.
 ;

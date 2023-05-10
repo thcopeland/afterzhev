@@ -14,19 +14,21 @@ audio:
     movw r8, r0
     in r10, SREG
 _a_noise:
-    lds r12, audio_noise
-    mov r0, r12
-    mov r1, r12
-    lsr r0
-    eor r1, r0
-    lsr r0
-    swap r0
-    eor r1, r0
-    lsr r0
-    eor r1, r0
+    ; 16-bit xorshift prng
+    movw r0, r2
+    ; x ^= (x << 7)
     lsr r1
-    rol r12
-    sts audio_noise, r12
+    ror r0
+    eor r3, r0
+    clr r0
+    ror r0
+    eor r2, r0
+    ; x ^= (x >> 9)
+    mov r0, r3
+    lsr r0
+    eor r2, r0
+    ; x ^= (x << 8)
+    eor r3, r2
 _a_channel_1:
     lds r0, channel1_dphase
     lds r1, channel1_dphase+1
@@ -35,9 +37,13 @@ _a_channel_1:
     lds r11, channel1_volume
     lds r0, channel1_wave
     sbrc r0, 7
-    rjmp _a_channel_2
+    rjmp a_channel_1_noise
 _a_channel_1_sawtooth:
     mul r5, r11
+    mov r12, r1
+    rjmp _a_channel_2
+a_channel_1_noise:
+    mul r2, r11
     mov r12, r1
 _a_channel_2:
     lds r0, channel2_dphase
@@ -56,8 +62,8 @@ _a_channel_2_sawtooth:
     com r12
     rjmp _a_write
 _a_channel_2_noise:
-    lds r0, audio_noise
-    add r12, r0
+    mul r2, r11
+    add r12, r1
     brcc _a_write
     clr r12
     com r12
@@ -196,9 +202,6 @@ _loop_heartbeat: ; used to synch with emulator
 
     ; At this point, there are around 100,000 cycles in which to render and
     ; update the entire game.
-
-    rcall rand
-    clr r1
 
     lds r24, clock
     lds r25, clock+1

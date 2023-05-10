@@ -6,11 +6,9 @@
 .org SRAM_START
 
 framebuffer:        .byte DISPLAY_WIDTH*DISPLAY_HEIGHT
-channel1_phase:     .byte 2
 channel1_dphase:    .byte 2
 channel1_volume:    .byte 1
 channel1_wave:      .byte 1 ; [waveform:1][effect:2][duration:5]
-channel2_phase:     .byte 2
 channel2_dphase:    .byte 2
 channel2_volume:    .byte 1
 channel2_wave:      .byte 1
