@@ -9,7 +9,7 @@
 
 #define SAMPLING_RATE 44100
 #define AUDIO_BUFFER_SIZE 2048
-#define SAMPLING_CYCLES 283
+#define SAMPLING_CYCLES (16000000/SAMPLING_RATE-1)
 
 #define HSYNC_PORT 0x25
 #define HSYNC_PIN 6
@@ -54,30 +54,13 @@ void run_to_sync(void) {
 
         if (hsync2 == 0 && hsync != hsync2) {
             video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255;
+            for (unsigned i = 1; offset+i < GAME_DISPLAY_WIDTH; i++) {
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*(offset+i) + 0] += avr->mem[AUDIO_PORT];
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*(offset+i) + 1] += avr->mem[AUDIO_PORT];
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*(offset+i) + 2] += avr->mem[AUDIO_PORT];
+            }
             offset = 0;
             scanline += 1;
-
-            int i = (scanline-1)*3*GAME_DISPLAY_WIDTH + 3*(GAME_DISPLAY_WIDTH-30);
-            int audio_read_ptr = avr->reg[4] | (avr->reg[5]<<8);
-            int audio_write_ptr = avr->reg[6] | (avr->reg[7]<<8);
-            for (int addr = 0x20F0-6; addr < 0x20F0+20; addr++, i+=3) {
-                video_buffer[i] = 0;
-                video_buffer[i+1] = 0;
-                video_buffer[i+2] = 0;
-                if (addr > audio_write_ptr) {
-                    video_buffer[i] = 64;
-                } else if (addr == audio_write_ptr) {
-                    video_buffer[i] = 255;
-                } else if (addr > audio_read_ptr) {
-                    video_buffer[i] = avr->mem[addr];
-                    video_buffer[i+1] = avr->mem[addr];
-                    video_buffer[i+2] = avr->mem[addr];
-                } else if (addr == audio_read_ptr) {
-                    video_buffer[i+1] = 255;
-                } else if (addr >= 0x20F0){
-                    video_buffer[i+1] = 64;
-                }
-            }
         } else {
             offset += 1;
 
@@ -86,12 +69,8 @@ void run_to_sync(void) {
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255*(val&7)/7;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] = 255*((val>>3)&7)/7;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] = 255*((val>>5)&6)/7;
-            } else if (scanline > 31 && scanline < 362) {
-                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += avr->mem[AUDIO_PORT];
-                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += avr->mem[AUDIO_PORT];
-                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += avr->mem[AUDIO_PORT];
             } else {
-                uint8_t val = avr->pc >> 5;
+                uint8_t val = avr->pc >> 3;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 0] += val;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] += val;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] += val;

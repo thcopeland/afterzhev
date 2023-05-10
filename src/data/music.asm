@@ -34,25 +34,133 @@ music_tracks:
 music_null:
     MUSIC_END music_null, music_null, music_null
 music_test:
-    .db (2<<6)|(16), 16, low(NOTE_A4), high(NOTE_A4)
-    .db (1<<6)|(16), 0, 0, 0
+    .db (0<<7)|(24), 127, low(NOTE_D2), high(NOTE_D2)
+    .db (0<<7)|(24), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_B4), high(NOTE_B4)
-    .db (1<<6)|(16), 0, 0, 0
+    .db (0<<7)|(8), 127, low(NOTE_E3), high(NOTE_E3)
+    .db (0<<7)|(8), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_Db4), high(NOTE_Db4)
-    .db (1<<6)|(16), 0, 0, 0
+    .db (0<<7)|(4), 127, low(NOTE_G3), high(NOTE_G3)
+    .db (0<<7)|(4), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_D4), high(NOTE_D4)
-    .db (1<<6)|(16), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_E4), high(NOTE_E4)
-    .db (1<<6)|(16), 0, 0, 0
+    .db (0<<7)|(4), 127, low(NOTE_Gb3), high(NOTE_Gb3)
+    .db (0<<7)|(4), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_F4), high(NOTE_F4)
-    .db (1<<6)|(16), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
 
-    .db (2<<6)|(16), 16, low(NOTE_Ab4), high(NOTE_Ab4)
-    .db (1<<6)|(16), 0, 0, 0
+    .db (0<<7)|(4), 127, low(NOTE_E3), high(NOTE_E3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_C3), high(NOTE_C3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_B3), high(NOTE_B3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(2<<5)|(31), 127, low(NOTE_B3), high(NOTE_B3)
+    .db (0<<7)|(31), 0, 0, 0
+
+    .db (0<<7)|(24), 127, low(NOTE_B4), high(NOTE_B4)
+    .db (0<<7)|(24), 0, 0, 0
+
+    .db (0<<7)|(8), 127, low(NOTE_E3), high(NOTE_E3)
+    .db (0<<7)|(8), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_G3), high(NOTE_G3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_Gb3), high(NOTE_Gb3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_E3), high(NOTE_E3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_C4), high(NOTE_C4)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_B4), high(NOTE_B4)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(2<<5)|(31), 127, low(NOTE_B4), high(NOTE_B4)
+    .db (0<<7)|(31), 0, 0, 0
+
+    .db (0<<7)|(24), 127, low(NOTE_C4), high(NOTE_C4)
+    .db (0<<7)|(24), 0, 0, 0
+
+    .db (0<<7)|(8), 127, low(NOTE_E3), high(NOTE_E3)
+    .db (0<<7)|(8), 0, 0, 0
+
+    .db (0<<7)|(16), 127, low(NOTE_G3), high(NOTE_G3)
+    .db (0<<7)|(16), 0, 0, 0
+
+    .db (0<<7)|(8), 127, low(NOTE_Gb3), high(NOTE_Gb3)
+    .db (0<<7)|(8), 0, 0, 0
+
+    .db (0<<7)|(8), 0, 0, 0
+    .db (0<<7)|(8), 0, 0, 0
+
+    .db (0<<7)|(24), 127, low(NOTE_B4), high(NOTE_B4)
+    .db (0<<7)|(24), 0, 0, 0
+
+    .db (0<<7)|(8), 127, low(NOTE_E3), high(NOTE_E3)
+    .db (0<<7)|(8), 0, 0, 0
+
+    .db (0<<7)|(16), 127, low(NOTE_Gb3), high(NOTE_Gb3)
+    .db (0<<7)|(16), 0, 0, 0
+
+    .db (0<<7)|(8), 127, low(NOTE_E3), high(NOTE_E3)
+    .db (0<<7)|(8), 0, 0, 0
+
+    .db (0<<7)|(8), 0, 0, 0
+    .db (0<<7)|(8), 0, 0, 0
+
+    .db (0<<7)|(24), 127, low(NOTE_A4), high(NOTE_A4)
+    .db (0<<7)|(24), 0, 0, 0
+
+    .db (0<<7)|(8), 127, low(NOTE_E3), high(NOTE_E3)
+    .db (0<<7)|(8), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_G3), high(NOTE_G3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_Gb3), high(NOTE_Gb3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_F3), high(NOTE_F3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 0, 0, 0
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_Gb3), high(NOTE_Gb3)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(4), 127, low(NOTE_B4), high(NOTE_B4)
+    .db (0<<7)|(4), 0, 0, 0
+
+    .db (0<<7)|(2<<5)|(31), 127, low(NOTE_B4), high(NOTE_B4)
+    .db (0<<7)|(31), 0, 0, 0
 
     MUSIC_END music_null, music_null, music_null

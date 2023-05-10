@@ -11,12 +11,60 @@
     jmp loop
 .org OC0Aaddr
 audio:
-    movw r8, ZL
-    movw ZL, r4
-    ld r10, Z+
-    out PORTC, r10
-    movw r4, ZL
-    movw ZL, r8
+    movw r8, r0
+    in r10, SREG
+_a_noise:
+    lds r12, audio_noise
+    mov r0, r12
+    mov r1, r12
+    lsr r0
+    eor r1, r0
+    lsr r0
+    swap r0
+    eor r1, r0
+    lsr r0
+    eor r1, r0
+    lsr r1
+    rol r12
+    sts audio_noise, r12
+_a_channel_1:
+    lds r0, channel1_dphase
+    lds r1, channel1_dphase+1
+    add r4, r0
+    adc r5, r1
+    lds r11, channel1_volume
+    lds r0, channel1_wave
+    sbrc r0, 7
+    rjmp _a_channel_2
+_a_channel_1_sawtooth:
+    mul r5, r11
+    mov r12, r1
+_a_channel_2:
+    lds r0, channel2_dphase
+    lds r1, channel2_dphase+1
+    add r6, r0
+    adc r7, r1
+    lds r11, channel2_volume
+    lds r0, channel2_wave
+    sbrc r0, 7
+    rjmp _a_channel_2_noise
+_a_channel_2_sawtooth:
+    mul r7, r11
+    add r12, r1
+    brcc _a_write
+    clr r12
+    com r12
+    rjmp _a_write
+_a_channel_2_noise:
+    lds r0, audio_noise
+    add r12, r0
+    brcc _a_write
+    clr r12
+    com r12
+_a_write:
+    out PORTC, r12
+    movw r0, r8
+    out SREG, r10
     reti
 
 .include "init.asm"
@@ -28,15 +76,17 @@ main:
     out DDRE, r25   ; PE4 is VGA VSYNC
     out DDRC, r25   ; audio output
 
-    ; Audio: CTC w/ OCRA and 64 prescaling
-    ldi r25, AUDIO_SAMPLING_PERIOD/64-1
+    ; Audio: CTC w/ OCRA and 8 prescaling
+    ldi r25, AUDIO_SAMPLING_PERIOD/8-1
     out OCR0A, r25
     ldi r25, 1 << OCIE0A
     sts TIMSK0, r25
     ldi r24, (1<<WGM01)
-    ldi r25, (1<<CS01)|(1<<CS00)
+    ldi r25, (1<<CS01)
     out TCCR0A, r24
     out TCCR0B, r25
+    ldi r25, 68 ; ensure audio happens during horizontal blank during video generation
+    out TCNT0, r25
 
     ; HSYNC: fast PWM on pin PB6
     ldi r24, low(HSYNC_PERIOD - 1)
@@ -131,19 +181,6 @@ _loop_video:
     ldi r20, DISPLAY_VERTICAL_STRETCH-1
 _loop_audio:
     out GPIOR2, r20
-    lds r25, audio_state
-    inc r25
-    andi r25, 7
-    sts audio_state, r25
-    breq _loop_audio_reset_buffer
-    cpi r25, 2
-    brsh _loop_audio_generate_sample
-    rjmp _loop_end
-_loop_audio_reset_buffer:
-    rcall reset_audio_buffer
-    rjmp _loop_end
-_loop_audio_generate_sample:
-    rcall generate_audio_sample
     rjmp _loop_end
 _loop_game:
     in r20, GPIOR2
@@ -151,9 +188,6 @@ _loop_game:
     rjmp _loop_check_audio
     sbr r20, 0x80
     out GPIOR2, r20
-_loop_reset_audio_state:
-    ldi r25, 41 ; synchronize to frame
-    out TCNT0, r25
 _loop_heartbeat: ; used to synch with emulator
     in r25, PORTB
     ldi r24, 0x80
@@ -238,12 +272,9 @@ _loop_reenter:
 _loop_check_audio:
     lds r24, TCNT3L
     lds r25, TCNT3H
-    ldi r22, low(DISPLAY_CLK_TOP)
-    ldi r23, high(DISPLAY_CLK_TOP)
-    cp r24, r22
-    cpc r25, r23
+    sbiw r24, DISPLAY_CLK_TOP/2
+    sbiw r24, DISPLAY_CLK_TOP/2
     brlo _loop_reset_render_state
-    rcall refill_audio_buffer
 _loop_reset_render_state:
     cli
     sts audio_state, r1

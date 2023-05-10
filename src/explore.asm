@@ -99,7 +99,7 @@ explore_update_game:
     rcall update_savepoint
     call update_player_stat_effects
     rcall sort_npcs
-    call refill_audio_buffer
+    ; call refill_audio_buffer
     rcall render_game
     rcall handle_controls
     rcall update_active_effects
@@ -107,7 +107,7 @@ explore_update_game:
     rcall update_player
     rcall move_camera
     rcall update_followers
-    call refill_audio_buffer
+    ; call refill_audio_buffer
 
     ; lds r21, player_position_x
     ; ldi r23, 0x07
@@ -199,7 +199,7 @@ render_game:
     lds r24, current_sector
     lds r25, current_sector+1
     call render_sector
-    call refill_audio_buffer
+    ; call refill_audio_buffer
 _rg_features:
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
