@@ -23,8 +23,6 @@ savedmem_start:
 
 clock:              .byte 2
 mode_clock:         .byte 1
-audio_noise:
-seed:               .byte 2
 
 game_mode:          .byte 1
 current_sector:     .byte 2

@@ -9,10 +9,10 @@
 ;   r8-r12      temporary
 
 ; Check note duration and handle fading. Four different types of effects:
-; 0 - no effect, 1 - fade in, 2 - fade out, 3 - tremolo.
+; 0 - no effect, 1 - fade in, 2 - fade out, 3 - vibrato.
 ;
 ; Register Usage
-;   r23-r25     calculations
+;   r22-r25     calculations
 update_audio_channels:
     ; TODO channel 1 as well
     lds r24, channel2_wave
@@ -21,13 +21,21 @@ update_audio_channels:
     breq _uac_channel2_step
     cpi r25, 0x60
     brne _uac_channel2_fade
-_uac_channel2_tremolo:
-    lds r25, channel2_volume
-    subi r25, low(-8)
-    lds r23, clock
-    sbrc r23, 2
-    subi r25, 16
-    sts channel2_volume, r25
+_uac_channel2_vibrato:
+    lds r22, channel2_dphase
+    lds r23, channel2_dphase+1
+    mov r20, r23
+    clr r21
+    lsl r20
+    lds r25, clock
+    sbrc r25, 2
+    neg r20
+    sbrc r25, 2
+    com r21
+    add r22, r20
+    adc r23, r21
+    sts channel2_dphase, r22
+    sts channel2_dphase+1, r23
     rjmp _uac_channel2_step
 _uac_channel2_fade:
     cpi r25, 0x020
@@ -108,7 +116,7 @@ _uas_music_check:
     elpm r20, Z+
     tst r20
     brne _uas_music_channel_2
-    lds r25, seed
+    mov r25, r2
     andi r25, 3
     breq _uas_music_next
     dec r25
