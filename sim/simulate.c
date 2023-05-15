@@ -9,18 +9,22 @@
 #include <emscripten.h>
 #endif
 
+#define TRUE_FPS 60
 #define GAME_DISPLAY_WIDTH 120
 #define GAME_DISPLAY_HEIGHT 66
 #define SCALE 8
 
 #define SAMPLING_RATE 44100
-#define AUDIO_BUFFER_SIZE 2048
-#define SAMPLING_CYCLES (16000000/SAMPLING_RATE-1)
+#define AUDIO_BUFFER_SIZE 1024
+#define AUDIO_DPHASE_CONVERSION (16000000/1024)
+#define VSYNC_PERIOD 0x41800
+#define AUDIO_DPHASE_UPSCALE(val) (TRUE_FPS*VSYNC_PERIOD*(val)/(512*2)/SAMPLING_RATE)
 
 #define SYNC_PORT 0x25
 #define SYNC_PIN 7
 #define VIDEO_MASK 0x21
-#define AUDIO_PORT 0x28
+#define AUDIO_CHANNEL1_ADDR 0x20F0
+#define AUDIO_CHANNEL2_ADDR 0x20F4
 
 struct avr *avr;
 int stayin_alive = 1;
@@ -29,18 +33,54 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Texture *framebuffer;
 SDL_AudioDeviceID audio_device;
-int16_t audio_buffer[AUDIO_BUFFER_SIZE];
+
+struct channel_data {
+    int16_t phase;
+    int16_t dphase;
+    uint8_t volume;
+    uint8_t wave;
+};
+struct channel_data channel1, channel2;
+void generate_audio(void *udata, uint8_t *raw, int len) {
+    (void) udata;
+    int16_t *stream = (int16_t *) raw;
+    len /= sizeof(stream[0])/sizeof(raw[0]);
+
+    // load channel data from AVR memory
+    channel1.dphase = AUDIO_DPHASE_UPSCALE((avr->mem[AUDIO_CHANNEL1_ADDR+1]<<8) | avr->mem[AUDIO_CHANNEL1_ADDR]);
+    channel1.volume = avr->mem[AUDIO_CHANNEL1_ADDR+2];
+    channel1.wave = avr->mem[AUDIO_CHANNEL1_ADDR+3];
+    channel2.dphase = AUDIO_DPHASE_UPSCALE((avr->mem[AUDIO_CHANNEL2_ADDR+1]<<8) | avr->mem[AUDIO_CHANNEL2_ADDR]);
+    channel2.volume = avr->mem[AUDIO_CHANNEL2_ADDR+2];
+    channel2.wave = avr->mem[AUDIO_CHANNEL2_ADDR+3];
+
+    // generate samples (see audio in main.asm)
+    for (int i = 0; i < len; i++) {
+        channel1.phase += channel1.dphase;
+        if (channel1.wave & 0x080) {
+            stream[i] = (int16_t) ((rand() & 0xffff)*channel1.volume >> 10);
+        } else {
+            stream[i] = channel1.phase*channel1.volume >> 10;
+        }
+
+        channel2.phase += channel2.dphase;
+        if (channel2.wave & 0x080) {
+            stream[i] += (int16_t) ((rand() & 0xffff)*channel2.volume >> 10);
+        } else {
+            stream[i] += channel2.phase*channel2.volume >> 10;
+        }
+
+        // simple low-pass filter
+        if (i > 0) {
+            stream[i] = 7*stream[i]/8 + stream[i-1]/8;
+        }
+    }
+}
 
 void run_to_sync(void) {
-    int drop_frame = SDL_GetQueuedAudioSize(audio_device) > 8*AUDIO_BUFFER_SIZE;
-    int samples = 0;
     while (1) {
         uint8_t sync = avr->mem[0x25] & 0x80;
         avr_step(avr);
-
-        if (!drop_frame && (avr->clock % SAMPLING_CYCLES) == 0) {
-            audio_buffer[samples++] = avr->mem[AUDIO_PORT] << 6;
-        }
 
         if ((avr->mem[SYNC_PORT] & (1 << SYNC_PIN)) ^ sync) {
             break;
@@ -49,11 +89,10 @@ void run_to_sync(void) {
             exit(0);
         }
     }
-    SDL_QueueAudio(audio_device, audio_buffer, sizeof(*audio_buffer)*samples);
 }
 
 void fps_delay(void) {
-    const uint64_t expected_frametime = 1000/60;
+    const uint64_t expected_frametime = 1000/TRUE_FPS;
     uint64_t counter = SDL_GetPerformanceCounter();
     uint64_t frametime = 1000 * (counter - last_counter) / SDL_GetPerformanceFrequency();
     last_counter = counter;
@@ -169,7 +208,7 @@ int main(int argc, char **argv) {
         .format = AUDIO_S16,
         .channels = 1,
         .samples = AUDIO_BUFFER_SIZE,
-        .callback = NULL
+        .callback = generate_audio
     };
 
     audio_device = SDL_OpenAudioDevice(NULL, 0, &in_spec, &out_spec, 0);

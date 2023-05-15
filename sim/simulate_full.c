@@ -8,8 +8,12 @@
 #define GAME_DISPLAY_HEIGHT 600
 
 #define SAMPLING_RATE 44100
-#define AUDIO_BUFFER_SIZE 2048
-#define SAMPLING_CYCLES (16000000/SAMPLING_RATE-1)
+#define AUDIO_BUFFER_SIZE 1024
+
+#define VSYNC_PERIOD 0x41800
+#define TRUE_FPS 60
+#define CYCLES_PER_TRUE_SECOND (VSYNC_PERIOD*TRUE_FPS)
+#define SAMPLING_CYCLES (CYCLES_PER_TRUE_SECOND/SAMPLING_RATE-1)
 
 #define HSYNC_PORT 0x25
 #define HSYNC_PIN 6
@@ -97,7 +101,7 @@ void run_to_sync(void) {
 }
 
 void fps_delay(void) {
-    const uint64_t expected_frametime = 1000/60;
+    const uint64_t expected_frametime = 1000/TRUE_FPS;
     uint64_t counter = SDL_GetPerformanceCounter();
     uint64_t frametime = 1000 * (counter - last_counter) / SDL_GetPerformanceFrequency();
     last_counter = counter;
