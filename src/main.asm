@@ -202,6 +202,7 @@ _loop_heartbeat: ; used to synch with emulator
 
     ; At this point, there are around 100,000 cycles in which to render and
     ; update the entire game.
+    rcall update_audio_channels
 
     lds r24, clock
     lds r25, clock+1
@@ -270,8 +271,6 @@ _loop_credits:
     brne _loop_reenter
     jmp credits_update
 _loop_reenter:
-    rcall update_audio_channels
-    rcall update_all_sound
 _loop_check_audio:
     lds r24, TCNT3L
     lds r25, TCNT3H

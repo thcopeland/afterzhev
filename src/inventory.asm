@@ -1,4 +1,5 @@
 inventory_update_game:
+    call update_sound_effects
     rcall inventory_render_game
     rcall inventory_handle_controls
     jmp _loop_reenter
@@ -89,6 +90,7 @@ _ihc_end:
 ;   r18         selected item
 ;   r19         calculations, equipped item
 ;   r20         calculations
+;   r25         sound effect
 inventory_equip_item:
     ldi XL, low(player_inventory)
     ldi XH, high(player_inventory)
@@ -121,6 +123,8 @@ _iei_equip_weapon:
     lds r19, player_weapon
     sts player_weapon, r18
     st X, r19
+    ldi r25, (sfx_equip-sfx_table)>>1
+    call play_sound_effect
 _iei_end_trampoline:
     rjmp _iei_end
 _iei_equip_armor:
@@ -233,6 +237,8 @@ _iei_check_purple_hood_2:
 _iei_do_equip_armor:
     sts player_armor, r18
     st X, r19
+    ldi r25, (sfx_equip-sfx_table)>>1
+    call play_sound_effect
     rjmp _iei_end
 _iei_unequip_weapon:
     lds r18, player_weapon
@@ -240,11 +246,16 @@ _iei_unequip_weapon:
     breq _iei_unequip_armor
     st X, r18
     sts player_weapon, r1
+    ldi r25, (sfx_unequip-sfx_table)>>1
+    call play_sound_effect
     rjmp _iei_end
 _iei_unequip_armor:
     lds r18, player_armor
     st X, r18
     sts player_armor, r1
+    ldi r25, (sfx_unequip-sfx_table)>>1
+    cpse r18, r1
+    call play_sound_effect
 _iei_end:
     call calculate_player_stats
     ret
@@ -321,6 +332,7 @@ _iui_end:
 ; Register Usage
 ;   r18-r20         calculations
 ;   r21             counter
+;   r25             sound effect
 ;   Z (r30:r31)     memory access
 inventory_drop_item:
     ldi ZL, low(player_inventory)
@@ -347,6 +359,8 @@ _idi_loose_items_iter:
     subi r19, -CHARACTER_SPRITE_HEIGHT/2
     std Z+SECTOR_ITEM_X_OFFSET, r18
     std Z+SECTOR_ITEM_Y_OFFSET, r19
+    ldi r25, (sfx_drop-sfx_table)>>1
+    call play_sound_effect
     rjmp _idi_end
 _idi_loose_items_next:
     adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE

@@ -5,6 +5,7 @@ load_intro:
     ret
 
 intro_update_game:
+    call update_sound_and_music
     rcall intro_render
     rcall intro_handle_controls
 

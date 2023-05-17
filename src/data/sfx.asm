@@ -2,20 +2,20 @@
 ; something happens in the game. They interrupt music playing on channel 1, but
 ; generally not other effects.
 ;
-; Sound effects are referenced by a quad-byte offset from sound_effects, so the
+; Sound effects are referenced by a quad-byte offset from sfx_table, so the
 ; total number of notes in all sound effects must be at most 256.
 ;
 ; Note format
-;   [wave:2][fade:1][duration:5] - if zero, end of effect (1 byte)
+;   [wave:1][effect:2][duration:5] - if zero, end of effect (1 byte)
 ;   volume - should generally be <= 127 (1 byte)
 ;   dphase - controls pitch for non-noise waveforms (2 bytes)
 
-.equ WAVE_SAWTOOTH = (0<<6)
-.equ WAVE_NOISE = (1<<6)
-.equ WAVE_SQUARE50 = (2<<6)
-.equ WAVE_SQUARE75 = (3<<6)
+.equ WAVE_SAWTOOTH = (0<<7)
+.equ WAVE_NOISE = (1<<7)
 
-.equ SFX_FADE = (1<<5)
+.equ SFX_FADE_OUT = (1<<5)
+.equ SFX_FADE_IN = (2<<5)
+.equ SFX_VIBRATO = (3<<5)
 
 .macro SFX_NOTE ; waveform, volume, dphase
     .db @0, @1, low(@2), high(@2)
@@ -29,28 +29,29 @@
     SFX_NOTE 0, 0, 0, 0
 .endm
 
-sound_effects:
+sfx_table:
 sfx_null:
     SFX_END
 sfx_confirm:
-    ; SFX_NOTE WAVE_SQUARE50|15, 64, NOTE_A2
-    ; SFX_NOTE WAVE_SQUARE50|15, 64, NOTE_A3
-    ; SFX_NOTE WAVE_SQUARE50|15, 64, NOTE_A4
-    ; SFX_NOTE WAVE_SQUARE50|15, 64, NOTE_A5
-    ; SFX_NOTE WAVE_NOISE|1, 64, 0
-    ; SFX_SILENCE 1
-    ; SFX_NOTE WAVE_NOISE|1, 64, 0
-    ; SFX_SILENCE 1
-    ; SFX_NOTE WAVE_NOISE|1, 64, 0
-    ; SFX_SILENCE 1
-    ; SFX_NOTE WAVE_NOISE|31, 64, 0
+    SFX_NOTE WAVE_SAWTOOTH|4, 64, NOTE_F5
     SFX_END
 sfx_fail:
 
+sfx_equip:
+    SFX_NOTE WAVE_NOISE|2, 20, 0
+    SFX_NOTE WAVE_NOISE|1, 40, 0
+    SFX_END
+sfx_unequip:
+    SFX_NOTE WAVE_NOISE|2, 40, 0
+    SFX_NOTE WAVE_NOISE|1, 20, 0
+    SFX_END
 sfx_pickup:
 
 sfx_drop:
-
+    SFX_NOTE WAVE_NOISE|2, 40, 0
+    SFX_NOTE WAVE_NOISE|1, 20, 0
+    SFX_NOTE WAVE_NOISE|SFX_FADE_OUT|2, 10, 0
+    SFX_END
 sfx_swing:
 
 sfx_cast:

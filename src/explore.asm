@@ -97,9 +97,9 @@ _le_player_xp:
 
 explore_update_game:
     rcall update_savepoint
+    call update_sound_effects
     call update_player_stat_effects
     rcall sort_npcs
-    ; call refill_audio_buffer
     rcall render_game
     rcall handle_controls
     rcall update_active_effects
@@ -107,7 +107,6 @@ explore_update_game:
     rcall update_player
     rcall move_camera
     rcall update_followers
-    ; call refill_audio_buffer
 
     ; lds r21, player_position_x
     ; ldi r23, 0x07
