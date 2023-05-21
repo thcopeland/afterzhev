@@ -23,6 +23,7 @@ load_inventory:
 ; Register Usage
 ;   r18-r19         controller values
 ;   r20-r22         calculations
+;   r25             sound effect
 inventory_handle_controls:
     lds r18, prev_controller_values
     lds r19, controller_values
@@ -40,6 +41,8 @@ _ihc_handle_buttons:
 _ihc_down:
     sbrs r19, CONTROLS_DOWN
     rjmp _ihc_right
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r22, inventory_selection
     cpi r22, PLAYER_INVENTORY_SIZE/2
     brpl _ihc_right
@@ -48,6 +51,8 @@ _ihc_down:
 _ihc_right:
     sbrs r19, CONTROLS_RIGHT
     rjmp _ihc_up
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r22, inventory_selection
     inc r22
     cpi r22, PLAYER_INVENTORY_SIZE
@@ -56,6 +61,8 @@ _ihc_right:
 _ihc_up:
     sbrs r19, CONTROLS_UP
     rjmp _ihc_left
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r22, inventory_selection
     subi r22, PLAYER_INVENTORY_SIZE/2
     brlo _ihc_left
@@ -63,6 +70,8 @@ _ihc_up:
 _ihc_left:
     sbrs r19, CONTROLS_LEFT
     rjmp _ihc_button1
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r22, inventory_selection
     dec r22
     brmi _ihc_end
@@ -78,7 +87,10 @@ _ihc_button3:
     sbrc r22, CONTROLS_SPECIAL3
     rcall inventory_drop_item
 _ihc_button4:
-    sbrc r22, CONTROLS_SPECIAL4
+    sbrs r22, CONTROLS_SPECIAL4
+    rjmp _ihc_end
+    ldi r25, (sfx_boop-sfx_table)>>1
+    call play_sound_effect
     call load_explore
 _ihc_end:
     ret
@@ -116,7 +128,10 @@ _iei_nonempty_selected:
     elpm r19, Z
     andi r19, 3
     cpi r19, ITEM_USABLE
-    breq _iei_end_trampoline
+    brne _iei_equip_weapon
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
+    rjmp _iei_end
 _iei_equip_weapon:
     cpi r19, ITEM_WEARABLE
     breq _iei_equip_armor
@@ -125,7 +140,6 @@ _iei_equip_weapon:
     st X, r19
     ldi r25, (sfx_equip-sfx_table)>>1
     call play_sound_effect
-_iei_end_trampoline:
     rjmp _iei_end
 _iei_equip_armor:
     lds r19, player_armor
@@ -253,8 +267,9 @@ _iei_unequip_armor:
     lds r18, player_armor
     st X, r18
     sts player_armor, r1
-    ldi r25, (sfx_unequip-sfx_table)>>1
+    ldi r25, (sfx_fail-sfx_table)>>1
     cpse r18, r1
+    ldi r25, (sfx_unequip-sfx_table)>>1
     call play_sound_effect
 _iei_end:
     call calculate_player_stats
@@ -264,6 +279,7 @@ _iei_end:
 ;
 ; Register Usage
 ;   r18-r21     calculations
+;   r25         sound effect
 ;   X, Z        memory lookups
 inventory_use_item:
     ldi XL, low(player_inventory)
@@ -273,7 +289,7 @@ inventory_use_item:
     adc XH, r1
     ld r18, X
     tst r18
-    breq _iui_end
+    breq _iui_fail
     mov r19, r18
     dec r19
     ldi ZL, byte3(2*item_table)
@@ -288,11 +304,11 @@ inventory_use_item:
     elpm r19, Z
     andi r19, 3
     cpi r19, ITEM_USABLE
-    brne _iui_end
+    brne _iui_fail
     adiw ZL, ITEM_EXTRA_OFFSET-ITEM_FLAGS_OFFSET
     elpm r19, Z
     andi r19, 0x01
-    brne _iui_end
+    brne _iui_fail
     ldi ZL, low(player_effects)
     ldi ZH, high(player_effects)
     ldi r20, PLAYER_EFFECT_COUNT
@@ -303,8 +319,13 @@ _iui_effects_iter:
     adiw ZL, PLAYER_EFFECT_MEMSIZE
     dec r20
     brne _iui_effects_iter
+_iui_fail:
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
     rjmp _iui_end
 _iui_found_empty_slot:
+    ldi r25, (sfx_potion-sfx_table)>>1
+    call play_sound_effect
     std Z+PLAYER_EFFECT_IDX_OFFSET, r18
     ldi r20, 0xff
     std Z+PLAYER_EFFECT_TIME_OFFSET, r20
@@ -342,7 +363,7 @@ inventory_drop_item:
     adc ZH, r1
     ld r18, Z
     tst r18
-    breq _idi_end
+    breq _idi_no_item
     st Z, r1
     ldi ZL, low(sector_loose_items)
     ldi ZH, high(sector_loose_items)
@@ -366,6 +387,9 @@ _idi_loose_items_next:
     adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
     dec r21
     brne _idi_loose_items_iter
+_idi_no_item:
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
 _idi_end:
     ret
 

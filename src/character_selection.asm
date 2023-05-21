@@ -30,9 +30,16 @@ _csc_class:
     cpi r25, 3
     brsh _csc_finalize_class
     sts player_class, r25
+    mov r25, r20
+    andi r25, exp2(CONTROLS_LEFT)|exp2(CONTROLS_RIGHT)
+    breq _csc_finalize_class
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
 _csc_finalize_class:
     andi r20, exp2(CONTROLS_SPECIAL1)|exp2(CONTROLS_SPECIAL2)|exp2(CONTROLS_SPECIAL3)|exp2(CONTROLS_SPECIAL4)
     breq _csc_class_end
+    ldi r25, (sfx_boop-sfx_table)>>1
+    call play_sound_effect
     ldi r25, 1
     sts sector_data, r25
 _csc_class_end:
@@ -46,9 +53,16 @@ _csc_character:
     cpi r25, 3
     brsh _csc_finalize_character
     sts player_character, r25
+    mov r25, r20
+    andi r25, exp2(CONTROLS_LEFT)|exp2(CONTROLS_RIGHT)
+    breq _csc_finalize_character
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
 _csc_finalize_character:
     andi r20, exp2(CONTROLS_SPECIAL1)|exp2(CONTROLS_SPECIAL2)|exp2(CONTROLS_SPECIAL3)|exp2(CONTROLS_SPECIAL4)
     breq _csc_class_end
+    ldi r25, (sfx_boop-sfx_table)>>1
+    call play_sound_effect
     call load_intro
 _csc_character_end:
     ret

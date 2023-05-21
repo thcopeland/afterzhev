@@ -1,4 +1,5 @@
 upgrade_update_game:
+    call update_sound_effects
     rcall upgrade_render_game
     rcall upgrade_handle_controls
     jmp _loop_reenter
@@ -55,6 +56,8 @@ _luin_level_up:
     sts game_mode, r25
     ldi r25, EFFECT_UPGRADE<<3
     sts player_effect, r25
+    ldi r25, (sfx_level_up-sfx_table)>>1
+    call play_sound_effect
 _luin_end:
     ret
 
@@ -64,7 +67,8 @@ _luin_end:
 ;
 ; Register Usage
 ;   r18-r19         controller
-;   r21-r21         calculations
+;   r20-r21         calculations
+;   r25             sound effects
 ;   Z (r30:r31)     memory pointer
 upgrade_handle_controls:
     lds r18, prev_controller_values
@@ -85,6 +89,8 @@ _uhc_check_keys:
 _uhc_up:
     sbrs r19, CONTROLS_UP
     rjmp _uhc_down
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r20, upgrade_selection
     dec r20
     brmi _uhc_down
@@ -92,6 +98,8 @@ _uhc_up:
 _uhc_down:
     sbrs r19, CONTROLS_DOWN
     rjmp _uhc_left
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r20, upgrade_selection
     cpi r20, 3
     brsh _uhc_left
@@ -100,6 +108,8 @@ _uhc_down:
 _uhc_left:
     sbrs r19, CONTROLS_LEFT
     rjmp _uhc_right
+    ldi r25, (sfx_unequip-sfx_table)>>1
+    call play_sound_effect
     lds r20, upgrade_selection
     ldi ZL, low(player_augmented_stats)
     ldi ZH, high(player_augmented_stats)
@@ -115,6 +125,8 @@ _uhc_left:
 _uhc_right:
     sbrs r19, CONTROLS_RIGHT
     rjmp _uhc_other
+    ldi r25, (sfx_equip-sfx_table)>>1
+    call play_sound_effect
     lds r20, upgrade_points
     dec r20
     brmi _uhc_other
@@ -132,7 +144,13 @@ _uhc_other:
     breq _uhc_end
     lds r20, upgrade_points
     tst r20
-    brne _uhc_end
+    breq _uhc_update_stats
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
+    rjmp _uhc_end
+_uhc_update_stats:
+    ldi r25, (sfx_boop-sfx_table)>>1
+    call play_sound_effect
     lds r20, player_augmented_stats+STATS_STRENGTH_OFFSET
     lds r21, player_stats+STATS_STRENGTH_OFFSET
     add r20, r21

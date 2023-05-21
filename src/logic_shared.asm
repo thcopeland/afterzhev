@@ -232,8 +232,9 @@ _sdn_next:
     brne _sdn_loop
     cpi r22, 4
     brsh _sdn_end
-    and r0, r24
-    add r25, r0
+    mov r20, r2
+    and r20, r24
+    add r25, r20
     call add_distant_npc
 _sdn_end:
     ret

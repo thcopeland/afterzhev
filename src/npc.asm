@@ -259,6 +259,8 @@ _nm_melee_attack:
     andi r24, 0x1f
     ori r24, ACTION_ATTACK<<5
     std Y+NPC_ANIM_OFFSET, r24
+    ldi r25, (sfx_swing-sfx_table)>>1
+    call play_sound_effect
 _nm_attack_end:
 _nm_test_move:
     lds r25, npc_move_flags
@@ -551,7 +553,7 @@ _eu_npc_next:
 _eu_ranged_attack:
     lds r22, clock
     andi r22, ATTACK_FRAME_DURATION_MASK
-    brne _eu_end
+    brne _eu_end_trampoline
     dec r21
     brmi _eu_end
     ldi ZL, byte3(2*item_table)
@@ -619,6 +621,9 @@ _eu_ranged_facing_right:
     subi r24, -2*EFFECT_SPRITE_WIDTH/3
 _eu_add_effect:
     call add_active_effect
+_eu_cast_sound:
+    ldi r25, (sfx_cast2-sfx_table)>>1
+    call play_sound_effect
 _eu_end:
     ret
 

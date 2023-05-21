@@ -758,6 +758,7 @@ _rnhb_end:
 ;   r18             previous button states
 ;   r19             current button state
 ;   r20-r21         miscellaneous
+;   r25             sound effect
 ;   Z (r30:r31)     flash memory lookups
 handle_controls:
     lds r18, prev_controller_values
@@ -817,6 +818,8 @@ _hc_button4:
     rjmp _hc_end
     sbrc r18, CONTROLS_SPECIAL4
     rjmp _hc_end
+    ldi r25, (sfx_boop-sfx_table)>>1
+    call play_sound_effect
     call load_inventory
 _hc_end:
     ret
@@ -874,6 +877,8 @@ _hmb_pickup_gold:
     adc r22, r1
     sts player_gold, r21
     sts player_gold+1, r22
+    ldi r25, (sfx_pickup-sfx_table)>>1
+    call play_sound_effect
     rjmp _hmb_remove_item
 _hmb_pickup_item:
     ldi r22, PLAYER_INVENTORY_SIZE
@@ -884,9 +889,13 @@ _hmb_inventory_iter:
 _hmb_inventory_next:
     dec r22
     brne _hmb_inventory_iter
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
     rjmp _hmb_npc_interactions
 _hmb_empty_inventory_slot_found:
     st -X, r23   ; fill the empty slot
+    ldi r25, (sfx_pickup-sfx_table)>>1
+    call play_sound_effect
 _hmb_remove_item:
     std Z+SECTOR_ITEM_IDX_OFFSET, r1
     ldd r20, Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET
@@ -947,6 +956,8 @@ _hmb_npc_next:
     brne _hmb_npc_iter
     rjmp _hmb_check_savepoint
 _hmb_nearby_shopkeeper:
+    ldi r25, (sfx_boop-sfx_table)>>1
+    call play_sound_effect
     adiw ZL, NPC_TABLE_SHOP_IDX_OFFSET
     lpm r25, Z
     call load_shop
@@ -1033,6 +1044,8 @@ _hmb_check_savepoint:
     sts player_effect, r25
     sts player_velocity_x, r1
     sts player_velocity_y, r1
+    ldi r25, (sfx_save-sfx_table)>>1
+    call play_sound_effect
     rjmp _hmb_end
 _hmb_check_portals:
     lds r20, player_position_x
@@ -1049,7 +1062,9 @@ _hmb_portal_iter:
     elpm r25, Z+
     cp r24, r1
     cpc r25, r1
-    breq _hmb_portal_next
+    brne _hmb_portal_distance
+    rjmp _hmb_portal_next
+_hmb_portal_distance:
     sub r24, r20
     sbrc r24, 7
     neg r24
@@ -1095,6 +1110,8 @@ _hmb_update_position:
     sts player_direction, r22
 _hmb_move_camera:
     rcall reset_camera
+    ldi r25, (sfx_portal-sfx_table)>>1
+    call play_sound_effect
 _hmb_switch_sectors:
     ldi ZL, low(2*sector_table)
     ldi ZH, high(2*sector_table)
@@ -1111,8 +1128,11 @@ _hmb_switch_sectors:
 _hmb_portal_next:
     adiw ZL, SECTOR_PORTAL_MEMSIZE-2
     dec r22
-    breq _hmb_end
+    breq _hmb_nothing
     rjmp _hmb_portal_iter
+_hmb_nothing:
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
 _hmb_end:
     ret
 
@@ -1158,6 +1178,7 @@ _rc_y_ok:
 ;
 ; Register Usage
 ;   r20         calculations
+;   r25         effect sound
 player_dash:
     lds r20, player_dash_cooldown
     tst r20
@@ -1169,6 +1190,8 @@ player_dash:
     sts player_dash_cooldown, r25
     lds r20, player_direction
     sts player_dash_direction, r20
+    ldi r25, (sfx_dash-sfx_table)>>1
+    call play_sound_effect
 _pd_end:
     ret
 
@@ -1184,7 +1207,13 @@ player_attack:
     brne _pa_end
     lds r20, player_weapon
     dec r20
-    brmi _pa_end
+    brpl _pa_has_weapon
+    ldi r20, (ATTACK_FRAME_DURATION_MASK+1)*5
+    sts player_attack_cooldown, r20
+_pa_fail:
+    ldi r25, (sfx_fail-sfx_table)>>1
+    rjmp _pa_sound
+_pa_has_weapon:
     ldi ZL, byte3(2*item_table)
     out RAMPZ, ZL
     ldi ZL, low(2*item_table+ITEM_FLAGS_OFFSET)
@@ -1196,15 +1225,17 @@ player_attack:
     clr r1
     elpm r20, Z
 _pa_test_high_level_intellect:
+    ldi r25, (sfx_swing-sfx_table)>>1
     mov r21, r20
     andi r21, 0x3
     cpi r21, ITEM_RANGED
     brne _pa_attack
+    clr r25
     sbrs r20, 2
     rjmp _pa_attack
     lds r21, player_augmented_stats+STATS_INTELLECT_OFFSET
     cpi r21, ITEM_HIGH_LEVEL_INTELLECT
-    brlo _pa_end
+    brlo _pa_fail
 _pa_attack:
     mov r21, r20
     andi r21, 0x38
@@ -1213,6 +1244,8 @@ _pa_attack:
     ldi r21, ACTION_ATTACK
     sts player_action, r21
     sts player_frame, r1
+_pa_sound:
+    call play_sound_effect
 _pa_end:
     ret
 
@@ -1642,6 +1675,8 @@ _up_add_effect:
     andi r21, 0x38
     or r22, r21
     rcall add_active_effect
+    ldi r25, (sfx_cast-sfx_table)>>1
+    call play_sound_effect
 _up_animation:
     lds r21, player_effect
     lds r22, player_action

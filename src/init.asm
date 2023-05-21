@@ -55,6 +55,9 @@ _init_game:
     ldi r25, ITEM_health_potion
     sts player_inventory+2, r25
 
+    ldi r25, ITEM_blessed_sword
+    sts player_inventory+3, r25
+
     ldi r22, 14
     ldi r23, 14
     ldi r24, 9

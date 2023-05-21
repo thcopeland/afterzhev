@@ -1,4 +1,5 @@
 gameover_update_game:
+    call update_sound_and_music
     rjmp gameover_render_game
 _gug_return:
     rcall gameover_handle_controls

@@ -1,14 +1,46 @@
 conversation_update_game:
+    call update_sound_effects
     rcall conversation_render_game
     rcall conversation_handle_controls
 
+    ldi ZL, byte3(2*conversation_table)
+    out RAMPZ, ZL
+    lds ZL, conversation_frame
+    lds ZH, conversation_frame+1
+    elpm r25, Z
+    cpi r25, CONVERSATION_LINE
+    brne _cug_end
+    adiw ZL, CONVERSATION_LINE_STR_OFFSET
+    elpm r24, Z+
+    elpm r25, Z+
+    movw ZL, r24
+    subi ZL, low(-2*conversation_string_table)
+    sbci ZH, high(-2*conversation_string_table)
     lds r25, conversation_chars
-    cpi r25, 0xff
-    brsh _cug_end
+    add ZL, r25
+    adc ZH, r1
+    elpm r24, Z
+    tst r24
+    breq _cug_end
     inc r25
     sts conversation_chars, r25
+
+    lds r25, sfx_track
+    tst r25
+    brne _cug_end
+    ldi ZL, low(2*conversation_sound_table)
+    ldi ZH, high(2*conversation_sound_table)
+    andi r24, 0x07
+    add ZL, r24
+    adc ZH, r1
+    lpm r25, Z
+    sts sfx_track, r25
 _cug_end:
     jmp _loop_reenter
+
+conversation_sound_table:
+.db (sfx_talk1-sfx_table)>>1, (sfx_talk2-sfx_table)>>1, (sfx_talk3-sfx_table)>>1, (sfx_talk4-sfx_table)>>1
+.db (sfx_talk5-sfx_table)>>1, (sfx_talk6-sfx_table)>>1, (sfx_talk7-sfx_table)>>1, (sfx_talk8-sfx_table)>>1
 
 ; Handle controls in the conversation mode. If the current conversation frame is
 ; a "line", the first special button advances to the next frame. Otherwise, the
@@ -44,13 +76,20 @@ _chc_check_frame_type:
     breq _chc_branch_button1
 _chc_line_button1:
     sbrs r18, CONTROLS_SPECIAL1
-    rjmp _chc_end
+    rjmp _chc_line_other_buttons
     adiw ZL, CONVERSATION_LINE_NEXT_OFFSET
     elpm r24, Z+
     elpm r25, Z+
     subi r24, low(-2*conversation_table)
     sbci r25, high(-2*conversation_table)
     call load_conversation
+    rjmp _chc_end
+_chc_line_other_buttons:
+    andi r18, (1<<CONTROLS_SPECIAL2)|(1<<CONTROLS_SPECIAL3)|(1<<CONTROLS_SPECIAL4)
+    breq _chc_line_end
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
+_chc_line_end:
     rjmp _chc_end
 _chc_branch_button1:
     sbrs r18, CONTROLS_SPECIAL1
@@ -87,6 +126,8 @@ _chc_do_conversation:
 _chc_branch_down:
     sbrs r19, CONTROLS_DOWN
     rjmp _chc_branch_up
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r20, selected_choice
     inc r20
     adiw ZL, CONVERSATION_BRANCH_NUM_OFFSET
@@ -97,6 +138,8 @@ _chc_branch_down:
 _chc_branch_up:
     sbrs r19, CONTROLS_UP
     rjmp _chc_end
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r20, selected_choice
     dec r20
     brmi _chc_end
@@ -117,6 +160,8 @@ _lc_clear_conversation:
     call load_explore
     ret
 _lc_load_conversation:
+    sts sfx_track, r1
+    sts sfx_track+1, r1
     sts conversation_frame, r24
     sts conversation_frame+1, r25
     sts selected_choice, r1

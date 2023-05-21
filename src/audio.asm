@@ -49,9 +49,6 @@ _uac_channel1_fade_out:
     subi r25, 2
     sts channel1_volume, r25
 _uac_channel1_step:
-    ; lds r23, clock
-    ; andi r23, 0x01
-    ; brne _uac_channel_2
     mov r25, r24
     andi r24, 0xe0
     andi r25, 0x1f
@@ -99,9 +96,6 @@ _uac_channel2_fade_out:
     subi r25, 2
     sts channel2_volume, r25
 _uac_channel2_step:
-    ; lds r23, clock
-    ; andi r23, 0x01
-    ; brne _uac_end
     mov r25, r24
     andi r24, 0xe0
     andi r25, 0x1f
@@ -280,30 +274,52 @@ _use_track_2:
     elpm r24, Z+
     sts channel2_dphase+1, r24
     inc r25
-    sts sfx_track, r25
+    sts sfx_track+1, r25
     rjmp _use_end
 _use_two_sticks:
     sts sfx_track+1, r1
 _use_end:
     ret
 
-; If a sound effect track is free, put the given effect in the track.
+; If a sound effect track is free, put the given effect in the track. Does not
+; allow adding a duplicate sound effect.
 ;
 ; Register Usage
 ;   r0          tmp
 ;   r25         sound effect (parameter)
 play_sound_effect:
     lds r0, sfx_track
+    cp r0, r25
+    breq _pse_end
     tst r0
     brne _pse_test_track_2
-    cpse r0, r25
     sts sfx_track, r25
     ret
 _pse_test_track_2:
     lds r0, sfx_track+1
+    cp r0, r25
+    breq _pse_end
     tst r0
     brne _pse_end
-    cpse r0, r25
     sts sfx_track+1, r25
 _pse_end:
+    ret
+
+; Add the given sound effect to a track, using an empty one if possible, but
+; overriding if necessary. Does not allow adding a duplicate sound effect.
+;
+; Register Usage
+;   r0          tmp
+;   r25         sound effect (parameter)
+play_sound_effect2:
+    lds r0, sfx_track
+    cp r0, r25
+    breq _pse2_end
+    tst r0
+    brne _pse2_test_track_2
+    sts sfx_track, r25
+    ret
+_pse2_test_track_2:
+    sts sfx_track+1, r25
+_pse2_end:
     ret

@@ -102,4 +102,4 @@ character_render:   .byte CHARACTER_MEMSIZE-4
 subroutine_tmp:     .byte 4
 end_game_allocs:
 
-.message "Unallocated memory: ", RAMEND - end_game_allocs, " (about 0x19 needed for stack)"
+.message "Unallocated memory: ", RAMEND - end_game_allocs, " (about 0x1C needed for stack)"

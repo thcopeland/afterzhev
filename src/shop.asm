@@ -1,4 +1,5 @@
 shop_update_game:
+    call update_sound_effects
     rcall shop_render_game
     rcall shop_handle_controls
     jmp _loop_reenter
@@ -55,6 +56,7 @@ _ls_change_mode:
 ; Register Usage
 ;   r18-r19         controller values
 ;   r20-r22         calculations
+;   r25             sound effect
 shop_handle_controls:
     lds r18, prev_controller_values
     lds r19, controller_values
@@ -72,6 +74,8 @@ _shc_handle_buttons:
 _shc_down:
     sbrs r19, CONTROLS_DOWN
     rjmp _shc_right
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r22, shop_selection
     cpi r22, (SHOP_INVENTORY_SIZE+PLAYER_INVENTORY_SIZE)/2
     brpl _shc_right
@@ -80,6 +84,8 @@ _shc_down:
 _shc_right:
     sbrs r19, CONTROLS_RIGHT
     rjmp _shc_up
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r22, shop_selection
     inc r22
     cpi r22, SHOP_INVENTORY_SIZE+PLAYER_INVENTORY_SIZE
@@ -88,6 +94,8 @@ _shc_right:
 _shc_up:
     sbrs r19, CONTROLS_UP
     rjmp _shc_left
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r22, shop_selection
     subi r22, (SHOP_INVENTORY_SIZE+PLAYER_INVENTORY_SIZE)/2
     brmi _shc_left
@@ -95,11 +103,17 @@ _shc_up:
 _shc_left:
     sbrs r19, CONTROLS_LEFT
     rjmp _shc_button1
+    ldi r25, (sfx_cursor-sfx_table)>>1
+    call play_sound_effect
     lds r22, shop_selection
     dec r22
     brmi _shc_end
     sts shop_selection, r22
 _shc_button1:
+    sbrs r19, CONTROLS_SPECIAL1
+    rjmp _shc_button2
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
 _shc_button2:
     sbrc r19, CONTROLS_SPECIAL2
     rcall shop_buy_selected
@@ -107,7 +121,10 @@ _shc_button3:
     sbrc r19, CONTROLS_SPECIAL3
     rcall shop_sell_selected
 _shc_button4:
-    sbrc r18, CONTROLS_SPECIAL4
+    sbrs r18, CONTROLS_SPECIAL4
+    rjmp _shc_end
+    ldi r25, (sfx_boop-sfx_table)>>1
+    call play_sound_effect
     call load_explore
 _shc_end:
     ret
@@ -123,10 +140,15 @@ _shc_end:
 shop_buy_selected:
     rcall shop_determine_selection
     tst r25
-    brne _sbs_end
+    brne _sbs_fail
     ld r25, X
     dec r25
-    brmi _sbs_end
+    brpl _sbs_price
+_sbs_fail:
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
+    rjmp _sbs_end
+_sbs_price:
     rcall calculate_buy_price
     lds r22, player_gold
     lds r23, player_gold+1
@@ -143,13 +165,15 @@ _sbs_player_inventory_iter:
 _sbs_player_inventory_next:
     dec r20
     brne _sbs_player_inventory_iter
-    rjmp _sbs_end
+    rjmp _sbs_fail
 _sbs_player_inventory_empty_slot_found:
     sts player_gold, r22
     sts player_gold+1, r23
     ld r20, X
     st X, r1
     st -Y, r20
+    ldi r25, (sfx_pickup-sfx_table)>>1
+    call play_sound_effect
 _sbs_end:
     ret
 
@@ -164,10 +188,15 @@ _sbs_end:
 shop_sell_selected:
     rcall shop_determine_selection
     tst r25
-    breq _sss_end
+    breq _sss_fail
     ld r25, X
     dec r25
-    brmi _sss_end
+    brpl _sss_shop_search
+_sss_fail:
+    ldi r25, (sfx_fail-sfx_table)>>1
+    call play_sound_effect
+    rjmp _sss_end
+_sss_shop_search:
     ldi YL, low(shop_inventory)
     ldi YH, high(shop_inventory)
     ldi r20, SHOP_INVENTORY_SIZE
@@ -189,6 +218,8 @@ _sss_shop_inventory_empty_slot_found:
     ld r20, X
     st X, r1
     st -Y, r20
+    ldi r25, (sfx_drop-sfx_table)>>1
+    call play_sound_effect
 _sss_end:
     ret
 

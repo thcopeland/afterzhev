@@ -135,6 +135,8 @@ _prmd_apply_damage:
     brsh _prmd_push
 _prmd_die:
     sts player_health, r1
+    ldi r25, (sfx_death-sfx_table)>>1
+    sts sfx_track, r25
     ldi r25, GAME_OVER_DEAD
     call load_gameover
     rjmp _prmd_end
@@ -263,6 +265,8 @@ _pred_damage:
     brsh _pred_effect_next
 _pred_die:
     sts player_health, r1
+    ldi r25, (sfx_death-sfx_table)>>1
+    sts sfx_track, r25
     ldi r25, GAME_OVER_DEAD
     call load_gameover
     ret
@@ -594,6 +598,8 @@ _nrrd_end:
 ;   Y (r28:r29)     enemy pointer, preserved (param)
 ;   Z (r30:r31)     enemy data pointer, preserved (param)
 resolve_enemy_death:
+    ldi r25, (sfx_kill-sfx_table)>>1
+    call play_sound_effect2
     movw r22, ZL
     elpm r25, Z
     cpi r25, NPC_SHOPKEEPER
