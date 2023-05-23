@@ -30,6 +30,14 @@
     .dw 0, (2*@0)&0xffff, (2*@1)&0xffff, (2*@2)&0xffff
 .endm
 
+.equ MUSIC_FADE_IN = (1<<5)
+.equ MUSIC_FADE_OUT = (2<<5)
+.equ MUSIC_VIBRATO = (3<<5)
+
+.macro MUSIC_PAIR ; duration 1, volume 1, dphase 1, duration 2, volume 2, dphase 2
+    .db @0, @1, low(@2), high(@2), @3, @4, low(@5), high(@5)
+.endm
+
 music_tracks:
 music_null:
     MUSIC_END music_null, music_null, music_null
@@ -164,3 +172,41 @@ music_test:
     .db (0<<7)|(31), 0, 0, 0
 
     MUSIC_END music_null, music_null, music_null
+
+music_start1:
+    ; MUSIC_PAIR 31, 127, NOTE_D3, 0, 0, 0
+    ; MUSIC_PAIR 31, 127, NOTE_G3, 0, 0, 0
+    ; MUSIC_PAIR SFX_FADE_OUT|16, 127, NOTE_B4, 0, 0, 0
+    ; MUSIC_PAIR SFX_FADE_OUT|16, 127, NOTE_B4, 0, 0, 0
+    ; MUSIC_PAIR 16, 0, 0, 0, 0, 0
+    ; MUSIC_PAIR 16, 127, NOTE_B4, 0, 0, 0
+    ; MUSIC_PAIR 16, 127, NOTE_D4, 0, 0, 0
+    ; MUSIC_PAIR 16, 127, NOTE_C4, 0, 0, 0
+    ; MUSIC_PAIR 16, 127, NOTE_B4, 0, 0, 0
+    ; MUSIC_PAIR 16, 127, NOTE_A4, 0, 0, 0
+    ; MUSIC_PAIR 16, 127, NOTE_B4, 0, 0, 0
+
+    ; MUSIC_PAIR 31, 127, NOTE_D3, 0, 0, 0
+    ; MUSIC_PAIR 31, 127, NOTE_C4, 0, 0, 0
+    ; MUSIC_PAIR 16, 127, NOTE_B4, 0, 0, 0
+    ; MUSIC_PAIR 16, 127, NOTE_A4, 0, 0, 0
+    ; MUSIC_PAIR SFX_FADE_OUT|31, 127, NOTE_A4, 0, 0, 0
+    ;
+    ; MUSIC_PAIR 16, 127, NOTE_G3, 0, 0, 0
+    ; MUSIC_PAIR 31, 127, NOTE_B4, 0, 0, 0
+    ; MUSIC_PAIR 16, 127, NOTE_G3, 0, 0, 0
+    ; MUSIC_PAIR 31, 127, NOTE_E3, 0, 0, 0
+    ; MUSIC_PAIR 31, 127, NOTE_D3, 0, 0, 0
+    ;
+    ; MUSIC_PAIR 31, 0, 0, 0, 0, 0
+    ; MUSIC_PAIR 31, 0, 0, 0, 0, 0
+    ; MUSIC_PAIR 31, 0, 0, 0, 0, 0
+    ; MUSIC_PAIR 31, 0, 0, 0, 0, 0
+
+    MUSIC_END music_start2, music_start1, music_start3
+music_start2:
+
+    MUSIC_END music_start3, music_start2, music_start1
+
+music_start3:
+    MUSIC_END music_start1, music_start3, music_start2

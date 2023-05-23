@@ -5,6 +5,10 @@ restart_game:
     lds r25, start_selection
     andi r25, 0x03
     sts start_selection, r25
+    ldi r24, low(2*music_start1)
+    ldi r25, high(2*music_start1)
+    sts music_track, r24
+    sts music_track+1, r25
     ret
 
 start_update_game:
