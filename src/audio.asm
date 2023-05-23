@@ -41,12 +41,12 @@ _uac_channel1_fade:
     brne _uac_channel1_fade_out
 _uac_channel1_fade_in:
     lds r25, channel1_volume
-    subi r25, low(-2)
+    subi r25, low(-4)
     sts channel1_volume, r25
     rjmp _uac_channel1_step
 _uac_channel1_fade_out:
     lds r25, channel1_volume
-    subi r25, 2
+    subi r25, 4
     sts channel1_volume, r25
 _uac_channel1_step:
     mov r25, r24
@@ -88,12 +88,12 @@ _uac_channel2_fade:
     brne _uac_channel2_fade_out
 _uac_channel2_fade_in:
     lds r25, channel2_volume
-    subi r25, low(-2)
+    subi r25, low(-4)
     sts channel2_volume, r25
     rjmp _uac_channel2_step
 _uac_channel2_fade_out:
     lds r25, channel2_volume
-    subi r25, 2
+    subi r25, 4
     sts channel2_volume, r25
 _uac_channel2_step:
     mov r25, r24
