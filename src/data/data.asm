@@ -69,7 +69,7 @@ sector_npcs:        .byte NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT
 following_spawn_x:  .byte 1
 following_spawn_y:  .byte 1
 following_timer:    .byte 1
-following_npcs:     .byte FOLLOWING_NPC_COUNT
+following_npcs:     .byte FOLLOWING_NPC_MEMSIZE*FOLLOWING_NPC_COUNT
 
 savepoint_used:     .byte SAVEPOINT_COUNT>>3
 savepoint_data:     .byte 1 ; [status:2][index:3][frame:3]

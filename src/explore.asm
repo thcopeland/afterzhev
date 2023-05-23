@@ -16,7 +16,7 @@ init_game_state:
     memset npc_presence, 0xff, (TOTAL_NPC_COUNT >> 3)
     memset conversation_over, 0xff, (TOTAL_CONVERSATION_COUNT >> 3)
     memset preplaced_item_presence, 0xff, (TOTAL_PREPLACED_ITEM_COUNT >> 3)
-    memset following_npcs, 0, FOLLOWING_NPC_COUNT
+    memset following_npcs, 0, FOLLOWING_NPC_COUNT*FOLLOWING_NPC_MEMSIZE
     memset shop_inventory, 0, SHOP_INVENTORY_SIZE
     ldi r23, ITEM_inventory_book
     ldi r24, ITEM_war_book
@@ -1506,6 +1506,10 @@ _rfs_clear_following:
     ldi r25, FOLLOWING_NPC_COUNT
 _rfs_clear_following_iter:
     st Z+, r1
+    st Z+, r1
+    .if FOLLOWING_NPC_MEMSIZE != 2
+        .error "expected FOLLOWING_NPC_MEMSIZE to be two bytes while clearing, update to match"
+    .endif
     dec r25
     brne _rfs_clear_following_iter
 _rfs_load_sector: ; load any sector-specific stuff that was not saved
@@ -1929,11 +1933,13 @@ _ls_following_check: ; don't add if in (or replacement) following list
     ldi ZH, high(following_npcs)
     ldi r24, FOLLOWING_NPC_COUNT
 _ls_following_iter:
-    ld r23, Z+
+    ldd r23, Z+FOLLOWING_NPC_IDX_OFFSET
     cp r23, r25
     breq _ls_load_npcs_next
     cp r23, r19
     breq _ls_load_npcs_next
+_ls_following_next:
+    adiw ZL, FOLLOWING_NPC_MEMSIZE
     dec r24
     brne _ls_following_iter
     rcall load_npc
@@ -2111,6 +2117,7 @@ _mc_save_vertical:
 ; Bring a follower from the previous sector into the current sector.
 ;
 ; Register Usage
+;   r20             temporary, preserved through load_npc
 ;   r24-r25         calculations
 ;   Y (r28:r29)     follower pointer, NPC pointer
 update_followers:
@@ -2125,10 +2132,11 @@ _uf_check_followers:
     ldi YH, high(following_npcs)
     ldi r24, FOLLOWING_NPC_COUNT
 _uf_followers_iter:
-    ld r25, Y
-    st Y+, r1
+    ldd r25, Y+FOLLOWING_NPC_IDX_OFFSET
     tst r25
     breq _uf_next_follower
+    st Y, r1
+    ldd r20, Y+FOLLOWING_NPC_HEALTH_OFFSET
     sts following_timer, r1
 _uf_scan_npc_slots:
     ldi YL, low(sector_npcs)
@@ -2148,8 +2156,10 @@ _uf_slot_found:
     lds r25, following_spawn_y
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
     std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    std Y+NPC_HEALTH_OFFSET, r20
     ret
 _uf_next_follower:
+    adiw YL, FOLLOWING_NPC_MEMSIZE
     dec r24
     brne _uf_followers_iter
 _uf_end:
@@ -2353,13 +2363,17 @@ _anf_check_type:
     cpi r25, NPC_ENEMY
     brne _anf_npc_next
 _anf_add_follower:
-    ldd r25, Z+NPC_IDX_OFFSET
-    st Y+, r25
-    cpiw YL, YH, following_npcs+FOLLOWING_NPC_COUNT, r25
+    ldd r24, Z+NPC_IDX_OFFSET
+    ldd r25, Z+NPC_HEALTH_OFFSET
+    std Y+FOLLOWING_NPC_IDX_OFFSET, r24
+    std Y+FOLLOWING_NPC_HEALTH_OFFSET, r25
+    adiw YL, 2
+    cpiw YL, YH, following_npcs+FOLLOWING_NPC_COUNT*FOLLOWING_NPC_MEMSIZE, r25
     brsh _anf_end
 _anf_npc_next:
     adiw ZL, NPC_MEMSIZE
     cpiw ZL, ZH, sector_npcs+NPC_MEMSIZE*SECTOR_DYNAMIC_NPC_COUNT, r25
-    brlo _anf_npc_iter
+    brsh _anf_end
+    rjmp _anf_npc_iter
 _anf_end:
     ret
