@@ -47,6 +47,9 @@ _uac_channel1_fade_in:
 _uac_channel1_fade_out:
     lds r25, channel1_volume
     subi r25, 4
+    brsh _uac_channel1_fade_done
+    clr r25
+_uac_channel1_fade_done:
     sts channel1_volume, r25
 _uac_channel1_step:
     mov r25, r24
@@ -94,6 +97,9 @@ _uac_channel2_fade_in:
 _uac_channel2_fade_out:
     lds r25, channel2_volume
     subi r25, 4
+    brsh _uac_channel2_fade_done
+    clr r25
+_uac_channel2_fade_done:
     sts channel2_volume, r25
 _uac_channel2_step:
     mov r25, r24
@@ -110,79 +116,37 @@ _uac_channel2_save:
 _uac_end:
     ret
 
-; Update sound effects and music, giving sound effects priority over channel 1.
+; Update only the music.
 ;
-; Register Usage
+; Registers Used
 ;   r20-r25         calculations
-;   X (r26:r27)     memory pointer
 ;   Z (r30:r31)     flash pointer
-update_sound_and_music:
-    lds r25, channel1_wave
-    tst r25
-    brne _usam_music
-_usam_test_sfx_tracks:
-    ldi XL, low(sfx_track)
-    ldi XH, high(sfx_track)
-    ld r25, X
-    tst r25
-    brne _usam_sfx_pointer
-    adiw XL, 1
-    ld r25, X
-    tst r25
-    breq _usam_music
-_usam_sfx_pointer:
-    ldi ZL, byte3(2*sfx_table)
-    out RAMPZ, ZL
-    ldi ZL, low(2*sfx_table)
-    ldi ZH, high(2*sfx_table)
-    ldi r24, 4
-    mul r24, r25
-    add ZL, r0
-    adc ZH, r1
-    clr r1
-    elpm r24, Z+
-    tst r24
-    breq _usam_sfx_stop
-_usam_sfx_note:
-    sts channel1_wave, r24
-    elpm r24, Z+
-    sts channel1_volume, r24
-    elpm r24, Z+
-    sts channel1_dphase, r24
-    elpm r24, Z+
-    sts channel1_dphase+1, r24
-    inc r25
-    st X, r25
-    rjmp _usam_music
-_usam_sfx_stop:
-    st X, r1
-_usam_music:
+update_music:
     lds r25, channel2_wave
     tst r25
-    brne _usam_end
+    brne _um_end1
     ldi ZL, byte3(2*music_tracks)
     out RAMPZ, ZL
     lds ZL, music_track
     lds ZH, music_track+1
-_usam_music_check:
     elpm r20, Z+
     tst r20
-    brne _usam_music_channel_2
+    brne _um_channel_2
     mov r25, r2
-    andi r25, 3
-    breq _usam_music_next
-    dec r25
-_usam_music_next:
-    lsl r25
+    andi r25, 0x06
+    breq _um_next_track
+    subi r25, 2
+_um_next_track:
     inc r25
     add ZL, r25
     adc ZH, r1
-    elpm r24, Z+
-    elpm r25, Z+
-    sts music_track, r24
-    sts music_track+1, r25
-    rjmp _usam_end
-_usam_music_channel_2:
+    elpm r20, Z+
+    elpm r21, Z+
+    sts music_track, r20
+    sts music_track+1, r21
+_um_end1:
+    ret
+_um_channel_2:
     elpm r21, Z+
     elpm r22, Z+
     elpm r23, Z+
@@ -190,10 +154,7 @@ _usam_music_channel_2:
     sts channel2_volume, r21
     sts channel2_dphase, r22
     sts channel2_dphase+1, r23
-_usam_music_channel_1:
-    lds r25, channel1_wave
-    tst r25
-    brne _usam_advance_channel_1
+_um_channel_1:
     elpm r20, Z+
     elpm r21, Z+
     elpm r22, Z+
@@ -202,13 +163,10 @@ _usam_music_channel_1:
     sts channel1_volume, r21
     sts channel1_dphase, r22
     sts channel1_dphase+1, r23
-    rjmp _usam_save_channel_1
-_usam_advance_channel_1:
-    adiw ZL, 4
-_usam_save_channel_1:
+_um_advance_track:
     sts music_track, ZL
     sts music_track+1, ZH
-_usam_end:
+_um_end2:
     ret
 
 ; Only update sound effects. This is used for most of the game, since music is

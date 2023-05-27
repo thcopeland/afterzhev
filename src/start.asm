@@ -12,7 +12,7 @@ restart_game:
     ret
 
 start_update_game:
-    call update_sound_and_music
+    call update_music
     lds r25, mode_clock
     tst r25
     breq _sug_main

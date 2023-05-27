@@ -174,39 +174,56 @@ music_test:
     MUSIC_END music_null, music_null, music_null
 
 music_start1:
-    ; MUSIC_PAIR 31, 127, NOTE_D3, 0, 0, 0
-    ; MUSIC_PAIR 31, 127, NOTE_G3, 0, 0, 0
-    ; MUSIC_PAIR SFX_FADE_OUT|16, 127, NOTE_B4, 0, 0, 0
-    ; MUSIC_PAIR SFX_FADE_OUT|16, 127, NOTE_B4, 0, 0, 0
-    ; MUSIC_PAIR 16, 0, 0, 0, 0, 0
-    ; MUSIC_PAIR 16, 127, NOTE_B4, 0, 0, 0
-    ; MUSIC_PAIR 16, 127, NOTE_D4, 0, 0, 0
-    ; MUSIC_PAIR 16, 127, NOTE_C4, 0, 0, 0
-    ; MUSIC_PAIR 16, 127, NOTE_B4, 0, 0, 0
-    ; MUSIC_PAIR 16, 127, NOTE_A4, 0, 0, 0
-    ; MUSIC_PAIR 16, 127, NOTE_B4, 0, 0, 0
-
-    ; MUSIC_PAIR 31, 127, NOTE_D3, 0, 0, 0
-    ; MUSIC_PAIR 31, 127, NOTE_C4, 0, 0, 0
-    ; MUSIC_PAIR 16, 127, NOTE_B4, 0, 0, 0
-    ; MUSIC_PAIR 16, 127, NOTE_A4, 0, 0, 0
-    ; MUSIC_PAIR SFX_FADE_OUT|31, 127, NOTE_A4, 0, 0, 0
+    ; MUSIC_PAIR 16, 0, 0, 8, 64, NOTE_B4
+    ; MUSIC_PAIR 16, 0, 0, 16, 64, NOTE_B4
+    ; MUSIC_PAIR 24, 0, 0, 24, 64, NOTE_Gb4
+    ; MUSIC_PAIR 24, 0, 0, 24, 64, NOTE_Gb4
+    ; MUSIC_PAIR 8, 0, 0, 8, 64, NOTE_E4
+    ; MUSIC_PAIR 8, 0, 0, 8, 64, NOTE_Gb4
+    ; MUSIC_PAIR 2, 0, 0, 2, 64, NOTE_D4
+    ; MUSIC_PAIR 2, 0, 0, 2, 64, NOTE_E4
+    ; MUSIC_PAIR 16, 0, 0, 16, 64, NOTE_D4
+    ; MUSIC_PAIR 8, 0, 0, 8, 64, NOTE_Db4
+    ; MUSIC_PAIR 8, 0, 0, 8, 64, NOTE_B4
     ;
-    ; MUSIC_PAIR 16, 127, NOTE_G3, 0, 0, 0
-    ; MUSIC_PAIR 31, 127, NOTE_B4, 0, 0, 0
-    ; MUSIC_PAIR 16, 127, NOTE_G3, 0, 0, 0
-    ; MUSIC_PAIR 31, 127, NOTE_E3, 0, 0, 0
-    ; MUSIC_PAIR 31, 127, NOTE_D3, 0, 0, 0
-    ;
-    ; MUSIC_PAIR 31, 0, 0, 0, 0, 0
-    ; MUSIC_PAIR 31, 0, 0, 0, 0, 0
-    ; MUSIC_PAIR 31, 0, 0, 0, 0, 0
-    ; MUSIC_PAIR 31, 0, 0, 0, 0, 0
+    ; MUSIC_PAIR 8, 0, 0, 8, 64, NOTE_Db4
+    ; MUSIC_PAIR 8, 0, 0, 8, 64, NOTE_D4
+    ; MUSIC_PAIR 24, 0, 0, 24, 64, NOTE_E4
+    ; MUSIC_PAIR 16, 0, 0, 16, 64, NOTE_E4
+    ; MUSIC_PAIR 16, 0, 0, 16, 64, NOTE_Gb4
+    ; MUSIC_PAIR 2, 0, 0, 2, 64, NOTE_Db4
+    ; MUSIC_PAIR 2, 0, 0, 2, 64, NOTE_D4
+    ; MUSIC_PAIR 16, 0, 0, 16, 64, NOTE_Db4
 
-    MUSIC_END music_start2, music_start1, music_start3
-music_start2:
+    MUSIC_PAIR 22, 0, 0, 22, 32, NOTE_D2
+    MUSIC_PAIR 14, 0, 0, 14, 32, NOTE_D3
+    MUSIC_PAIR 22, 0, 0, 22, 32, NOTE_A3
+    MUSIC_PAIR 14, 0, 0, 14, 32, NOTE_D3
 
-    MUSIC_END music_start3, music_start2, music_start1
+    MUSIC_PAIR 22, 0, 0, 22, 32, NOTE_D2
+    MUSIC_PAIR 14, 0, 0, 14, 32, NOTE_D3
+    MUSIC_PAIR 22, 0, 0, 22, 32, NOTE_A3
+    MUSIC_PAIR 14, 0, 0, 14, 32, NOTE_D3
 
-music_start3:
-    MUSIC_END music_start1, music_start3, music_start2
+    MUSIC_PAIR 22, 0, 0, 22, 32, NOTE_D2
+    MUSIC_PAIR 14, 0, 0, 14, 32, NOTE_D3
+    MUSIC_PAIR 22, 0, 0, 22, 32, NOTE_A3
+    MUSIC_PAIR 14, 0, 0, 14, 32, NOTE_D3
+
+    MUSIC_PAIR 30, 0, 0, 30, 32, NOTE_A4
+    MUSIC_PAIR 30, 0, 0, 30, 32, NOTE_A4
+    MUSIC_PAIR 12, 0, 0, MUSIC_FADE_OUT|12, 32, NOTE_A4
+
+    MUSIC_PAIR 30, 0, 0, 30, 24, NOTE_D3
+    MUSIC_PAIR 30, 0, 0, 30, 24, NOTE_D3
+    MUSIC_PAIR 12, 0, 0, MUSIC_FADE_OUT|12, 24, NOTE_D3
+
+    MUSIC_PAIR 30, 0, 0, 30, 32, NOTE_Gb3
+    MUSIC_PAIR 30, 0, 0, 30, 32, NOTE_Gb3
+    MUSIC_PAIR 12, 0, 0, MUSIC_FADE_OUT|12, 32, NOTE_Gb3
+
+    MUSIC_PAIR 30, 0, 0, 30, 24, NOTE_A3
+    MUSIC_PAIR 30, 0, 0, 30, 24, NOTE_A3
+    MUSIC_PAIR 12, 0, 0, MUSIC_FADE_OUT|12, 24, NOTE_A3
+
+    MUSIC_END music_start1, music_start1, music_start1
