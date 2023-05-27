@@ -29,6 +29,8 @@ _init_audio:
     ldi r25, high(2*music_null)
     sts music_track, r24
     sts music_track+1, r25
+    sts music_track+2, r24
+    sts music_track+3, r25
     sts sfx_track, r1
     sts sfx_track+1, r1
 _init_random:

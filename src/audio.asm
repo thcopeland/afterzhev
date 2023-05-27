@@ -122,40 +122,32 @@ _uac_end:
 ;   r20-r25         calculations
 ;   Z (r30:r31)     flash pointer
 update_music:
-    lds r25, channel2_wave
-    tst r25
-    brne _um_end1
-    ldi ZL, byte3(2*music_tracks)
+    ldi ZL, byte3(2*music_table)
     out RAMPZ, ZL
+    lds r25, channel1_wave
+    tst r25
+    brne _um_channel2
     lds ZL, music_track
     lds ZH, music_track+1
     elpm r20, Z+
     tst r20
-    brne _um_channel_2
+    brne _um_channel1_advance
+_um_channel1_end:
+    ldi r25, 1
     mov r25, r2
     andi r25, 0x06
-    breq _um_next_track
+    breq _um_channel1_track
     subi r25, 2
-_um_next_track:
+_um_channel1_track:
     inc r25
     add ZL, r25
     adc ZH, r1
-    elpm r20, Z+
-    elpm r21, Z+
-    sts music_track, r20
-    sts music_track+1, r21
-_um_end1:
-    ret
-_um_channel_2:
-    elpm r21, Z+
-    elpm r22, Z+
-    elpm r23, Z+
-    sts channel2_wave, r20
-    sts channel2_volume, r21
-    sts channel2_dphase, r22
-    sts channel2_dphase+1, r23
-_um_channel_1:
-    elpm r20, Z+
+    elpm r24, Z+
+    elpm r25, Z+
+    sts music_track, r24
+    sts music_track+1, r25
+    rjmp _um_channel2
+_um_channel1_advance:
     elpm r21, Z+
     elpm r22, Z+
     elpm r23, Z+
@@ -163,10 +155,43 @@ _um_channel_1:
     sts channel1_volume, r21
     sts channel1_dphase, r22
     sts channel1_dphase+1, r23
-_um_advance_track:
     sts music_track, ZL
     sts music_track+1, ZH
-_um_end2:
+_um_channel2:
+    lds r25, channel2_wave
+    tst r25
+    brne _um_end
+    lds ZL, music_track+2
+    lds ZH, music_track+3
+    elpm r20, Z+
+    tst r20
+    brne _um_channel2_advance
+_um_channel2_end:
+    ldi r25, 2
+    mov r25, r2
+    andi r25, 0x06
+    breq _um_channel2_track
+    subi r25, 2
+_um_channel2_track:
+    inc r25
+    add ZL, r25
+    adc ZH, r1
+    elpm r24, Z+
+    elpm r25, Z+
+    sts music_track+2, r24
+    sts music_track+3, r25
+    ret
+_um_channel2_advance:
+    elpm r21, Z+
+    elpm r22, Z+
+    elpm r23, Z+
+    sts channel2_wave, r20
+    sts channel2_volume, r21
+    sts channel2_dphase, r22
+    sts channel2_dphase+1, r23
+    sts music_track+2, ZL
+    sts music_track+3, ZH
+_um_end:
     ret
 
 ; Only update sound effects. This is used for most of the game, since music is

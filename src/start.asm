@@ -5,10 +5,16 @@ restart_game:
     lds r25, start_selection
     andi r25, 0x03
     sts start_selection, r25
-    ldi r24, low(2*music_start1)
-    ldi r25, high(2*music_start1)
+    ldi r24, low(2*music_start_channel_1)
+    ldi r25, high(2*music_start_channel_1)
     sts music_track, r24
     sts music_track+1, r25
+    ldi r24, low(2*music_start_channel_2)
+    ldi r25, high(2*music_start_channel_2)
+    sts music_track+2, r24
+    sts music_track+3, r25
+    sts sfx_track, r1
+    sts sfx_track+1, r1
     ret
 
 start_update_game:
@@ -146,6 +152,13 @@ _sthc_end:
     ret
 
 start_change:
+    ; fade the music out
+    lds r25, channel1_wave
+    ori r25, SFX_FADE_OUT|15
+    sts channel1_wave, r25
+    lds r25, channel2_wave
+    ori r25, SFX_FADE_OUT|15
+    sts channel2_wave, r25
     lds r25, start_selection
 _sc_check_resume:
     cpi r25, 1

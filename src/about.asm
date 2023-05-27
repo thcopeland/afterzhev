@@ -4,7 +4,7 @@ load_about:
     ret
 
 about_update:
-    ; call update_sound_and_music
+    call update_sound_effects
     rcall about_render
     rcall about_handle_controls
     jmp _loop_reenter

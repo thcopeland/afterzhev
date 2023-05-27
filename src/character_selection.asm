@@ -8,7 +8,7 @@ load_character_selection:
     ret
 
 character_selection_update:
-    ; call update_sound_and_music
+    call update_sound_effects
     rcall character_selection_render
     rcall character_selection_controls
     jmp _loop_reenter

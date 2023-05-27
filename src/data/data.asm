@@ -13,7 +13,7 @@ channel2_dphase:    .byte 2
 channel2_volume:    .byte 1
 channel2_wave:      .byte 1
 
-music_track:        .byte 2 ; one 16-bit track
+music_track:        .byte 4 ; two 16-bit tracks
 sfx_track:          .byte 2 ; two 8-bit tracks
 
 prev_controller_values: .byte 1
