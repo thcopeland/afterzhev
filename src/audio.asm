@@ -55,8 +55,10 @@ _uac_channel1_step:
     mov r25, r24
     andi r24, 0xe0
     andi r25, 0x1f
+    breq _uac_channel1_clear
     subi r25, 1
-    brsh _uac_channel1_save
+    brne _uac_channel1_save
+_uac_channel1_clear:
     sts channel1_volume, r1
     sts channel1_wave, r1
     rjmp _uac_channel_2
@@ -105,8 +107,10 @@ _uac_channel2_step:
     mov r25, r24
     andi r24, 0xe0
     andi r25, 0x1f
+    breq _uac_channel2_clear
     subi r25, 1
-    brsh _uac_channel2_save
+    brne _uac_channel2_save
+_uac_channel2_clear:
     sts channel2_volume, r1
     sts channel2_wave, r1
     rjmp _uac_end
@@ -133,7 +137,6 @@ update_music:
     tst r20
     brne _um_channel1_advance
 _um_channel1_end:
-    ldi r25, 1
     mov r25, r2
     andi r25, 0x06
     breq _um_channel1_track
@@ -167,7 +170,6 @@ _um_channel2:
     tst r20
     brne _um_channel2_advance
 _um_channel2_end:
-    ldi r25, 2
     mov r25, r2
     andi r25, 0x06
     breq _um_channel2_track
