@@ -149,7 +149,10 @@ _um_channel1_track:
     elpm r25, Z+
     sts music_track, r24
     sts music_track+1, r25
-    rjmp _um_channel2
+    movw ZL, r24
+    elpm r20, Z+
+    tst r20
+    breq _um_channel2
 _um_channel1_advance:
     elpm r21, Z+
     elpm r22, Z+
@@ -182,7 +185,10 @@ _um_channel2_track:
     elpm r25, Z+
     sts music_track+2, r24
     sts music_track+3, r25
-    ret
+    movw ZL, r24
+    elpm r20, Z+
+    tst r20
+    breq _um_end
 _um_channel2_advance:
     elpm r21, Z+
     elpm r22, Z+
