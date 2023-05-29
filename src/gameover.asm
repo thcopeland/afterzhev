@@ -1,5 +1,26 @@
 gameover_update_game:
+    lds r25, gameover_state
+    cpi r25, GAME_OVER_DEAD
+    brne _gug_render
+    lds r25, mode_clock
+    cpi r25, 32
+    brlo _gug_sound_effects
+    brne _gug_music
+_gug_start_music:
+    ldi r24, low(2*music_death_channel_1)
+    ldi r25, high(2*music_death_channel_1)
+    sts music_track, r24
+    sts music_track+1, r25
+    ldi r24, low(2*music_death_channel_2)
+    ldi r25, high(2*music_death_channel_2)
+    sts music_track+2, r24
+    sts music_track+3, r25
+_gug_sound_effects:
     call update_sound_effects
+    rjmp _gug_render
+_gug_music:
+    call update_music
+_gug_render:
     rjmp gameover_render_game
 _gug_return:
     rcall gameover_handle_controls
@@ -74,6 +95,13 @@ _ghc_restart:
     rjmp _ghc_end
     sts start_selection, r1
     call restart_game
+    ; fade out music
+    lds r25, channel1_wave
+    ori r25, SFX_FADE_OUT|15
+    sts channel1_wave, r25
+    lds r25, channel2_wave
+    ori r25, SFX_FADE_OUT|15
+    sts channel2_wave, r25
 _ghc_end:
     ret
 
