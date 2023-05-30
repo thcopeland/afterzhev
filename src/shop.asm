@@ -190,8 +190,8 @@ shop_sell_selected:
     tst r25
     breq _sss_fail
     ld r25, X
-    dec r25
-    brpl _sss_shop_search
+    subi r25, 1
+    brsh _sss_shop_search
 _sss_fail:
     ldi r25, (sfx_fail-sfx_table)>>1
     call play_sound_effect

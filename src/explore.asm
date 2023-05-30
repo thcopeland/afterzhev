@@ -1042,8 +1042,6 @@ _hmb_check_savepoint:
     sts player_health, r25
     ldi r25, EFFECT_HEALING << 3
     sts player_effect, r25
-    sts player_velocity_x, r1
-    sts player_velocity_y, r1
     ldi r25, (sfx_save-sfx_table)>>1
     call play_sound_effect
     rjmp _hmb_end
@@ -1578,6 +1576,16 @@ _aae_replace:
 ;   r20-r26         calculations
 ;   Z (r30:r31)     flash pointer
 update_player:
+    lds r25, savepoint_progress
+    tst r25
+    breq _up_move
+    lds r24, player_velocity_x
+    lds r25, player_velocity_y
+    asr r24
+    asr r25
+    sts player_velocity_x, r24
+    sts player_velocity_y, r25
+_up_move:
     ldi YL, low(player_position_data)
     ldi YH, high(player_position_data)
     call move_character

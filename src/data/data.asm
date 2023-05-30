@@ -30,6 +30,13 @@ current_sector:     .byte 2
 camera_position_x:  .byte 1
 camera_position_y:  .byte 1
 
+sector_data:        .byte SECTOR_DATA_MEMSIZE
+global_data:        .byte GLOBAL_DATA_MEMSIZE
+
+preplaced_item_presence: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
+npc_presence:       .byte TOTAL_NPC_COUNT>>3
+conversation_over:  .byte TOTAL_CONVERSATION_COUNT>>3
+
 player_class:       .byte 1 ; [level:4][class:4]
 player_position_data:
 player_position_x:  .byte 1
@@ -55,12 +62,6 @@ player_gold:        .byte 2
 player_xp:          .byte 2
 player_effects:     .byte PLAYER_EFFECT_MEMSIZE*PLAYER_EFFECT_COUNT
 player_inventory:   .byte PLAYER_INVENTORY_SIZE
-sector_data:        .byte SECTOR_DATA_MEMSIZE
-global_data:        .byte GLOBAL_DATA_MEMSIZE
-
-preplaced_item_presence: .byte TOTAL_PREPLACED_ITEM_COUNT>>3
-npc_presence:       .byte TOTAL_NPC_COUNT>>3
-conversation_over:  .byte TOTAL_CONVERSATION_COUNT>>3
 
 savedmem_end:
 
