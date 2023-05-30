@@ -154,7 +154,7 @@ _sbs_price:
     lds r23, player_gold+1
     sub r22, r24
     sbc r23, r25
-    brmi _sbs_end
+    brlo _sbs_fail
     ldi YL, low(player_inventory)
     ldi YH, high(player_inventory)
     ldi r20, PLAYER_INVENTORY_SIZE
