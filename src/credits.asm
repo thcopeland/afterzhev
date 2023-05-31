@@ -8,6 +8,7 @@ credits_update:
     brsh _cu_main
     sts mode_clock, r25
 _cu_main:
+    call update_music
     rcall credits_handle_controls
     rcall credits_render
     jmp _loop_reenter
@@ -23,6 +24,9 @@ load_credits:
     ret
 
 credits_handle_controls:
+    lds r25, mode_clock
+    cpi r25, 219
+    brlo _crc_end
     lds r24, prev_controller_values
     lds r25, controller_values
     com r24

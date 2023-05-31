@@ -1,20 +1,7 @@
 gameover_update_game:
-    lds r25, gameover_state
-    cpi r25, GAME_OVER_DEAD
-    brne _gug_render
     lds r25, mode_clock
     cpi r25, 32
-    brlo _gug_sound_effects
-    brne _gug_music
-_gug_start_music:
-    ldi r24, low(2*music_death_channel_1)
-    ldi r25, high(2*music_death_channel_1)
-    sts music_track, r24
-    sts music_track+1, r25
-    ldi r24, low(2*music_death_channel_2)
-    ldi r25, high(2*music_death_channel_2)
-    sts music_track+2, r24
-    sts music_track+3, r25
+    brsh _gug_music
 _gug_sound_effects:
     call update_sound_effects
     rjmp _gug_render
@@ -45,6 +32,32 @@ _gug_end:
 ;   r25     game status (param)
 load_gameover:
     sts gameover_state, r25
+    cpi r25, GAME_OVER_WIN
+    brne _lg_lose
+_lg_win:
+    ldi r25, (sfx_win-sfx_table)>>1
+    sts sfx_track, r25
+    ldi r24, low(2*music_credits_channel_1)
+    ldi r25, high(2*music_credits_channel_1)
+    sts music_track, r24
+    sts music_track+1, r25
+    ldi r24, low(2*music_credits_channel_2)
+    ldi r25, high(2*music_credits_channel_2)
+    sts music_track+2, r24
+    sts music_track+3, r25
+    rjmp _lg_setup
+_lg_lose:
+    ldi r25, (sfx_death-sfx_table)>>1
+    sts sfx_track, r25
+    ldi r24, low(2*music_death_channel_1)
+    ldi r25, high(2*music_death_channel_1)
+    sts music_track, r24
+    sts music_track+1, r25
+    ldi r24, low(2*music_death_channel_2)
+    ldi r25, high(2*music_death_channel_2)
+    sts music_track+2, r24
+    sts music_track+3, r25
+_lg_setup:
     ldi r25, MODE_GAMEOVER
     sts game_mode, r25
     sts mode_clock, r1

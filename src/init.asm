@@ -42,6 +42,12 @@ _init_game:
     sts start_selection, r1
     call restart_game
 
+    ldi r25, GAME_OVER_WIN
+    ; ldi r25, GAME_OVER_DEAD
+    call load_gameover
+    ; ldi r25, 32
+    ; sts mode_clock, r25
+
     ; call init_game_state
     ; call load_explore
     ;

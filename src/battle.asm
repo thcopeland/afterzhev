@@ -135,8 +135,6 @@ _prmd_apply_damage:
     brsh _prmd_push
 _prmd_die:
     sts player_health, r1
-    ldi r25, (sfx_death-sfx_table)>>1
-    sts sfx_track, r25
     ldi r25, GAME_OVER_DEAD
     call load_gameover
     rjmp _prmd_end
@@ -265,8 +263,6 @@ _pred_damage:
     brsh _pred_effect_next
 _pred_die:
     sts player_health, r1
-    ldi r25, (sfx_death-sfx_table)>>1
-    sts sfx_track, r25
     ldi r25, GAME_OVER_DEAD
     call load_gameover
     ret
