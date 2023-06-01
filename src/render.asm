@@ -2051,12 +2051,20 @@ render_partial_screen:
     brlo _rps_end
 _rps_col_loop:
     mov r21, r23
+    sbrs r21, 0
+    rjmp _rps_prerow
+    elpm r0, Z+
+    st Y+, r0
+    subi r21, 1
+_rps_prerow:
     subi r21, 1
     brlo _rps_next_col
 _rps_row_loop:
     elpm r0, Z+
     st Y+, r0
-    subi r21, 1
+    elpm r0, Z+
+    st Y+, r0
+    subi r21, 2
     brsh _rps_row_loop
 _rps_next_col:
     sub YL, r23
