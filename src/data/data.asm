@@ -22,7 +22,7 @@ controller_values:  .byte 1
 
 savedmem_start:
 
-clock:              .byte 2
+clock:              .byte 3
 mode_clock:         .byte 1
 
 game_mode:          .byte 1
@@ -94,7 +94,7 @@ gameover_state:
 npc_move_flags2:    .byte 1
 
 lightning_clock:
-final_time:
+final_time:         ; needs 3 bytes
 conversation_frame: .byte 2
 
 conversation_chars:

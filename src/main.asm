@@ -206,9 +206,12 @@ _loop_heartbeat: ; used to synch with emulator
 
     lds r24, clock
     lds r25, clock+1
+    lds r23, clock+2
     adiw r24, 1
+    adc r23, r1
     sts clock, r24
     sts clock+1, r25
+    sts clock+2, r23
 
     sts TIMSK1, r1
     sei

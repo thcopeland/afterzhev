@@ -4,6 +4,7 @@ restart_game:
     sts mode_clock, r1
     sts clock, r1
     sts clock+1, r1
+    sts clock+2, r1
     lds r25, start_selection
     andi r25, 0x03
     sts start_selection, r25

@@ -41,7 +41,9 @@ _crc_end:
     ret
 
 ; Render scrolling credits.
-;   r18-r25     calculations
+;   r18-r25         calculations
+;   Y (r28:r29)     framebuffer pointer
+;   Z (r30:r31)     flash pointer
 credits_render:
     lds r25, mode_clock
     tst r25
@@ -118,19 +120,42 @@ _cr_time:
     ldi r23, 0
     lds r24, final_time
     lds r25, final_time+1
+    lds r21, final_time+2
+    ; handle higher order bits so that the time can fit in 16 bits, yet still
+    ; correctly display times up to 59 minutes.
+    clr r20
+    cpi r21, 1
+    brlo _cr_time_math
+    subi r24, low(15*60*60)
+    sbci r25, high(15*60*60)
+    sbci r21, byte3(15*60*60)
+    subi r20, low(-15)
+    cpi r21, 1
+    brlo _cr_time_math
+    subi r24, low(15*60*60)
+    sbci r25, high(15*60*60)
+    sbci r21, byte3(15*60*60)
+    subi r20, low(-15)
+    cpi r21, 1
+    brlo _cr_time_math
+    subi r24, low(11*60*60)
+    sbci r25, high(11*60*60)
+    sbci r21, byte3(11*60*60)
+    subi r20, low(-11)
+_cr_time_math:
     call divmodw
     mov r18, r22 ; frames
     ldi r22, 60
     ldi r23, 0
     call divmodw
     mov r19, r22 ; seconds (for the physical 16.000 MHz MCU, more like 1.0061 seconds)
-    mov r20, r24 ; minutes (more like 60.365 seconds)
+    add r20, r24 ; minutes (more like 60.365 seconds)
 _cr_time_minute:
     cpi r20, 10
     brsh _cr_time_minute2
     push r20
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+42)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+42)
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+43)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+43)
     clr r20
     rcall putb_outlined
     pop r20
@@ -147,15 +172,15 @@ _cr_time_second:
     brsh _cr_time_second2
     ldi YL, low(framebuffer+DISPLAY_WIDTH*58+57)
     ldi YH, high(framebuffer+DISPLAY_WIDTH*58+57)
-    clr r21
+    clr r20
     rcall putb_outlined
 _cr_time_second2:
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+62)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+62)
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+61)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+61)
     mov r20, r19
     rcall putb_outlined
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+67)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+67)
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+66)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+66)
     ldi r21, '.'
     rcall putc_outlined
 _cr_time_second_decimal:
@@ -167,13 +192,13 @@ _cr_time_second_decimal:
     clr r1
     cpi r18, 10
     brsh _cr_time_second_decimal2
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+72)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+72)
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+71)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+71)
     clr r20
     rcall putb_outlined
 _cr_time_second_decimal2:
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+76)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+76)
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+75)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+75)
     mov r20, r18
     rcall putb_outlined
 _cr_end:

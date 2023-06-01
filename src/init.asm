@@ -45,48 +45,48 @@ _init_game:
     ; ldi r25, GAME_OVER_DEAD
     ; call load_credits
     ; call load_gameover
-    ; ldi r25, 200
+    ; ldi r25, 219
     ; sts mode_clock, r25
 
-    call init_game_state
-    call load_explore
-
-    ldi r25, ITEM_iron_staff
-    sts player_weapon, r25
-
-    ldi r25, ITEM_mithril_armor
-    sts player_armor, r25
-
-    ldi r25, ITEM_strength_potion
-    sts player_inventory, r25
-
-    ldi r25, ITEM_health_potion
-    sts player_inventory+2, r25
-
-    ldi r25, ITEM_blessed_sword
-    sts player_inventory+3, r25
-
-    ldi r22, 40
-    ldi r23, 20
-    ldi r24, 20
-    ldi r25, 20
-    sts player_stats + STATS_STRENGTH_OFFSET, r22
-    sts player_stats + STATS_VITALITY_OFFSET, r23
-    sts player_stats + STATS_DEXTERITY_OFFSET, r24
-    sts player_stats + STATS_INTELLECT_OFFSET, r25
-
-    ldi r25, 140
-    sts player_position_x, r25
-    ldi r25, 100
-    sts player_position_y, r25
-    call reset_camera
-
-    ldi ZL, byte3(2*sector_table)
-    out RAMPZ, ZL
-    .equ SECTOR = SECTOR_FINAL_6
-    ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
-    ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
-    call load_sector
+    ; call init_game_state
+    ; call load_explore
+    ;
+    ; ldi r25, ITEM_iron_staff
+    ; sts player_weapon, r25
+    ;
+    ; ldi r25, ITEM_mithril_armor
+    ; sts player_armor, r25
+    ;
+    ; ldi r25, ITEM_strength_potion
+    ; sts player_inventory, r25
+    ;
+    ; ldi r25, ITEM_health_potion
+    ; sts player_inventory+2, r25
+    ;
+    ; ldi r25, ITEM_blessed_sword
+    ; sts player_inventory+3, r25
+    ;
+    ; ldi r22, 40
+    ; ldi r23, 20
+    ; ldi r24, 20
+    ; ldi r25, 20
+    ; sts player_stats + STATS_STRENGTH_OFFSET, r22
+    ; sts player_stats + STATS_VITALITY_OFFSET, r23
+    ; sts player_stats + STATS_DEXTERITY_OFFSET, r24
+    ; sts player_stats + STATS_INTELLECT_OFFSET, r25
+    ;
+    ; ldi r25, 140
+    ; sts player_position_x, r25
+    ; ldi r25, 100
+    ; sts player_position_y, r25
+    ; call reset_camera
+    ;
+    ; ldi ZL, byte3(2*sector_table)
+    ; out RAMPZ, ZL
+    ; .equ SECTOR = SECTOR_FINAL_6
+    ; ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
+    ; ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
+    ; call load_sector
     ;
     ; ldi r24, low(2*_conv_field_foxes)
     ; ldi r25, high(2*_conv_field_foxes)
