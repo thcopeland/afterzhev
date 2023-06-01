@@ -13,16 +13,18 @@ _cu_main:
     rcall credits_render
     jmp _loop_reenter
 
-; Switch to the inventory game mode.
+; Switch to the credits.
 ;
 ; Register Usage
-;   r25     temporary value
+;   r24-r25 calculations
 load_credits:
     ldi r25, MODE_CREDITS
     sts game_mode, r25
     sts mode_clock, r1
     ret
 
+; Handle button presses (after the credits finish).
+;   r24-r25     calculations
 credits_handle_controls:
     lds r25, mode_clock
     cpi r25, 219
@@ -38,6 +40,8 @@ credits_handle_controls:
 _crc_end:
     ret
 
+; Render scrolling credits.
+;   r18-r25     calculations
 credits_render:
     lds r25, mode_clock
     tst r25
@@ -105,8 +109,75 @@ _cr_text:
     ldi r24, 68
     ldi r25, 190
     rcall scrolling_text
+    lds r25, mode_clock
+    cpi r25, 219
+    brsh _cr_time
+    rjmp _cr_end
+_cr_time:
+    ldi r22, 60
+    ldi r23, 0
+    lds r24, final_time
+    lds r25, final_time+1
+    call divmodw
+    mov r18, r22 ; frames
+    ldi r22, 60
+    ldi r23, 0
+    call divmodw
+    mov r19, r22 ; seconds (for the physical 16.000 MHz MCU, more like 1.0061 seconds)
+    mov r20, r24 ; minutes (more like 60.365 seconds)
+_cr_time_minute:
+    cpi r20, 10
+    brsh _cr_time_minute2
+    push r20
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+42)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+42)
+    clr r20
+    rcall putb_outlined
+    pop r20
+_cr_time_minute2:
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+47)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+47)
+    rcall putb_outlined
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+52)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+52)
+    ldi r21, ':'
+    rcall putc_outlined
+    cpi r19, 10
+_cr_time_second:
+    brsh _cr_time_second2
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+57)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+57)
+    clr r21
+    rcall putb_outlined
+_cr_time_second2:
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+62)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+62)
+    mov r20, r19
+    rcall putb_outlined
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+67)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+67)
+    ldi r21, '.'
+    rcall putc_outlined
+_cr_time_second_decimal:
+    ldi r25, 0xd5 ; 100*128/60
+    mul r18, r25
+    lsl r0
+    rol r1
+    mov r18, r1
+    clr r1
+    cpi r18, 10
+    brsh _cr_time_second_decimal2
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+72)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+72)
+    clr r20
+    rcall putb_outlined
+_cr_time_second_decimal2:
+    ldi YL, low(framebuffer+DISPLAY_WIDTH*58+76)
+    ldi YH, high(framebuffer+DISPLAY_WIDTH*58+76)
+    mov r20, r18
+    rcall putb_outlined
+_cr_end:
     ret
-
 
 ; Write a line of centered, scrolling text, outlined in black. Only one line is
 ; supported for simplicity.
@@ -170,10 +241,10 @@ _st_end:
 ; nine times, which is not particularly efficient but sure is easy.
 ;
 ; Register Usage
+;   r21, r23        setup
 ;   Y (r28:r29)     framebuffer pointer (param)
 ;   Z (r30:r31)     string flash pointer (param)
 puts_outlined:
-    ldi r21, 30
     sts subroutine_tmp, YL
     sts subroutine_tmp+1, YH
     sts subroutine_tmp+2, ZL
@@ -240,4 +311,114 @@ puts_outlined:
     lds ZH, subroutine_tmp+3
     ldi r23, 0xff
     call puts
+    ret
+
+; Write a 8 bit value to the framebuffer, outlined in black.
+;
+; Register Usage
+;   r20             value (param)
+;   X (r26:r27)     working framebuffer pointer
+;   Y (r28:r29)     framebuffer pointer (param)
+putb_outlined:
+    clr r23
+    movw XL, YL
+    subi XL, low(DISPLAY_WIDTH+1)
+    sbci XH, high(DISPLAY_WIDTH+1)
+    mov r21, r20
+    call putb
+    movw XL, YL
+    subi XL, low(DISPLAY_WIDTH)
+    sbci XH, high(DISPLAY_WIDTH)
+    mov r21, r20
+    call putb
+    movw XL, YL
+    subi XL, low(DISPLAY_WIDTH-1)
+    sbci XH, high(DISPLAY_WIDTH-1)
+    mov r21, r20
+    call putb
+    movw XL, YL
+    sbiw XL, 1
+    mov r21, r20
+    call putb
+    movw XL, YL
+    mov r21, r20
+    call putb
+    movw XL, YL
+    adiw XL, 1
+    mov r21, r20
+    call putb
+    movw XL, YL
+    subi XL, low(-DISPLAY_WIDTH-1)
+    sbci XH, high(-DISPLAY_WIDTH-1)
+    mov r21, r20
+    call putb
+    movw XL, YL
+    subi XL, low(-DISPLAY_WIDTH)
+    sbci XH, high(-DISPLAY_WIDTH)
+    mov r21, r20
+    call putb
+    movw XL, YL
+    subi XL, low(-DISPLAY_WIDTH+1)
+    sbci XH, high(-DISPLAY_WIDTH+1)
+    mov r21, r20
+    call putb
+    movw XL, YL
+    ldi r23, 0xff
+    mov r21, r20
+    call putb
+    ret
+
+; Write a character to the framebuffer, outlined in black.
+;
+; Register Usage
+;   r21             character (param)
+;   X (r26:r27)     working framebuffer pointer
+;   Y (r28:r29)     framebuffer pointer (param)
+putc_outlined:
+    clr r23
+    movw XL, YL
+    subi XL, low(DISPLAY_WIDTH+1)
+    sbci XH, high(DISPLAY_WIDTH+1)
+    mov r22, r21
+    call putc
+    movw XL, YL
+    subi XL, low(DISPLAY_WIDTH)
+    sbci XH, high(DISPLAY_WIDTH)
+    mov r22, r21
+    call putc
+    movw XL, YL
+    subi XL, low(DISPLAY_WIDTH-1)
+    sbci XH, high(DISPLAY_WIDTH-1)
+    mov r22, r21
+    call putc
+    movw XL, YL
+    sbiw XL, 1
+    mov r22, r21
+    call putc
+    movw XL, YL
+    mov r22, r21
+    call putc
+    movw XL, YL
+    adiw XL, 1
+    mov r22, r21
+    call putc
+    movw XL, YL
+    subi XL, low(-DISPLAY_WIDTH-1)
+    sbci XH, high(-DISPLAY_WIDTH-1)
+    mov r22, r21
+    call putc
+    movw XL, YL
+    subi XL, low(-DISPLAY_WIDTH)
+    sbci XH, high(-DISPLAY_WIDTH)
+    mov r22, r21
+    call putc
+    movw XL, YL
+    subi XL, low(-DISPLAY_WIDTH+1)
+    sbci XH, high(-DISPLAY_WIDTH+1)
+    mov r22, r21
+    call putc
+    movw XL, YL
+    ldi r23, 0xff
+    mov r22, r21
+    call putc
     ret

@@ -35,6 +35,10 @@ load_gameover:
     cpi r25, GAME_OVER_WIN
     brne _lg_lose
 _lg_win:
+    lds r24, clock
+    lds r25, clock+1
+    sts final_time, r24
+    sts final_time+1, r25
     ldi r25, (sfx_win-sfx_table)>>1
     sts sfx_track, r25
     ldi r24, low(2*music_credits_channel_1)

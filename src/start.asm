@@ -2,6 +2,8 @@ restart_game:
     ldi r25, MODE_START
     sts game_mode, r25
     sts mode_clock, r1
+    sts clock, r1
+    sts clock+1, r1
     lds r25, start_selection
     andi r25, 0x03
     sts start_selection, r25

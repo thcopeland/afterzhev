@@ -94,6 +94,7 @@ gameover_state:
 npc_move_flags2:    .byte 1
 
 lightning_clock:
+final_time:
 conversation_frame: .byte 2
 
 conversation_chars:
