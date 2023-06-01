@@ -1,7 +1,7 @@
 # Game Engine
 - Optimize effect sprites
 - Special case single color tiles
-* Sound
+- Sound
 * NES controller
 - Balance potions
 - Items

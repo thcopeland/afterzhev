@@ -316,6 +316,10 @@ music_credits_channel_1:
     MUSIC_NOTE 24, 0, 0
     MUSIC_NOTE 24, 0, 0
 
+    MUSIC_NOTE 24, 0, 0
+    MUSIC_NOTE 24, 0, 0
+    MUSIC_NOTE 24, 0, 0
+
     MUSIC_NOTE 24, 32, NOTE_B3
     MUSIC_NOTE 2, 28, NOTE_B3
     MUSIC_NOTE 2, 24, NOTE_B3
@@ -731,8 +735,13 @@ music_credits_channel_1:
     MUSIC_NOTE 2, 10, NOTE_B3
     MUSIC_NOTE 4, 9, NOTE_B3
     MUSIC_NOTE 4, 8, NOTE_B3
+    MUSIC_NOTE 4, 7, NOTE_Gb3
+    MUSIC_NOTE 4, 6, NOTE_Gb3
+    MUSIC_NOTE 4, 5, NOTE_Gb3
+    MUSIC_NOTE 4, 4, NOTE_Gb3
+    MUSIC_NOTE 4, 3, NOTE_Gb3
+    MUSIC_NOTE 4, 2, NOTE_Gb3
 
-    MUSIC_NOTE 24, 0, 0
     MUSIC_NOTE 24, 0, 0
     MUSIC_NOTE 24, 0, 0
 
@@ -826,6 +835,10 @@ music_credits_channel_1:
 
     TRACK_END music_null, music_null, music_null
 music_credits_channel_2:
+    MUSIC_NOTE 24, 0, 0
+    MUSIC_NOTE 24, 0, 0
+    MUSIC_NOTE 24, 0, 0
+
     TRACK_START_REPEAT 12
 _music_credits_channel_2_1:
     MUSIC_NOTE 8, 16, NOTE_B2
