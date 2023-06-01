@@ -133,16 +133,36 @@ update_music:
     brne _um_channel2
     lds ZL, music_track
     lds ZH, music_track+1
+_um_channel1_main:
     elpm r20, Z+
     tst r20
     brne _um_channel1_advance
+_um_channel1_command:
+    elpm r20, Z+
+    cpi r20, 2
+    breq _um_channel1_end_repeat
+    cpi r20, 1
+    brne _um_channel1_end
+_um_channel1_start_repeat:
+    elpm r20, Z+
+    sts music_repeat, r20
+    adiw ZL, 1
+    rjmp _um_channel1_main
+_um_channel1_end_repeat:
+    lds r25, music_repeat
+    subi r25, 1
+    sts music_repeat, r25
+    elpm r20, Z+
+    elpm r21, Z+
+    cpse r25, r1
+    movw ZL, r20
+    rjmp _um_channel1_main
 _um_channel1_end:
     mov r25, r2
     andi r25, 0x06
     breq _um_channel1_track
     subi r25, 2
 _um_channel1_track:
-    inc r25
     add ZL, r25
     adc ZH, r1
     elpm r24, Z+
@@ -169,16 +189,36 @@ _um_channel2:
     brne _um_end
     lds ZL, music_track+2
     lds ZH, music_track+3
+_um_channel2_main:
     elpm r20, Z+
     tst r20
     brne _um_channel2_advance
+_um_channel2_command:
+    elpm r20, Z+
+    cpi r20, 2
+    breq _um_channel2_end_repeat
+    cpi r20, 1
+    brne _um_channel2_end
+_um_channel2_start_repeat:
+    elpm r20, Z+
+    sts music_repeat+1, r20
+    adiw ZL, 1
+    rjmp _um_channel2_main
+_um_channel2_end_repeat:
+    lds r25, music_repeat+1
+    subi r25, 1
+    sts music_repeat+1, r25
+    elpm r20, Z+
+    elpm r21, Z+
+    cpse r25, r1
+    movw ZL, r20
+    rjmp _um_channel2_main
 _um_channel2_end:
     mov r25, r2
     andi r25, 0x06
     breq _um_channel2_track
     subi r25, 2
 _um_channel2_track:
-    inc r25
     add ZL, r25
     adc ZH, r1
     elpm r24, Z+
