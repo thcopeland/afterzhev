@@ -1221,14 +1221,13 @@ _sfbu_check_second_phase:
 _sfbu_end1:
     ret
 _sfbu_test_zhev_defeated:
-    ldi YL, low(sector_npcs)
-    ldi YH, high(sector_npcs)
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_CORPSE
+    ldi r25, NPC_ZHEV
+    call find_npc
+    tst r20
     brne _sfbu_end2
-    adiw YL, NPC_MEMSIZE
-    ldd r25, Y+NPC_IDX_OFFSET
-    cpi r25, NPC_CORPSE
+    ldi r25, NPC_ZHEV2
+    call find_npc
+    tst r20
     breq _sfbu_test_letter_taken
     ldi r25, NPC_CORPSE
     std Y+NPC_IDX_OFFSET, r25

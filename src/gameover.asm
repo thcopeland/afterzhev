@@ -132,7 +132,7 @@ gameover_render_game:
     brne _grg_check_death
 _grg_win:
     lds r25, mode_clock
-    cpi r25, 30
+    cpi r25, 29
     brsh _grg_render_win
     call render_game
     call update_active_effects
