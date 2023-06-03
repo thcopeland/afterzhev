@@ -199,7 +199,7 @@ _loop_game:
     rjmp _loop_check_audio
     sbr r20, 0x80
     out GPIOR2, r20
-_loop_heartbeat: ; used to synch with emulator
+_loop_heartbeat: ; used to sync with emulator
     in r25, PORTB
     ldi r24, 0x80
     eor r25, r24
@@ -222,7 +222,7 @@ _loop_heartbeat: ; used to synch with emulator
     sei
 
 .if TARGETING_MCU ; the emulator pokes memory directly
-    call read_nes_controller
+    rcall read_nes_controller
 .endif
 
     lds r25, game_mode
@@ -279,6 +279,8 @@ _loop_credits:
     brne _loop_reenter
     jmp credits_update
 _loop_reenter:
+    lds r25, controller_values
+    sts prev_controller_values, r25
 _loop_check_audio:
     lds r24, TCNT3L
     lds r25, TCNT3H

@@ -12,4 +12,4 @@
     .equ TARGETING_MCU = 1
 .endif
 
-.equ TARGETING_PC = !(!TARGETING_MCU)
+.equ TARGETING_PC = !TARGETING_MCU

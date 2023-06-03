@@ -113,8 +113,8 @@ void fps_delay(void) {
 }
 
 void set_control_bit(int bit, int val) {
-    if (val) avr->mem[0x26] |= (1 << bit);
-    else avr->mem[0x26] &= ~(1 << bit);
+    if (!val) avr->ram[0x1F01] |= (1 << bit);
+    else avr->ram[0x1F01] &= ~(1 << bit);
 }
 
 void handle_events(void) {
@@ -123,29 +123,29 @@ void handle_events(void) {
         if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
             switch (event.key.keysym.sym) {
                 case SDLK_UP:
-                    set_control_bit(7, event.type == SDL_KEYUP);
+                    set_control_bit(2, event.type == SDL_KEYUP);
                     break;
                 case SDLK_LEFT:
-                    set_control_bit(5, event.type == SDL_KEYUP);
+                    set_control_bit(3, event.type == SDL_KEYUP);
                     break;
                 case SDLK_DOWN:
-                    set_control_bit(6, event.type == SDL_KEYUP);
+                    set_control_bit(0, event.type == SDL_KEYUP);
                     break;
                 case SDLK_RIGHT:
-                    set_control_bit(4, event.type == SDL_KEYUP);
+                    set_control_bit(1, event.type == SDL_KEYUP);
                     break;
                 case SDLK_a:
                 case SDLK_RETURN:
-                    set_control_bit(3, event.type == SDL_KEYUP);
+                    set_control_bit(4, event.type == SDL_KEYUP);
                     break;
                 case SDLK_s:
-                    set_control_bit(2, event.type == SDL_KEYUP);
+                    set_control_bit(5, event.type == SDL_KEYUP);
                     break;
                 case SDLK_d:
-                    set_control_bit(1, event.type == SDL_KEYUP);
+                    set_control_bit(6, event.type == SDL_KEYUP);
                     break;
                 case SDLK_f:
-                    set_control_bit(0, event.type == SDL_KEYUP);
+                    set_control_bit(7, event.type == SDL_KEYUP);
                     break;
             }
         } else if (event.type == SDL_QUIT) {
