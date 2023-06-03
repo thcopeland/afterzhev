@@ -1,28 +1,80 @@
-; Read control inputs and set controller_values.
+; Read control inputs from the NES controller, and update controller_values and
+; prev_controller_values. This is faster than spec but works on both my original
+; and clone NES controllers.
+;
+;   latch   __----____________________________________________________________
+;   clock   --------___---___---___---___---___---___---___---___-------------
+;   data    ______a_____b_____c_____r_____^_____v_____<_____>_________________
 ;
 ; Register Usage
-;   r18     controller input values low byte
-;   r20     input pin values
-read_controls:
-    lds r20, controller_values
-    sts prev_controller_values, r20
-    clr r18
-    in r20, PINC
-    sbrs r20, 7
-    ori r18, 1<<CONTROLS_UP
-    sbrs r20, 6
-    sbr r18, 1<<CONTROLS_DOWN
-    sbrs r20, 5
-    ori r18, 1<<CONTROLS_LEFT
-    sbrs r20, 4
-    ori r18, 1<<CONTROLS_RIGHT
-    sbrs r20, 3
-    ori r18, 1<<CONTROLS_SPECIAL1
-    sbrs r20, 2
-    ori r18, 1<<CONTROLS_SPECIAL2
-    sbrs r20, 1
-    ori r18, 1<<CONTROLS_SPECIAL3
-    sbrs r20, 0
-    ori r18, 1<<CONTROLS_SPECIAL4
-    sts controller_values, r18
+;   r24, r25        calculations
+read_nes_controller:
+    lds r25, controller_values
+    sts prev_controller_values, r25
+    clr r25
+    cbi PORTG, PG0
+    sbi PORTG, PG1
+    sbi PORTG, PG0
+    delay 32, r24
+    cbi PORTG, PG0
+    sbis PING, PG2
+    ori r25, 1<<CONTROLS_SPECIAL1
+    delay 16, r24
+
+    cbi PORTG, PG1
+    delay 16, r24
+    sbi PORTG, PG1
+    delay 16, r24
+    sbis PING, PG2
+    ori r25, 1<<CONTROLS_SPECIAL2
+
+    cbi PORTG, PG1
+    delay 16, r24
+    sbi PORTG, PG1
+    delay 16, r24
+    sbis PING, PG2
+    ori r25, 1<<CONTROLS_SPECIAL3
+
+    cbi PORTG, PG1
+    delay 16, r24
+    sbi PORTG, PG1
+    delay 16, r24
+    sbis PING, PG2
+    ori r25, 1<<CONTROLS_SPECIAL4
+
+    cbi PORTG, PG1
+    delay 16, r24
+    sbi PORTG, PG1
+    delay 16, r24
+    sbis PING, PG2
+    ori r25, 1<<CONTROLS_UP
+
+    cbi PORTG, PG1
+    delay 16, r24
+    sbi PORTG, PG1
+    delay 16, r24
+    sbis PING, PG2
+    ori r25, 1<<CONTROLS_DOWN
+
+    cbi PORTG, PG1
+    delay 16, r24
+    sbi PORTG, PG1
+    delay 16, r24
+    sbis PING, PG2
+    ori r25, 1<<CONTROLS_LEFT
+
+    cbi PORTG, PG1
+    delay 16, r24
+    sbi PORTG, PG1
+    delay 16, r24
+    sbis PING, PG2
+    ori r25, 1<<CONTROLS_RIGHT
+
+    ; final clock is unnecessary for original controllers but my clone wants it
+    cbi PORTG, PG1
+    delay 16, r24
+    sbi PORTG, PG1
+    delay 16, r24
+
+    sts controller_values, r25
     ret

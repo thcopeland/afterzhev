@@ -15,7 +15,7 @@ $(BIN)/%.hex: $(SRC)/%.asm $(SRC)/*.asm $(DATA)/*.asm
 	$(AS) $(DEFS) -I $(SRC) -I $(DATA) -o $@ -e /dev/null -d /dev/null $<
 
 $(BIN)/%.lst: $(BIN)/%.hex
-	$(OBJDUMP) -m avr51 -D $< > $@
+	$(OBJDUMP) -m avr51 -Dz $< > $@
 
 upload: all
 	avrdude -p atmega2560 -c wiring -P /dev/ttyACM0 -b 115200 -D -U flash:w:$(BIN)/main.hex:i

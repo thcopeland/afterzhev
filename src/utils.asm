@@ -234,3 +234,45 @@ _cm_%:
     ld r0, @1+
     out @0, r0
 .endm
+
+; Delay for the given number of cycles. Should be exact.
+.macro delay ; cycles, tmp register
+.if @0 == 1
+    nop
+.endif
+.if @0 == 2
+    nop
+    nop
+.endif
+.if @0 == 3
+    nop
+    nop
+    nop
+.endif
+.if @0 == 4
+    nop
+    nop
+    nop
+    nop
+.endif
+.if @0 > 4
+    ldi @1, (@0-1)/4
+_delay_loop_%:
+    nop
+    dec @1
+    brne _delay_loop_%
+    nop
+.if (@0-1)&3 == 1
+    nop
+.endif
+.if (@0-1)&3 == 2
+    nop
+    nop
+.endif
+.if (@0-1)&3 == 3
+    nop
+    nop
+    nop
+.endif
+.endif
+.endm

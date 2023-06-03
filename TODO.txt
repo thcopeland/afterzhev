@@ -2,6 +2,6 @@
 - Optimize effect sprites
 - Special case single color tiles
 - Sound
-* NES controller
+- NES controller
 - Balance potions
 - Items

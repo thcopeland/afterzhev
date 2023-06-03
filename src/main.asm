@@ -76,11 +76,16 @@ _a_write:
 .include "init.asm"
 
 main:
-    ser r25
+    ldi r25, 0xff
     out DDRA, r25   ; VGA image output
-    out DDRB, r25   ; PB6 is VGA HSYNC
-    out DDRE, r25   ; PE4 is VGA VSYNC
     out DDRC, r25   ; audio output
+    sbi DDRB, PB6   ; PB6 is VGA HSYNC
+    sbi DDRE, PE4   ; PE4 is VGA VSYNC
+.if TARGETING_MCU
+    ldi r25, (1<<PG0)|(1<<PG1)|(0<<PG2) ; latch, clock, data
+    out DDRG, r25   ; NES controller
+    sbi PORTG, PG2  ; pull-up for data line
+.endif
 
     ; Audio: CTC w/ OCRA and 8 prescaling
     ldi r25, AUDIO_SAMPLING_PERIOD/8-1
@@ -217,7 +222,7 @@ _loop_heartbeat: ; used to synch with emulator
     sei
 
 .if TARGETING_MCU ; the emulator pokes memory directly
-    call read_controls
+    call read_nes_controller
 .endif
 
     lds r25, game_mode
