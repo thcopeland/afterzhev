@@ -131,6 +131,8 @@ DECL_LOOSE_ITEM abandoned_gold_1
 DECL_LOOSE_ITEM abandoned_gold_2
 DECL_LOOSE_ITEM bandit_pass
 DECL_LOOSE_ITEM bandit_helmet
+DECL_LOOSE_ITEM bandit_cloak
+DECL_LOOSE_ITEM bandit_beer
 DECL_LOOSE_ITEM woods_mithril_spike
 DECL_LOOSE_ITEM woods_mithril_dagger
 DECL_LOOSE_ITEM mine_glass_staff

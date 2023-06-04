@@ -200,6 +200,10 @@ _conv_poet4:                    DECL_LINE poet4, NPC_LONELY_POET, poet, END_CONV
 _conv_poet5:                    DECL_LINE poet5, 0, PLAYER, poet6
 _conv_poet6:                    DECL_LINE poet6, NPC_LONELY_POET, poet, END_CONVERSATION
 _conv_poet7:                    DECL_LINE poet7, NPC_LONELY_POET, poet, END_CONVERSATION
+DECL_CONVERSATION cult_victim
+_conv_cult_victim:              DECL_LINE cult_victim1, NPC_CULT_VICTIM, billiam, cult_victim2
+_conv_cult_victim2:             DECL_LINE cult_victim2, NPC_CULTIST_6, cultist, cult_victim3
+_conv_cult_victim3:             DECL_LINE cult_victim3, NPC_CULT_VICTIM, billiam, END_CONVERSATION
 DECL_CONVERSATION welcome_to_haldir
 _conv_haldir1:                  DECL_LINE haldir1, NPC_HALDIR_GUARD, haldir_guard, haldir2
 _conv_haldir2:                  DECL_BRANCH 3
@@ -287,6 +291,8 @@ _conv_speaker_bandit_agent_str: .db "Bandit spy", 0, 0
 _conv_speaker_highway_guard_str:.db "Highway guard", 0
 _conv_speaker_scared_bandit_str:.db "Trepid bandit", 0
 _conv_speaker_poet_str:         .db "Lonely poet", 0
+_conv_speaker_billiam_str:      .db "Hapless traveller", 0
+_conv_speaker_cultist_str:      .db "Cultist", 0
 _conv_speaker_haldir_guard_str: .db "Haldir guard", 0, 0
 _conv_speaker_bard_str:         .db "Bard", 0, 0
 _conv_speaker_citizen_str:      .db "Citizen", 0
@@ -410,6 +416,9 @@ _conv_poet4_str:                .db "Huh. I guess you", 39, "d better go", 10, "
 _conv_poet5_str:                .db "I", 39, "d sooner die!", 0
 _conv_poet6_str:                .db "Oh, would you?", 0, 0
 _conv_poet7_str:                .db "Come back to hear my songs,", 10, "adventurer? Well, it", 39, "s too late.You", 39, "ve already had your chance.", 0
+_conv_cult_victim1_str:         .db "Please! No! Save me!", 0, 0
+_conv_cult_victim2_str:         .db "That", 39, "s enough! Take that!", 0
+_conv_cult_victim3_str:         .db "Aaargh...", 0
 _conv_haldir1_str:              .db "Welcome to Haldir, adventurer.", 10, "By your garb, I see that you area proven warrior.", 0, 0
 _conv_haldir2_c1_str:           .db "Ask about Dor Haldir", 0, 0
 _conv_haldir2_c2_str:           .db "Ask about Baron Haldir", 0, 0

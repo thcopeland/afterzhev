@@ -108,17 +108,17 @@ explore_update_game:
     rcall move_camera
     rcall update_followers
 
-    ; lds r21, player_position_x
-    ; ldi r23, 0x07
-    ; ldi XL, low(framebuffer + 10 + 2*DISPLAY_WIDTH)
-    ; ldi XH, high(framebuffer + 10 + 2*DISPLAY_WIDTH)
-    ; call putb
-    ;
-    ; lds r21, player_position_y
-    ; ldi XL, low(framebuffer + 30 + 2*DISPLAY_WIDTH)
-    ; ldi XH, high(framebuffer + 30 + 2*DISPLAY_WIDTH)
-    ; call putb
-    ;
+    lds r21, player_position_x
+    ldi r23, 0x07
+    ldi XL, low(framebuffer + 10 + 2*DISPLAY_WIDTH)
+    ldi XH, high(framebuffer + 10 + 2*DISPLAY_WIDTH)
+    call putb
+
+    lds r21, player_position_y
+    ldi XL, low(framebuffer + 30 + 2*DISPLAY_WIDTH)
+    ldi XH, high(framebuffer + 30 + 2*DISPLAY_WIDTH)
+    call putb
+
     ; lds r20, player_position_x
     ; div12u r20, r21
     ; ldi r20, 12

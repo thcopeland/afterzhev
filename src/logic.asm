@@ -795,6 +795,41 @@ sector_underground_update:
     call spawn_distant_npcs
     ret
 
+sector_skull_cult_1_enter:
+    try_start_conversation cult_victim
+    ldi r25, NPC_CULT_VICTIM
+    call find_npc
+    tst r20
+    breq _ssc1e_end
+    ldi r25, EFFECT_DAMAGE<<3
+    std Y+NPC_EFFECT_OFFSET, r25
+    ldi r25, NPC_CULTIST_6
+    call find_npc
+    tst r20
+    breq _ssc1e_end
+    ldi r25, ACTION_ATTACK<<5
+    std Y+NPC_ANIM_OFFSET, r25
+_ssc1e_end:
+    ret
+
+sector_skull_cult_1_update:
+    ldi r25, NPC_CULT_VICTIM
+    call find_npc
+    tst r20
+    breq _ssc1u_end
+    ldd r25, Y+NPC_EFFECT_OFFSET
+    tst r25
+    brne _ssc1u_end
+    ldi r25, EFFECT_DAMAGE<<3
+    std Y+NPC_EFFECT_OFFSET, r25
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table + (NPC_CULT_VICTIM-1)*NPC_MEMSIZE)
+    ldi ZH, high(2*npc_table + (NPC_CULT_VICTIM-1)*NPC_MEMSIZE)
+    call resolve_enemy_death
+_ssc1u_end:
+    ret
+
 sector_fields_update:
     ldi r22, 0x1f
     ldi r23, 20

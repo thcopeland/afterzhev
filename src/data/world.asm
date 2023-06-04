@@ -144,7 +144,7 @@ sector_table:
     073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073, 073
 .db SECTOR_TOWN_DEN, SECTOR_TOWN_DEN_2, SECTOR_TOWN_DEN_2, SECTOR_TOWN_FOREST_PATH_2
 .db NPC_DEN_BANDIT_CHIEF, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-.db ITEM_pass, LOOSE_ITEM_bandit_pass, 124, 104, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+.db ITEM_pass, LOOSE_ITEM_bandit_pass, 124, 104, ITEM_purple_cloak, LOOSE_ITEM_bandit_cloak, 47, 61, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
 .db 144, 60, SECTOR_TOWN_DEN, 132, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -377,7 +377,7 @@ sector_table:
     039, 039, 039, 039, 039, 065, 034, 066, 039, 039, 039, 039, 039, 039, 039, 039, 065, 034, 034, 033, \
     039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039
 .db SECTOR_TOWN_FOREST_PATH_4, SECTOR_TOWN_FOREST_PATH_5, SECTOR_TOWN_FOREST_PATH_3, SECTOR_TOWN_FOREST_PATH_4
-.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_AMBUSHER3, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
 .db ITEM_leather_armor, LOOSE_ITEM_abandoned_armor, 61, 131, 128|10, LOOSE_ITEM_abandoned_gold_1, 80, 127, 128|15, LOOSE_ITEM_abandoned_gold_2, 75, 119, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
@@ -404,7 +404,7 @@ sector_table:
     039, 039, 039, 065, 066, 039, 039, 039, 039, 039, 041, 037, 036, 036, 036, 049, 036, 036, 036, 036
 .db SECTOR_TOWN_FOREST_PATH_5, SECTOR_TOWN_FOREST_PATH_5, SECTOR_TOWN_DEN, SECTOR_TOWN_FOREST_PATH_4
 .db NPC_BANDIT_GUARD_1, NPC_BANDIT_GUARD_2, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-.db ITEM_iron_helmet, LOOSE_ITEM_bandit_helmet, 18, 18, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+.db ITEM_iron_helmet, LOOSE_ITEM_bandit_helmet, 18, 18, ITEM_beer, LOOSE_ITEM_bandit_beer, 204, 120, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
 .db 156, 72, SECTOR_TOWN_DEN, 174, 85, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -1501,7 +1501,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
+.dw SECTOR_FLAG_FOLLOW_RIGHT
 .dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "skull_cult_section_2"
@@ -1521,14 +1521,14 @@ sector_table:
     076, 065, 034, 015, 192, 183, 007, 033, 015, 182, 182, 007, 033, 034, 033, 034, 066, 039, 076, 039, \
     039, 039, 039, 065, 033, 034, 066, 040, 041, 183, 192, 038, 039, 039, 040, 039, 039, 039, 039, 039
 .db SECTOR_SKULL_CULT_3, SECTOR_SKULL_CULT_4, SECTOR_ROAD_6, SECTOR_SKULL_CULT_1
-.db NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
+.db NPC_CULTIST_5, NPC_CULTIST_6, NPC_CULT_VICTIM, NO_NPC, NO_NPC, NO_NPC
 .db NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw SECTOR_FLAG_FOLLOW_ALL
+.dw sector_skull_cult_1_update, sector_skull_cult_1_enter, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "skull_cult_section_4"
 .db 040, 039, 039, 076, 056, 046, 045, 045, 057, 039, 039, 039, 039, 056, 057, 039, 039, 039, 039, 039, \
