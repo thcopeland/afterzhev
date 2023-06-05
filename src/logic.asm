@@ -795,6 +795,23 @@ sector_underground_update:
     call spawn_distant_npcs
     ret
 
+sector_road_5_update:
+    ldi r25, NPC_BRIDGE_PEDDLER
+    call find_npc
+    tst r20
+    breq _sr5u_end
+    ldd r22, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
+    ldd r23, Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    player_distance r22, r23
+    cpi r25, 12
+    brsh _sr5u_end
+    try_start_conversation bridge_peddler
+    lds r25, npc_presence+((NPC_BRIDGE_PEDDLER-1)>>3)
+    andi r25, low(~(1<<((NPC_BRIDGE_PEDDLER-1)&7)))
+    sts npc_presence+((NPC_BRIDGE_PEDDLER-1)>>3), r25
+_sr5u_end:
+    ret
+
 sector_skull_cult_1_enter:
     try_start_conversation cult_victim
     ldi r25, NPC_CULT_VICTIM
@@ -828,6 +845,25 @@ sector_skull_cult_1_update:
     ldi ZH, high(2*npc_table + (NPC_CULT_VICTIM-1)*NPC_MEMSIZE)
     call resolve_enemy_death
 _ssc1u_end:
+    ret
+
+sector_road_9_enter:
+    ldi r25, NPC_CORPSE
+    call add_npc
+    ldi r24, 49
+    ldi r25, 129
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H, r24
+    std Y+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H, r25
+    lds r25, npc_presence+((NPC_CULTIST_LEADER-1)>>3)
+    andi r25, (1<<((NPC_CULTIST_LEADER-1)&7))
+    brne _sr9e_end
+    ldi r25, NPC_HALDIR_CRIME_SCENE_GUARD
+    call find_npc
+    tst r20
+    breq _sr9e_end
+    ldi r25, NPC_HALDIR_CRIME_SCENE_GUARD2
+    std Y+NPC_IDX_OFFSET, r25
+_sr9e_end:
     ret
 
 sector_fields_update:

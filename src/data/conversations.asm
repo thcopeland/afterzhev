@@ -33,7 +33,7 @@
     .equ CONVERSATION_@0_ID = __CONVERSATION_IDX
     .set __CONVERSATION_IDX = __CONVERSATION_IDX+1
 
-    .if __CONVERSATION_IDX == TOTAL_CONVERSATION_COUNT
+    .if __CONVERSATION_IDX > TOTAL_CONVERSATION_COUNT
         .error "Too many conversations"
     .endif
 .endm
@@ -200,10 +200,23 @@ _conv_poet4:                    DECL_LINE poet4, NPC_LONELY_POET, poet, END_CONV
 _conv_poet5:                    DECL_LINE poet5, 0, PLAYER, poet6
 _conv_poet6:                    DECL_LINE poet6, NPC_LONELY_POET, poet, END_CONVERSATION
 _conv_poet7:                    DECL_LINE poet7, NPC_LONELY_POET, poet, END_CONVERSATION
+DECL_CONVERSATION bridge_peddler
+_conv_bridge_peddler:           DECL_LINE bridge_peddler1, NPC_BRIDGE_PEDDLER, bridge_peddler, bridge_peddler2
+_conv_bridge_peddler2:          DECL_LINE bridge_peddler2, NPC_BRIDGE_PEDDLER, bridge_peddler, END_CONVERSATION
 DECL_CONVERSATION cult_victim
 _conv_cult_victim:              DECL_LINE cult_victim1, NPC_CULT_VICTIM, billiam, cult_victim2
 _conv_cult_victim2:             DECL_LINE cult_victim2, NPC_CULTIST_6, cultist, cult_victim3
 _conv_cult_victim3:             DECL_LINE cult_victim3, NPC_CULT_VICTIM, billiam, END_CONVERSATION
+DECL_CONVERSATION crime_scene
+_conv_crime_scene1:             DECL_LINE crime_scene1, NPC_HALDIR_CRIME_SCENE_GUARD, haldir_guard, crime_scene2
+_conv_crime_scene2:             DECL_LINE crime_scene2, 0, PLAYER, crime_scene3
+_conv_crime_scene3:             DECL_LINE crime_scene3, NPC_HALDIR_CRIME_SCENE_GUARD, haldir_guard, crime_scene4
+_conv_crime_scene4:             DECL_LINE crime_scene4, NPC_HALDIR_CRIME_SCENE_GUARD, haldir_guard, END_CONVERSATION
+DECL_CONVERSATION crime_scene_done
+_conv_crime_scene_done1:        DECL_LINE crime_scene_done1, NPC_HALDIR_CRIME_SCENE_GUARD2, haldir_guard, crime_scene_done2
+_conv_crime_scene_done2:        DECL_LINE crime_scene_done2, 0, PLAYER, crime_scene_done3
+_conv_crime_scene_done3:        DECL_LINE crime_scene_done3, NPC_HALDIR_CRIME_SCENE_GUARD2, haldir_guard, crime_scene_done4
+_conv_crime_scene_done4:        DECL_LINE crime_scene_done4, NPC_HALDIR_CRIME_SCENE_GUARD2, haldir_guard, END_CONVERSATION
 DECL_CONVERSATION welcome_to_haldir
 _conv_haldir1:                  DECL_LINE haldir1, NPC_HALDIR_GUARD, haldir_guard, haldir2
 _conv_haldir2:                  DECL_BRANCH 3
@@ -291,9 +304,10 @@ _conv_speaker_bandit_agent_str: .db "Bandit spy", 0, 0
 _conv_speaker_highway_guard_str:.db "Highway guard", 0
 _conv_speaker_scared_bandit_str:.db "Trepid bandit", 0
 _conv_speaker_poet_str:         .db "Lonely poet", 0
+_conv_speaker_bridge_peddler_str:.db "Wandering peddler", 0
 _conv_speaker_billiam_str:      .db "Hapless traveller", 0
 _conv_speaker_cultist_str:      .db "Cultist", 0
-_conv_speaker_haldir_guard_str: .db "Haldir guard", 0, 0
+_conv_speaker_haldir_guard_str: .db "Haldirian guard", 0
 _conv_speaker_bard_str:         .db "Bard", 0, 0
 _conv_speaker_citizen_str:      .db "Citizen", 0
 _conv_speaker_bank_guard_str:   .db "Bank guard", 0, 0
@@ -393,7 +407,7 @@ _conv_highway_guard_str:        .db "No further, adventurer! None", 10, "may pas
 _conv_highway_guard2_str:       .db "You again? What do you want? Theroad is closed!", 0
 _conv_highway_guard4_str:       .db "Question", 0, 0
 _conv_highway_guard5_str:       .db "Disregard", 0
-_conv_highway_guard6_str:       .db "Show your pass", 0, 0
+_conv_highway_guard6_str:       .db "Offer pass", 0, 0
 _conv_highway_guard7_str:       .db "Apologize", 0
 _conv_highway_guard8_str:       .db "Under whose orders?", 0
 _conv_highway_guard9_str:       .db "Make way, fools!", 0, 0
@@ -416,9 +430,19 @@ _conv_poet4_str:                .db "Huh. I guess you", 39, "d better go", 10, "
 _conv_poet5_str:                .db "I", 39, "d sooner die!", 0
 _conv_poet6_str:                .db "Oh, would you?", 0, 0
 _conv_poet7_str:                .db "Come back to hear my songs,", 10, "adventurer? Well, it", 39, "s too late.You", 39, "ve already had your chance.", 0
+_conv_bridge_peddler1_str:      .db "Huh! That blasted bridge is down again! I suppose Frogford will", 10, "have to get along without my", 10, "wares.", 0
+_conv_bridge_peddler2_str:      .db "Care for some bargain prices,", 10, "adventurer? I won", 39, "t be staying", 10, "long. Doesn", 39, "t feel safe...", 0
 _conv_cult_victim1_str:         .db "Please! No! Save me!", 0, 0
 _conv_cult_victim2_str:         .db "That", 39, "s enough! Take that!", 0
 _conv_cult_victim3_str:         .db "Aaargh...", 0
+_conv_crime_scene1_str:         .db "Steady, adventurer, it", 39, "s a nastysight.", 0, 0
+_conv_crime_scene2_str:         .db "What happened?", 0, 0
+_conv_crime_scene3_str:         .db "Twice a month we find a body,", 10, "each time in a different place.", 10, "They say it", 39, "s part of some evil", 10, "ritual.", 0
+_conv_crime_scene4_str:         .db "Something must be done.", 0
+_conv_crime_scene_done1_str:    .db "What do you want, adventurer?", 0
+_conv_crime_scene_done2_str:    .db "I have found and killed the men", 10, "responsible for this.", 0
+_conv_crime_scene_done3_str:    .db "If what you say is true, you haverendered Haldir a great service.But know that the murderers willhave had friends in the city.", 0, 0
+_conv_crime_scene_done4_str:    .db "Be careful, adventurer.", 0
 _conv_haldir1_str:              .db "Welcome to Haldir, adventurer.", 10, "By your garb, I see that you area proven warrior.", 0, 0
 _conv_haldir2_c1_str:           .db "Ask about Dor Haldir", 0, 0
 _conv_haldir2_c2_str:           .db "Ask about Baron Haldir", 0, 0
@@ -445,7 +469,7 @@ _conv_kill_thieves2_str:        .db "But listen. Rumor has it a gang ofthieves h
 _conv_kill_thieves3_str:        .db "Find them and clean them out,", 10, "and we", 39, "ll make it worth your", 10, "time. What do you say?", 0
 _conv_kill_thieves5_str:        .db "Offer", 39, "s still open. Come back if", 10, "you change your mind.", 0, 0
 _conv_kill_thieves6_str:        .db "What do you say, adventurer?", 0, 0
-_conv_kill_thieves7_str:        .db "Question guard", 0, 0
+_conv_kill_thieves7_str:        .db "Question", 0, 0
 _conv_kill_thieves8_str:        .db "Why don", 39, "t you guards handle it?", 0
 _conv_kill_thieves9_str:        .db "The baron hasn", 39, "t given orders.", 10, "We", 39, "ve been waiting for weeks, butwithout them, we can", 39, "t take", 10, "action. But you don", 39, "t need them.", 10, "So what do you say?", 0, 0
 _conv_kill_thieves10_str:       .db "Great. Good luck, adventurer.", 0

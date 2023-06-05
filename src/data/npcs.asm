@@ -61,7 +61,7 @@
     .set __NPC_IDX = __NPC_IDX + 1
     .db @1, @2, @3, @4, @5, @6, @7, @8
 
-    .if __NPC_IDX == TOTAL_NPC_COUNT
+    .if __NPC_IDX > TOTAL_NPC_COUNT
         .error "Too many NPCs"
     .endif
 .endm
@@ -205,7 +205,7 @@ npc_table:
     DECL_NPC        NPC_AMBUSHER, NPC_ENEMY, CHARACTER_BANDIT, ITEM_wooden_bow, ITEM_full_green_cloak, DIRECTION_DOWN, 15, 38, 59
     DECL_ENEMY_DATA NPC_ATTACK|NPC_MOVE_CIRCLE, 25, 6, 3, 1, ITEM_green_hood, ITEM_green_cloak, ITEM_wooden_bow
 
-    DECL_NPC        NPC_AMBUSHER3, NPC_ENEMY, CHARACTER_BANDIT, ITEM_wood_staff, ITEM_full_green_cloak, DIRECTION_RIGHT, 15, 142, 131
+    DECL_NPC        NPC_AMBUSHER3, NPC_ENEMY, CHARACTER_BANDIT, ITEM_wood_staff, ITEM_full_green_cloak, DIRECTION_RIGHT, 15, 160, 131
     DECL_ENEMY_DATA NPC_ATTACK|NPC_HOSTILE, 25, 5, 4, 1, ITEM_green_cloak, ITEM_green_hood, ITEM_wood_staff
 
     DECL_NPC        NPC_BANDIT_GUARD_1, NPC_ENEMY, CHARACTER_BANDIT, ITEM_bloody_sword, ITEM_beard, DIRECTION_DOWN, 25, 96, 86
@@ -274,6 +274,9 @@ npc_table:
     DECL_NPC        NPC_GHOUL_2, NPC_ENEMY, CHARACTER_GHOUL, ITEM_invisible_staff, NO_ITEM, DIRECTION_DOWN, 40, 91, 74
     DECL_ENEMY_DATA NPC_PATROL, 50, 6, 6, 0, NO_ITEM, 128|40, ITEM_glass_shard
 
+    DECL_NPC        NPC_BRIDGE_PEDDLER, NPC_SHOPKEEPER, 128|NPC_PEDDLER_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_RIGHT, 10, 71, 94
+    DECL_SHOP_DATA  NO_NPC, SHOP_bridge_peddler_ID
+
     DECL_NPC        NPC_CULTIST_1, NPC_ENEMY, CHARACTER_CULTIST, ITEM_steel_sword, NO_ITEM, DIRECTION_DOWN, 40, 44, 44
     DECL_ENEMY_DATA NPC_PATROL, 40, 6, 5, 2, ITEM_health_potion, ITEM_large_health_potion, ITEM_mint_tonic
 
@@ -297,6 +300,15 @@ npc_table:
 
     DECL_NPC        NPC_CULTIST_LEADER, NPC_ENEMY, CHARACTER_CULTIST, ITEM_iron_staff, NO_ITEM, DIRECTION_UP, 50, 194, 90
     DECL_ENEMY_DATA NPC_HOSTILE, 150, 6, 8, 5, ITEM_large_health_potion, ITEM_mint_tonic, ITEM_strength_potion
+
+    DECL_NPC        NPC_HALDIR_CRIME_SCENE_GUARD, NPC_TALKER, CHARACTER_MAN, ITEM_spear, ITEM_iron_armor, DIRECTION_RIGHT, 50, 57, 64
+    DECL_TALK_DATA  NO_NPC, CONVERSATION_crime_scene_ID, crime_scene1, 0, crime_scene4, NPC_HALDIR_CRIME_SCENE_GUARD_ANGRY
+
+    DECL_NPC        NPC_HALDIR_CRIME_SCENE_GUARD2, NPC_TALKER, CHARACTER_MAN, ITEM_spear, ITEM_iron_armor, DIRECTION_RIGHT, 50, 57, 64
+    DECL_TALK_DATA  NO_NPC, CONVERSATION_crime_scene_done_ID, crime_scene_done1, 0, crime_scene_done4, NPC_HALDIR_CRIME_SCENE_GUARD_ANGRY
+
+    DECL_NPC        NPC_HALDIR_CRIME_SCENE_GUARD_ANGRY, NPC_ENEMY, CHARACTER_MAN, ITEM_spear, ITEM_iron_armor, DIRECTION_RIGHT, 50, 57, 64
+    DECL_ENEMY_DATA NPC_ATTACK, 50, 7, 8, 8, ITEM_spear, ITEM_iron_helmet, NO_ITEM
 
     DECL_NPC        NPC_HALDIR_GUARD, NPC_TALKER, CHARACTER_MAN, ITEM_spear, ITEM_iron_armor, DIRECTION_LEFT, 50, 180, 96
     DECL_TALK_DATA  NO_NPC, CONVERSATION_welcome_to_haldir_ID, haldir1, 0, haldir2, NPC_HALDIR_GUARD_1_ANGRY

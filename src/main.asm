@@ -186,24 +186,29 @@ _loop_video:
     nop
     dec r20
     out PORTA, r1
-    brpl _loop_audio
+    brpl _loop_repeat_scanline
+_loop_next_scanline:
     out GPIOR0, XL
     out GPIOR1, XH
     ldi r20, DISPLAY_VERTICAL_STRETCH-1
-_loop_audio:
+_loop_repeat_scanline:
     out GPIOR2, r20
     rjmp _loop_end
 _loop_game:
     in r20, GPIOR2
     sbrc r20, 7
-    rjmp _loop_check_audio
+    rjmp _loop_reset_render_state
     sbr r20, 0x80
     out GPIOR2, r20
+.if TARGETING_PC
+    lds r25, controller_values
+    sts prev_controller_values, r25
 _loop_heartbeat: ; used to sync with emulator
     in r25, PORTB
     ldi r24, 0x80
     eor r25, r24
     out PORTB, r25
+.endif
 
     ; At this point, there are around 100,000 cycles in which to render and
     ; update the entire game.
@@ -279,14 +284,6 @@ _loop_credits:
     brne _loop_reenter
     jmp credits_update
 _loop_reenter:
-    lds r25, controller_values
-    sts prev_controller_values, r25
-_loop_check_audio:
-    lds r24, TCNT3L
-    lds r25, TCNT3H
-    sbiw r24, DISPLAY_CLK_TOP/2
-    sbiw r24, DISPLAY_CLK_TOP/2
-    brlo _loop_reset_render_state
 _loop_reset_render_state:
     cli
     sts audio_state, r1

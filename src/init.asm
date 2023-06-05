@@ -66,16 +66,16 @@ _init_game:
     ldi r25, ITEM_blessed_sword
     sts player_inventory+3, r25
 
-    ldi r22, 40
+    ldi r22, 20
     ldi r23, 20
-    ldi r24, 20
+    ldi r24, 24
     ldi r25, 20
     sts player_stats + STATS_STRENGTH_OFFSET, r22
     sts player_stats + STATS_VITALITY_OFFSET, r23
     sts player_stats + STATS_DEXTERITY_OFFSET, r24
     sts player_stats + STATS_INTELLECT_OFFSET, r25
 
-    ldi r25, 200
+    ldi r25, 100
     sts player_position_x, r25
     ldi r25, 120
     sts player_position_y, r25
@@ -83,7 +83,7 @@ _init_game:
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    .equ SECTOR = SECTOR_SKULL_CULT_1
+    .equ SECTOR = SECTOR_ROAD_9
     ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     call load_sector

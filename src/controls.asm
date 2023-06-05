@@ -9,6 +9,8 @@
 ; Register Usage
 ;   r24, r25        calculations
 read_nes_controller:
+    lds r25, controller_values
+    sts prev_controller_values, r25
     clr r25
     cbi PORTG, PG0
     sbi PORTG, PG1
