@@ -459,13 +459,6 @@
             "fileName": "skull_cult_section_4.tmx",
             "height": 180,
             "width": 240,
-            "x": 1920,
-            "y": 540
-        },
-        {
-            "fileName": "skull_cult_section_3.tmx",
-            "height": 180,
-            "width": 240,
             "x": 1680,
             "y": 720
         },
