@@ -75,15 +75,15 @@ _init_game:
     sts player_stats + STATS_DEXTERITY_OFFSET, r24
     sts player_stats + STATS_INTELLECT_OFFSET, r25
 
-    ldi r25, 200
+    ldi r25, 180
     sts player_position_x, r25
-    ldi r25, 120
+    ldi r25, 80
     sts player_position_y, r25
     call reset_camera
 
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
-    .equ SECTOR = SECTOR_SKULL_CULT_1
+    .equ SECTOR = SECTOR_ROAD_8
     ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     call load_sector
