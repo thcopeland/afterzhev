@@ -514,7 +514,7 @@ sector_table:
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_ALL
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_start_pretown_1_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "start_section_1"
 .db 039, 039, 039, 039, 039, 039, 039, 041, 182, 182, 182, 175, 174, 182, 183, 192, 038, 039, 065, 066, \

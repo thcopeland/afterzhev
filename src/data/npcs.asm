@@ -164,7 +164,7 @@ npc_table:
     DECL_TALK_DATA  NO_NPC, 0, whit_ye_daen, 0, whit_ye_daen, NPC_ROBBED_GUEST
 
     DECL_NPC        NPC_ROBBED_GUEST, NPC_ENEMY, CHARACTER_BANDIT, ITEM_steel_sword, ITEM_feathered_hat, DIRECTION_DOWN, 25, 192, 40
-    DECL_ENEMY_DATA NPC_ATTACK, 40, 8, 4, 4, ITEM_steel_sword, ITEM_steel_sword, ITEM_steel_sword
+    DECL_ENEMY_DATA NPC_ATTACK, 40, 8, 3, 4, ITEM_steel_sword, ITEM_steel_sword, ITEM_steel_sword
 
     DECL_NPC        NPC_GUEST_QUEST, NPC_TALKER, CHARACTER_MAN, NO_ITEM, ITEM_leather_armor, DIRECTION_LEFT, 20, 59, 34
     DECL_TALK_DATA  NO_NPC, 0, guest_quest, 0, guest_quest, NO_NPC

@@ -733,6 +733,37 @@ sector_town_den_2_update:
 _std2u_end:
     ret
 
+sector_start_pretown_1_update:
+    player_distance_imm 36, 84
+    cpi r25, 12
+    brsh _ssp1u_interact_popup
+    lds r25, savepoint_used
+    sbrc r25, 1
+    rjmp _ssp1u_end
+    ldi r24, 88
+    ldi r25, 10
+    ldi ZL, byte3(2*tutorial_save2_str)
+    out RAMPZ, ZL
+    ldi ZL, low(2*tutorial_save2_str)
+    ldi ZH, high(2*tutorial_save2_str)
+    call render_popup
+    rjmp _ssp1u_end
+_ssp1u_interact_popup:
+    player_distance_imm 170, 34
+    cpi r25, 10
+    brsh _ssp1u_end
+    check_conversation drunks_warning
+    breq _ssp1u_end
+    ldi r24, 84
+    ldi r25, 10
+    ldi ZL, byte3(2*tutorial_talk2_str)
+    out RAMPZ, ZL
+    ldi ZL, low(2*tutorial_talk2_str)
+    ldi ZH, high(2*tutorial_talk2_str)
+    call render_popup
+_ssp1u_end:
+    ret
+
 ; 0 - nothing
 ; 1 - warned
 ; 2 - attacking

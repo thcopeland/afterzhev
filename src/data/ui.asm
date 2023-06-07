@@ -104,7 +104,9 @@ tutorial_fight_str: .db "After equipping", 10, "a weapon, press <S> to attack.",
 tutorial_fight2_str:.db "  Press <S> to attack.", 0, 0
 .endif
 tutorial_pickup_str:.db "Press <A> to pick", 10, "up items.", 10, 10, "They will aid you inyour travels.", 0, 0
+tutorial_pickup2_str:.db "  Press <A> to pick up.", 0
 tutorial_talk_str:  .db "Press <A> to", 10, "interact.", 0, 0
+tutorial_talk2_str: .db "  Press <A> to interact.", 0, 0
 tutorial_next_str:  .db "Press <A> to", 10, "continue through", 10, "the open door.", 0, 0
 tutorial_save_str:  .db "Press <A>", 10, "to save", 10, "your", 10, "progress.", 0, 0
-tutorial_pickup2_str:.db "  Press <A> to pick up.", 0
+tutorial_save2_str: .db "  Press <A> to save game.", 0
