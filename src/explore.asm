@@ -1386,6 +1386,7 @@ update_savepoint:
     ldi r24, low(SAVEPOINT_DATA_START)
     ldi r25, high(SAVEPOINT_DATA_START)
     lds r22, savepoint_progress
+    cli
     cpi r22, 2
     brsh _us_write_data
     cpi r22, 1
@@ -1455,6 +1456,7 @@ _us_save_complete:
     ori r25, 0xc0
     sts savepoint_data, r25
 _us_end:
+    sei
     ret
 
 ; Restore the game state from the savepoint. r25 is cleared if a savepoint exists.
