@@ -122,26 +122,16 @@ _cr_time:
     lds r25, final_time+1
     lds r21, final_time+2
     ; handle higher order bits so that the time can fit in 16 bits, yet still
-    ; correctly display times up to 59 minutes.
+    ; correctly display times up to 255 minutes
     clr r20
+_cr_third_byte_iter:
     cpi r21, 1
     brlo _cr_time_math
     subi r24, low(15*60*60)
     sbci r25, high(15*60*60)
     sbci r21, byte3(15*60*60)
     subi r20, low(-15)
-    cpi r21, 1
-    brlo _cr_time_math
-    subi r24, low(15*60*60)
-    sbci r25, high(15*60*60)
-    sbci r21, byte3(15*60*60)
-    subi r20, low(-15)
-    cpi r21, 1
-    brlo _cr_time_math
-    subi r24, low(11*60*60)
-    sbci r25, high(11*60*60)
-    sbci r21, byte3(11*60*60)
-    subi r20, low(-11)
+    rjmp _cr_third_byte_iter
 _cr_time_math:
     call divmodw
     mov r18, r22 ; frames
