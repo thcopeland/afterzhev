@@ -121,6 +121,30 @@ _tu_right_end:
     ret
 
 sector_start_1_update:
+    lds r24, player_position_x
+    lds r25, player_position_y
+    cpi r24, 151
+    brne _ss1u_main
+    cpi r25, 87
+    brne _ss1u_main
+    lds r24, player_subpixel_x
+    lds r25, player_subpixel_y
+    tst r24
+    brne _ss1u_main
+    tst r25
+    brne _ss1u_main
+.if TARGETING_MCU
+    ldi r24, 76
+.else
+    ldi r24, 100
+.endif
+    ldi r25, 10
+    ldi ZL, byte3(2*tutorial_move2_str)
+    out RAMPZ, ZL
+    ldi ZL, low(2*tutorial_move2_str)
+    ldi ZH, high(2*tutorial_move2_str)
+    call render_popup
+_ss1u_main:
     player_distance_imm 157, 93
     cpi r25, 12
     brlo _ss1u_end
@@ -129,6 +153,65 @@ _ss1u_end:
     ret
 
 sector_start_2_update:
+_ss2u_pickup_popup:
+    ldi r25, ITEM_wood_stick
+    call find_item
+    tst r20
+    breq _ss2u_inventory_popup
+    ldd r22, Y+SECTOR_ITEM_X_OFFSET
+    ldd r23, Y+SECTOR_ITEM_Y_OFFSET
+    player_distance r22, r23
+    cpi r25, 12
+    brsh _ss2u_pickup_popup_continue
+    ldi r24, 80
+    ldi r25, 10
+    ldi ZL, byte3(2*tutorial_pickup2_str)
+    out RAMPZ, ZL
+    ldi ZL, low(2*tutorial_pickup2_str)
+    ldi ZH, high(2*tutorial_pickup2_str)
+    call render_popup
+_ss2u_pickup_popup_continue:
+    rjmp _ss2u_npc
+_ss2u_inventory_popup:
+    lds r25, player_weapon
+    tst r25
+    brne _ss2u_attack_popup
+.if TARGETING_MCU
+    ldi r24, 104
+.else
+    ldi r24, 92
+.endif
+    ldi r25, 10
+    ldi ZL, byte3(2*tutorial_inventory2_str)
+    out RAMPZ, ZL
+    ldi ZL, low(2*tutorial_inventory2_str)
+    ldi ZH, high(2*tutorial_inventory2_str)
+    call render_popup
+    rjmp _ss2u_npc
+_ss2u_attack_popup:
+    lds r25, npc_move_flags2
+    tst r25
+    breq _ss2u_npc
+    ldi r25, NPC_BANDIT_0
+    call find_npc
+    tst r20
+    breq _ss2u_npc
+    ldi ZL, byte3(2*npc_table)
+    out RAMPZ, ZL
+    ldi ZL, low(2*npc_table + NPC_TABLE_ENTRY_MEMSIZE*(NPC_BANDIT_0-1) + NPC_TABLE_HEALTH_OFFSET)
+    ldi ZH, high(2*npc_table + NPC_TABLE_ENTRY_MEMSIZE*(NPC_BANDIT_0-1) + NPC_TABLE_HEALTH_OFFSET)
+    elpm r24, Z
+    ldd r25, Y+NPC_HEALTH_OFFSET
+    cp r24, r25
+    brne _ss2u_npc
+    ldi r24, 80
+    ldi r25, 10
+    ldi ZL, byte3(2*tutorial_fight2_str)
+    out RAMPZ, ZL
+    ldi ZL, low(2*tutorial_fight2_str)
+    ldi ZH, high(2*tutorial_fight2_str)
+    call render_popup
+_ss2u_npc:
     sts npc_move_flags2, r1
 _ss2u_test_ruffian:
     lds r25, player_position_x

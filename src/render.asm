@@ -2008,6 +2008,74 @@ render_item_with_underbar:
     rcall render_rect
     ret
 
+; Render a small popup to the framebuffer.
+;
+; Register Usage
+;   r20-r23         calculations
+;   r24             width (param)
+;   r25             height (param)
+;   X (r26:r27)     framebuffer pointer (param)
+;   Z (r30:r31)     string pointer (param)
+render_popup:
+    andi r24, 0xfc
+    ldi XL, low(framebuffer + 44*DISPLAY_WIDTH + DISPLAY_WIDTH/2 - 1)
+    ldi XH, high(framebuffer + 44*DISPLAY_WIDTH + DISPLAY_WIDTH/2 - 1)
+    mov r23, r24
+    lsr r23
+    sub XL, r23
+    sbc XH, r1
+    ldi r21, DISPLAY_WIDTH-2
+    sub r21, r24
+_rp_top:
+    ldi r22, 0x1d
+    ldi r20, 0x6e
+    mov r23, r24
+    st X+, r22
+_rp_top_loop:
+    st X+, r22
+    st X+, r22
+    st X+, r22
+    st X+, r22
+    subi r23, 4
+    brne _rp_top_loop
+    st X+, r22
+    add XL, r21
+    adc XH, r1
+_rp_inside_row:
+    mov r23, r24
+    st X+, r22
+_rp_inside4:
+    st X+, r20
+    st X+, r20
+    st X+, r20
+    st X+, r20
+    subi r23, 4
+    brne _rp_inside4
+    st X+, r22
+    add XL, r21
+    adc XH, r1
+    dec r25
+    brne _rp_inside_row
+    mov r23, r24
+    st X+, r22
+_rp_bottom_loop:
+    st X+, r22
+    st X+, r22
+    st X+, r22
+    st X+, r22
+    subi r23, 4
+    brne _rp_bottom_loop
+    st X+, r22
+    ldi YL, low(framebuffer + 47*DISPLAY_WIDTH + DISPLAY_WIDTH/2)
+    ldi YH, high(framebuffer + 47*DISPLAY_WIDTH + DISPLAY_WIDTH/2)
+    lsr r24
+    sub YL, r24
+    sbc YH, r1
+    ldi r21, 30
+    clr r23
+    rcall puts
+    ret
+
 ; Render an entire screen.
 ;
 ;   r24-r25        calculations
@@ -2116,7 +2184,6 @@ _ft_render:
     call puts
 _ft_end:
     ret
-
 
 ; Fade out some text, hold it, then fade in out. This allows us to fade black
 ; text onto any background.

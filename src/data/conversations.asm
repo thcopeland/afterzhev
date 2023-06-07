@@ -463,7 +463,7 @@ _conv_leaving_str:              .db "I", 39, "m getting out of Haldir while I ca
 _conv_leaving2_str:             .db "If you want, take a look", 10, "upstairs. Anything you want,", 10, "keep it.", 0, 0
 _conv_field_foxes_str:          .db "Adventurer! A strange breed of", 10, "foxes has overrun the fields!", 0, 0
 _conv_field_foxes2_str:         .db "Can", 39, "t pay you myself, but the", 10, "thing about these foxes, they", 10, "drop all kinds of stuff.", 0, 0
-_conv_cant_leave_str:           .db "I can", 39, "t leave yet... I must find", 10, "the letter!", 0, 0
+_conv_cant_leave_str:           .db "I can", 39, "t leave yet... I must find", 10, "Zhev and Baron Haldir!", 0
 _conv_kill_thieves1_str:        .db "Bank", 39, "s closed, adventurer. Not", 10, "much left, anyway.", 0
 _conv_kill_thieves2_str:        .db "But listen. Rumor has it a gang ofthieves has a place in Haldir,", 10, "they", 39, "re looking to rob us.", 0
 _conv_kill_thieves3_str:        .db "Find them and clean them out,", 10, "and we", 39, "ll make it worth your", 10, "time. What do you say?", 0

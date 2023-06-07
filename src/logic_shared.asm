@@ -160,6 +160,26 @@ _fn_npc_iter:
 _fn_end:
     ret
 
+; Return a pointer to the given item. r20 will be cleared if not found.
+;
+; Register Usage
+;   r20-r21         calculations
+;   r25             item id (param)
+;   Y (r28:r29)     temp
+find_item:
+    ldi YL, low(sector_loose_items)
+    ldi YH, high(sector_loose_items)
+    ldi r20, SECTOR_DYNAMIC_ITEM_COUNT
+_fi_item_iter:
+    ldd r21, Y+SECTOR_ITEM_IDX_OFFSET
+    cp r21, r25
+    breq _fi_end
+    adiw YL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    dec r20
+    brne _fi_item_iter
+_fi_end:
+    ret
+
 ; Release hold if any of the first N NPCs are damaged.
 ;
 ; Register Usage
