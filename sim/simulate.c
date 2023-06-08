@@ -78,6 +78,7 @@ void generate_audio(void *udata, uint8_t *raw, int len) {
 }
 
 void run_to_sync(void) {
+    unsigned i = 0;
     while (1) {
         uint8_t sync = avr->mem[0x25] & 0x80;
         avr_step(avr);
@@ -86,7 +87,10 @@ void run_to_sync(void) {
             break;
         } else if (avr->status == MCU_STATUS_CRASHED) {
             avr_dump(avr, NULL);
-            exit(0);
+            exit(1);
+        } else if (i++ > 2*VSYNC_PERIOD) {
+             fprintf(stderr, "game stalled (check build target), exiting...\n");
+             exit(1);
         }
     }
 }
