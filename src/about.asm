@@ -14,6 +14,7 @@ about_handle_controls:
     lds r21, controller_values
     com r20
     and r20, r21
+    andi r20, (1<<CONTROLS_SPECIAL1)|(1<<CONTROLS_SPECIAL2)|(1<<CONTROLS_SPECIAL3)|(1<<CONTROLS_SPECIAL4)
     breq _ahc_end
     call restart_game
 _ahc_end:
@@ -26,8 +27,8 @@ about_render:
     ldi XL, low(framebuffer)
     ldi XH, high(framebuffer)
     call render_rect
-    ldi YL, low(framebuffer + 8 + DISPLAY_WIDTH*4)
-    ldi YH, high(framebuffer + 8 + DISPLAY_WIDTH*4)
+    ldi YL, low(framebuffer + 9 + DISPLAY_WIDTH*3)
+    ldi YH, high(framebuffer + 9 + DISPLAY_WIDTH*3)
     ldi ZL, byte3(2*about_str)
     out RAMPZ, ZL
     ldi ZL, low(2*about_str)
@@ -35,28 +36,4 @@ about_render:
     ldi r21, 27
     ldi r23, 255
     call puts
-    ldi YL, low(framebuffer + 80 + DISPLAY_WIDTH*37)
-    ldi YH, high(framebuffer + 80 + DISPLAY_WIDTH*37)
-    rcall render_logo
-    ret
-
-render_logo:
-    ldi ZL, byte3(2*logo_image)
-    out RAMPZ, ZL
-    ldi ZL, low(2*logo_image)
-    ldi ZH, high(2*logo_image)
-    ldi r25, 29
-_rl_row:
-    ldi r24, 22-2
-_rl_col:
-    elpm r0, Z+
-    st Y+, r0
-    elpm r0, Z+
-    st Y+, r0
-    subi r24, 2
-    brsh _rl_col
-    subi YL, low(-DISPLAY_WIDTH+22)
-    sbci YH, high(-DISPLAY_WIDTH+22)
-    subi r25, 1
-    brsh _rl_row
     ret

@@ -18,9 +18,6 @@
 .endm
 
 shop_table:
-    DECL_SHOP tutorial, 5, 0x20 ; 1x+5
-    DECL_SHOP_ITEMS ITEM_bloody_sword, ITEM_beer, ITEM_croissant, NO_ITEM, NO_ITEM, NO_ITEM, NO_ITEM, NO_ITEM
-
     DECL_SHOP bartender, 5, 0x28 ; 1.25x+5
     DECL_SHOP_ITEMS ITEM_beer, ITEM_beer, ITEM_whiskey, ITEM_whiskey, ITEM_croissant, ITEM_croissant, ITEM_strength_potion, ITEM_health_potion
 
@@ -40,7 +37,6 @@ shop_table:
     DECL_SHOP_ITEMS ITEM_mithril_cap, ITEM_bismuth_subsalicylate, ITEM_mithril_spike, ITEM_health_potion, ITEM_axe, ITEM_glass_dagger, ITEM_speed_potion, ITEM_purple_hood
 
 shop_string_table:
-_shop_tutorial_name:            .db "Merchant", 0, 0
 _shop_bartender_name:           .db "Bristling Boar", 0, 0
 _shop_blacksmith_name:          .db "Boris the Blacksmith", 0, 0
 _shop_bridge_peddler_name:      .db "Wandering peddler", 0

@@ -91,12 +91,6 @@ npc_table:
     DECL_NPC        NPC_TOWN_GUARD_ANGRY, NPC_ENEMY, CHARACTER_MAN, ITEM_steel_sword, ITEM_guard_hat, DIRECTION_DOWN, 30, 0, 0
     DECL_ENEMY_DATA NPC_ATTACK, 50, 8, 7, 4, ITEM_guard_hat, ITEM_guard_hat, ITEM_steel_sword
 
-    DECL_NPC        NPC_TUTORIAL_SHOP, NPC_SHOPKEEPER, 128|NPC_BUSINESSMAN_SPRITE, NO_ITEM, NO_ITEM, DIRECTION_DOWN, 0, 18, 100
-    DECL_SHOP_DATA  NO_NPC, SHOP_tutorial_ID
-
-    DECL_NPC        NPC_TUTORIAL_TALK, NPC_TALKER, CHARACTER_MAN, NO_ITEM, ITEM_feathered_hat, DIRECTION_right, 10, 190, 50
-    DECL_TALK_DATA  NO_NPC, 0, tutorial_go_git_em, 0, tutorial_go_git_em, NO_NPC
-
     DECL_NPC        NPC_TUTORIAL_FIGHT, NPC_ENEMY, CHARACTER_MAN, ITEM_bloody_sword, ITEM_feathered_hat, DIRECTION_right, 20, 197, 150
     DECL_ENEMY_DATA NPC_GUARD, 10, 5, 2, 1, ITEM_feathered_hat, ITEM_feathered_hat, ITEM_bloody_sword
 

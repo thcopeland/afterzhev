@@ -105,6 +105,9 @@ font_character_table:
     .db 0x43, 0xff
     .db 0x00, 0x00
     .db 0x72, 0x0f
+    .db 0x7a, 0x6f
+    .db 0x51, 0xc5
+    .db 0x7b, 0x2f
 
 ; This is a 4x3 bitmap font based on "Tiny" by Matthew Welch, available at
 ; https://squaregear.net/fonts/tiny.html and licensed under the MIT license

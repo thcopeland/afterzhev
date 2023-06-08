@@ -56,7 +56,6 @@
 
 conversation_table:
 _conv_END_CONVERSATION:         .dw 0 ; placeholder
-_conv_tutorial_go_git_em:       DECL_LINE go_git_em, NPC_TUTORIAL_TALK, farmer, END_CONVERSATION
 DECL_CONVERSATION what_happened
 _conv_what_happened:            DECL_LINE what_happened, 0, PLAYER, what_happened2
 _conv_what_happened2:           DECL_LINE what_happened2, 0, PLAYER, what_happened3
@@ -315,7 +314,6 @@ _conv_speaker_dodgy_fellow_str: .db "Dodgy citizen", 0
 _conv_speaker_baron_haldir_str: .db "Baron Haldir", 0, 0
 _conv_speaker_zhev_str:         .db "Zhev", 0, 0
 _conv_speaker_empty_str:        .db 0, 0
-_conv_go_git_em_str:            .db "Go git ", 39, "em, adventurer!", 0
 _conv_what_happened_str:        .db "Ugh...  what happened?", 0, 0
 _conv_what_happened2_str:       .db "Zhev! What have you done?!", 0, 0
 _conv_what_happened3_str:       .db "My apprentice has vanished,", 10, "along with the queen", 39, "s letter.", 10, "This is terrible.", 0, 0

@@ -273,12 +273,12 @@ _loop_resume:
     jmp resume_update_game
 _loop_about:
     cpi r25, MODE_ABOUT
-    brne _loop_help
+    brne _loop_controls
     jmp about_update
-_loop_help:
-    cpi r25, MODE_HELP
+_loop_controls:
+    cpi r25, MODE_CONTROLS
     brne _loop_credits
-    jmp help_update
+    jmp controls_update
 _loop_credits:
     cpi r25, MODE_CREDITS
     brne _loop_reenter
@@ -304,7 +304,7 @@ _loop_end:
 
 .include "audio.asm"
 .include "math.asm"
-.include "controls.asm"
+.include "controller.asm"
 .include "animation.asm"
 .include "character.asm"
 .include "battle.asm"
@@ -323,7 +323,7 @@ _loop_end:
 .include "intro.asm"
 .include "resume.asm"
 .include "about.asm"
-.include "tutorial.asm"
+.include "controls.asm"
 .include "logic.asm"
 .include "rodata.asm"
 .include "data.asm"

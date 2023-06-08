@@ -22,104 +22,6 @@
 
 .include "logic_shared.asm"
 
-tutorial_update:
-    lds r24, prev_controller_values
-    lds r25, controller_values
-    com r24
-    and r25, r24
-    sbrs r25, CONTROLS_SPECIAL1
-    rjmp _tu_instructions
-    player_distance_imm 205, 160
-    cpi r25, 12
-    brsh _tu_instructions
-_tu_exit:
-    call load_help
-    ret
-_tu_instructions:
-    ldi r23, 0x00
-    lds r24, player_position_x
-    lds r25, player_position_y
-    ldi ZL, byte3(2*ui_string_table)
-    out RAMPZ, ZL
-    cpi r24, 100
-    brlo _tu_left
-    rjmp _tu_right
-_tu_left:
-    ldi r21, 16
-_tu_left_move:
-    cpi r25, 140
-    brlo _tu_left_pickup
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*16+50)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*16+50)
-    ldi ZL, low(2*tutorial_move_str)
-    ldi ZH, high(2*tutorial_move_str)
-    call puts
-    ret
-_tu_left_pickup:
-    cpi r25, 120
-    brlo _tu_left_shop
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*16+50)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*16+50)
-    ldi ZL, low(2*tutorial_pickup_str)
-    ldi ZH, high(2*tutorial_pickup_str)
-    call puts
-    ret
-_tu_left_shop:
-    cpi r25, 80
-    brlo _tu_left_inventory
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*6+50)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*6+50)
-    ldi ZL, low(2*tutorial_shop_str)
-    ldi ZH, high(2*tutorial_shop_str)
-    call puts
-    ret
-_tu_left_inventory:
-    cpi r25, 50
-    brlo _tu_left_next
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*4+50)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*4+50)
-    ldi ZL, low(2*tutorial_inventory_str)
-    ldi ZH, high(2*tutorial_inventory_str)
-    call puts
-    ret
-_tu_left_next:
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*24+55)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*24+55)
-    ldi ZL, low(2*tutorial_next_str)
-    ldi ZH, high(2*tutorial_next_str)
-    call puts
-    ret
-_tu_right:
-    ldi r21, 14
-_tu_right_talk:
-    cpi r25, 70
-    brsh _tu_right_fight
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*24+8)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*24+8)
-    ldi ZL, low(2*tutorial_talk_str)
-    ldi ZH, high(2*tutorial_talk_str)
-    call puts
-    ret
-_tu_right_fight:
-    cpi r25, 96
-    brsh _tu_right_save
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*12+5)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*12+5)
-    ldi ZL, low(2*tutorial_fight_str)
-    ldi ZH, high(2*tutorial_fight_str)
-    call puts
-    ret
-_tu_right_save:
-    cpi r25, 140
-    brlo _tu_right_end
-    ldi YL, low(framebuffer+DISPLAY_WIDTH*20+4)
-    ldi YH, high(framebuffer+DISPLAY_WIDTH*20+4)
-    ldi ZL, low(2*tutorial_save_str)
-    ldi ZH, high(2*tutorial_save_str)
-    call puts
-_tu_right_end:
-    ret
-
 sector_start_1_update:
     lds r24, player_position_x
     lds r25, player_position_y
@@ -139,10 +41,10 @@ sector_start_1_update:
     ldi r24, 100
 .endif
     ldi r25, 10
-    ldi ZL, byte3(2*tutorial_move2_str)
+    ldi ZL, byte3(2*tutorial_move_str)
     out RAMPZ, ZL
-    ldi ZL, low(2*tutorial_move2_str)
-    ldi ZH, high(2*tutorial_move2_str)
+    ldi ZL, low(2*tutorial_move_str)
+    ldi ZH, high(2*tutorial_move_str)
     call render_popup
 _ss1u_main:
     player_distance_imm 157, 93
@@ -165,10 +67,10 @@ _ss2u_pickup_popup:
     brsh _ss2u_pickup_popup_continue
     ldi r24, 80
     ldi r25, 10
-    ldi ZL, byte3(2*tutorial_pickup2_str)
+    ldi ZL, byte3(2*tutorial_pickup_str)
     out RAMPZ, ZL
-    ldi ZL, low(2*tutorial_pickup2_str)
-    ldi ZH, high(2*tutorial_pickup2_str)
+    ldi ZL, low(2*tutorial_pickup_str)
+    ldi ZH, high(2*tutorial_pickup_str)
     call render_popup
 _ss2u_pickup_popup_continue:
     rjmp _ss2u_npc
@@ -182,10 +84,10 @@ _ss2u_inventory_popup:
     ldi r24, 92
 .endif
     ldi r25, 10
-    ldi ZL, byte3(2*tutorial_inventory2_str)
+    ldi ZL, byte3(2*tutorial_inventory_str)
     out RAMPZ, ZL
-    ldi ZL, low(2*tutorial_inventory2_str)
-    ldi ZH, high(2*tutorial_inventory2_str)
+    ldi ZL, low(2*tutorial_inventory_str)
+    ldi ZH, high(2*tutorial_inventory_str)
     call render_popup
     rjmp _ss2u_npc
 _ss2u_attack_popup:
@@ -206,10 +108,10 @@ _ss2u_attack_popup:
     brne _ss2u_npc
     ldi r24, 80
     ldi r25, 10
-    ldi ZL, byte3(2*tutorial_fight2_str)
+    ldi ZL, byte3(2*tutorial_fight_str)
     out RAMPZ, ZL
-    ldi ZL, low(2*tutorial_fight2_str)
-    ldi ZH, high(2*tutorial_fight2_str)
+    ldi ZL, low(2*tutorial_fight_str)
+    ldi ZH, high(2*tutorial_fight_str)
     call render_popup
 _ss2u_npc:
     sts npc_move_flags2, r1
@@ -441,10 +343,10 @@ sector_town_entrance_2_update:
     breq _ste2u_end
     ldi r24, 76
     ldi r25, 10
-    ldi ZL, byte3(2*tutorial_next2_str)
+    ldi ZL, byte3(2*tutorial_next_str)
     out RAMPZ, ZL
-    ldi ZL, low(2*tutorial_next2_str)
-    ldi ZH, high(2*tutorial_next2_str)
+    ldi ZL, low(2*tutorial_next_str)
+    ldi ZH, high(2*tutorial_next_str)
     call render_popup
 _ste2u_end:
     ret
@@ -758,10 +660,10 @@ sector_start_pretown_1_update:
     rjmp _ssp1u_end
     ldi r24, 88
     ldi r25, 10
-    ldi ZL, byte3(2*tutorial_save2_str)
+    ldi ZL, byte3(2*tutorial_save_str)
     out RAMPZ, ZL
-    ldi ZL, low(2*tutorial_save2_str)
-    ldi ZH, high(2*tutorial_save2_str)
+    ldi ZL, low(2*tutorial_save_str)
+    ldi ZH, high(2*tutorial_save_str)
     call render_popup
     rjmp _ssp1u_end
 _ssp1u_interact_popup:
@@ -772,10 +674,10 @@ _ssp1u_interact_popup:
     breq _ssp1u_end
     ldi r24, 84
     ldi r25, 10
-    ldi ZL, byte3(2*tutorial_talk2_str)
+    ldi ZL, byte3(2*tutorial_talk_str)
     out RAMPZ, ZL
-    ldi ZL, low(2*tutorial_talk2_str)
-    ldi ZH, high(2*tutorial_talk2_str)
+    ldi ZL, low(2*tutorial_talk_str)
+    ldi ZH, high(2*tutorial_talk_str)
     call render_popup
 _ssp1u_end:
     ret

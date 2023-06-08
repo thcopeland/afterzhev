@@ -165,15 +165,15 @@ start_change:
     lds r25, start_selection
 _sc_check_resume:
     cpi r25, 1
-    brne _sc_check_about
+    brne _sc_check_controls
     call load_resume
     ret
-_sc_check_about:
+_sc_check_controls:
     cpi r25, 2
-    brne _sc_check_help
-    call load_tutorial
+    brne _sc_check_about
+    call load_controls
     ret
-_sc_check_help:
+_sc_check_about:
     cpi r25, 3
     brne _sc_fallback_start
     call load_about

@@ -93,16 +93,6 @@ _ghc_dead:
     sbrs r24, CONTROLS_SPECIAL1
     rjmp  _ghc_restart
 _ghc_retry:
-    ldi r20, low(2*sector_table + SECTOR_MEMSIZE*SECTOR_TUTORIAL)
-    ldi r21, high(2*sector_table + SECTOR_MEMSIZE*SECTOR_TUTORIAL)
-    lds r22, current_sector
-    lds r23, current_sector+1
-    cp r20, r22
-    cpc r21, r23
-    brne _ghc_normal_retry
-    call load_tutorial
-    rjmp _ghc_end
-_ghc_normal_retry:
     call restore_from_savepoint
     tst r25
     breq _ghc_end
