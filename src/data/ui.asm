@@ -108,5 +108,6 @@ tutorial_pickup2_str:.db "  Press <A> to pick up.", 0
 tutorial_talk_str:  .db "Press <A> to", 10, "interact.", 0, 0
 tutorial_talk2_str: .db "  Press <A> to interact.", 0, 0
 tutorial_next_str:  .db "Press <A> to", 10, "continue through", 10, "the open door.", 0, 0
+tutorial_next2_str: .db "  Press <A> to enter.", 0
 tutorial_save_str:  .db "Press <A>", 10, "to save", 10, "your", 10, "progress.", 0, 0
 tutorial_save2_str: .db "  Press <A> to save game.", 0

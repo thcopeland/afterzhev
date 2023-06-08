@@ -83,7 +83,7 @@ _init_game:
     ;
     ; ldi ZL, byte3(2*sector_table)
     ; out RAMPZ, ZL
-    ; .equ SECTOR = SECTOR_START_PRETOWN_1
+    ; .equ SECTOR = SECTOR_TOWN_ENTRANCE_2
     ; ldi ZL, low(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ; ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ; call load_sector

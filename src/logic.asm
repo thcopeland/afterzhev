@@ -433,6 +433,22 @@ _sspfc_end:
     pop r24
     ret
 
+sector_town_entrance_2_update:
+    player_distance_imm 126, 104
+    cpi r25, 12
+    brsh _ste2u_end
+    check_conversation bartender
+    breq _ste2u_end
+    ldi r24, 76
+    ldi r25, 10
+    ldi ZL, byte3(2*tutorial_next2_str)
+    out RAMPZ, ZL
+    ldi ZL, low(2*tutorial_next2_str)
+    ldi ZH, high(2*tutorial_next2_str)
+    call render_popup
+_ste2u_end:
+    ret
+
 sector_town_tavern_1_update:
     player_distance_imm 75, 116
     cpi r25, 16

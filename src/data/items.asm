@@ -121,6 +121,7 @@ item_table:
     DECL_ITEM small_chest,          ITEM_USABLE,                        10,     0,  0,  0,  0,      1
     DECL_ITEM letter,               ITEM_USABLE,                        10,     0,  0,  0,  0,      1
 
+DECL_LOOSE_ITEM intro_hat
 DECL_LOOSE_ITEM intro_wood_stick
 DECL_LOOSE_ITEM intro_bandit_gold
 DECL_LOOSE_ITEM tavern_guest_gold

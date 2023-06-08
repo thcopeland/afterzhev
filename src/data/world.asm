@@ -202,7 +202,7 @@ sector_table:
 .db 120, 96, SECTOR_TOWN_TAVERN_1, 60, 132, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db FEATURE_WINDOW, 136, 94, FEATURE_WINDOW, 174, 94, FEATURE_SHUTTERS, 156, 74, FEATURE_SHUTTERS, 39, 131, FEATURE_WINDOW, 20, 112, 0, 0, 0
 .dw SECTOR_FLAG_FOLLOW_ALL
-.dw NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
+.dw sector_town_entrance_2_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "town_section_2"
 .db 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 039, 056, 046, 045, 046, 057, 039, 039, 039, 039, \
@@ -430,12 +430,12 @@ sector_table:
     039, 039, 039, 039, 039, 039, 039, 041, 183, 192, 183, 175, 174, 192, 192, 183, 007, 066, 056, 057
 .db SECTOR_START_1, SECTOR_START_FIGHT, SECTOR_START_2, SECTOR_START_2
 .db NPC_BANDIT_0, NO_NPC, NO_NPC, NO_NPC, NO_NPC, NO_NPC
-.db ITEM_wood_stick, LOOSE_ITEM_intro_wood_stick, 134, 128, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
+.db ITEM_wood_stick, LOOSE_ITEM_intro_wood_stick, 134, 128, ITEM_feathered_hat, LOOSE_ITEM_intro_hat, 43, 10, NO_ITEM, 0, 0, 0, NO_ITEM, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw 0
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw sector_start_2_update, NO_HANDLER, NO_HANDLER, NO_HANDLER, NO_HANDLER
 
 ; Sector "start_section_fight"
@@ -461,7 +461,7 @@ sector_table:
 .db 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-.dw SECTOR_FLAG_FOLLOW_RIGHT
+.dw SECTOR_FLAG_FOLLOW_ALL
 .dw sector_start_fight_update, clear_sector_data, NO_HANDLER, NO_HANDLER, sector_start_fight_choice
 
 ; Sector "start_section_post_fight"
