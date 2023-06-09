@@ -17,7 +17,8 @@
 #define SAMPLING_RATE 44100
 #define AUDIO_BUFFER_SIZE 1024
 #define VSYNC_PERIOD 0x41800
-#define AUDIO_DPHASE_UPSCALE(val) (TRUE_FPS*VSYNC_PERIOD*(val)/(512*2)/SAMPLING_RATE)
+#define AUDIO_PERIOD 1024
+#define AUDIO_DPHASE_UPSCALE(val) (TRUE_FPS*VSYNC_PERIOD*(val)/AUDIO_PERIOD/SAMPLING_RATE)
 
 #define SYNC_PORT 0x25
 #define SYNC_PIN 7
@@ -39,6 +40,7 @@ struct channel_data {
     uint8_t volume;
     uint8_t wave;
 };
+
 struct channel_data channel1, channel2;
 
 void generate_audio(void *udata, uint8_t *raw, int len) {
@@ -78,7 +80,8 @@ void generate_audio(void *udata, uint8_t *raw, int len) {
 }
 
 void run_to_sync(void) {
-    unsigned i = 0;
+    unsigned cycles = 0;
+
     while (1) {
         uint8_t sync = avr->mem[0x25] & 0x80;
         avr_step(avr);
@@ -88,9 +91,9 @@ void run_to_sync(void) {
         } else if (avr->status == MCU_STATUS_CRASHED) {
             avr_dump(avr, NULL);
             exit(1);
-        } else if (i++ > 2*VSYNC_PERIOD) {
-             fprintf(stderr, "game stalled (check build target), exiting...\n");
-             exit(1);
+        } else if (cycles++ > 2*VSYNC_PERIOD) {
+            fprintf(stderr, "game stalled (check build target), exiting...\n");
+            exit(1);
         }
     }
 }

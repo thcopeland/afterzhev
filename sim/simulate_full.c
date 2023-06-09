@@ -19,10 +19,13 @@
 #define HSYNC_PIN 6
 #define VSYNC_PORT 0x2e
 #define VSYNC_PIN 4
-#define SYNC_PORT 0x25
-#define SYNC_PIN 7
 #define VIDEO_PORT 0x22
 #define VIDEO_MASK 0x21
+#define CONTROLLER_PORT 0x34
+#define CONTROLLER_PIN 0x32
+#define CONTROLLER_LATCH_PIN 0
+#define CONTROLLER_CLOCK_PIN 1
+#define CONTROLLER_DATA_PIN 2
 
 #define AUDIO_PORT 0x28
 
@@ -37,6 +40,18 @@ SDL_Renderer *renderer;
 SDL_Texture *framebuffer;
 SDL_AudioDeviceID audio_device;
 
+struct controller_data {
+    uint8_t value;
+    uint8_t latched;
+    uint8_t clock;
+};
+
+struct controller_data controller = {
+    .value = 0xff,
+    .latched = 0xff,
+    .clock = 1
+};
+
 void run_to_sync(void) {
     static int scanline = 0;
     static int offset = 0;
@@ -45,7 +60,6 @@ void run_to_sync(void) {
     int samples = 0;
 
     while (1) {
-        uint8_t sync = avr->mem[SYNC_PORT] & (1<<SYNC_PIN);
         int hsync = avr->mem[HSYNC_PORT] & (1<<HSYNC_PIN);
         int vsync = avr->mem[VSYNC_PORT] & (1<<VSYNC_PIN);
         avr_step(avr);
@@ -87,13 +101,33 @@ void run_to_sync(void) {
             }
             scanline = 0;
             offset = 0;
+            break;
         }
 
-        if ((avr->mem[SYNC_PORT] & (1 << SYNC_PIN)) ^ sync) {
-            break;
-        } else if (avr->status == MCU_STATUS_CRASHED) {
+        if (avr->status == MCU_STATUS_CRASHED) {
             avr_dump(avr, NULL);
-            exit(0);
+            exit(1);
+        }
+
+        uint8_t controller_clock = !!(avr->mem[CONTROLLER_PORT] & (1 << CONTROLLER_CLOCK_PIN));
+        uint8_t controller_latch = !!(avr->mem[CONTROLLER_PORT] & (1 << CONTROLLER_LATCH_PIN));
+        if (controller_latch) {
+            controller.latched = controller.value;
+            if (controller.latched & 1) {
+                avr->mem[CONTROLLER_PIN] |= (1 << CONTROLLER_DATA_PIN);
+            } else {
+                avr->mem[CONTROLLER_PIN] &= ~(1 << CONTROLLER_DATA_PIN);
+            }
+        } else if (controller_clock != controller.clock) {
+            if (controller_clock == 0) {
+                controller.latched >>= 1;
+                if (controller.latched & 1) {
+                    avr->mem[CONTROLLER_PIN] |= (1 << CONTROLLER_DATA_PIN);
+                } else {
+                    avr->mem[CONTROLLER_PIN] &= ~(1 << CONTROLLER_DATA_PIN);
+                }
+            }
+            controller.clock = controller_clock;
         }
     }
 
@@ -113,8 +147,8 @@ void fps_delay(void) {
 }
 
 void set_control_bit(int bit, int val) {
-    if (!val) avr->ram[0x1F01] |= (1 << bit);
-    else avr->ram[0x1F01] &= ~(1 << bit);
+    if (val) controller.value |= (1 << bit);
+    else controller.value &= ~(1 << bit);
 }
 
 void handle_events(void) {
@@ -123,29 +157,29 @@ void handle_events(void) {
         if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
             switch (event.key.keysym.sym) {
                 case SDLK_UP:
-                    set_control_bit(2, event.type == SDL_KEYUP);
+                    set_control_bit(4, event.type == SDL_KEYUP);
                     break;
                 case SDLK_LEFT:
-                    set_control_bit(3, event.type == SDL_KEYUP);
+                    set_control_bit(6, event.type == SDL_KEYUP);
                     break;
                 case SDLK_DOWN:
-                    set_control_bit(0, event.type == SDL_KEYUP);
+                    set_control_bit(5, event.type == SDL_KEYUP);
                     break;
                 case SDLK_RIGHT:
-                    set_control_bit(1, event.type == SDL_KEYUP);
+                    set_control_bit(7, event.type == SDL_KEYUP);
                     break;
                 case SDLK_a:
                 case SDLK_RETURN:
-                    set_control_bit(4, event.type == SDL_KEYUP);
+                    set_control_bit(0, event.type == SDL_KEYUP);
                     break;
                 case SDLK_s:
-                    set_control_bit(5, event.type == SDL_KEYUP);
+                    set_control_bit(1, event.type == SDL_KEYUP);
                     break;
                 case SDLK_d:
-                    set_control_bit(6, event.type == SDL_KEYUP);
+                    set_control_bit(2, event.type == SDL_KEYUP);
                     break;
                 case SDLK_f:
-                    set_control_bit(7, event.type == SDL_KEYUP);
+                    set_control_bit(3, event.type == SDL_KEYUP);
                     break;
             }
         } else if (event.type == SDL_QUIT) {
