@@ -98,14 +98,13 @@ void run_to_sync(void) {
     }
 }
 
-void fps_delay(void) {
+void fps_delay(uint64_t timer_start) {
     const uint64_t expected_frametime = 1000/TRUE_FPS;
-    uint64_t counter = SDL_GetPerformanceCounter();
-    uint64_t frametime = 1000 * (counter - last_counter) / SDL_GetPerformanceFrequency();
-    last_counter = counter;
+    uint64_t timer_end = SDL_GetPerformanceCounter();
+    uint64_t frametime = 1000 * (timer_end - timer_start) / SDL_GetPerformanceFrequency();
 
     // a bit loose, but prevents crazy FPS and vsync should pick up the slack
-    if (frametime < expected_frametime-1) {
+    if (frametime < expected_frametime-2) {
         SDL_Delay(expected_frametime-frametime-1);
     }
 }
@@ -153,9 +152,10 @@ void handle_events(void) {
 }
 
 void loop(void) {
-    fps_delay();
+    uint64_t timer_start = SDL_GetPerformanceCounter();
     handle_events();
     run_to_sync();
+    fps_delay(timer_start);
 
     uint8_t *pixels;
     int pitch;
