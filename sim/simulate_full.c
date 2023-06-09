@@ -209,7 +209,6 @@ int main(int argc, char **argv) {
     (void) argv;
 
     avr = avr_new(AVR_MODEL_ATMEGA2560);
-    avr->mem[0x26] = 0xff;
 
     if (avr_load_ihex(avr, "bin/main.hex") != 0) {
         exit(1);
