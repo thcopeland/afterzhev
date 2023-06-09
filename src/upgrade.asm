@@ -57,7 +57,8 @@ _luin_level_up:
     ldi r25, EFFECT_UPGRADE<<3
     sts player_effect, r25
     ldi r25, (sfx_level_up-sfx_table)>>1
-    call play_sound_effect
+    sts sfx_track, r25
+    sts sfx_track+1, r1
 _luin_end:
     ret
 

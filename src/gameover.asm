@@ -43,6 +43,7 @@ _lg_win:
     sts final_time+2, r25
     ldi r25, (sfx_win-sfx_table)>>1
     sts sfx_track, r25
+    sts sfx_track+1, r1
     ldi r24, low(2*music_credits_channel_1)
     ldi r25, high(2*music_credits_channel_1)
     sts music_track, r24
@@ -55,6 +56,7 @@ _lg_win:
 _lg_lose:
     ldi r25, (sfx_death-sfx_table)>>1
     sts sfx_track, r25
+    sts sfx_track+1, r1
     ldi r24, low(2*music_death_channel_1)
     ldi r25, high(2*music_death_channel_1)
     sts music_track, r24
