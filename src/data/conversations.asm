@@ -279,10 +279,8 @@ _conv_baron_haldir4:            DECL_LINE baron_haldir4, NPC_BARON_HALDIR, baron
 _conv_final_boss1:              DECL_LINE final_boss1, NPC_ZHEV, zhev, final_boss2
 _conv_final_boss2:              DECL_LINE final_boss2, 0, PLAYER, final_boss3
 _conv_final_boss3:              DECL_LINE final_boss3, NPC_ZHEV, zhev, final_boss4
-_conv_final_boss4:              DECL_LINE final_boss4, NPC_ZHEV, zhev, final_boss5
-_conv_final_boss5:              DECL_LINE final_boss5, NPC_ZHEV, zhev, final_boss6
-_conv_final_boss6:              DECL_LINE final_boss6, 0, PLAYER, final_boss7
-_conv_final_boss7:              DECL_LINE final_boss7, NPC_ZHEV, zhev, END_CONVERSATION
+_conv_final_boss4:              DECL_LINE final_boss4, 0, PLAYER, final_boss5
+_conv_final_boss5:              DECL_LINE final_boss5, NPC_ZHEV, zhev, END_CONVERSATION
 
 .message "Unallocated conversation ids: ", low(TOTAL_CONVERSATION_COUNT - __CONVERSATION_IDX + 1)
 
@@ -489,10 +487,8 @@ _conv_baron_haldir1_str:        .db "Baron Haldir?!", 0, 0
 _conv_baron_haldir2_str:        .db "Still here, heh, heh... that", 10, "blasted Zhev betrayed me! Kill", 10, "him, won", 39, "t you, envoy?", 0, 0
 _conv_baron_haldir3_str:        .db "What have you done, traitor?", 0, 0
 _conv_baron_haldir4_str:        .db "Ugh... leave me.", 0, 0
-_conv_final_boss1_str:          .db "Well well! The loyal envoy at", 10, "last!", 0
-_conv_final_boss2_str:          .db "Zhev, you traitor! Did the baron put you up to this?", 0, 0
-_conv_final_boss3_str:          .db "His plan, yes... though I", 39, "ve made some improvements, did you", 10, "notice? Heh heh.", 0
-_conv_final_boss4_str:          .db "He thought the letter held somegreat secret or subtle plan.", 10, "Something to give him an edge...", 10, "the fool.", 0, 0
-_conv_final_boss5_str:          .db "No matter. But now you choose. I can tell you", 39, "ve become powerfulsince we parted. Will you join me,or die serving your thankless", 10, "queen?", 0, 0
-_conv_final_boss6_str:          .db "Never! Give me the letter!", 0, 0
-_conv_final_boss7_str:          .db "Ha! I", 39, "m going to enjoy this... I", 10, "have learned much during my", 10, "travels.", 0
+_conv_final_boss1_str:          .db "Blast it, envoy! How are you", 10, "still after me?", 0, 0
+_conv_final_boss2_str:          .db "Give me the letter you stole,", 10, "Zhev!", 0
+_conv_final_boss3_str:          .db "I", 39, "ll give you a choice instead...", 10, "Join me, or die today. What do yousay? Will you wear the red hood?", 0, 0
+_conv_final_boss4_str:          .db "Never, traitor!", 0
+_conv_final_boss5_str:          .db "Hah! I hoped you", 39, "d say that... I", 10, "shall enjoy this!", 0, 0

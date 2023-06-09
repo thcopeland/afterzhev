@@ -88,8 +88,8 @@ _init_game:
     ; ldi ZH, high(2*sector_table + SECTOR*SECTOR_MEMSIZE)
     ; call load_sector
 
-    ; ldi r24, low(2*_conv_cant_leave)
-    ; ldi r25, high(2*_conv_cant_leave)
+    ; ldi r24, low(2*_conv_final_boss1)
+    ; ldi r25, high(2*_conv_final_boss1)
     ; call load_conversation
 
     rjmp main
