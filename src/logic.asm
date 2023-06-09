@@ -307,6 +307,28 @@ _stwu_end:
     ret
 
 sector_start_post_fight_update:
+    lds r24, player_position_x
+    lds r25, player_position_y
+    cpi r24, 60
+    brlo _sspfu_kidnapped
+    cpi r24, 108
+    brsh _sspfu_kidnapped
+    cpi r25, 70
+    brlo _sspfu_kidnapped
+    cpi r25, 120
+    brsh _sspfu_kidnapped
+.if TARGETING_MCU
+    ldi r24, 80
+.else
+    ldi r24, 72
+.endif
+    ldi r25, 10
+    ldi ZL, byte3(2*tutorial_dash_str)
+    out RAMPZ, ZL
+    ldi ZL, low(2*tutorial_dash_str)
+    ldi ZH, high(2*tutorial_dash_str)
+    call render_popup
+_sspfu_kidnapped:
     lds r25, global_data + QUEST_KIDNAPPED
     cpi r25, 4
     brne _sspfu_end

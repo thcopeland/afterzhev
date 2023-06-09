@@ -89,6 +89,7 @@ about_str:          .db "AfterZhev is a small, retro-", 10, "inspired RPG writte
 .if TARGETING_MCU
 tutorial_move_str:  .db "  Move with the D-pad.", 0, 0
 tutorial_inventory_str:.db "  Press select for inventory.", 0
+tutorial_dash_str:  .db "  Press start to dash.", 0, 0
 tutorial_fight_str: .db "  Press <B> to attack.", 0, 0
 controls_line1_str: .db 129, 130, 131, "    Move character", 0
 controls_line2_str: .db "sel    Toggle inventory", 0
@@ -99,6 +100,7 @@ controls_line5_str: .db "  A      Interact, equip/unequip", 0, 0
 tutorial_move_str:  .db "  Move with the arrows keys.", 0, 0
 tutorial_inventory_str:.db "  Press <F> for inventory.", 0, 0
 tutorial_fight_str: .db "  Press <S> to attack.", 0, 0
+tutorial_dash_str:  .db "  Press <D> to dash.", 0, 0
 controls_line1_str: .db "  A      Interact, equip/unequip", 0, 0
 controls_line2_str: .db "  S      Attack, use potion, buy", 0, 0
 controls_line3_str: .db "  D      Dash, drop item, sell", 0, 0
