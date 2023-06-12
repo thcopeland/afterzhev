@@ -33,14 +33,14 @@ read_nes_controller:
     sbi PORTG, PG1
     delay 16, r24
     sbis PING, PG2
-    ori r25, 1<<CONTROLS_SPECIAL3
+    ori r25, 1<<CONTROLS_SPECIAL4
 
     cbi PORTG, PG1
     delay 16, r24
     sbi PORTG, PG1
     delay 16, r24
     sbis PING, PG2
-    ori r25, 1<<CONTROLS_SPECIAL4
+    ori r25, 1<<CONTROLS_SPECIAL3
 
     cbi PORTG, PG1
     delay 16, r24

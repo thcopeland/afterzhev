@@ -175,10 +175,10 @@ void handle_events(void) {
                     set_control_bit(1, event.type == SDL_KEYUP);
                     break;
                 case SDLK_d:
-                    set_control_bit(2, event.type == SDL_KEYUP);
+                    set_control_bit(3, event.type == SDL_KEYUP);
                     break;
                 case SDLK_f:
-                    set_control_bit(3, event.type == SDL_KEYUP);
+                    set_control_bit(2, event.type == SDL_KEYUP);
                     break;
             }
         } else if (event.type == SDL_QUIT) {
