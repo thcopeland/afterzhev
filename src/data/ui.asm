@@ -51,6 +51,10 @@ ui_str_dexterity_abbr:  .db "Dex", 0
 ui_str_intellect_abbr:  .db "Int", 0
 ui_str_buy_label:   .db "Buy", 10, "for", 0
 ui_str_sell_label:  .db "Sell", 10, " for", 0
+strength_desc_str:  .db "Strength strongly affects the", 10, "power of melee attacks. It also", 10, "influences non-magical ranged", 10, "attacks.", 10, 10, "This quality is most valued by", 10, "Paladins, but is important to", 10, "any class.", 0
+vitality_desc_str:  .db "Chief among defensive traits,", 10, "vitality determines maximum", 10, "health and healing speed.", 0
+dexterity_desc_str: .db "Dexterity affects running", 10, "speed and resting time between", 10, "dashing.", 10, 10, "Extremely useful when facing", 10, "sheer odds. Rogues especially", 10, "prefer speed and cunning", 10, "to raw power.", 0, 0
+intellect_desc_str: .db "A subtle talent. Intellect", 10, "affects the damage of magical", 10, "attacks and influences non-", 10, "magical ranged attacks.", 10, 10, "Mages rely upon intellect for", 10, "their greatest powers.", 0, 0
 ui_str_you_died:    .db "A noble effort.", 0
 .if TARGETING_MCU
 ui_str_death_retry: .db "Press <A> to try again", 0, 0

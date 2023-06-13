@@ -75,6 +75,9 @@ upgrade_handle_controls:
     lds r18, prev_controller_values
     lds r19, controller_values
     com r18
+    lds r20, upgrade_selection
+    sbrc r20, 7
+    rjmp _uhc_attribute_details
     and r18, r19
     breq _uhc_no_recent_keydowns
     sts mode_clock, r1
@@ -125,12 +128,12 @@ _uhc_left:
     sts upgrade_points, r20
 _uhc_right:
     sbrs r19, CONTROLS_RIGHT
-    rjmp _uhc_other
+    rjmp _uhc_inspect
     ldi r25, (sfx_equip-sfx_table)>>1
     call play_sound_effect
     lds r20, upgrade_points
     dec r20
-    brmi _uhc_other
+    brmi _uhc_inspect
     sts upgrade_points, r20
     lds r20, upgrade_selection
     ldi ZL, low(player_augmented_stats)
@@ -140,8 +143,15 @@ _uhc_right:
     ld r20, Z
     inc r20
     st Z, r20
-_uhc_other:
-    andi r18, (1<<CONTROLS_SPECIAL1)|(1<<CONTROLS_SPECIAL2)|(1<<CONTROLS_SPECIAL3)|(1<<CONTROLS_SPECIAL4)
+_uhc_inspect:
+    sbrs r18, CONTROLS_SPECIAL4
+    rjmp _uhc_exit_buttons
+    lds r20, upgrade_selection
+    ori r20, 128
+    sts upgrade_selection, r20
+    rjmp _uhc_end
+_uhc_exit_buttons:
+    andi r18, (1<<CONTROLS_SPECIAL1)|(1<<CONTROLS_SPECIAL2)|(1<<CONTROLS_SPECIAL3)
     breq _uhc_end
     lds r20, upgrade_points
     tst r20
@@ -177,6 +187,14 @@ _uhc_refresh_stats:
     call calculate_player_stats
     call calculate_max_health
     sts player_health, r25
+    rjmp _uhc_end
+_uhc_attribute_details:
+    and r18, r19
+    andi r18, (1<<CONTROLS_SPECIAL1)|(1<<CONTROLS_SPECIAL2)|(1<<CONTROLS_SPECIAL3)|(1<<CONTROLS_SPECIAL4)
+    breq _uhc_end
+    lds r20, upgrade_selection
+    andi r20, 0x7f
+    sts upgrade_selection, r20
 _uhc_end:
     ret
 
@@ -220,6 +238,41 @@ _urg_render_header_text:
     ldi r21, 10
     clr r23
     call puts
+_urg_attribute_details:
+    lds r20, upgrade_selection
+    sbrs r20, 7
+    rjmp _urg_render_strength
+    andi r20, 0x7f
+    ldi r21, 28
+    clr r23
+    ldi YL, low(framebuffer + UPGRADE_UI_STATS_MARGIN)
+    ldi YH, high(framebuffer + UPGRADE_UI_STATS_MARGIN)
+    ldi ZL, byte3(2*ui_string_table)
+    out RAMPZ, ZL
+_urg_attribute_strength:
+    cpi r20, 0
+    brne _urg_attribute_vitality
+    ldi ZL, low(2*strength_desc_str)
+    ldi ZH, high(2*strength_desc_str)
+    rjmp _urg_render_description
+_urg_attribute_vitality:
+    cpi r20, 1
+    brne _urg_attribute_dexterity
+    ldi ZL, low(2*vitality_desc_str)
+    ldi ZH, high(2*vitality_desc_str)
+    rjmp _urg_render_description
+_urg_attribute_dexterity:
+    cpi r20, 2
+    brne _urg_attribute_intellect
+    ldi ZL, low(2*dexterity_desc_str)
+    ldi ZH, high(2*dexterity_desc_str)
+    rjmp _urg_render_description
+_urg_attribute_intellect:
+    ldi ZL, low(2*intellect_desc_str)
+    ldi ZH, high(2*intellect_desc_str)
+_urg_render_description:
+    call puts
+    rjmp _urg_end
 _urg_render_strength:
     ldi YL, low(framebuffer+UPGRADE_UI_STATS_MARGIN)
     ldi YH, high(framebuffer+UPGRADE_UI_STATS_MARGIN)
@@ -292,6 +345,7 @@ _urg_render_remaining_points:
     ldi XH, high(framebuffer+UPGRADE_UI_REMAINING_MARGIN)
     lds r21, upgrade_points
     call putb
+_urg_end:
     ret
 
 ; Render an indicator to show whether a stat is selected.
