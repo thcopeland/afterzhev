@@ -147,7 +147,11 @@ _sthc_check_keys:
     brsh _sthc_check_submit
     sts start_selection, r25
 _sthc_check_submit:
-    andi r20, exp2(CONTROLS_SPECIAL1)|exp2(CONTROLS_SPECIAL2)|exp2(CONTROLS_SPECIAL3)|exp2(CONTROLS_SPECIAL4)
+.if TARGETING_MCU
+    andi r20, exp2(CONTROLS_SPECIAL1)| exp2(CONTROLS_SPECIAL3) ; A or start
+.else
+    andi r20, exp2(CONTROLS_SPECIAL1) ; A/enter
+.endif
     breq _sthc_end
     ldi r25, 1
     sts mode_clock, r25
