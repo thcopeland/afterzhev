@@ -288,6 +288,9 @@ _cpr_end:
 calculate_dash_cooldown:
     lds r25, player_augmented_stats+STATS_DEXTERITY_OFFSET
     subi r25, 32
+    brlo _cdc_main
+    clr r25
+_cdc_main:
     neg r25
     sbrc r25, 7
     ldi r25, 3
