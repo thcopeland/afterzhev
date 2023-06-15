@@ -281,13 +281,13 @@ _cpr_end:
     ret
 
 ; Calculate the dash cooldown time.
-;   cooldown = 6*max(32-dex, 3)
+;   cooldown = 6*max(38-dex, 3)
 ;
 ; Register Usage
 ;   r25     cooldown time
 calculate_dash_cooldown:
     lds r25, player_augmented_stats+STATS_DEXTERITY_OFFSET
-    subi r25, 32
+    subi r25, 38
     brlo _cdc_main
     clr r25
 _cdc_main:
