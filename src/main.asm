@@ -99,6 +99,7 @@ main:
     ldi r25, 68 ; ensure audio happens during horizontal blank during video generation
     out TCNT0, r25
 
+.if TARGETING_MCU
     ; HSYNC: fast PWM on pin PB6
     ldi r24, low(HSYNC_PERIOD - 1)
     ldi r25, high(HSYNC_PERIOD - 1)
@@ -146,8 +147,12 @@ main:
 _main_stall:
     sleep
     rjmp _main_stall
+.else
+    sei
+.endif
 
 loop:
+.if TARGETING_MCU
     ; drop stack frame to save a few bytes
     pop r25
     pop r25
@@ -200,6 +205,7 @@ _loop_game:
     rjmp _loop_reset_render_state
     sbr r20, 0x80
     out GPIOR2, r20
+.endif
 .if TARGETING_PC
     lds r25, controller_values
     sts prev_controller_values, r25
@@ -284,6 +290,7 @@ _loop_credits:
     brne _loop_reenter
     jmp credits_update
 _loop_reenter:
+.if TARGETING_MCU
 _loop_reset_render_state:
     cli
     sts audio_state, r1
@@ -301,6 +308,9 @@ _loop_reset_render_state:
 _loop_end:
     sei
     rjmp _main_stall
+.else
+    rjmp loop
+.endif
 
 .include "audio.asm"
 .include "math.asm"
