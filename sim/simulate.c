@@ -255,6 +255,8 @@ int main(int argc, char **argv) {
     SDL_PauseAudioDevice(audio_device, 0);
 
 #ifdef EMSCRIPTEN
+    printf("This is the PC build of AfterZhev, running on slimavr.\n"
+           "Use the arrow keys and ASDF to control the game.\n");
     emscripten_set_main_loop(&loop, 0, 1);
 #else
     while (stayin_alive) loop();
