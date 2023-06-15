@@ -172,6 +172,21 @@ void loop(void) {
     SDL_RenderPresent(renderer);
 }
 
+#ifdef EMSCRIPTEN
+EM_JS(int, request_screen_width, (), {
+    return window.innerWidth;
+});
+#else
+int request_screen_width(void) {
+    SDL_DisplayMode dm;
+    if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
+         SDL_Log("unable to get display mode: %s", SDL_GetError());
+         return 1300;
+    }
+    return dm.w;
+}
+#endif
+
 int main(int argc, char **argv) {
     (void) argc;
     (void) argv;
@@ -188,7 +203,9 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    window = SDL_CreateWindow("AfterZhev", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, GAME_DISPLAY_WIDTH*SCALE, GAME_DISPLAY_HEIGHT*SCALE, SDL_WINDOW_RESIZABLE|SDL_WINDOW_HIDDEN);
+    int width = 2*request_screen_width()/3;
+    int height = GAME_DISPLAY_HEIGHT*width/GAME_DISPLAY_WIDTH;
+    window = SDL_CreateWindow("AfterZhev", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_RESIZABLE|SDL_WINDOW_HIDDEN);
     if (!window) {
         fprintf(stderr, "unable to create SDL window: %s\n", SDL_GetError());
         return 1;

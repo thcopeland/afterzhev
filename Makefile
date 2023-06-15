@@ -34,10 +34,9 @@ $(BIN)/simulate-full: $(SIM)/simulate_full.c
 	make -C $(SLIMAVR)
 	$(CC) $< $(SLIMAVR)/libslimavr.a -o $@ $(CFLAGS)
 
-wasm: clean all
+wasm: all
 	CC=emcc AR=emar make -C $(SLIMAVR)
-	emcc $(CFLAGS) $(EMCC_FLAGS) $(SLIMAVR)/libslimavr.a $(SIM)/simulate.c -o $(BIN)/simulate-fast.html
-	make -C $(SLIMAVR) clean
+	emcc $(CFLAGS) $(EMCC_FLAGS) $(SLIMAVR)/libslimavr.a $(SIM)/simulate.c --shell-file $(SIM)/web-shell.html -o $(BIN)/afterzhev.html
 
 clean:
 	make -C $(SLIMAVR) clean
