@@ -1009,8 +1009,8 @@ _sc4c_accepted:
     lds r25, npc_presence+((NPC_THIEF_BOSS-1)>>3)
     andi r25, exp2((NPC_THIEF_BOSS-1)&0x07)
     breq _sc4c_completed
-    ldi r24, low(2*_conv_kill_thieves11)
-    ldi r25, high(2*_conv_kill_thieves11)
+    ldi r24, low(2*_conv_kill_thieves8)
+    ldi r25, high(2*_conv_kill_thieves8)
     rjmp _sc4c_end
 _sc4c_completed:
     ldi r23, ITEM_mithril_breastplate
@@ -1027,14 +1027,14 @@ _sc4c_completed:
     andi r25, 0xf0
     ori r25, QUEST_HALDIR_BANK_REWARDED
     sts global_data+QUEST_HALDIR, r25
-    ldi r24, low(2*_conv_kill_thieves12)
-    ldi r25, high(2*_conv_kill_thieves12)
+    ldi r24, low(2*_conv_kill_thieves9)
+    ldi r25, high(2*_conv_kill_thieves9)
     rjmp _sc4c_end
 _sc4c_rewarded:
     cpi r20, QUEST_HALDIR_BANK_REWARDED
     brne _sc4c_other
-    ldi r24, low(2*_conv_kill_thieves12)
-    ldi r25, high(2*_conv_kill_thieves12)
+    ldi r24, low(2*_conv_kill_thieves9)
+    ldi r25, high(2*_conv_kill_thieves9)
     rjmp _sc4c_end
 _sc4c_other:
     ldi r24, low(2*_conv_END_CONVERSATION)
@@ -1047,7 +1047,7 @@ sector_city_4_choice:
     andi r24, 0xf0
     lds r25, selected_choice
 _sc4ch_accept:
-    cpi r25, 1
+    cpi r25, 0
     brne _sc4ch_refuse
     cpi r24, QUEST_HALDIR_THIEVES_NOT_BEGUN
     brne _sc4ch_acc_quest
@@ -1056,7 +1056,7 @@ _sc4ch_acc_quest:
     ori r24, QUEST_HALDIR_BANK_ACCEPTED
     sts global_data+QUEST_HALDIR, r24
 _sc4ch_refuse:
-    cpi r25, 2
+    cpi r25, 1
     brne _sc4ch_end
     ori r24, QUEST_HALDIR_BANK_REFUSED
     sts global_data+QUEST_HALDIR, r24

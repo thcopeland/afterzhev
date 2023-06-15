@@ -246,16 +246,13 @@ _conv_kill_thieves1:            DECL_LINE kill_thieves1, NPC_BANK_QUESTGIVER, ba
 _conv_kill_thieves2:            DECL_LINE kill_thieves2, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves3
 _conv_kill_thieves3:            DECL_LINE kill_thieves3, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves4
 _conv_kill_thieves4:            DECL_BRANCH 3
-                                DECL_CHOICE kill_thieves7, kill_thieves8
-                                DECL_CHOICE accept, kill_thieves10
+                                DECL_CHOICE accept, kill_thieves7
                                 DECL_CHOICE refuse, kill_thieves5
 _conv_kill_thieves5:            DECL_LINE kill_thieves5, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
 _conv_kill_thieves6:            DECL_LINE kill_thieves6, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves4
-_conv_kill_thieves8:            DECL_LINE kill_thieves8, 0, PLAYER, kill_thieves9
-_conv_kill_thieves9:            DECL_LINE kill_thieves9, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves4
-_conv_kill_thieves10:           DECL_LINE kill_thieves10, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
-_conv_kill_thieves11:           DECL_LINE kill_thieves11, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
-_conv_kill_thieves12:           DECL_LINE kill_thieves12, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
+_conv_kill_thieves7:            DECL_LINE kill_thieves7, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
+_conv_kill_thieves8:            DECL_LINE kill_thieves8, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
+_conv_kill_thieves9:            DECL_LINE kill_thieves9, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
 _conv_bank_warning:             DECL_LINE bank_warning, NPC_BANK_GUARD_1, bank_guard, END_CONVERSATION
 _conv_rob_bank1:                DECL_LINE rob_bank1, NPC_THIEF_QUESTGIVER, dodgy_fellow, rob_bank2
 _conv_rob_bank2:                DECL_LINE rob_bank2, 0, PLAYER, rob_bank3
@@ -465,12 +462,9 @@ _conv_kill_thieves2_str:        .db "But listen. Rumor has it a gang ofthieves h
 _conv_kill_thieves3_str:        .db "Find them and clean them out,", 10, "and we", 39, "ll make it worth your", 10, "time. What do you say?", 0
 _conv_kill_thieves5_str:        .db "Offer", 39, "s still open. Come back if", 10, "you change your mind.", 0, 0
 _conv_kill_thieves6_str:        .db "What do you say, adventurer?", 0, 0
-_conv_kill_thieves7_str:        .db "Question", 0, 0
-_conv_kill_thieves8_str:        .db "Why don", 39, "t you guards handle it?", 0
-_conv_kill_thieves9_str:        .db "The baron hasn", 39, "t given orders.", 10, "We", 39, "ve been waiting for weeks, butwithout them, we can", 39, "t take", 10, "action. But you don", 39, "t need them.", 10, "So what do you say?", 0, 0
-_conv_kill_thieves10_str:       .db "Great. Good luck, adventurer.", 0
-_conv_kill_thieves11_str:       .db "Come back when you", 39, "ve finished", 10, "the job.", 0
-_conv_kill_thieves12_str:       .db "Thanks, adventurer. You", 39, "ve doneHaldir a service.", 0, 0
+_conv_kill_thieves7_str:       .db "Great. Good luck, adventurer.", 0
+_conv_kill_thieves8_str:       .db "Come back when you", 39, "ve finished", 10, "the job.", 0
+_conv_kill_thieves9_str:       .db "Thanks, adventurer. You", 39, "ve doneHaldir a service.", 0, 0
 _conv_rob_bank1_str:            .db "Say, adventurer, you look like", 10, "you could use some gold! Could", 10, "use some myself, heh heh.", 0
 _conv_rob_bank2_str:            .db "What do you want?", 0
 _conv_rob_bank3_str:            .db "You", 39, "re an adventurer, right?", 10, "There", 39, "s something in the bank", 10, "that we need. If you bring it", 10, "here, it", 39, "ll be worth your while.", 0
