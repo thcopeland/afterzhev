@@ -210,7 +210,7 @@ int main(int argc, char **argv) {
 
     avr = avr_new(AVR_MODEL_ATMEGA2560);
 
-    if (avr_load_ihex(avr, "bin/main.hex") != 0) {
+    if (avr_load_ihex(avr, "bin/afterzhev.hex") != 0) {
         exit(1);
     }
 

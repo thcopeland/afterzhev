@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
     // using a stripped-down ATmega 2560 for performance
     avr = avr_new(AFTERZHEV_MINIMAL_MODEL);
 
-    if (avr_load_ihex(avr, "bin/main.hex") != 0) {
+    if (avr_load_ihex(avr, "bin/afterzhev.hex") != 0) {
         exit(1);
     }
 
