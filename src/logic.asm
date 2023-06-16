@@ -1279,6 +1279,7 @@ sector_city_robbers_den_2_init:
     andi r25, 0x0f
     ori r25, QUEST_HALDIR_THIEVES_ATTACKING
     sts global_data+QUEST_HALDIR, r25
+    try_start_conversation thieves_recognize
     ret
 
 sector_final_castle_init:

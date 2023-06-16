@@ -265,6 +265,8 @@ _conv_rob_bank6:                DECL_LINE rob_bank6, NPC_THIEF_QUESTGIVER, dodgy
 _conv_rob_bank7:                DECL_LINE rob_bank7, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
 _conv_rob_bank8:                DECL_LINE rob_bank8, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
 _conv_rob_bank9:                DECL_LINE rob_bank9, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
+DECL_CONVERSATION thieves_recognize
+_conv_thieves_recognize:        DECL_LINE thieves_recognize, NPC_THIEF_5, thief, END_CONVERSATION
 _conv_thieves_warning:          DECL_LINE thieves_warning, NPC_THIEF_QUESTGIVER, dodgy_fellow, END_CONVERSATION
 _conv_bridge_broken:            DECL_LINE bridge_broken, NPC_BRIDGE_BROKEN, citizen, bridge_broken2
 _conv_bridge_broken2:           DECL_LINE bridge_broken2, NPC_BRIDGE_BROKEN, citizen, END_CONVERSATION
@@ -301,6 +303,7 @@ _conv_speaker_poet_str:         .db "Lonely poet", 0
 _conv_speaker_bridge_peddler_str:.db "Wandering peddler", 0
 _conv_speaker_billiam_str:      .db "Hapless traveller", 0
 _conv_speaker_cultist_str:      .db "Cultist", 0
+_conv_speaker_thief_str:        .db "Thief", 0
 _conv_speaker_haldir_guard_str: .db "Haldirian guard", 0
 _conv_speaker_bard_str:         .db "Bard", 0, 0
 _conv_speaker_citizen_str:      .db "Citizen", 0
@@ -475,6 +478,7 @@ _conv_rob_bank8_str:            .db "Come back when you have it.", 0
 _conv_rob_bank9_str:            .db "Many thanks for your help,", 10, "adventurer. Here", 39, "s the promised", 10, "reward, heh heh...", 0
 _conv_bank_warning_str:         .db "Stay yourself, adventurer!", 10, "Bank", 39, "s closed. Just turn around and leave.", 0
 _conv_thieves_warning_str:      .db "Hey you! Quit snooping or else!", 0
+_conv_thieves_recognize_str:    .db "Hey, it", 39, "s that envoy! Kill him!", 0
 _conv_bridge_broken_str:        .db "Yep... bridge", 39, "s out. Can", 39, "t say as", 10, "how it happened, but a lot of", 10, "strange stuff", 39, "s been going on.", 0, 0
 _conv_bridge_broken2_str:       .db "Course, there have always been other ways. Tunnels, hidden", 10, "paths, that sort of thing.", 0
 _conv_baron_haldir1_str:        .db "Baron Haldir?!", 0, 0
