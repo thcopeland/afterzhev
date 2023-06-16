@@ -10,7 +10,7 @@ The game is sort of intended to be played on physical microcontroller along with
 
 ## Building AfterZhev
 
-A [prebuilt HEX file](/bin/afterzhev.hex) containing the most recent version of AfterZhev should be in the `bin/` directory. However, you may want to build the game yourself.
+A prebuilt HEX file containing the most recent version of AfterZhev should be in the `bin/` directory. However, you may want to build the game yourself.
 
 #### Dependencies
 
@@ -50,16 +50,14 @@ AfterZhev outputs a 60 Hz 640x480 VGA signal:
  - VSYNC on pin PE4 (2 on Arduino)
  - RRRGGGBB image on pins PA0-PA7 (22-29 on Arduino)
 
-It also outputs audio on pins PC0-PC7 (37-30 on Arduino), where PC7 (30) is the most significant bit of an unsigned 8-bit sample, and PC0 (37) is the least significant bit. I used an R-2R (R=100 ohms) resistor ladder as a digital-to-analog converter.
+You can use proper digital-to-analog circuitry for each channel, but since 8-bit color is pretty imprecise and the VGA impedance is known, I got away with just a 1:2:4 resistor ratio for the channel pins. This approach uses fewer resistors.
 
-Finally, AfterZhev uses a NES controller:
+AfterZhev also outputs audio on pins PC0-PC7 (37-30 on Arduino), where PC7 (30) is the most significant bit of an unsigned 8-bit sample, and PC0 (37) is the least significant bit. I used an R-2R (R=100 ohms) resistor ladder as a digital-to-analog converter.
+
+Finally, AfterZhev uses a NES controller (I've successfully tried both an original Nintendo controller and a clone):
 
  - LATCH on pin PG0 (41 on Arduino)
  - CLOCK on pin PG1 (40 on Arduino)
  - DATA on pin PG2 (39 on Arduino)
-
-I've successfully tried both an original Nintendo controller and a clone. If you have neither, it's possible to rewrite `src/controller.asm` to work with pushbuttons.
-
-Below is a working schematic that I used.
 
 ![AfterZhev schematic](/assets/screenshot_schematic.png)
