@@ -12,7 +12,6 @@
 #define TRUE_FPS 60
 #define GAME_DISPLAY_WIDTH 120
 #define GAME_DISPLAY_HEIGHT 66
-#define SCALE 8
 
 #define SAMPLING_RATE 44100
 #define AUDIO_BUFFER_SIZE 1024
@@ -155,11 +154,11 @@ void loop(void) {
 #ifdef EMSCRIPTEN
     // Emscripten emulates SDL_Delay() with a busy wait, which isn't great. So
     // instead use a less accurate but more efficient FPS cap.
-    const uint64_t expected_frametime = 1000/TRUE_FPS;
+    const uint64_t expected_frametime = 2000/TRUE_FPS;
     static uint64_t last_start_time2; // two frame window
     static uint64_t last_start_time;
     uint64_t time = SDL_GetPerformanceCounter();
-    if (last_start_time2 == 0 || (time - last_start_time2) >= 2*expected_frametime) {
+    if (last_start_time2 == 0 || (time - last_start_time2) >= expected_frametime) {
         handle_events();
         run_to_sync();
         last_start_time2 = last_start_time;
