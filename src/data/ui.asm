@@ -101,7 +101,7 @@ controls_line3_str: .db "srt    Dash, drop item, sell", 0, 0
 controls_line4_str: .db "  B      Attack, use potion, buy", 0, 0
 controls_line5_str: .db "  A      Interact, equip/unequip", 0, 0
 .else
-tutorial_move_str:  .db "  Move with the arrows keys.", 0, 0
+tutorial_move_str:  .db "  Move with the arrow keys.", 0
 tutorial_inventory_str:.db "  Press <F> for inventory.", 0, 0
 tutorial_fight_str: .db "  Press <S> to attack.", 0, 0
 tutorial_dash_str:  .db "  Press <D> to dash.", 0, 0

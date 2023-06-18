@@ -38,7 +38,7 @@ sector_start_1_update:
 .if TARGETING_MCU
     ldi r24, 76
 .else
-    ldi r24, 100
+    ldi r24, 96
 .endif
     ldi r25, 10
     ldi ZL, byte3(2*tutorial_move_str)

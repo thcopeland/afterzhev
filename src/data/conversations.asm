@@ -245,7 +245,7 @@ _conv_cant_leave:               DECL_LINE cant_leave, 0, PLAYER, END_CONVERSATIO
 _conv_kill_thieves1:            DECL_LINE kill_thieves1, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves2
 _conv_kill_thieves2:            DECL_LINE kill_thieves2, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves3
 _conv_kill_thieves3:            DECL_LINE kill_thieves3, NPC_BANK_QUESTGIVER, bank_guard, kill_thieves4
-_conv_kill_thieves4:            DECL_BRANCH 3
+_conv_kill_thieves4:            DECL_BRANCH 2
                                 DECL_CHOICE accept, kill_thieves7
                                 DECL_CHOICE refuse, kill_thieves5
 _conv_kill_thieves5:            DECL_LINE kill_thieves5, NPC_BANK_QUESTGIVER, bank_guard, END_CONVERSATION
