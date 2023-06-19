@@ -153,16 +153,17 @@ void handle_events(void) {
 void loop(void) {
 #ifdef EMSCRIPTEN
     // Emscripten emulates SDL_Delay() with a busy wait, which isn't great. So
-    // instead use a less accurate but more efficient FPS cap.
-    const uint64_t expected_frametime = 2000/TRUE_FPS;
-    static uint64_t last_start_time2; // two frame window
-    static uint64_t last_start_time;
+    // instead use a uglier but more efficient method.
+    static uint64_t window[4];
+    const uint64_t expected_window_time = sizeof(window)/sizeof(window[0])*1000/TRUE_FPS;
     uint64_t time = SDL_GetPerformanceCounter();
-    if (last_start_time2 == 0 || (time - last_start_time2) >= expected_frametime) {
+    if (window[0] == 0 || (time - window[0]) >= expected_window_time) {
         handle_events();
         run_to_sync();
-        last_start_time2 = last_start_time;
-        last_start_time = time;
+        for (unsigned i = 1; i < sizeof(window)/sizeof(window[0]); i++) {
+            window[i-1] = window[i];
+        }
+        window[sizeof(window)/sizeof(window[0])-1] = time;
     } else {
         return;
     }
