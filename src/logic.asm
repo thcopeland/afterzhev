@@ -139,11 +139,12 @@ _ss2u_loot:
     lds r25, sector_npcs+NPC_IDX_OFFSET
     cpi r25, NPC_CORPSE
     brne _ss2u_end
-    lds r25, sector_loose_items
-    cpi r25, 0
+    ldi r25, ITEM_bloody_sword
+    call find_item
+    tst r20
     breq _ss2u_end
-    lds r22, sector_npcs+NPC_POSITION_OFFSET+CHARACTER_POSITION_X_H
-    lds r23, sector_npcs+NPC_POSITION_OFFSET+CHARACTER_POSITION_Y_H
+    ldd r22, Y+SECTOR_ITEM_X_OFFSET
+    ldd r23, Y+SECTOR_ITEM_Y_OFFSET
     player_distance r22, r23
     cpi r25, 16
     brlo _ss2u_end

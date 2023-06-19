@@ -107,6 +107,7 @@ explore_update_game:
     rcall update_player
     rcall move_camera
     rcall update_followers
+    call update_loose_items
 
     lds r25, game_mode
     cpi r25, MODE_EXPLORE
@@ -166,7 +167,6 @@ render_game:
     lds r24, current_sector
     lds r25, current_sector+1
     call render_sector
-    ; call refill_audio_buffer
 _rg_features:
     ldi ZL, byte3(2*sector_table)
     out RAMPZ, ZL
@@ -806,8 +806,8 @@ handle_main_button:
     subi r18, -CHARACTER_SPRITE_WIDTH/2
     subi r19, -CHARACTER_SPRITE_HEIGHT/2
 _hmb_pickup_items:
-    ldi ZL, low(sector_loose_items)
-    ldi ZH, high(sector_loose_items)
+    ldi ZL, low(sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*(SECTOR_DYNAMIC_ITEM_COUNT-1))
+    ldi ZH, high(sector_loose_items+SECTOR_DYNAMIC_ITEM_MEMSIZE*(SECTOR_DYNAMIC_ITEM_COUNT-1))
     ldi r22, SECTOR_DYNAMIC_ITEM_COUNT
 _hmb_loose_item_iter:
     ldd r23, Z+SECTOR_ITEM_IDX_OFFSET
@@ -828,7 +828,7 @@ _hmb_loose_item_iter:
     cpi r21, 3*TILE_HEIGHT/4
     brlo _hmb_nearby_item_found
 _hmb_loose_item_next:
-    adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    sbiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
     dec r22
     brne _hmb_loose_item_iter
     rjmp _hmb_npc_interactions
@@ -2354,4 +2354,46 @@ _anf_npc_next:
     brsh _anf_end
     rjmp _anf_npc_iter
 _anf_end:
+    ret
+
+; Reorder loose items so that all empty slots are at the end. This makes dropping
+; and picking up more intuitive.
+;
+; Register Usage
+;   r20-r25         calculations
+;   Y (r28:r29)     main pointer
+;   Z (r30:r31)     temporary pointer
+update_loose_items:
+    ldi YL, low(sector_loose_items)
+    ldi YH, high(sector_loose_items)
+    ldi r25, SECTOR_DYNAMIC_ITEM_COUNT-1
+_uli_loose_item_iter:
+    ldd r20, Y+SECTOR_ITEM_IDX_OFFSET
+    tst r20
+    brne _uli_loose_item_next
+    mov r24, r25
+    movw ZL, YL
+_uli_inner_iter:
+    ldd r20, Z+SECTOR_ITEM_IDX_OFFSET
+    tst r20
+    brne _uli_inner_swap
+_uli_inner_next:
+    adiw ZL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    dec r24
+    brne _uli_inner_iter
+    rjmp _uli_end
+_uli_inner_swap:
+    ldd r21, Z+SECTOR_ITEM_PREPLACED_IDX_OFFSET
+    ldd r22, Z+SECTOR_ITEM_X_OFFSET
+    ldd r23, Z+SECTOR_ITEM_Y_OFFSET
+    std Y+SECTOR_ITEM_IDX_OFFSET, r20
+    std Y+SECTOR_ITEM_PREPLACED_IDX_OFFSET, r21
+    std Y+SECTOR_ITEM_X_OFFSET, r22
+    std Y+SECTOR_ITEM_Y_OFFSET, r23
+    std Z+SECTOR_ITEM_IDX_OFFSET, r1
+_uli_loose_item_next:
+    adiw YL, SECTOR_DYNAMIC_ITEM_MEMSIZE
+    dec r25
+    brne _uli_loose_item_iter
+_uli_end:
     ret
