@@ -95,9 +95,13 @@ _ghc_dead:
     sbrs r24, CONTROLS_SPECIAL1
     rjmp  _ghc_restart
 _ghc_retry:
+    lds r25, savepoint_used
+    tst r25
+    breq _ghc_reinit
     call restore_from_savepoint
     tst r25
     breq _ghc_end
+_ghc_reinit:
     call init_game_state
     call load_explore
     rjmp _ghc_end
