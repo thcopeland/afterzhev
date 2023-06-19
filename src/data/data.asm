@@ -20,11 +20,11 @@ sfx_track:          .byte 2 ; two 8-bit tracks
 prev_controller_values: .byte 1
 controller_values:  .byte 1
 
+clock:              .byte 3
+
 savedmem_start:
 
-clock:              .byte 3
 mode_clock:         .byte 1
-
 game_mode:          .byte 1
 current_sector:     .byte 2
 
