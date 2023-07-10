@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "SDL.h"
-#include "slimavr-0.1.5/slimavr.h"
+#include "slimavr-0.1.6/slimavr.h"
 
 #define GAME_DISPLAY_WIDTH 600
 #define GAME_DISPLAY_HEIGHT 600
@@ -13,21 +13,18 @@
 #define VSYNC_PERIOD 0x41800
 #define TRUE_FPS 60
 #define CYCLES_PER_TRUE_SECOND (VSYNC_PERIOD*TRUE_FPS)
-#define SAMPLING_CYCLES (CYCLES_PER_TRUE_SECOND/SAMPLING_RATE-1)
+#define SAMPLING_CYCLES (CYCLES_PER_TRUE_SECOND/SAMPLING_RATE-2)
 
-#define HSYNC_PORT 0x25
+#define HSYNC_PORT 'B'
 #define HSYNC_PIN 6
-#define VSYNC_PORT 0x2e
+#define VSYNC_PORT 'E'
 #define VSYNC_PIN 4
-#define VIDEO_PORT 0x22
-#define VIDEO_MASK 0x21
-#define CONTROLLER_PORT 0x34
-#define CONTROLLER_PIN 0x32
+#define VIDEO_PORT 'A'
+#define AUDIO_PORT 'C'
+#define CONTROLLER_PORT 'G'
 #define CONTROLLER_LATCH_PIN 0
 #define CONTROLLER_CLOCK_PIN 1
 #define CONTROLLER_DATA_PIN 2
-
-#define AUDIO_PORT 0x28
 
 uint8_t video_buffer[3*GAME_DISPLAY_WIDTH*GAME_DISPLAY_HEIGHT];
 int16_t audio_buffer[AUDIO_BUFFER_SIZE];
@@ -41,15 +38,15 @@ SDL_Texture *framebuffer;
 SDL_AudioDeviceID audio_device;
 
 struct controller_data {
+    enum avr_pin_state clock;
     uint8_t value;
     uint8_t latched;
-    uint8_t clock;
 };
 
 struct controller_data controller = {
+    .clock = AVR_PIN_HIGH,
     .value = 0xff,
-    .latched = 0xff,
-    .clock = 1
+    .latched = 0xff
 };
 
 void run_to_sync(void) {
@@ -60,22 +57,23 @@ void run_to_sync(void) {
     int samples = 0;
 
     while (1) {
-        int hsync = avr->mem[HSYNC_PORT] & (1<<HSYNC_PIN);
-        int vsync = avr->mem[VSYNC_PORT] & (1<<VSYNC_PIN);
+        enum avr_pin_state hsync = avr_io_read(avr, HSYNC_PORT, HSYNC_PIN);
+        enum avr_pin_state vsync = avr_io_read(avr, VSYNC_PORT, VSYNC_PIN);
         avr_step(avr);
-        int hsync2 = avr->mem[HSYNC_PORT] & (1<<HSYNC_PIN);
-        int vsync2 = avr->mem[VSYNC_PORT] & (1<<VSYNC_PIN);
+        enum avr_pin_state hsync2 = avr_io_read(avr, HSYNC_PORT, HSYNC_PIN);
+        enum avr_pin_state vsync2 = avr_io_read(avr, VSYNC_PORT, VSYNC_PIN);
 
         if (!drop_frame && (avr->clock % SAMPLING_CYCLES) == 0) {
-            audio_buffer[samples++] = avr->mem[AUDIO_PORT] << 6;
+            audio_buffer[samples++] = avr_io_read_port(avr, AUDIO_PORT) << 6;
         }
 
-        if (hsync2 == 0 && hsync != hsync2) {
+        if (hsync2 == AVR_PIN_LOW && hsync != hsync2) {
             video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255;
+            uint8_t sample = avr_io_read_port(avr, AUDIO_PORT);
             for (unsigned i = 1; offset+i < GAME_DISPLAY_WIDTH; i++) {
-                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*(offset+i) + 0] += avr->mem[AUDIO_PORT];
-                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*(offset+i) + 1] += avr->mem[AUDIO_PORT];
-                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*(offset+i) + 2] += avr->mem[AUDIO_PORT];
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*(offset+i) + 0] += sample;
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*(offset+i) + 1] += sample;
+                video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*(offset+i) + 2] += sample;
             }
             offset = 0;
             scanline += 1;
@@ -83,7 +81,7 @@ void run_to_sync(void) {
             offset += 1;
 
             if (offset > 10 && offset < 419 && scanline > 31 && scanline < 362) {
-                uint8_t val = avr->mem[VIDEO_PORT] & avr->mem[VIDEO_MASK];
+                uint8_t val = avr_io_read_port(avr, VIDEO_PORT);
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset] = 255*(val&7)/7;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 1] = 255*((val>>3)&7)/7;
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH + 3*offset + 2] = 255*((val>>5)&6)/7;
@@ -95,7 +93,7 @@ void run_to_sync(void) {
             }
         }
 
-        if (vsync2 == 0 && vsync != vsync2) {
+        if (vsync2 == AVR_PIN_LOW && vsync != vsync2) {
             for (int i = 0; i < GAME_DISPLAY_WIDTH; i++) {
                 video_buffer[scanline*3*GAME_DISPLAY_WIDTH+3*i] = 255;
             }
@@ -109,22 +107,22 @@ void run_to_sync(void) {
             exit(1);
         }
 
-        uint8_t controller_clock = !!(avr->mem[CONTROLLER_PORT] & (1 << CONTROLLER_CLOCK_PIN));
-        uint8_t controller_latch = !!(avr->mem[CONTROLLER_PORT] & (1 << CONTROLLER_LATCH_PIN));
-        if (controller_latch) {
+        enum avr_pin_state controller_clock = avr_io_read(avr, CONTROLLER_PORT, CONTROLLER_CLOCK_PIN);
+        enum avr_pin_state controller_latch = avr_io_read(avr, CONTROLLER_PORT, CONTROLLER_LATCH_PIN);
+        if (controller_latch == AVR_PIN_HIGH) {
             controller.latched = controller.value;
             if (controller.latched & 1) {
-                avr->mem[CONTROLLER_PIN] |= (1 << CONTROLLER_DATA_PIN);
+                avr_io_write(avr, CONTROLLER_PORT, CONTROLLER_DATA_PIN, AVR_PIN_HIGH);
             } else {
-                avr->mem[CONTROLLER_PIN] &= ~(1 << CONTROLLER_DATA_PIN);
+                avr_io_write(avr, CONTROLLER_PORT, CONTROLLER_DATA_PIN, AVR_PIN_LOW);
             }
         } else if (controller_clock != controller.clock) {
-            if (controller_clock == 0) {
+            if (controller_clock == AVR_PIN_LOW) {
                 controller.latched >>= 1;
                 if (controller.latched & 1) {
-                    avr->mem[CONTROLLER_PIN] |= (1 << CONTROLLER_DATA_PIN);
+                    avr_io_write(avr, CONTROLLER_PORT, CONTROLLER_DATA_PIN, AVR_PIN_HIGH);
                 } else {
-                    avr->mem[CONTROLLER_PIN] &= ~(1 << CONTROLLER_DATA_PIN);
+                    avr_io_write(avr, CONTROLLER_PORT, CONTROLLER_DATA_PIN, AVR_PIN_LOW);
                 }
             }
             controller.clock = controller_clock;
@@ -213,6 +211,29 @@ int main(int argc, char **argv) {
     if (avr_load_ihex(avr, "bin/afterzhev.hex") != 0) {
         exit(1);
     }
+
+    // set up IO connections
+    avr_io_write(avr, HSYNC_PORT, HSYNC_PIN, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, VSYNC_PORT, VSYNC_PIN, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, VIDEO_PORT, 0, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, VIDEO_PORT, 1, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, VIDEO_PORT, 2, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, VIDEO_PORT, 3, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, VIDEO_PORT, 4, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, VIDEO_PORT, 5, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, VIDEO_PORT, 6, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, VIDEO_PORT, 7, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, AUDIO_PORT, 0, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, AUDIO_PORT, 1, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, AUDIO_PORT, 2, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, AUDIO_PORT, 3, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, AUDIO_PORT, 4, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, AUDIO_PORT, 5, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, AUDIO_PORT, 6, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, AUDIO_PORT, 7, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, CONTROLLER_PORT, CONTROLLER_LATCH_PIN, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, CONTROLLER_PORT, CONTROLLER_CLOCK_PIN, AVR_PIN_PULLDOWN);
+    avr_io_write(avr, CONTROLLER_PORT, CONTROLLER_DATA_PIN, AVR_PIN_HIGH);
 
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0) {
         fprintf(stderr, "unable to initialize SDL: %s\n", SDL_GetError());

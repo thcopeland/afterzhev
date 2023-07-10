@@ -5,6 +5,7 @@
 #include "model.h"
 #include "eeprom.h"
 #include "flash.h"
+#include "gpio.h"
 
 enum avr_error {
     AVR_INVALID_INSTRUCTION,
@@ -22,15 +23,15 @@ enum avr_status {
     MCU_STATUS_IDLE
 };
 
-enum avr_pending_type {
-    AVR_PENDING_NONE,
-    AVR_PENDING_COPY
+enum avr_incomplete_inst_type {
+    AVR_INCOMPLETE_NONE,
+    AVR_INCOMPLETE_COPY
 };
 
-struct avr_pending_inst {
+struct avr_incomplete_inst {
     uint32_t src;
     uint32_t dst;
-    enum avr_pending_type type;
+    enum avr_incomplete_inst_type type;
 };
 
 #define avr_panic(avr, err) ({                                                  \
@@ -59,8 +60,9 @@ struct avr {
     uint8_t *eep;               // eeprom
 
     // various internal state
+    enum avr_pin_state (*pin_data)[8];
     struct avr_timerstate *timer_data;
-    struct avr_pending_inst pending_inst;
+    struct avr_incomplete_inst incomplete_inst;
     struct avr_eeprom_state eeprom_data;
     struct avr_flash_state flash_data;
     struct avr_tracedata *trace;
@@ -70,6 +72,12 @@ struct avr {
  * Allocate and initialize a new avr instance of the given model.
  */
 struct avr *avr_new(struct avr_model model);
+
+/*
+ * Reset an avr instance, resetting registers, buffers, and memory to their
+ * initial state.
+ */
+void avr_reset(struct avr *avr);
 
 /*
  * Free an avr instance.
@@ -86,17 +94,5 @@ int avr_dump(struct avr *avr, const char *fname);
  * Step a single cycle.
  */
 void avr_step(struct avr *avr);
-
-/*
- * Read an IO register's value. This can be used for basic communication, but
- * if you need more control, you should access avr->reg or avr->mem directly.
- */
-uint8_t avr_io_read(struct avr *avr, uint16_t reg);
-
-/*
- * Write to an IO register. This can be used for basic communication, but
- * if you need more control, you should access avr->reg or avr->mem directly.
- */
-void avr_io_write(struct avr *avr, uint16_t reg, uint8_t val);
 
 #endif

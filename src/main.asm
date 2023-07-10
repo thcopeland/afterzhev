@@ -86,6 +86,9 @@ main:
     out DDRG, r25   ; NES controller
     sbi PORTG, PG2  ; pull-up for data line
 .endif
+.if TARGETING_PC
+    sbi DDRB, PB7   ; heartbeat
+.endif
 
     ; Audio: CTC w/ OCRA and 8 prescaling
     ldi r25, AUDIO_SAMPLING_PERIOD/8-1

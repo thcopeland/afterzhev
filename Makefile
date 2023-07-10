@@ -5,7 +5,7 @@ DATA           = $(SRC)/data
 DEFS           = -D DEV -D TARGET=$(TARGET)
 AS             = avra
 OBJDUMP        = avr-objdump
-SLIMAVR        = $(SIM)/slimavr-0.1.5
+SLIMAVR        = $(SIM)/slimavr-0.1.6
 CFLAGS         = $(shell pkg-config --cflags --libs sdl2) -O2 -Wall -Wextra
 EMCC_FLAGS     = -sUSE_SDL=2 --preload-file $(BIN)/afterzhev.hex
 

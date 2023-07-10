@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "SDL.h"
-#include "slimavr-0.1.5/slimavr.h"
+#include "slimavr-0.1.6/slimavr.h"
 #include "minimal_model.h"
 
 #ifdef EMSCRIPTEN
@@ -19,7 +19,7 @@
 #define AUDIO_PERIOD 1024
 #define AUDIO_DPHASE_UPSCALE(val) (TRUE_FPS*VSYNC_PERIOD*(val)/AUDIO_PERIOD/SAMPLING_RATE)
 
-#define SYNC_PORT 0x25
+#define SYNC_PORT 'B'
 #define SYNC_PIN 7
 #define VIDEO_MASK 0x21
 #define AUDIO_CHANNEL1_ADDR 0x20F0
@@ -82,10 +82,10 @@ void run_to_sync(void) {
     unsigned cycles = 0;
 
     while (1) {
-        uint8_t sync = avr->mem[0x25] & 0x80;
+        enum avr_pin_state sync = avr_io_read(avr, SYNC_PORT, SYNC_PIN);
         avr_step(avr);
 
-        if ((avr->mem[SYNC_PORT] & (1 << SYNC_PIN)) ^ sync) {
+        if (avr_io_read(avr, SYNC_PORT, SYNC_PIN) != sync) {
             break;
         } else if (avr->status == MCU_STATUS_CRASHED) {
             avr_dump(avr, NULL);
@@ -214,6 +214,9 @@ int main(int argc, char **argv) {
     if (avr_load_ihex(avr, "bin/afterzhev.hex") != 0) {
         exit(1);
     }
+
+    // set up IO connections
+    avr_io_write(avr, SYNC_PORT, SYNC_PIN, AVR_PIN_PULLDOWN);
 
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0) {
         fprintf(stderr, "unable to initialize SDL: %s\n", SDL_GetError());
